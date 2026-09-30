@@ -203,6 +203,21 @@ Run `npm run check` for the current numbers. The limits and margins live in `too
 
 Global variable slots are the tightest limit. Reuse existing variables where it makes sense, and never renumber existing ones.
 
+### Server load baseline (v1.3.2)
+
+Measured with the debug HUD (`90 - Debug` → debug HUD) so later changes have something to compare against.
+
+| Setup | Server Load | Server Load Average | Server Load Peak |
+|---|---|---|---|
+| Full lobby of bots, during a round | bounces 70 to 140–150 | 60–80 | not usable (see below) |
+
+How to read these:
+
+- The HUD values change too fast to record separate numbers for the lobby, final duel and fast ball (300+). The row above covers normal play with bots; treat it as the reference for all states.
+- Server Load Peak resets too often to mean anything, so compare Server Load Average and the typical top of Server Load instead.
+- Bots were used, not real players. Real players may load the server differently.
+- When comparing a change against this baseline, use the same setup: a full bot lobby, mid-round, watching the average for a while.
+
 ## Odd bits worth knowing
 
 - **Rule names can't contain "Blizzard"**, so the map rule is called "Blizz World".
