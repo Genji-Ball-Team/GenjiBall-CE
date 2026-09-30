@@ -11,6 +11,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 - Documented which parts of the rule order matter (`docs/architecture.md`, "Rule order") and marked the order-sensitive includes in `src/main.opy`.
 - Wrote down the ball and player feel policy (`CONTRIBUTING.md`): feel changes go behind a default-off toggle, no preset turns them on, and Default and Tournament stay identical to v1.3.2. Added a PR template checkbox and `.github/CODEOWNERS` for the core files.
 - Moved Teams (Team Deathmatch) off `main`: removed `18-teams.opy`, the *70 - Teams* settings and the TDM branches in collision and target visuals. It lives on the `v1.3.2T` variant. Free-for-all is unchanged.
+- Moved Player rank off `main`: removed `16-player-rank.opy` (placeholder rules that never fired) and freed its player variables. The code is kept on the `feature/player-rank` branch.
 
 ## v1.3.2 (Community Edition import)
 
