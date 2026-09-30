@@ -19,7 +19,9 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           HAS_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'ball feel') }}
         run: |
-          if git diff --quiet "$BASE_SHA...$HEAD_SHA" -- tools/feel-lock.json; then
+          if ! git cat-file -e "$BASE_SHA:tools/feel-lock.json" 2>/dev/null; then
+            echo "tools/feel-lock.json is new in this PR; creating the snapshot doesn't change ball feel."
+          elif git diff --quiet "$BASE_SHA...$HEAD_SHA" -- tools/feel-lock.json; then
             echo "tools/feel-lock.json unchanged."
           elif [ "$HAS_LABEL" = "true" ]; then
             echo "tools/feel-lock.json changed and the PR has the 'ball feel' label."
