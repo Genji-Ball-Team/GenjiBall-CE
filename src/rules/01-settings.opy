@@ -42,11 +42,6 @@ rule "Settings - Workshop settings":
     antiOrbitMode = createWorkshopSettingBool("60 - Competitive", "AntiOrbit", false)
     antiOrbitRadius = createWorkshopSettingInt("60 - Competitive", "AntiOrbit radius", 14, 10, 20, 1)
     antiOrbitPressureRate = createWorkshopSettingInt("60 - Competitive", "AntiOrbit pressure", 2, 1, 5, 2) / 100
-    #70 - Teams: native TDM support. These only matter when the Custom Game mode is Team Deathmatch.
-    #Dash passing allows dash to trigger a same-team pass when normal passing is enabled.
-    Teamsscoretowin = createWorkshopSettingInt("70 - Teams", "score to win", 0, 0, 30)
-    enablepassing = createWorkshopSettingBool("70 - Teams", "passing", false, 1)
-    enableDashPassing = createWorkshopSettingBool("70 - Teams", "dash passing", false, 2)
     #80 - Visual: visual helpers. Presets leave these manual.
     xray = createWorkshopSettingBool("80 - Visual", "x-ray", false)
     tracingMode = createWorkshopSettingBool("80 - Visual", "tracing mode", false, 1)

@@ -10,6 +10,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 - `npm run check` prints the resource budget (global and player variables, subroutines, elements) and fails when one is within 5 of its Workshop limit (elements: within 1,000).
 - Documented which parts of the rule order matter (`docs/architecture.md`, "Rule order") and marked the order-sensitive includes in `src/main.opy`.
 - Wrote down the ball and player feel policy (`CONTRIBUTING.md`): feel changes go behind a default-off toggle, no preset turns them on, and Default and Tournament stay identical to v1.3.2. Added a PR template checkbox and `.github/CODEOWNERS` for the core files.
+- Moved Teams (Team Deathmatch) off `main`: removed `18-teams.opy`, the *70 - Teams* settings and the TDM branches in collision and target visuals. It lives on the `v1.3.2T` variant. Free-for-all is unchanged.
 
 ## v1.3.2 (Community Edition import)
 

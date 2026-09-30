@@ -54,7 +54,9 @@ Only needed if people still play an older version while `main` has moved on:
 
 ## Variants
 
-Variants like `v1.3.2T` (Teams) live on their own branch:
+Variants like `v1.3.2T` (Teams) live on their own branch. Their code isn't on `main`: Team Deathmatch support (`src/rules/18-teams.opy`, the *70 - Teams* settings, TDM passing) only exists on `v1.3.2T`.
+
+This is how `v1.3.2T` was started:
 
 ```sh
 git switch -c v1.3.2T 1.3.2    # start from the 1.3.2 release

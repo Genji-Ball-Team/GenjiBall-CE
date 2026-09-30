@@ -72,10 +72,6 @@ globalvar tracingPoints 67
 globalvar RedGreenColorblindMode 68
 globalvar WatermarkEnabled 69
 globalvar doubleSensEnabled 70
-globalvar Teamsscoretowin 71
-globalvar enablepassing 72
-globalvar passingassistid 73
-globalvar passingplayer 74
 globalvar antiOrbitMode 75
 globalvar antiOrbitRadius 76
 globalvar antiOrbitPressureRate 77
@@ -109,7 +105,6 @@ globalvar experimentalHomingStart 104
 globalvar experimentalHomingHold 105
 globalvar experimentalHomingRamp 106
 globalvar experimentalSurfaceHoming 107
-globalvar enableDashPassing 108
 globalvar killCounterEnabled 109
 globalvar debugRules 110
 globalvar killLeaderboardPlayers 111
@@ -163,7 +158,6 @@ subroutine stopBall 14
 subroutine startModernBall 15
 subroutine startAstroBall 16
 subroutine startRetroBall 17
-subroutine TDMcollision 18
 subroutine resetOrbitRoundState 19
 subroutine simpleIslandSideCollision 20
 subroutine startLegacyPlusBall 21
