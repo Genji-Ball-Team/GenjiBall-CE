@@ -1368,7 +1368,7 @@ rule ("Subroutine - setup duel") {
         Set Global Variable(IsInFinalDuel, True);
         Chase Global Variable At Rate(ballSpawnCountdown, 0, 1, Destination and Rate);
         Set Player Variable(All Living Players(All Teams), bouncePadCooldown, Subtract(Global.bouncePadCooldownLength, 1));
-        If(Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))));
+        If(Global.isIsland);
             Start Forcing Player Position(First Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved)), Add(Global.circleCenter, Vector(-15, 0, 0)), False);
             Start Forcing Player Position(Value In Array(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved), 1), Add(Global.circleCenter, Vector(15, 0, 0)), False);
         Else;
@@ -2072,7 +2072,7 @@ rule ("Ball Physics - general collision") {
         Set Global Variable(ballNextFramePosition, Add(Global.ballPosition, Multiply(Multiply(Global.ballDirection, Global.ballSpeed), 0.066)));
         "Used for phasingprotection in Ball/Target - collision check"
         Set Global Variable(ballHitPosition, Ray Cast Hit Position(Global.ballPosition, Global.ballNextFramePosition, Null, All Players(All Teams), False));
-        If(Or(Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))), And(Compare(Y Component Of(Global.ballHitPosition), <, -0.5), Compare(Y Component Of(Global.ballHitPosition), >, -3.5))));
+        If(Or(Global.isIsland, And(Compare(Y Component Of(Global.ballHitPosition), <, -0.5), Compare(Y Component Of(Global.ballHitPosition), >, -3.5))));
             Set Global Variable(CollisionSurfaceDistances, Array(Distance Between(Global.ballHitPosition, Vector(20, Y Component Of(Global.ballHitPosition), Z Component Of(Global.ballHitPosition))), Distance Between(Global.ballHitPosition, Vector(-20, Y Component Of(Global.ballHitPosition), Z Component Of(Global.ballHitPosition))), Distance Between(Global.ballHitPosition, Vector(X Component Of(Global.ballHitPosition), Y Component Of(Global.ballHitPosition), 20)), Distance Between(Global.ballHitPosition, Vector(X Component Of(Global.ballHitPosition), Y Component Of(Global.ballHitPosition), -20))));
             Call Subroutine(simpleIslandSideCollision);
         Else;
@@ -2104,7 +2104,7 @@ rule ("Ball Physics - island collision") {
         X Component Of(Global.ballPosition) < 20.2;
         X Component Of(Global.ballPosition) > -20.2;
         Y Component Of(Global.ballPosition) < 0;
-        Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))) == True;
+        Global.isIsland == True;
     }
     actions {
         Set Global Variable(CollisionSurfaceDistances, Array(Distance Between(Global.ballPosition, Vector(X Component Of(Global.ballPosition), 0, Z Component Of(Global.ballPosition))), Distance Between(Global.ballPosition, Vector(20, Y Component Of(Global.ballPosition), Z Component Of(Global.ballPosition))), Distance Between(Global.ballPosition, Vector(-20, Y Component Of(Global.ballPosition), Z Component Of(Global.ballPosition))), Distance Between(Global.ballPosition, Vector(X Component Of(Global.ballPosition), Y Component Of(Global.ballPosition), 20)), Distance Between(Global.ballPosition, Vector(X Component Of(Global.ballPosition), Y Component Of(Global.ballPosition), -20))));
@@ -2253,7 +2253,7 @@ rule ("Ball Physics - water") {
         Or(Or(Or(Compare(X Component Of(Global.ballPosition), >, 20), Compare(X Component Of(Global.ballPosition), <, -20)), Compare(Z Component Of(Global.ballPosition), >, 20)), Compare(Z Component Of(Global.ballPosition), <, -20)) == True;
         Y Component Of(Global.ballPosition) < Global.waterLevel;
         Y Component Of(Global.ballDirection) < 0;
-        Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))) == True;
+        Global.isIsland == True;
     }
     actions {
         Modify Global Variable(ballDirection, Multiply, Vector(1, 0, 1));

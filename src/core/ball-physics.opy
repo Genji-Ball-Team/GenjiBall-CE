@@ -161,7 +161,7 @@ rule "Ball Physics - general collision":
     ballNextFramePosition = ballPosition + ballDirection * ballSpeed * 0.066
     #Used for phasingprotection in Ball/Target - collision check
     ballHitPosition = raycastHitPosition(ballPosition, ballNextFramePosition, null, getAllPlayers(), false)
-    if __getCurrentMap__() == Map.WORKSHOP_ISLAND or __getCurrentMap__() == Map.WORKSHOP_ISLAND_NIGHT or ballHitPosition.y < -0.5 and ballHitPosition.y > -3.5:
+    if isIsland or ballHitPosition.y < -0.5 and ballHitPosition.y > -3.5:
         CollisionSurfaceDistances = [distance(ballHitPosition, vect(20, ballHitPosition.y, ballHitPosition.z)), distance(ballHitPosition, vect(-20, ballHitPosition.y, ballHitPosition.z)), distance(ballHitPosition, vect(ballHitPosition.x, ballHitPosition.y, 20)), distance(ballHitPosition, vect(ballHitPosition.x, ballHitPosition.y, -20))]
         simpleIslandSideCollision()
     else:
@@ -188,7 +188,7 @@ rule "Ball Physics - island collision":
     @Condition ballPosition.x < 20.2
     @Condition ballPosition.x > -20.2
     @Condition ballPosition.y < 0
-    @Condition (__getCurrentMap__() == Map.WORKSHOP_ISLAND or __getCurrentMap__() == Map.WORKSHOP_ISLAND_NIGHT) == true
+    @Condition isIsland == true
     
     CollisionSurfaceDistances = [distance(ballPosition, vect(ballPosition.x, 0, ballPosition.z)), distance(ballPosition, vect(20, ballPosition.y, ballPosition.z)), distance(ballPosition, vect(-20, ballPosition.y, ballPosition.z)), distance(ballPosition, vect(ballPosition.x, ballPosition.y, 20)), distance(ballPosition, vect(ballPosition.x, ballPosition.y, -20))]
     simpleIslandCollision()
@@ -296,7 +296,7 @@ rule "Ball Physics - water":
     @Condition (ballPosition.x > 20 or ballPosition.x < -20 or ballPosition.z > 20 or ballPosition.z < -20) == true
     @Condition ballPosition.y < waterLevel
     @Condition ballDirection.y < 0
-    @Condition (__getCurrentMap__() == Map.WORKSHOP_ISLAND or __getCurrentMap__() == Map.WORKSHOP_ISLAND_NIGHT) == true
+    @Condition isIsland == true
     
     ballDirection *= vect(1, 0, 1)
     playEffect(getAllPlayers(), DynamicEffect.RING_EXPLOSION, Color.WHITE, ballPosition, 2)

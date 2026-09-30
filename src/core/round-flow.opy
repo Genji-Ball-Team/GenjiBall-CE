@@ -47,7 +47,7 @@ def setupFinal():
     IsInFinalDuel = true
     chaseAtRate(ballSpawnCountdown, 0, 1)
     getLivingPlayers(Team.ALL).bouncePadCooldown = bouncePadCooldownLength - 1
-    if __getCurrentMap__() == Map.WORKSHOP_ISLAND or __getCurrentMap__() == Map.WORKSHOP_ISLAND_NIGHT:
+    if isIsland:
         getLivingPlayers(Team.ALL).filter(lambda player: player.hasMoved)[0].startForcingPosition(circleCenter + vect(-15, 0, 0), false)
         getLivingPlayers(Team.ALL).filter(lambda player: player.hasMoved)[1].startForcingPosition(circleCenter + vect(15, 0, 0), false)
     else:
