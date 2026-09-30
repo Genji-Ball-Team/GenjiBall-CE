@@ -40,6 +40,7 @@ When `main` is ready to ship as, say, 1.3.3:
    git push origin 1.3.3 v1.3.3
    ```
 3. The **Release** workflow builds the Workshop code and publishes a GitHub release with `genjiball-v1.3.3.txt` attached. If the tag is ever re-pushed, the workflow replaces the attached file and keeps the release notes.
+4. Paste the release's Workshop code in-game and create an **import code**. Add it to the release notes, the table in [hosting.md](hosting.md#with-an-import-code), and the "Play it" section of the README.
 
 **Tags have no `v`** (`1.3.3`, `1.3.2T`) because the branches already use `v1.3.3`-style names. A tag and a branch with the same name make Git commands ambiguous.
 
