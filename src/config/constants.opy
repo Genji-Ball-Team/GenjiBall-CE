@@ -52,6 +52,15 @@ enum SandboxField:
     SIGN            #1 = add, -1 = subtract
     EDITING         #value being edited: 1 = position, 2 = direction, 3 = speed
 
+#Fields of botState (features/bot-zbozo.opy)
+enum BotField:
+    BEHAVIOR_MODE    #1 = aggressive, may orbit; 2 = calmer
+    AGGRESSION       #distance the bot keeps from the target
+    WILL_ORBIT
+    WILL_GHOST_DASH
+    WILL_EDASH
+    GHOST_DASHING
+
 #ballMotion ("10 - Ball > motion")
 enum BallMotion:
     MODERN

@@ -63,10 +63,10 @@ rule "Controls - Shorten deflect length":
     
     wait(0.3)
     if eventPlayer.isDummy():
-        if bozoWillEdash == true or bozoWillGhostDash == true:
+        if botState[BotField.WILL_EDASH] == true or botState[BotField.WILL_GHOST_DASH] == true:
             eventPlayer.forceButtonPress(Button.ABILITY_1)
-            bozoWillGhostDash = false
-            bozoWillEdash = false
+            botState[BotField.WILL_GHOST_DASH] = false
+            botState[BotField.WILL_EDASH] = false
     eventPlayer.setAbility2Enabled(false)
     eventPlayer.setAbility1Enabled(false)
     eventPlayer.canDeflect = false

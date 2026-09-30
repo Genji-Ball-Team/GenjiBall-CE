@@ -146,17 +146,7 @@ variables {
         76: antiOrbitRadius
         77: antiOrbitPressureRate
         78: bozo_Bot
-        79: BozoTracing
-        80: bozoBehaviorModes
-        81: bozoAggression
-        82: bozoWillOrbit
-        83: bozoWillGhostDash
-        84: bozoWillEdash
-        85: OrbitTolerance
-        86: IsOrbiting
-        87: bozoIsGhostDashing
-        88: botJumping
-        89: bozoHasJumped
+        80: botState
         90: sandboxState
         96: Critalert
         97: ballPhysicsMode
@@ -452,6 +442,8 @@ rule ("Initialization - global variables") {
         Set Global Variable(experimentalSteeringRate, Global.ballDirectionRate);
         Set Global Variable(reboundInfluence, Global.experimentalReboundMin);
         Set Global Variable(duelQueue, Empty Array);
+        "zBozo behaviour and pending moves (BotField in config/constants.opy)"
+        Set Global Variable(botState, Empty Array);
         Set Global Variable(killLeaderboardPlayers, Empty Array);
         Set Global Variable(killLeaderboardSortedPlayers, Empty Array);
         "Sandbox spawn point, aim point and speed, plus the editor state (SandboxField in config/constants.opy)"
@@ -936,10 +928,10 @@ rule ("Controls - Shorten deflect length") {
     actions {
         Wait(0.3, Ignore Condition);
         If(Is Dummy Bot(Event Player));
-            If(Or(Compare(Global.bozoWillEdash, ==, True), Compare(Global.bozoWillGhostDash, ==, True)));
+            If(Or(Compare(Value In Array(Global.botState, 4), ==, True), Compare(Value In Array(Global.botState, 3), ==, True)));
                 Press Button(Event Player, Button(Ability 1));
-                Set Global Variable(bozoWillGhostDash, False);
-                Set Global Variable(bozoWillEdash, False);
+                Set Global Variable At Index(botState, 3, False);
+                Set Global Variable At Index(botState, 4, False);
             End;
         End;
         Set Ability 2 Enabled(Event Player, False);
@@ -2650,9 +2642,6 @@ rule ("zBozo - spawn") {
             Wait(0.1, Ignore Condition);
         End;
         Set Global Variable(bozo_Bot, True);
-        Set Global Variable(bozoHasJumped, False);
-        Set Global Variable(OrbitTolerance, 0);
-        Set Global Variable(BozoTracing, False);
     }
 }
 
@@ -2687,7 +2676,7 @@ rule ("zBozo - face target while deflecting") {
         Is Using Ability 1(Event Player) == False;
         Is Using Ability 2(Event Player) == False;
         Has Status(Event Player, Stunned) == False;
-        Global.bozoIsGhostDashing != True;
+        Value In Array(Global.botState, 5) != True;
     }
     actions {
         If(Compare((Event Player).canDash, ==, True));
@@ -2711,9 +2700,9 @@ rule ("zBozo - face target while deflecting") {
         End;
         Wait Until(Or(Compare(Global.target, !=, Event Player), Is Dead(Event Player)), 99999);
         If(Compare(Angle Between Vectors(Multiply(Global.ballDirection, -1), Direction Towards(Global.target, Global.ballPosition)), <, 20));
-            "if distance(eventPlayer.getEyePosition(), target.getEyePosition()) < ballSpeed * 0.3:\nbozoWillEdash = true\nbigMessage(getAllPlayers(), \"EDASH\")"
+            "if distance(eventPlayer.getEyePosition(), target.getEyePosition()) < ballSpeed * 0.3:\nbotState[BotField.WILL_EDASH] = true\nbigMessage(getAllPlayers(), \"EDASH\")"
             If(Compare(Distance Between(Eye Position(Event Player), Global.ballPosition), <, Global.ballSpeed));
-                Set Global Variable(bozoWillGhostDash, True);
+                Set Global Variable At Index(botState, 3, True);
             End;
         End;
         Wait(0.3, Ignore Condition);
@@ -2732,7 +2721,7 @@ rule ("zBozo - face the Ball") {
         Is Dummy Bot(Event Player) == True;
         Distance Between(Eye Position(Event Player), Global.ballPosition) >= Multiply(2, Divide(Global.ballSpeed, 20));
         Is Alive(Event Player) == True;
-        Global.bozoIsGhostDashing != True;
+        Value In Array(Global.botState, 5) != True;
         Is Using Ability 1(Event Player) == False;
         Is Using Ability 2(Event Player) == False;
         Has Status(Event Player, Stunned) == False;
@@ -2750,11 +2739,11 @@ rule ("zBozo - behavior changes after round") {
         Global.roundEndCall == True;
     }
     actions {
-        Set Global Variable(bozoBehaviorModes, Random Value In Array(Array(2)));
-        If(Compare(Global.bozoBehaviorModes, ==, 1));
-            Set Global Variable(bozoAggression, 10);
-        Else If(Compare(Global.bozoBehaviorModes, ==, 2));
-            Set Global Variable(bozoAggression, 5);
+        Set Global Variable At Index(botState, 0, Random Value In Array(Array(2)));
+        If(Compare(First Of(Global.botState), ==, 1));
+            Set Global Variable At Index(botState, 1, 10);
+        Else If(Compare(First Of(Global.botState), ==, 2));
+            Set Global Variable At Index(botState, 1, 5);
     }
 }
 
@@ -2768,7 +2757,7 @@ rule ("zBozo - Movement reworked") {
         Global.bozo_Bot == True;
         Is Game In Progress == True;
         Is Dummy Bot(Event Player) == True;
-        Global.bozoWillOrbit != True;
+        Value In Array(Global.botState, 2) != True;
         Is Alive(Event Player) == True;
     }
     actions {
@@ -2781,7 +2770,7 @@ rule ("zBozo - Movement reworked") {
             Loop If Condition Is True;
         End;
         If(Compare(Event Player, !=, Global.target));
-            If(Compare(Distance Between(Position Of(Event Player), Position Of(Global.target)), >=, Global.bozoAggression));
+            If(Compare(Distance Between(Position Of(Event Player), Position Of(Global.target)), >=, Value In Array(Global.botState, 1)));
                 Start Throttle In Direction(Event Player, Direction Towards(Position Of(Event Player), Global.target), 0.8, To Player, Replace existing throttle, None);
                 Wait(Random Real(0.5, 3), Ignore Condition);
                 Loop If Condition Is True;
@@ -2809,18 +2798,14 @@ rule ("zBozo - Let him Orbit") {
         Is Dummy Bot(Event Player) == True;
         Global.ballIsOut == True;
         Distance Between(Position Of(Event Player), Global.ballPosition) < Add(5, Divide(Global.ballSpeed, 30));
-        Global.bozoWillOrbit == True;
+        Value In Array(Global.botState, 2) == True;
     }
     actions {
-        Set Global Variable(IsOrbiting, True);
         Start Throttle In Direction(Event Player, Divide(Add(Multiply(Global.ballDirection, -1), Multiply(Direction Towards(Global.ballPosition, Eye Position(Event Player)), 2)), 2), 1, To World, Replace existing throttle, Direction and Magnitude);
-        "eventPlayer.startThrottleInDirection(random.choice([vect(180, 0, 0), vect(-180, 0, 0)]), 1, Relativity.TO_PLAYER)"
-        Set Global Variable(OrbitTolerance, 999);
-        "bigMessage(getAllPlayers(), \"ORBIT\")"
+        "eventPlayer.startThrottleInDirection(random.choice([vect(180, 0, 0), vect(-180, 0, 0)]), 1, Relativity.TO_PLAYER)\nbigMessage(getAllPlayers(), \"ORBIT\")"
         Wait Until(Or(Compare(Global.target, !=, Event Player), Is Dead(Event Player)), 99999);
         Stop Throttle In Direction(Event Player);
-        Set Global Variable(IsOrbiting, False);
-        Set Global Variable(bozoWillOrbit, 0);
+        Set Global Variable At Index(botState, 2, 0);
     }
 }
 
@@ -2835,9 +2820,9 @@ rule ("zBozo - bozos move being chosen") {
         Event Player == Global.target;
     }
     actions {
-        If(Compare(Global.bozoBehaviorModes, ==, 1));
+        If(Compare(First Of(Global.botState), ==, 1));
             If(Compare(Random Integer(1, 10), ==, 5));
-                Set Global Variable(bozoWillOrbit, True);
+                Set Global Variable At Index(botState, 2, True);
     }
 }
 
@@ -2854,26 +2839,26 @@ rule ("zBozo - Edash when needed") {
         Is Using Ability 2(Event Player) == True;
     }
     actions {
-        "@Condition (eventPlayer.isUsingAbility2() or bozoWillEdash) == true"
+        "@Condition (eventPlayer.isUsingAbility2() or botState[BotField.WILL_EDASH]) == true"
         Wait Until(And(Compare(Event Player, !=, Global.target), Or(Is Using Ability 1(Global.target), Is Using Ability 2(Global.target))), 0.25);
         If(Compare(Event Player, ==, Global.target));
             If(Compare(Angle Between Vectors(Global.ballDirection, Direction Towards(Global.ballPosition, Eye Position(Event Player))), <, 20));
-                Set Global Variable(bozoWillEdash, True);
+                Set Global Variable At Index(botState, 4, True);
                 Set Facing(Event Player, Evaluate Once(Direction Towards(Eye Position(Event Player), Global.ballPosition)), To World);
                 Start Facing(Event Player, Evaluate Once(Direction Towards(Eye Position(Event Player), Global.ballPosition)), 10000, To World, Direction and Turn Rate);
                 "bigMessage(getAllPlayers(), \"EDASHING\")"
                 Wait Until(Or(Is Button Held(Event Player, Button(Ability 1)), Is Dead(Event Player)), 1);
-                Set Global Variable(bozoWillEdash, False);
+                Set Global Variable At Index(botState, 4, False);
             End;
         Else If(Compare(Event Player, ==, Global.prevTarget));
             If(Or(Is Using Ability 1(Global.target), Is Using Ability 2(Global.target)));
                 If(Compare(Angle Between Vectors(Global.ballDirection, Direction Towards(Global.ballPosition, Eye Position(Global.target))), <, 20));
-                    Set Global Variable(bozoWillEdash, True);
+                    Set Global Variable At Index(botState, 4, True);
                     Set Facing(Event Player, Evaluate Once(Direction Towards(Eye Position(Event Player), Global.ballPosition)), To World);
                     Start Facing(Event Player, Evaluate Once(Direction Towards(Eye Position(Event Player), Global.ballPosition)), 10000, To World, Direction and Turn Rate);
                     "bigMessage(getAllPlayers(), \"EDASHING\")"
                     Wait Until(Or(Is Button Held(Event Player, Button(Ability 1)), Is Dead(Event Player)), 1);
-                    Set Global Variable(bozoWillEdash, False);
+                    Set Global Variable At Index(botState, 4, False);
     }
 }
 
@@ -2889,8 +2874,7 @@ rule ("zBozo - Jumping") {
         Global.ballIsOut == True;
     }
     actions {
-        Set Global Variable(botJumping, Random Value In Array(Array(1, 2)));
-        If(Compare(Global.botJumping, ==, 2));
+        If(Compare(Random Value In Array(Array(1, 2)), ==, 2));
             Press Button(Event Player, Button(Jump));
             Wait(0.35, Ignore Condition);
             Press Button(Event Player, Button(Jump));
@@ -2913,10 +2897,10 @@ rule ("zBozo - GhostDash") {
         Global.bozo_Bot == True;
         Is Dummy Bot(Event Player) == True;
         Global.ballIsOut == True;
-        Global.bozoWillGhostDash == True;
+        Value In Array(Global.botState, 3) == True;
     }
     actions {
-        Set Global Variable(bozoIsGhostDashing, True);
+        Set Global Variable At Index(botState, 5, True);
         If(Compare(Global.target, ==, Event Player));
             If(Compare(Distance Between(Eye Position(Event Player), Global.ballPosition), <, Multiply(Global.ballSpeed, 0.3)));
                 Set Facing(Event Player, Evaluate Once(Facing Direction Of(Global.ballDirection)), To World);
@@ -2927,7 +2911,7 @@ rule ("zBozo - GhostDash") {
             Start Facing(Event Player, Multiply(Evaluate Once(Facing Direction Of(Global.ballDirection)), -1), 1000, To World, Direction and Turn Rate);
             Wait Until(Or(Is Button Held(Event Player, Button(Ability 1)), Is Dead(Event Player)), 99999);
         End;
-        Set Global Variable(bozoIsGhostDashing, False);
+        Set Global Variable At Index(botState, 5, False);
     }
 }
 
@@ -2945,7 +2929,7 @@ rule ("zBozo - randomize facing near ball") {
         Global.ballIsOut == True;
         Is Alive(Event Player) == True;
         "@Condition eventPlayer.isUsingAbility2() == false"
-        Global.bozoIsGhostDashing != True;
+        Value In Array(Global.botState, 5) != True;
         Ability Cooldown(Event Player, Button(Ability 1)) != 0;
     }
     actions {

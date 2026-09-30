@@ -70,6 +70,8 @@ rule "Initialization - global variables":
     experimentalSteeringRate = ballDirectionRate
     reboundInfluence = experimentalReboundMin
     duelQueue = []
+    #zBozo behaviour and pending moves (BotField in config/constants.opy)
+    botState = []
     killLeaderboardPlayers = []
     killLeaderboardSortedPlayers = []
     #Sandbox spawn point, aim point and speed, plus the editor state (SandboxField in config/constants.opy)
