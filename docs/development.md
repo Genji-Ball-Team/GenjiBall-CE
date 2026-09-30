@@ -17,7 +17,7 @@ The OverPy version is pinned in `package.json`, so everyone builds identical out
 |---|---|
 | `npm ci` | Install the pinned OverPy version |
 | `npm run build` | Compile `src/main.opy` → `workshop/genjiball.txt` |
-| `npm run check` | Compile and fail if `workshop/genjiball.txt` is stale or a [feel-locked](#feel-lock) rule changed (this is what CI runs) |
+| `npm run check` | Compile and fail if `workshop/genjiball.txt` is stale, a [feel-locked](#feel-lock) rule changed, or a Workshop limit is nearly used up (this is what CI runs). Also prints the [resource budget](architecture.md#limits-to-keep-in-mind) |
 | `npm run feel-lock:update` | Rewrite `tools/feel-lock.json` after a deliberate ball feel change |
 | `npm run decompile -- in.txt out.opy` | Turn Workshop code copied from the game into OverPy |
 
@@ -80,7 +80,7 @@ globalvar ballSpeed 22
 playervar kills 26
 ```
 
-- Pick an unused index for new variables. The highest global index in v1.3.2 is 112, and the limit is 127.
+- Pick an unused index for new variables. The limit is 127. `npm run check` shows how many global slots are left.
 - Never change an existing index. It keeps diffs and in-game inspector output stable.
 - Name new variables in `camelCase`. Many older names are inconsistent; rename them only in a PR dedicated to that.
 

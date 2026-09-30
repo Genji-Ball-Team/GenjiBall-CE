@@ -29,11 +29,16 @@ const LOCKED_RULES = [
   "Control - Dash reset",
 ];
 
-export async function compileSource() {
+// The full OverPy compile result, with `result` normalized to LF line endings.
+export async function compile() {
   await overpy.readyPromise;
   const source = await readFile(resolve(root, "src/main.opy"), "utf8");
-  const { result } = await overpy.compile(source, "en-US", resolve(root, "src"), "main.opy");
-  return result.replace(/\r\n/g, "\n");
+  const compiled = await overpy.compile(source, "en-US", resolve(root, "src"), "main.opy");
+  return { ...compiled, result: compiled.result.replace(/\r\n/g, "\n") };
+}
+
+export async function compileSource() {
+  return (await compile()).result;
 }
 
 // Rule names as they appear in-game: `rule "..."` and a def's `@Name "..."`.

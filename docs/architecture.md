@@ -189,13 +189,17 @@ When you add a setting:
 
 ## Limits to keep in mind
 
-| Resource | Used (v1.3.2) | Workshop limit |
+`npm run check` prints how much of each Workshop limit the mode uses, and fails when one gets too close:
+
+| Resource | Workshop limit | `npm run check` fails at |
 |---|---|---|
-| Global variables | 113 (indices up to 112) | 128 |
-| Player variables | 27 | 128 |
-| Subroutines | 21 | 128 |
-| Elements | ~9,800 | 32,768 |
-| Extension points | 24 / 24 | all used |
+| Global variables | 128 | 5 or fewer left |
+| Player variables | 128 | 5 or fewer left |
+| Subroutines | 128 | 5 or fewer left |
+| Elements | 32,768 | 1,000 or fewer left |
+| Extension points | all 24 used on purpose | never (reported only; OverPy refuses to go over) |
+
+Run `npm run check` for the current numbers. The limits and margins live in `tools/budget.mjs`.
 
 Global variable slots are the tightest limit. Reuse existing variables where it makes sense, and never renumber existing ones.
 
