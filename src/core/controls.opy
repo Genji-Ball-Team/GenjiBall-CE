@@ -243,10 +243,10 @@ rule "Controls - Simple HUD (Interact)":
     wait(0.1)
 
 
-rule "Controls - Bounce when near pad 1":
+rule "Controls - Bounce when near a pad":
     @Event eachPlayer
-    @Condition bouncePad1 != null
-    @Condition distance(eventPlayer.getPosition(), bouncePad1) <= bouncePadRange
+    @Condition len(bouncePads) > 0
+    @Condition any([distance(eventPlayer.getPosition(), pad) <= bouncePadRange for pad in bouncePads])
     @Condition eventPlayer.bouncePadCooldown == 0
     @Condition eventPlayer.isAlive() == true
     @Condition eventPlayer.isHoldingButton(Button.JUMP) == true
@@ -257,55 +257,4 @@ rule "Controls - Bounce when near pad 1":
     else:
         eventPlayer.applyImpulse(Vector.UP, bouncePadStrength, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
     eventPlayer.bouncePadCooldown = bouncePadCooldownLength
-    playEffect(getAllPlayers(), DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, bouncePad1, 25)
-
-
-rule "Controls - Bounce when near pad 2":
-    @Event eachPlayer
-    @Condition bouncePad2 != null
-    @Condition distance(eventPlayer.getPosition(), bouncePad2) <= bouncePadRange
-    @Condition eventPlayer.bouncePadCooldown == 0
-    @Condition eventPlayer.isAlive() == true
-    @Condition eventPlayer.isHoldingButton(Button.JUMP) == true
-    @Condition bouncePadToggle == true
-    
-    if eventPlayer.dashNerf:
-        eventPlayer.applyImpulse(Vector.UP, bouncePadStrength - bouncePadSuperjumpNerf, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
-    else:
-        eventPlayer.applyImpulse(Vector.UP, bouncePadStrength, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
-    eventPlayer.bouncePadCooldown = bouncePadCooldownLength
-    playEffect(getAllPlayers(), DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, bouncePad2, 25)
-
-
-rule "Controls - Bounce when near pad 3":
-    @Event eachPlayer
-    @Condition bouncePad3 != null
-    @Condition distance(eventPlayer.getPosition(), bouncePad3) <= bouncePadRange
-    @Condition eventPlayer.bouncePadCooldown == 0
-    @Condition eventPlayer.isAlive() == true
-    @Condition eventPlayer.isHoldingButton(Button.JUMP) == true
-    @Condition bouncePadToggle == true
-    
-    if eventPlayer.dashNerf:
-        eventPlayer.applyImpulse(Vector.UP, bouncePadStrength - bouncePadSuperjumpNerf, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
-    else:
-        eventPlayer.applyImpulse(Vector.UP, bouncePadStrength, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
-    eventPlayer.bouncePadCooldown = bouncePadCooldownLength
-    playEffect(getAllPlayers(), DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, bouncePad3, 25)
-
-
-rule "Controls - Bounce when near pad 4":
-    @Event eachPlayer
-    @Condition bouncePad4 != null
-    @Condition distance(eventPlayer.getPosition(), bouncePad4) <= bouncePadRange
-    @Condition eventPlayer.bouncePadCooldown == 0
-    @Condition eventPlayer.isAlive() == true
-    @Condition eventPlayer.isHoldingButton(Button.JUMP) == true
-    @Condition bouncePadToggle == true
-    
-    if eventPlayer.dashNerf:
-        eventPlayer.applyImpulse(Vector.UP, bouncePadStrength - bouncePadSuperjumpNerf, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
-    else:
-        eventPlayer.applyImpulse(Vector.UP, bouncePadStrength, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
-    eventPlayer.bouncePadCooldown = bouncePadCooldownLength
-    playEffect(getAllPlayers(), DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, bouncePad4, 25)
+    playEffect(getAllPlayers(), DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, sorted(bouncePads, lambda pad: distance(eventPlayer.getPosition(), pad))[0], 25)
