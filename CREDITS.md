@@ -7,7 +7,7 @@ Genji Ball exists because a lot of people put time into it.
 - **Mazawrath**: original creator of Genji Ball
 - **zSh4d0W**: major updates; the zBozo practice bot is named after them
 - **ØøØøØzZØøØøØ**: major updates
-- **Frozonovic**: v1.3.2 rebuild and continued development
+- **Frozonovic** (Overwatch: **FROZONE**): v1.3.2 rebuild and continued development; publisher of the v1.3.2 import code `C62PC`
 - **Naz**: contributor (see the comments in `src/rules/05-controls.opy`)
 - **The Genji Dodgeball community**: playtesting, tournaments, ideas and feedback
 
