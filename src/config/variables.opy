@@ -55,10 +55,7 @@ globalvar bouncePadCooldownLength 50
 globalvar bouncePadDistance 51
 globalvar bouncePadStrength 52
 globalvar bouncePadSuperjumpNerf 53
-globalvar bouncePad1 54
-globalvar bouncePad2 55
-globalvar bouncePad3 56
-globalvar bouncePad4 57
+globalvar bouncePads 54
 globalvar mobilityMode 58
 globalvar moveSpeed 59
 globalvar gravity 60
