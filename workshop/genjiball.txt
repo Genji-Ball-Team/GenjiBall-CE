@@ -145,6 +145,7 @@ variables {
         68: RedGreenColorblindMode
         69: WatermarkEnabled
         70: doubleSensEnabled
+        71: presetRow
         75: antiOrbitMode
         76: antiOrbitRadius
         77: antiOrbitPressureRate
@@ -282,55 +283,34 @@ rule ("Settings - Workshop settings") {
         Set Global Variable(killCounterEnabled, Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("kill tracker"), False, 2));
         "90 - Debug: developer/test HUD helpers. Presets leave these manual."
         Set Global Variable(debugRules, Workshop Setting Toggle(Custom String("90 - Debug"), Custom String("debug HUD"), False, 0));
-        "Shared core ruleset defaults for every non-Custom preset.\nCustom (index 7) intentionally skips this block so every visible setting is manual."
+        "v7: v7-style preset shell. Deeper v7 parity remains deferred.\nExperimental: curated rebound-physics test ruleset, not tournament-safe yet.\nThe bot setting stays manual so Bot + Experimental can be tested together."
         If(Compare(Global.presetMode, !=, 7));
-            Set Global Variable(matchTime, 900);
-            Set Global Variable(tournamentMode, False);
-            Set Global Variable(totalRounds, 30);
-            Set Global Variable(breaksEnabled, True);
-            Set Global Variable(roundsUntilBreak, 10);
-            Set Global Variable(breakLength, 60);
-            Set Global Variable(ballSpawnSpeed, 60);
-            Set Global Variable(ballSpeedCap, 400);
-            Set Global Variable(ballAcceleration, 0.25);
-            Set Global Variable(ballMotion, 0);
-            Set Global Variable(ballPhysicsMode, 0);
-            Set Global Variable(waterLevel, 0);
-            Set Global Variable(bouncePadToggle, False);
-            Set Global Variable(mobilityMode, 0);
-            If(Compare(Global.presetMode, ==, 1));
-                "Tournament: current conservative tournament setup."
-                Set Global Variable(tournamentMode, True);
-                Set Global Variable(antiGhostMode, 0);
-                Set Global Variable(antiOrbitMode, False);
-            Else If(Compare(Global.presetMode, ==, 2));
-                "Tournament+: future tournament candidate with AntiOrbit and steer-based anti-ghost correction.\nOriginal physics remains forced until Legacy+/Experimental are tournament-proven."
-                Set Global Variable(tournamentMode, True);
-                Set Global Variable(antiGhostMode, 2);
-                Set Global Variable(antiOrbitMode, True);
-                Set Global Variable(antiOrbitRadius, 14);
-                Set Global Variable(antiOrbitPressureRate, 0.02);
-            Else If(Compare(Global.presetMode, ==, 3));
-                "Rapid: Workshop Expanse-style fast/bouncy preset."
-                Set Global Variable(waterLevel, 3);
-                Set Global Variable(ballMotion, 1);
-                Set Global Variable(bouncePadToggle, True);
-                Set Global Variable(mobilityMode, 1);
-            Else If(Compare(Global.presetMode, ==, 4));
-                "v1: dry Workshop Island feel with otherwise standard gameplay."
-                Set Global Variable(waterLevel, 1);
-            Else If(Compare(Global.presetMode, ==, 5));
-                "v7-style preset shell. Deeper v7 parity remains deferred."
-                Set Global Variable(waterLevel, 3);
-                Set Global Variable(bouncePadToggle, True);
-                Set Global Variable(mobilityMode, 2);
-            Else If(Compare(Global.presetMode, ==, 6));
-                "Experimental: curated rebound-physics test ruleset, not tournament-safe yet.\nKeep the bot setting manual so Bot + Experimental can be tested together."
-                Set Global Variable(ballPhysicsMode, 2);
-                Set Global Variable(antiGhostMode, 0);
-                Set Global Variable(antiOrbitMode, True);
-                Set Global Variable(antiOrbitRadius, 14);
-                Set Global Variable(antiOrbitPressureRate, 0.02);
+            Set Global Variable(presetRow, Value In Array(Array(Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, -1, -1, -1, -1), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 0, False, -1, -1), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 2, True, 14, 0.02), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 1, 0, 3, True, 1, -1, -1, -1, -1), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 1, False, 0, -1, -1, -1, -1), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 3, True, 2, -1, -1, -1, -1), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 2, 0, False, 0, 0, True, 14, 0.02)), Global.presetMode));
+            Set Global Variable(matchTime, First Of(Global.presetRow));
+            Set Global Variable(tournamentMode, Value In Array(Global.presetRow, 1));
+            Set Global Variable(totalRounds, Value In Array(Global.presetRow, 2));
+            Set Global Variable(breaksEnabled, Value In Array(Global.presetRow, 3));
+            Set Global Variable(roundsUntilBreak, Value In Array(Global.presetRow, 4));
+            Set Global Variable(breakLength, Value In Array(Global.presetRow, 5));
+            Set Global Variable(ballSpawnSpeed, Value In Array(Global.presetRow, 6));
+            Set Global Variable(ballSpeedCap, Value In Array(Global.presetRow, 7));
+            Set Global Variable(ballAcceleration, Value In Array(Global.presetRow, 8));
+            Set Global Variable(ballMotion, Value In Array(Global.presetRow, 9));
+            Set Global Variable(ballPhysicsMode, Value In Array(Global.presetRow, 10));
+            Set Global Variable(waterLevel, Value In Array(Global.presetRow, 11));
+            Set Global Variable(bouncePadToggle, Value In Array(Global.presetRow, 12));
+            Set Global Variable(mobilityMode, Value In Array(Global.presetRow, 13));
+            If(Compare(Value In Array(Global.presetRow, 14), !=, -1));
+                Set Global Variable(antiGhostMode, Value In Array(Global.presetRow, 14));
+            End;
+            If(Compare(Value In Array(Global.presetRow, 15), !=, -1));
+                Set Global Variable(antiOrbitMode, Value In Array(Global.presetRow, 15));
+            End;
+            If(Compare(Value In Array(Global.presetRow, 16), !=, -1));
+                Set Global Variable(antiOrbitRadius, Value In Array(Global.presetRow, 16));
+            End;
+            If(Compare(Value In Array(Global.presetRow, 17), !=, -1));
+                Set Global Variable(antiOrbitPressureRate, Value In Array(Global.presetRow, 17));
             End;
         End;
         If(Compare(Global.ballMotion, ==, 0));

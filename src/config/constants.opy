@@ -14,6 +14,30 @@ enum Preset:
     EXPERIMENTAL
     CUSTOM
 
+#Columns of the preset table in config/workshop-settings.opy
+enum PresetColumn:
+    MATCH_TIME
+    TOURNAMENT_MODE
+    TOTAL_ROUNDS
+    BREAKS_ENABLED
+    ROUNDS_UNTIL_BREAK
+    BREAK_LENGTH
+    BALL_SPAWN_SPEED
+    BALL_SPEED_CAP
+    BALL_ACCELERATION
+    BALL_MOTION
+    BALL_PHYSICS
+    WATER
+    BOUNCE_PADS
+    MOBILITY
+    ANTI_GHOST
+    ANTI_ORBIT
+    ANTI_ORBIT_RADIUS
+    ANTI_ORBIT_PRESSURE
+
+#A preset table cell that leaves the host's setting as is
+#!define MANUAL -1
+
 #ballMotion ("10 - Ball > motion")
 enum BallMotion:
     MODERN

@@ -72,6 +72,7 @@ globalvar tracingPoints 67
 globalvar RedGreenColorblindMode 68
 globalvar WatermarkEnabled 69
 globalvar doubleSensEnabled 70
+globalvar presetRow 71
 globalvar antiOrbitMode 75
 globalvar antiOrbitRadius 76
 globalvar antiOrbitPressureRate 77

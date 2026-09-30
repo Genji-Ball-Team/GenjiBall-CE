@@ -16,7 +16,7 @@ This is a map of the game logic for contributors. It assumes you know roughly wh
 
 | File | Contents |
 |---|---|
-| `config/constants.opy` | Named values (OverPy `enum`s) for presets, ball motion, physics engine, anti-ghost, water, mobility, `simpleHUD` and ability ids. They compile to the same numbers |
+| `config/constants.opy` | Named values (OverPy `enum`s) for presets and the preset table columns, ball motion, physics engine, anti-ghost, water, mobility, `simpleHUD` and ability ids. They compile to the same numbers |
 | `config/lobby.opy` | Lobby, game mode, hero and extension settings (the part of the export that isn't rules) |
 | `config/variables.opy` | Every global/player variable and subroutine, with its **fixed index**, plus active extensions |
 | `config/workshop-settings.opy` | Reads the Workshop settings and applies presets |
@@ -190,11 +190,11 @@ With the constraints above kept, these have no order dependency: `features/duels
 
 ## Settings and presets
 
-`Settings - Workshop settings` is the first rule. It reads every `createWorkshopSetting*`, then **overwrites** the core values if `presetMode != 7` (not Custom), then applies preset-specific tweaks. It also turns enum settings into concrete numbers (mobility → move/gravity/jump percentages, water → a height, and so on).
+`Settings - Workshop settings` is the first rule. It reads every `createWorkshopSetting*`, then, unless the preset is Custom, **overwrites** the core values with the preset's row of the preset table. The table has one row per preset (in `Preset` order) and one column per forced setting (`PresetColumn` in `config/constants.opy`). A `MANUAL` cell leaves the host's value, which is how anti-ghost and AntiOrbit stay manual in most presets. It also turns enum settings into concrete numbers (mobility → move/gravity/jump percentages, water → a height, and so on).
 
 When you add a setting:
 1. Add a `createWorkshopSetting*` call in the right category, with a sort-order number.
-2. Decide whether presets should force it. If they should, add it to the preset block.
+2. Decide whether presets should force it. If they should, add a `PresetColumn`, a cell to every row of the preset table (`MANUAL` where a preset leaves it alone) and the assignment below the table.
 3. Document it in [hosting.md](hosting.md).
 
 ## Limits to keep in mind
