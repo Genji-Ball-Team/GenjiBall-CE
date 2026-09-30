@@ -233,6 +233,6 @@ How to read these:
 - **Rule names can't contain "Blizzard"**, so the map rule is called "Blizz World".
 - **Player rank** (rank-outline placeholders) isn't on `main`. The code is kept on the `feature/player-rank` branch. Its player variable slots (19–22) are free.
 - **Tombstone** (name-based removal of specific players) isn't on `main`. The code is kept on the `feature/tombstone` branch.
-- **Teams** (Team Deathmatch support) isn't on `main`. It lives on the `v1.3.2T` variant branch. Its global variable slots (71–74, 108) and subroutine slot 18 are free.
+- **Teams** (Team Deathmatch support) isn't on `main`. It lives on the `v1.3.2T` variant branch. Its global variable slots (71–74, 108) and subroutine slot 18 are unused on `main`. Keep them that way, or merging `main` into `v1.3.2T` gives two variables the same slot.
 - **`HUD - Watermark`** is controlled by `WatermarkEnabled`, which `Settings - Watermark` sets to false.
 - **`Settings - Red-green colorblind filter`** is a disabled rule. Enable it to switch the target visuals to blue/yellow.
