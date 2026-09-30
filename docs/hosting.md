@@ -109,7 +109,7 @@ Settings **not** touched by any preset: everything in *50 - Features*, *70 - Tea
 
 ### 70 - Teams
 
-These only matter if you switch the custom game to **Team Deathmatch**. Team support is **incomplete** in v1.3.2, and most team rules are disabled in the code. See `src/rules/18-teams.opy`.
+These only matter if you switch the custom game to **Team Deathmatch**. Team support is **incomplete** in v1.3.2, and most team rules are disabled in the code. See `src/features/teams.opy`.
 
 | Setting | Default | What it does |
 |---|---|---|

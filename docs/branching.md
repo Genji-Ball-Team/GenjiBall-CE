@@ -11,8 +11,8 @@
 | `feature/…`, `fix/…` | Your working branches (in your fork, or here if you're a maintainer) |
 
 The version number shown in-game is set in two places. Update both when bumping:
-- `src/settings.opy`: the lobby description and mode name
-- `src/rules/03-hud.opy`: the `"version 1.3.2"` HUD text
+- `src/config/lobby.opy`: the lobby description and mode name
+- `src/ui/hud.opy`: the `"version 1.3.2"` HUD text
 
 Also update `version` in `package.json`.
 
@@ -54,4 +54,4 @@ npm run decompile -- original/genjiball-v1.3.1.txt src/main.opy
 npm run build
 ```
 
-You can split it into `src/rules/` the same way the current version is, but it's not required for archived versions.
+You can split it into folders the same way the current version is, but it's not required for archived versions.

@@ -4,37 +4,49 @@ This is a map of the game logic for contributors. It assumes you know roughly wh
 
 ## Source layout
 
-`src/main.opy` is the entry point. It `#!include`s everything else **in order**. The Workshop runs rules top to bottom, so order matters when several rules react to the same thing.
+`src/main.opy` is the entry point. It `#!include`s everything else **in order**, and include order is rule order. The Workshop runs rules top to bottom, so order matters when several rules react to the same thing. The files are grouped into folders by topic, but `main.opy` still includes them in the v1.3.2 rule order, so folders are interleaved there.
+
+| Folder | What goes here |
+|---|---|
+| `config/` | Custom game settings, variables, Workshop settings and presets, initial values |
+| `core/` | Controls timing, lobby and round flow, collision, ball physics |
+| `maps/` | Per-map arena setup and map restrictions (boundaries, Workshop Island water and edges) |
+| `features/` | Optional modes and tools: duels, tournament, AntiOrbit, tracing, the bot, tombstone, player rank, abilities, teams, sandbox |
+| `ui/` | HUD text and visual effects |
 
 | File | Contents |
 |---|---|
-| `settings.opy` | Lobby, game mode, hero and extension settings (the part of the export that isn't rules) |
-| `variables.opy` | Every global/player variable and subroutine, with its **fixed index**, plus active extensions |
-| `rules/01-settings.opy` | Reads the Workshop settings and applies presets |
-| `rules/02-initialization.opy` | Arena center/size per map, initial variable values, bounce pads, mobility |
-| `rules/03-hud.opy` | All HUD text, debug overlays, kill tracker, ball/target visuals, spawn countdown text |
-| `rules/04-lobby.opy` | Waiting for 2+ players, starting the first round, handling joins |
-| `rules/05-controls.opy` | Dash/deflect input, cooldowns, perspective, simple HUD, anti-rubberbanding, double sens, bounce pads |
-| `rules/06-round-flow.opy` | Round start, ball spawn, final duel, round win, tiebreakers, end of match, choosing a target |
-| `rules/07-duels.opy` | Duel mode and its queue |
-| `rules/08-collision.opy` | Ball-reaches-player detection, deflect/dash handling, retargeting, deaths |
-| `rules/09-ball-physics.opy` | The four motion modes and three physics engines, anti-ghost, wall/floor/water bounces |
-| `rules/10-map-restrictions.opy` | Center exclusion zone, arena boundary, Workshop Island water and edges |
-| `rules/11-tournament.opy` | Round counting, breaks, tournament-only restrictions |
-| `rules/12-anti-orbit.opy` | AntiOrbit pressure/heat system |
-| `rules/13-tracing-mode.opy` | Tracing mode |
-| `rules/14-bot-zbozo.opy` | The zBozo practice bot's AI |
-| `rules/15-tombstone.opy` | Name-based removal of specific players |
-| `rules/16-player-rank.opy` | Rank outline colors (placeholders, inactive) |
-| `rules/17-abilities.opy` | Custom abilities (super jump, switch target, blink, crit slash) |
-| `rules/18-teams.opy` | Team Deathmatch support (mostly disabled) |
-| `rules/19-sandbox.opy` | Sandbox practice tools |
-| `rules/20-abilities-experimental.opy` | A disabled crit-slash rule (kept last to preserve original rule order) |
+| `config/lobby.opy` | Lobby, game mode, hero and extension settings (the part of the export that isn't rules) |
+| `config/variables.opy` | Every global/player variable and subroutine, with its **fixed index**, plus active extensions |
+| `config/workshop-settings.opy` | Reads the Workshop settings and applies presets |
+| `maps/arenas.opy` | Arena center and size per map |
+| `config/initialization.opy` | Initial variable values, map sphere, bounce pads, mobility, match length |
+| `ui/hud.opy` | All HUD text, debug overlays, kill tracker |
+| `ui/effects.opy` | Ball/target visuals, spawn countdown text |
+| `core/lobby.opy` | Waiting for 2+ players, starting the first round, handling joins |
+| `core/controls.opy` | Dash/deflect input, cooldowns, perspective, simple HUD, anti-rubberbanding, double sens, bounce pads |
+| `core/round-flow.opy` | Round start, ball spawn, final duel, round win, tiebreakers, end of match, choosing a target |
+| `features/duels.opy` | Duel mode and its queue |
+| `core/collision.opy` | Ball-reaches-player detection, deflect/dash handling, retargeting, deaths |
+| `core/ball-physics.opy` | The four motion modes and three physics engines, anti-ghost, wall/floor/water bounces |
+| `maps/restrictions.opy` | Center exclusion zone, arena boundary, Workshop Island water and edges |
+| `features/tournament.opy` | Round counting, breaks, tournament-only restrictions |
+| `features/anti-orbit.opy` | AntiOrbit pressure/heat system |
+| `features/tracing.opy` | Tracing mode |
+| `features/bot-zbozo.opy` | The zBozo practice bot's AI |
+| `features/tombstone.opy` | Name-based removal of specific players |
+| `features/player-rank.opy` | Rank outline colors (placeholders, inactive) |
+| `features/abilities.opy` | Custom abilities (super jump, switch target, blink, crit slash) |
+| `features/teams.opy` | Team Deathmatch support (mostly disabled) |
+| `features/sandbox.opy` | Sandbox practice tools |
+| `features/abilities-experimental.opy` | A disabled crit-slash rule (kept last to preserve original rule order) |
+
+The file table is in include order. When you add a file, include it in `main.opy` at the place its rules need to run, and add it here.
 
 ## The core loop
 
 ```
-       ┌──────────────── Wait for more players (04) ────────────────┐
+       ┌──────────────── Wait for more players ─────────────────────┐
        │  2+ players (or Sandbox)                                   │
        ▼                                                            │
   startRound() ── randomTarget() ── countdown (ballSpawnCountdown)  │
@@ -63,12 +75,12 @@ This is a map of the game logic for contributors. It assumes you know roughly wh
 | `ballPosition`, `ballDirection`, `ballSpeed` | The ball. There's no entity. The ball is just these variables plus effects drawn at `ballPosition` |
 | `ballSpawnCountdown` | Counts down to the next spawn (chased to 0) |
 | `RoundInProgress`, `IsEnoughPlayersToStart`, `IsInFinalDuel`, `TieBreakerActive` | Round state flags |
-| `circleCenter`, `SphereSize` | Arena center and radius, set per map in 02 |
-| `presetMode`, `ballMotion`, `ballPhysicsMode`, … | Settings from 01. Most are named after their Workshop setting |
+| `circleCenter`, `SphereSize` | Arena center and radius, set per map in `maps/arenas.opy` |
+| `presetMode`, `ballMotion`, `ballPhysicsMode`, … | Settings from `config/workshop-settings.opy`. Most are named after their Workshop setting |
 
 Per-player: `canDash`, `canDeflect`, `dashOnCooldown` (input gating), `hasMoved` (has spawned into the arena, used to exclude people who haven't really joined yet), `antiRubberbanding`, `simpleHUD` (0 off, 1 simple, 2 zen), `orbit*` (AntiOrbit), `kills` (kill tracker).
 
-See `src/variables.opy` for the full list.
+See `src/config/variables.opy` for the full list.
 
 ## Collision detection
 

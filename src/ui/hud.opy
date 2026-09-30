@@ -1,4 +1,4 @@
-#HUD text, debug overlays, kill tracker and visual effects
+#HUD text, debug overlays and kill tracker
 
 rule "HUD - community text":
     hudSubheader(getAllPlayers(), "version 1.3.2T", HudPosition.RIGHT, -100, Color.ORANGE, HudReeval.VISIBILITY_AND_STRING)
@@ -132,32 +132,3 @@ rule "HUD - Watermark":
     #Please don't be a child and try to take credit for this game. If you actually have contributed something you are free to add here. But if not, don't touch this. You are free to disable it.
     hudSubheader(getAllPlayers(), "원작자 u/Mazawrath. v1.0.0N", HudPosition.LEFT, -1000, Color.AQUA, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
     lbl_0:
-
-
-rule "Appearance - target effects":
-    @Condition isGameInProgress() == true
-    
-    createEffect(getAllPlayers().exclude(target), Effect.ORB, Color.WHITE, updateEveryFrame(ballPosition), 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-    createProjectileEffect(getAllPlayers(), Projectile.SIGMA_HYPERSPHERE, null, updateEveryFrame(ballPosition), ballDirection, 0.01, ProjectileEffectReeval.VISIBILITY_POSITION_DIRECTION_AND_SIZE)
-    if getCurrentGamemode() == Gamemode.TDM:
-        if passingplayer == prevTarget and target.getTeam() == prevTarget.getTeam():
-            createEffect(target, Effect.ORB, Color.SKY_BLUE, updateEveryFrame(ballPosition), 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-            createEffect(getAllPlayers().exclude(target) if target.isAlive() else null, Effect.GOOD_AURA, Color.RED, target, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-            createEffect(localPlayer if localPlayer == target else null, Effect.GOOD_AURA, Color.GRAY if localPlayer.thirdPerson else Color.RED, localPlayer, 0.8)
-            createEffect(target, Effect.GOOD_AURA, Color.BLUE, ballPosition, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-    elif not RedGreenColorblindMode:
-        createEffect(target, Effect.ORB, Color.RED, updateEveryFrame(ballPosition), 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        createEffect(getAllPlayers().exclude(target) if target.isAlive() else null, Effect.GOOD_AURA, Color.RED, target, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        createEffect(localPlayer if localPlayer == target else null, Effect.GOOD_AURA, Color.GRAY if localPlayer.thirdPerson else Color.RED, localPlayer, 0.8)
-        createEffect(target, Effect.GOOD_AURA, Color.BLUE, ballPosition, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-    else:
-        createEffect(target, Effect.ORB, Color.BLUE, updateEveryFrame(ballPosition), 0.4, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        createEffect(getAllPlayers(), Effect.GOOD_AURA, Color.BLUE, target, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        createEffect(target, Effect.GOOD_AURA, Color.BLUE, target, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-    if xray:
-        createIcon(target if ballIsOut and not isInLoS(target.getEyePosition(), ballPosition, BarrierLos.BLOCKED_BY_ALL_BARRIERS) else null, updateEveryFrame(ballPosition), Icon.HEART, IconReeval.VISIBILITY_AND_POSITION, Color.RED)
-
-
-rule "Appearance - ball countdown":
-    createInWorldText(null if ballIsOut else getAllPlayers().exclude(target), "BALL SPAWNING IN: {0}".format(ceil(ballSpawnCountdown)), vect(circleCenter.x, circleCenter.y + 2.5, circleCenter.z), 2.5, Clip.SURFACES, WorldTextReeval.VISIBILITY_POSITION_AND_STRING, Color.SKY_BLUE)
-    createInWorldText(null if ballIsOut else target, "BALL SPAWNING IN: {0}".format(ceil(ballSpawnCountdown)), vect(circleCenter.x, circleCenter.y + 2.5, circleCenter.z), 2.5, Clip.SURFACES, WorldTextReeval.VISIBILITY_POSITION_AND_STRING, Color.RED)
