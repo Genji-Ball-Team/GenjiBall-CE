@@ -29,8 +29,10 @@ fix/some-bug ──PR──▶ v1.3.2 ──(release)──▶ main
 3. When the branch is ready to release, a maintainer:
    - moves the "Unreleased" section of `CHANGELOG.md` under a version heading
    - merges the version branch into `main` (for the latest stable line)
-   - tags it: `git tag v1.3.3 && git push origin v1.3.3`
+   - tags the commit with the version number, **without a `v`**: `git tag 1.3.3 && git push origin 1.3.3`
 4. The **Release** workflow builds the Workshop code and publishes a GitHub release with `genjiball-v1.3.3.txt` attached.
+
+Tags have no `v` because the branches already use `v1.3.2`-style names. A tag and a branch with the same name would make Git commands ambiguous. Variants are tagged the same way: `1.3.2T`.
 
 ## Starting a new version or variant
 
