@@ -4,34 +4,46 @@ This is a map of the game logic for contributors. It assumes you know roughly wh
 
 ## Source layout
 
-`src/main.opy` is the entry point. It `#!include`s everything else **in order**. The Workshop runs rules top to bottom, so order matters when several rules react to the same thing. [Rule order](#rule-order) lists exactly which parts of the order matter.
+`src/main.opy` is the entry point. It `#!include`s everything else **in order**, and include order is rule order. The Workshop runs rules top to bottom, so order matters when several rules react to the same thing. [Rule order](#rule-order) lists exactly which parts of the order matter. The files are grouped into folders by topic, but `main.opy` still includes them in the v1.3.2 rule order, so folders are interleaved there.
+
+| Folder | What goes here |
+|---|---|
+| `config/` | Custom game settings, variables, Workshop settings and presets, initial values |
+| `core/` | Controls timing, lobby and round flow, collision, ball physics. Needs a maintainer's review ([CODEOWNERS](../.github/CODEOWNERS)); most of it is [feel-locked](development.md#feel-lock) |
+| `maps/` | Per-map arena setup and map restrictions (boundaries, Workshop Island water and edges) |
+| `features/` | Optional modes and tools: duels, tournament, AntiOrbit, tracing, the bot, abilities, sandbox |
+| `ui/` | HUD text and visual effects |
 
 | File | Contents |
 |---|---|
-| `settings.opy` | Lobby, game mode, hero and extension settings (the part of the export that isn't rules) |
-| `variables.opy` | Every global/player variable and subroutine, with its **fixed index**, plus active extensions |
-| `rules/01-settings.opy` | Reads the Workshop settings and applies presets |
-| `rules/02-initialization.opy` | Arena center/size per map, initial variable values, bounce pads, mobility |
-| `rules/03-hud.opy` | All HUD text, debug overlays, kill tracker, ball/target visuals, spawn countdown text |
-| `rules/04-lobby.opy` | Waiting for 2+ players, starting the first round, handling joins |
-| `rules/05-controls.opy` | Dash/deflect input, cooldowns, perspective, simple HUD, anti-rubberbanding, double sens, bounce pads |
-| `rules/06-round-flow.opy` | Round start, ball spawn, final duel, round win, tiebreakers, end of match, choosing a target |
-| `rules/07-duels.opy` | Duel mode and its queue |
-| `rules/08-collision.opy` | Ball-reaches-player detection, deflect/dash handling, retargeting, deaths |
-| `rules/09-ball-physics.opy` | The four motion modes and three physics engines, anti-ghost, wall/floor/water bounces |
-| `rules/10-map-restrictions.opy` | Center exclusion zone, arena boundary, Workshop Island water and edges |
-| `rules/11-tournament.opy` | Round counting, breaks, tournament-only restrictions |
-| `rules/12-anti-orbit.opy` | AntiOrbit pressure/heat system |
-| `rules/13-tracing-mode.opy` | Tracing mode |
-| `rules/14-bot-zbozo.opy` | The zBozo practice bot's AI |
-| `rules/17-abilities.opy` | Custom abilities (super jump, switch target, blink, crit slash) |
-| `rules/19-sandbox.opy` | Sandbox practice tools |
-| `rules/20-abilities-experimental.opy` | A disabled crit-slash rule (last only because it was last in v1.3.2; it has no order constraint) |
+| `config/lobby.opy` | Lobby, game mode, hero and extension settings (the part of the export that isn't rules) |
+| `config/variables.opy` | Every global/player variable and subroutine, with its **fixed index**, plus active extensions |
+| `config/workshop-settings.opy` | Reads the Workshop settings and applies presets |
+| `maps/arenas.opy` | Arena center and size per map |
+| `config/initialization.opy` | Initial variable values, map sphere, bounce pads, mobility, match length |
+| `ui/hud.opy` | All HUD text, debug overlays, kill tracker |
+| `ui/effects.opy` | Ball/target visuals, spawn countdown text |
+| `core/lobby.opy` | Waiting for 2+ players, starting the first round, handling joins |
+| `core/controls.opy` | Dash/deflect input, cooldowns, perspective, simple HUD, anti-rubberbanding, double sens, bounce pads |
+| `core/round-flow.opy` | Round start, ball spawn, final duel, round win, tiebreakers, end of match, choosing a target |
+| `features/duels.opy` | Duel mode and its queue |
+| `core/collision.opy` | Ball-reaches-player detection, deflect/dash handling, retargeting, deaths |
+| `core/ball-physics.opy` | The four motion modes and three physics engines, anti-ghost, wall/floor/water bounces (including the Workshop Island and Chamber bounces, which are feel-locked and order-sensitive, so they stay in `core/`) |
+| `maps/restrictions.opy` | Center exclusion zone, arena boundary, Workshop Island water and edges |
+| `features/tournament.opy` | Round counting, breaks, tournament-only restrictions |
+| `features/anti-orbit.opy` | AntiOrbit pressure/heat system |
+| `features/tracing.opy` | Tracing mode |
+| `features/bot-zbozo.opy` | The zBozo practice bot's AI |
+| `features/abilities.opy` | Custom abilities (super jump, switch target, blink, crit slash) |
+| `features/sandbox.opy` | Sandbox practice tools |
+| `features/abilities-experimental.opy` | A disabled crit-slash rule (last only because it was last in v1.3.2; it has no order constraint) |
+
+The file table is in include order. When you add a file, include it in `main.opy` at the place its rules need to run, and add it here.
 
 ## The core loop
 
 ```
-       ┌──────────────── Wait for more players (04) ────────────────┐
+       ┌──────────────── Wait for more players ─────────────────────┐
        │  2+ players (or Sandbox)                                   │
        ▼                                                            │
   startRound() ── randomTarget() ── countdown (ballSpawnCountdown)  │
@@ -60,12 +72,12 @@ This is a map of the game logic for contributors. It assumes you know roughly wh
 | `ballPosition`, `ballDirection`, `ballSpeed` | The ball. There's no entity. The ball is just these variables plus effects drawn at `ballPosition` |
 | `ballSpawnCountdown` | Counts down to the next spawn (chased to 0) |
 | `RoundInProgress`, `IsEnoughPlayersToStart`, `IsInFinalDuel`, `TieBreakerActive` | Round state flags |
-| `circleCenter`, `SphereSize` | Arena center and radius, set per map in 02 |
-| `presetMode`, `ballMotion`, `ballPhysicsMode`, … | Settings from 01. Most are named after their Workshop setting |
+| `circleCenter`, `SphereSize` | Arena center and radius, set per map in `maps/arenas.opy` |
+| `presetMode`, `ballMotion`, `ballPhysicsMode`, … | Settings from `config/workshop-settings.opy`. Most are named after their Workshop setting |
 
 Per-player: `canDash`, `canDeflect`, `dashOnCooldown` (input gating), `hasMoved` (has spawned into the arena, used to exclude people who haven't really joined yet), `antiRubberbanding`, `simpleHUD` (0 off, 1 simple, 2 zen), `orbit*` (AntiOrbit), `kills` (kill tracker).
 
-See `src/variables.opy` for the full list.
+See `src/config/variables.opy` for the full list.
 
 ## Collision detection
 
@@ -134,7 +146,7 @@ Each line reads "A must stay before B". Rules are named as they appear in-game.
 |---|---|
 | `Check for <2 players` → `Wait for more players` | In Sandbox with one player both conditions are true in the same tick. The check has to reset `IsEnoughPlayersToStart` first, then the wait rule starts the round. |
 | `Check for <2 players` → `Active game - check for last player surviving` | When a player leaves a two-player round, both fire in the same tick. The check runs first and clears `IsEnoughPlayersToStart`, which stops the other rule from awarding a round win to the player left behind. |
-| `Active game - spawn ball` → `08-collision` and `09-ball-physics` rules | In the tick the ball spawns, `ballPosition`/`ballDirection` are set before the collision and bounce rules look at them. |
+| `Active game - spawn ball` → `core/collision` and `core/ball-physics` rules | In the tick the ball spawns, `ballPosition`/`ballDirection` are set before the collision and bounce rules look at them. |
 
 **Collision and physics** (these are the rules the feel-lock protects)
 
@@ -142,12 +154,12 @@ Each line reads "A must stay before B". Rules are named as they appear in-game.
 |---|---|
 | `Collision - ball reaches player` → `Collision - collision check` | Both can detect the same hit. The single-shot rule handles it first; the check loop then sees the new target and doesn't double-trigger. |
 | `Collision - collision check` → `Ball Physics - general collision` | The check reads `ballHitPosition` from the previous tick, then general collision writes this tick's hit. Swapped, the phasing interpolation would use a different point. |
-| `08-collision` rules → `09-ball-physics` bounce rules | When a deflect and a wall hit land in the same tick, the deflect sets the new direction first and the bounce reflects that. Swapped, the bounce would be applied to the old direction and then thrown away by the deflect. |
+| `core/collision` rules → `core/ball-physics` bounce rules | When a deflect and a wall hit land in the same tick, the deflect sets the new direction first and the bounce reflects that. Swapped, the bounce would be applied to the old direction and then thrown away by the deflect. |
 | `Ball Physics - anti ghost correction` → `Ball Physics - general collision`, `Ball Physics - island collision` | Anti-ghost can raise `ballDirectionRate` to 4. With the experimental engine, a surface bounce computes `experimentalSteeringRate` from `ballDirectionRate`, so in a shared tick the bounce uses the raised rate. |
 | `Ball Physics - general collision` → `Ball Physics - chamber x/y/z collision` | On Workshop Chamber both can bounce the ball in the same tick, and a normal-based reflect followed by an axis flip is not the same as the reverse. |
 | `Ball Physics - island collision` → `Ball Physics - water` | On Workshop Island their areas overlap in a thin band at the platform edge (|x| or |z| between 20 and 20.2). Island collision flips a downward ball up, and water then no longer triggers. Swapped, water flattens the ball first and island collision picks a side wall instead. |
-| `08-collision` → `Tracing mode - gained` / `Tracing mode - lost` | `collisionTarget()` reads `tracingPoints`, so a hit uses the previous tick's tracing state. |
-| `08-collision` → `Gb Abilities - 2. Target switch` | A target switch in the same tick as a deflect overrides the deflect's new target. Swapped, the deflect would win. |
+| `core/collision` → `Tracing mode - gained` / `Tracing mode - lost` | `collisionTarget()` reads `tracingPoints`, so a hit uses the previous tick's tracing state. |
+| `core/collision` → `Gb Abilities - 2. Target switch` | A target switch in the same tick as a deflect overrides the deflect's new target. Swapped, the deflect would win. |
 
 The three chamber rules (`x`, `y`, `z`) each flip a different axis, so they can be reordered among themselves.
 
@@ -157,7 +169,7 @@ The three chamber rules (`x`, `y`, `z`) each flip a different axis, so they can 
 |---|---|
 | `Controls - primary fire triggers dash`, `Controls - secondary fire triggers deflect` → `Controls - Shorten deflect length` → `Controls - Ability 1 dash queue`, `Controls - Ability 2 deflect queue` | `Shorten deflect length` re-enables `canDash`/`canDeflect`. The queue rules below it see that in the same tick, the mouse-button rules above it one tick later. That tick is part of how buffered inputs feel. |
 | `Controls - Dash cooldown` → `Control - Dash reset` | If a dash starts in the same tick its user earns an elimination, the cooldown sets `dashOnCooldown` first and the reset clears it. Swapped, the reset would be lost. |
-| `05-controls` → `10-map-restrictions` water rules | `Controls - Dash slow (gravity shift)` and `Map restrictions - water leave` / `island enter` all set gravity. The water rules come later and win in a shared tick. |
+| `core/controls` → `maps/restrictions` water rules | `Controls - Dash slow (gravity shift)` and `Map restrictions - water leave` / `island enter` all set gravity. The water rules come later and win in a shared tick. |
 
 **AntiOrbit**
 
@@ -173,7 +185,7 @@ The three chamber rules (`x`, `y`, `z`) each flip a different axis, so they can 
 
 ### Free to move
 
-With the constraints above kept, these have no order dependency: `07-duels`, `11-tournament`, `14-bot-zbozo`, `19-sandbox`, `20-abilities-experimental`, the rest of `03-hud`, the rest of `10-map-restrictions`, the rest of `17-abilities`, and every `def` that's only called with `Call Subroutine`.
+With the constraints above kept, these have no order dependency: `features/duels`, `features/tournament`, `features/bot-zbozo`, `features/sandbox`, `features/abilities-experimental`, the rest of `ui/hud` and `ui/effects`, the rest of `maps/restrictions`, the rest of `features/abilities`, and every `def` that's only called with `Call Subroutine`.
 
 ## Settings and presets
 

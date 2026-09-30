@@ -1,38 +1,46 @@
 #Genji Ball Community Edition - OverPy entry point.
 #Build with `npm run build`; output goes to workshop/genjiball.txt.
-#Files are included in order. The Workshop runs rules top to bottom, so some of
-#this order is behaviour. Comments marked ORDER say which; docs/architecture.md
-#("Rule order") explains each one. Unmarked files can be moved freely.
+#Files are included in order, and include order is rule order. The Workshop runs
+#rules top to bottom, so some of this order is behaviour. Comments marked ORDER
+#say which; docs/architecture.md ("Rule order") explains each one. Unmarked files
+#can be moved freely.
+#
+#Folders: config/ (settings, presets, variables), core/ (controls, round flow,
+#collision, ball physics; feel-locked, see CONTRIBUTING.md), maps/ (per-map
+#setup and restrictions), features/ (optional modes and tools), ui/ (HUD, effects).
 
-#!include "settings.opy"
-#!include "variables.opy"
+#!include "config/lobby.opy"
+#!include "config/variables.opy"
 
-#ORDER: must be first. Its settings rule has to run before the startup rules in 02 and 03.
-#!include "rules/01-settings.opy"
-#ORDER: after 01. The map rules must stay before "Initialization - bounce pads".
-#!include "rules/02-initialization.opy"
-#ORDER: after 01 ("HUD - controls text", "HUD - Watermark" read settings once).
-#!include "rules/03-hud.opy"
-#ORDER: before 06. "Check for <2 players" must run before "check for last player surviving".
-#!include "rules/04-lobby.opy"
-#ORDER: dash/deflect rule order inside this file is input timing. Before 10 (gravity).
-#!include "rules/05-controls.opy"
-#ORDER: before 08 and 09 ("spawn ball" sets the ball before collision/physics see it).
-#!include "rules/06-round-flow.opy"
-#!include "rules/07-duels.opy"
-#ORDER: before 09, 13 and 17. A deflect must redirect the ball before bounces, tracing and target switch.
-#!include "rules/08-collision.opy"
-#ORDER: after 08. Bounce rule order inside this file decides same-tick bounces.
-#!include "rules/09-ball-physics.opy"
-#ORDER: after 05 (water rules override dash gravity in a shared tick).
-#!include "rules/10-map-restrictions.opy"
-#!include "rules/11-tournament.opy"
+#ORDER: must be first. Its settings rule has to run before the startup rules in config/initialization and ui/hud.
+#!include "config/workshop-settings.opy"
+#ORDER: after config/workshop-settings. Before config/initialization ("Initialization - bounce pads" reads circleCenter once).
+#!include "maps/arenas.opy"
+#ORDER: after config/workshop-settings and maps/arenas.
+#!include "config/initialization.opy"
+#ORDER: after config/workshop-settings ("HUD - controls text", "HUD - Watermark" read settings once).
+#!include "ui/hud.opy"
+#!include "ui/effects.opy"
+#ORDER: before core/round-flow. "Check for <2 players" must run before "check for last player surviving".
+#!include "core/lobby.opy"
+#ORDER: dash/deflect rule order inside this file is input timing. Before maps/restrictions (gravity).
+#!include "core/controls.opy"
+#ORDER: before core/collision and core/ball-physics ("spawn ball" sets the ball before collision/physics see it).
+#!include "core/round-flow.opy"
+#!include "features/duels.opy"
+#ORDER: before core/ball-physics, features/tracing and features/abilities. A deflect must redirect the ball before bounces, tracing and target switch.
+#!include "core/collision.opy"
+#ORDER: after core/collision. Bounce rule order inside this file decides same-tick bounces.
+#!include "core/ball-physics.opy"
+#ORDER: after core/controls (water rules override dash gravity in a shared tick).
+#!include "maps/restrictions.opy"
+#!include "features/tournament.opy"
 #ORDER: "no orbit abusing" must stay before "track pressure".
-#!include "rules/12-anti-orbit.opy"
-#ORDER: after 08 (collision reads last tick's tracingPoints).
-#!include "rules/13-tracing-mode.opy"
-#!include "rules/14-bot-zbozo.opy"
-#ORDER: after 08 ("2. Target switch" overrides a same-tick deflect).
-#!include "rules/17-abilities.opy"
-#!include "rules/19-sandbox.opy"
-#!include "rules/20-abilities-experimental.opy"
+#!include "features/anti-orbit.opy"
+#ORDER: after core/collision (collision reads last tick's tracingPoints).
+#!include "features/tracing.opy"
+#!include "features/bot-zbozo.opy"
+#ORDER: after core/collision ("2. Target switch" overrides a same-tick deflect).
+#!include "features/abilities.opy"
+#!include "features/sandbox.opy"
+#!include "features/abilities-experimental.opy"

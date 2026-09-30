@@ -15,8 +15,8 @@ const root = resolve(import.meta.dirname, "..");
 export const snapshotPath = resolve(root, "tools/feel-lock.json");
 
 // Every rule and subroutine in these files is locked, including ones added later.
-const LOCKED_FILES = ["rules/06-round-flow.opy", "rules/08-collision.opy", "rules/09-ball-physics.opy"];
-// Plus these rules from other files (dash/deflect timing in 05-controls).
+const LOCKED_FILES = ["core/round-flow.opy", "core/collision.opy", "core/ball-physics.opy"];
+// Plus these rules from other files (dash/deflect timing in core/controls).
 const LOCKED_RULES = [
   "Controls - primary fire triggers dash",
   "Controls - secondary fire triggers deflect",

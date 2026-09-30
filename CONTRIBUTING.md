@@ -30,7 +30,7 @@ For editing, [VS Code](https://code.visualstudio.com/) with the **OverPy** exten
    git pull
    git switch -c fix/ball-clips-through-floor
    ```
-2. **Edit the OverPy source** in `src/`. Don't edit `workshop/genjiball.txt` by hand, because it's regenerated on every build. [docs/development.md](docs/development.md) explains which file holds what.
+2. **Edit the OverPy source** in `src/`. Don't edit `workshop/genjiball.txt` by hand, because it's regenerated on every build. The folders are `config/` (settings, presets, variables), `core/` (controls timing, round flow, collision, ball physics), `maps/`, `features/` and `ui/`. [docs/architecture.md](docs/architecture.md#source-layout) explains which file holds what.
 3. **Build:** `npm run build`
 4. **Test in-game.** Paste `workshop/genjiball.txt` into a custom game and try it. A second player, or the bot (`50 - Features > bot`), makes testing much easier.
 5. **Commit both** your `src/` changes and the rebuilt `workshop/genjiball.txt`.
@@ -46,7 +46,7 @@ That's fine. Copy the Workshop code out of the game, then:
 npm run decompile -- my-export.txt my-export.opy
 ```
 
-Find the rules you changed in `my-export.opy` and copy them into the matching file in `src/rules/`. Then build and check that `git diff` only shows your change.
+Find the rules you changed in `my-export.opy` and copy them into the matching file under `src/` (`src/main.opy` lists them). Then build and check that `git diff` only shows your change.
 
 ## Ball and player feel
 
@@ -62,13 +62,13 @@ Changing the default feel itself (flipping a toggle on, or changing a default va
 Two things back this up:
 
 - The **feel-lock** (`npm run check`, also in CI) fails when the compiled code of a core ball rule changes. See [docs/development.md](docs/development.md#feel-lock). Note that it only covers the core ball rules, not every player control, so the rules above still apply where it can't see.
-- [`.github/CODEOWNERS`](.github/CODEOWNERS) asks a maintainer to review any change to the core files: collision, ball physics, controls timing and round flow.
+- [`.github/CODEOWNERS`](.github/CODEOWNERS) asks a maintainer to review any change under `src/core/`: controls timing, lobby and round flow, collision and ball physics.
 
 ## Guidelines
 
 - **Keep gameplay changes opt-in.** See [Ball and player feel](#ball-and-player-feel) above.
-- **Don't change a variable's index** in `src/variables.opy`. Add new variables with an unused index. The Workshop has a limit of 128 global and 128 player variables. `npm run check` shows how many are left.
-- **Rule order matters.** Rules run top to bottom, and `main.opy` includes files in order. Put new rules next to the ones they relate to.
+- **Don't change a variable's index** in `src/config/variables.opy`. Add new variables with an unused index. The Workshop has a limit of 128 global and 128 player variables. `npm run check` shows how many are left.
+- **Rule order matters.** Rules run top to bottom, and `main.opy` includes files in order. Put new rules next to the ones they relate to. A new feature goes in its own file under `src/features/`, included in `main.opy` where [Rule order](docs/architecture.md#rule-order) allows (usually near the end).
 - **Keep one topic per PR.** A small PR gets reviewed and merged much faster than a big one.
 - **Explain the "why"** in comments for anything non-obvious, especially physics tuning numbers.
 - **Update the docs** if you change a setting, control, or rule of the game.

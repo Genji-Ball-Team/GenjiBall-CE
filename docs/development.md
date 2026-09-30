@@ -27,8 +27,8 @@ The build prints many **warnings** (chased variables in conditions, dark colors,
 
 The Workshop has no tests, so a refactor could change how the ball feels without anyone noticing. The feel-lock guards against that. `tools/feel-lock.json` is a snapshot of the **compiled** code of the core rules, in their list order:
 
-- every rule and subroutine in `08-collision.opy`, `09-ball-physics.opy` and `06-round-flow.opy` (new rules added to those files are locked automatically)
-- the dash/deflect timing rules in `05-controls.opy` (listed by name in `tools/feel-lock.mjs`)
+- every rule and subroutine in `src/core/collision.opy`, `src/core/ball-physics.opy` and `src/core/round-flow.opy` (new rules added to those files are locked automatically)
+- the dash/deflect timing rules in `src/core/controls.opy` (listed by name in `tools/feel-lock.mjs`)
 
 `npm run check` compiles the source and compares. It fails, naming the rule, when a locked rule's compiled code changes, a locked rule is added, removed or renamed, or the locked rules change order relative to each other. Because it compares compiled code, comments and formatting in the source don't count, but any change to a value, condition or action does.
 
@@ -73,7 +73,7 @@ async(startBall, AsyncBehavior.RESTART)    # Start Rule(startBall, Restart Rule)
 
 ## Adding variables
 
-Variables are declared in `src/variables.opy` with a **fixed index**:
+Variables are declared in `src/config/variables.opy` with a **fixed index**:
 
 ```python
 globalvar ballSpeed 22
@@ -92,13 +92,13 @@ If someone made changes in the in-game Workshop editor:
 npm run decompile -- their-export.txt their-export.opy
 ```
 
-Then copy the changed rules into the right files under `src/rules/`, and run `npm run build`. Compare `workshop/genjiball.txt` with their export to confirm nothing was missed.
+Then copy the changed rules into the right files under `src/` (`src/main.opy` lists them), and run `npm run build`. Compare `workshop/genjiball.txt` with their export to confirm nothing was missed.
 
 **Decompiler bug workaround:** OverPy 9.7.16 decompiles `Start Rule(x, Restart Rule)` as `startRule(x)`, which it then refuses to compile. `tools/decompile.mjs` rewrites it to `async(x, AsyncBehavior.RESTART)` automatically.
 
 ## How this repo was created
 
-`original/genjiball-v1.3.2.txt` is the Workshop export as it came out of the game. It was decompiled with OverPy 9.7.16 and split into `src/rules/*` by rule-name prefix, keeping the original order. We then verified:
+`original/genjiball-v1.3.2.txt` is the Workshop export as it came out of the game. It was decompiled with OverPy 9.7.16 and split into feature files by rule-name prefix, keeping the original order (they have since been moved into the folders under `src/`, still in that order). We then verified:
 
 1. the split source compiles to exactly the same output as the unsplit decompile, and
 2. decompiling that compiled output gives back the same OverPy, byte for byte.

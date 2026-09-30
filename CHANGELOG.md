@@ -13,6 +13,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 - Moved Teams (Team Deathmatch) off `main`: removed `18-teams.opy`, the *70 - Teams* settings and the TDM branches in collision and target visuals. It lives on the `v1.3.2T` variant. Free-for-all is unchanged.
 - Moved Player rank off `main`: removed `16-player-rank.opy` (placeholder rules that never fired) and freed its player variables. The code is kept on the `feature/player-rank` branch.
 - Moved Tombstone off `main`: removed `15-tombstone.opy`, which removed players with specific names from the game. The code is kept on the `feature/tombstone` branch.
+- Reorganised `src/` into `config/`, `core/`, `maps/`, `features/` and `ui/` folders. Files were moved and split only; the include order and the compiled Workshop code are unchanged. CODEOWNERS now covers all of `src/core/`.
 
 ## v1.3.2 (Community Edition import)
 
