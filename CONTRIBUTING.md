@@ -67,7 +67,7 @@ Two things back this up:
 ## Guidelines
 
 - **Keep gameplay changes opt-in.** See [Ball and player feel](#ball-and-player-feel) above.
-- **Don't change a variable's index** in `src/variables.opy`. Add new variables with an unused index. The Workshop has a limit of 128 global and 128 player variables, and about 15 global slots are left.
+- **Don't change a variable's index** in `src/variables.opy`. Add new variables with an unused index. The Workshop has a limit of 128 global and 128 player variables. `npm run check` shows how many are left.
 - **Rule order matters.** Rules run top to bottom, and `main.opy` includes files in order. Put new rules next to the ones they relate to.
 - **Keep one topic per PR.** A small PR gets reviewed and merged much faster than a big one.
 - **Explain the "why"** in comments for anything non-obvious, especially physics tuning numbers.
