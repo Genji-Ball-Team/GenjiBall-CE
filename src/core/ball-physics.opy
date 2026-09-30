@@ -8,7 +8,7 @@ def startBall():
     ballRedirectAge = 999
     experimentalSteeringRate = ballDirectionRate
     reboundIncomingDirection = ballDirection
-    reboundInfluence = experimentalReboundMin
+    reboundInfluence = experimentalTuning[ExperimentalTuning.REBOUND_MIN]
     if ballPhysicsMode == BallPhysics.LEGACY_PLUS:
         async(startLegacyPlusBall, AsyncBehavior.RESTART)
     elif ballPhysicsMode == BallPhysics.EXPERIMENTAL:
@@ -80,10 +80,10 @@ def startExperimentalBall():
             #Dodgeball Hybrid homing handoff: throw/rebound identity first,
             #then a smooth return to normal Modern steering. This uses no
             #close-range magnetic tightening; AntiOrbit handles true orbit abuse.
-            if ballRedirectAge < experimentalHomingHold:
-                experimentalSteeringRate = ballDirectionRate * experimentalHomingStart
-            elif ballRedirectAge < experimentalHomingHold + experimentalHomingRamp:
-                experimentalSteeringRate = ballDirectionRate * (experimentalHomingStart + (((ballRedirectAge - experimentalHomingHold) / experimentalHomingRamp) * (1 - experimentalHomingStart)))
+            if ballRedirectAge < experimentalTuning[ExperimentalTuning.HOMING_HOLD]:
+                experimentalSteeringRate = ballDirectionRate * experimentalTuning[ExperimentalTuning.HOMING_START]
+            elif ballRedirectAge < experimentalTuning[ExperimentalTuning.HOMING_HOLD] + experimentalTuning[ExperimentalTuning.HOMING_RAMP]:
+                experimentalSteeringRate = ballDirectionRate * (experimentalTuning[ExperimentalTuning.HOMING_START] + (((ballRedirectAge - experimentalTuning[ExperimentalTuning.HOMING_HOLD]) / experimentalTuning[ExperimentalTuning.HOMING_RAMP]) * (1 - experimentalTuning[ExperimentalTuning.HOMING_START])))
             else:
                 experimentalSteeringRate = ballDirectionRate
         wait()
@@ -170,8 +170,8 @@ rule "Ball Physics - general collision":
     if ballPhysicsMode == BallPhysics.EXPERIMENTAL:
         #Surface rebounds use their own tuning slider so wall/platform bounces
         #can read physically without resetting to the full player-deflect window.
-        experimentalSteeringRate = ballDirectionRate * experimentalSurfaceHoming
-        ballRedirectAge = experimentalHomingHold + (experimentalHomingRamp * (max(0, min(1, (experimentalSurfaceHoming - experimentalHomingStart) / (max(0.01, 1 - experimentalHomingStart))))))
+        experimentalSteeringRate = ballDirectionRate * experimentalTuning[ExperimentalTuning.SURFACE_HOMING]
+        ballRedirectAge = experimentalTuning[ExperimentalTuning.HOMING_HOLD] + (experimentalTuning[ExperimentalTuning.HOMING_RAMP] * (max(0, min(1, (experimentalTuning[ExperimentalTuning.SURFACE_HOMING] - experimentalTuning[ExperimentalTuning.HOMING_START]) / (max(0.01, 1 - experimentalTuning[ExperimentalTuning.HOMING_START]))))))
         antiGhostPrevDistance = 999
         antiGhostStallTimer = 0
     playEffect(getAllPlayers(), DynamicEffect.PHARAH_BARRAGE_EXPLOSION, Team.ALL, ballHitPosition, 1)
@@ -194,8 +194,8 @@ rule "Ball Physics - island collision":
     simpleIslandCollision()
     if ballPhysicsMode == BallPhysics.EXPERIMENTAL:
         #Floor/platform rebounds use the same surface tuning slider as walls.
-        experimentalSteeringRate = ballDirectionRate * experimentalSurfaceHoming
-        ballRedirectAge = experimentalHomingHold + (experimentalHomingRamp * (max(0, min(1, (experimentalSurfaceHoming - experimentalHomingStart) / (max(0.01, 1 - experimentalHomingStart))))))
+        experimentalSteeringRate = ballDirectionRate * experimentalTuning[ExperimentalTuning.SURFACE_HOMING]
+        ballRedirectAge = experimentalTuning[ExperimentalTuning.HOMING_HOLD] + (experimentalTuning[ExperimentalTuning.HOMING_RAMP] * (max(0, min(1, (experimentalTuning[ExperimentalTuning.SURFACE_HOMING] - experimentalTuning[ExperimentalTuning.HOMING_START]) / (max(0.01, 1 - experimentalTuning[ExperimentalTuning.HOMING_START]))))))
         antiGhostPrevDistance = 999
         antiGhostStallTimer = 0
     playEffect(getAllPlayers(), DynamicEffect.PHARAH_BARRAGE_EXPLOSION, Team.ALL, ballPosition, 1)

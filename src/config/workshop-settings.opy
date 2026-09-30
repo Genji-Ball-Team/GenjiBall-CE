@@ -13,12 +13,15 @@ rule "Settings - Workshop settings":
     ballPhysicsMode = createWorkshopSettingEnum("10 - Ball", "physics engine", 0, ["original", "Legacy+", "experimental"], 4)
     antiGhostMode = createWorkshopSettingEnum("10 - Ball", "anti-ghost correction", 0, ["off", "track", "steer"], 5)
     #Experimental tuning sliders. These only affect the Experimental physics engine.
-    experimentalReboundMin = createWorkshopSettingInt("10 - Ball", "exp incoming min %", 8, 0, 30, 6) / 100
-    experimentalReboundMax = createWorkshopSettingInt("10 - Ball", "exp incoming max %", 12, 0, 40, 7) / 100
-    experimentalHomingStart = createWorkshopSettingInt("10 - Ball", "exp homing start %", 55, 20, 100, 8) / 100
-    experimentalHomingHold = createWorkshopSettingInt("10 - Ball", "exp homing hold ms", 40, 0, 250, 9) / 1000
-    experimentalHomingRamp = createWorkshopSettingInt("10 - Ball", "exp homing ramp ms", 240, 25, 1000, 10) / 1000
-    experimentalSurfaceHoming = createWorkshopSettingInt("10 - Ball", "exp surface homing %", 70, 20, 100, 11) / 100
+    #One entry per ExperimentalTuning field (config/constants.opy), in that order.
+    experimentalTuning = [
+        createWorkshopSettingInt("10 - Ball", "exp incoming min %", 8, 0, 30, 6) / 100,
+        createWorkshopSettingInt("10 - Ball", "exp incoming max %", 12, 0, 40, 7) / 100,
+        createWorkshopSettingInt("10 - Ball", "exp homing start %", 55, 20, 100, 8) / 100,
+        createWorkshopSettingInt("10 - Ball", "exp homing hold ms", 40, 0, 250, 9) / 1000,
+        createWorkshopSettingInt("10 - Ball", "exp homing ramp ms", 240, 25, 1000, 10) / 1000,
+        createWorkshopSettingInt("10 - Ball", "exp surface homing %", 70, 20, 100, 11) / 100
+    ]
     #20 - Arena: core arena/environment tuning is preset-controlled unless Preset is Custom.
     waterLevel = createWorkshopSettingEnum("20 - Arena", "water", 0, ["moderate", "none", "minimal", "flood"])
     bouncePadToggle = createWorkshopSettingBool("20 - Arena", "bounce pads", false, 1)

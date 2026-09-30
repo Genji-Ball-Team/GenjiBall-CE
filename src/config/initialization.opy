@@ -67,7 +67,7 @@ rule "Initialization - global variables":
     else:
         ballDirectionRate = 6
     experimentalSteeringRate = ballDirectionRate
-    reboundInfluence = experimentalReboundMin
+    reboundInfluence = experimentalTuning[ExperimentalTuning.REBOUND_MIN]
     duelQueue = []
     #zBozo pending moves (BotField in config/constants.opy)
     botState = []
