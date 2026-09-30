@@ -66,7 +66,7 @@ def collisionTarget():
     return
     lbl_1:
     lbl_3:
-    if ballPhysicsMode == 2 and ballMotion != 2:
+    if ballPhysicsMode == BallPhysics.EXPERIMENTAL and ballMotion != BallMotion.ASTRO:
         #layered on top of original Modern movement. The deflector's 3D facing
         #direction remains dominant, while incoming ball momentum contributes
         #slightly more on side-angle redirects so geometry matters.
@@ -74,7 +74,7 @@ def collisionTarget():
         reboundInfluence = experimentalReboundMin + (((min(angleBetweenVectors(reboundIncomingDirection, target.getFacingDirection()), 180 - angleBetweenVectors(reboundIncomingDirection, target.getFacingDirection()))) / 90) * (experimentalReboundMax - experimentalReboundMin))
         ballDirection = directionTowards(vect(0, 0, 0), target.getFacingDirection() * (1 - reboundInfluence) + reboundIncomingDirection * reboundInfluence)
     else:
-        ballDirection = target.getFacingDirection() * (ballSpeed if ballMotion == 2 else 1)
+        ballDirection = target.getFacingDirection() * (ballSpeed if ballMotion == BallMotion.ASTRO else 1)
     prevTarget = target
     if prevTarget.isUsingAbility1():
         dashBall()
@@ -92,7 +92,7 @@ def collisionTarget():
     experimentalSteeringRate = ballDirectionRate * experimentalHomingStart
     antiGhostPrevDistance = 999
     antiGhostStallTimer = 0
-    if ballMotion == 0 and ballPhysicsMode != 2:
+    if ballMotion == BallMotion.MODERN and ballPhysicsMode != BallPhysics.EXPERIMENTAL:
         async(ballCurve, AsyncBehavior.RESTART)
 
 
@@ -138,7 +138,7 @@ def dashBall():
 def ballCurve():
     @Name "Collision - ball curve sub"
     
-    if ballMotion == 0:
+    if ballMotion == BallMotion.MODERN:
         ballDirectionRate = 6
         #chaseOverTime(ballDirectionRate, ballDirectionRateInit, 0.04, ChaseTimeReeval.NONE)
         wait(0.05)

@@ -20,13 +20,13 @@ rule "Initialization - player variables":
     eventPlayer.enableDeathSpectateTargetHud()
     eventPlayer.thirdPerson = true
     eventPlayer.startCamera(updateEveryFrame(raycastHitPosition(eventPlayer.getEyePosition(), eventPlayer + worldVector(vect(-0.5, 0, 0), eventPlayer, Transform.ROTATION) + vect(0, 1.5, 0) + eventPlayer.getFacingDirection() * -2, null, getAllPlayers(), false)), eventPlayer + eventPlayer.getFacingDirection() * 1000)
-    eventPlayer.simpleHUD = 0
+    eventPlayer.simpleHUD = SimpleHud.OFF
     eventPlayer.disableGamemodeHud()
     eventPlayer.canDash = true
     eventPlayer.dashOnCooldown = false
     eventPlayer.canDeflect = true
     eventPlayer.antiRubberbanding = false
-    eventPlayer.SpecialAbility = 1
+    eventPlayer.SpecialAbility = AbilityId.SUPER_JUMP
     #Has to be last, to avoid variable conflicts!!
     wait(3)
     smallMessage(eventPlayer, "anti-rubberbanding [{0}]".format(inputBindingString(Button.MELEE)))
@@ -59,10 +59,10 @@ rule "Initialization - global variables":
     if ballDirectionRate == 4:
         ballDirectionRate = ballDirectionRateInit
     tracingPoints = 1
-    if ballMotion == 0:
+    if ballMotion == BallMotion.MODERN:
         ballDirectionRateInit = 1.75
         ballDirectionRate = ballDirectionRateInit
-    elif ballMotion == 1:
+    elif ballMotion == BallMotion.RAPID:
         ballDirectionRateInit = 5
         ballDirectionRate = ballDirectionRateInit
     else:
