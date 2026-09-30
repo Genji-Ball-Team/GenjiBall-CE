@@ -1,0 +1,4105 @@
+settings
+{
+	main
+	{
+		Description: "Welcome to Genji Ball v1.3.2!\nDeflect the ball when targeted. Last player\nstanding wins the round. Join tournaments,\nevents, and community discussion at\ndiscord.gg/genjiball. More info:\nworkshop.codes/genjiball.\n\nv1.3.2 rebuild and continued development\nby Frozonovic. Originally developed by\nMazawrath, with major updates by zSh4d0W,\nØøØøØzZØøØøØ, and the official Genji\nDodgeball community."
+		Mode Name: "Genji Ball v1.3.2"
+	}
+	lobby
+	{
+		Allow Players Who Are In Queue: Yes
+		Map Rotation: After A Game
+		Match Voice Chat: Enabled
+		Max FFA Players: 10
+		Max Spectators: 12
+		Return To Lobby: Never
+	}
+	modes
+	{
+		Deathmatch
+		{
+			enabled maps
+			{
+				Workshop Island Night
+			}
+		}
+		General
+		{
+			Allow Hero Switching: Off
+			Game Mode Start: Immediately
+			Hero Limit: Off
+			Respawn As Random Hero: On
+			Self Initiated Respawn: Off
+		}
+	}
+	heroes
+	{
+		General
+		{
+			Genji
+			{
+				Deflect Cooldown Time: 0%
+				Jump Vertical Speed: 100%
+				Movement Gravity: 100%
+				Movement Speed: 100%
+				No Ammunition Requirement: On
+				Primary Fire: Off
+				Projectile Speed: 120%
+				Quick Melee: Off
+				Secondary Fire: Off
+				Swift Strike Cooldown Time: 38%
+				Ultimate Generation - Combat Dragonblade: 0%
+				Ultimate Generation - Passive Dragonblade: 0%
+			}
+			enabled heroes
+			{
+				Genji
+			}
+		}
+	}
+	extensions
+	{
+		Beam Sounds
+		Buff Status Effects
+		Debuff Status Effects
+		Buff and Debuff Sounds
+		Energy Explosion Effects
+		Kinetic Explosion Effects
+		Explosion Sounds
+		Play More Effects
+		Spawn More Dummy Bots
+		Projectiles
+	}
+}
+
+variables {
+    global:
+        0: target
+        1: prevTarget
+        2: ballIsOut
+        3: RoundInProgress
+        4: IsEnoughPlayersToStart
+        5: IsInFinalDuel
+        6: roundEndCall
+        7: HighestScore
+        8: TieBreakerActive
+        9: matchTime
+        10: tournamentMode
+        11: totalRounds
+        12: roundsUntilBreak
+        13: breakLength
+        14: roundsUntilBreakInit
+        15: breaksEnabled
+        16: breakInProgress
+        17: presetMode
+        18: duelMode
+        19: duelQueue
+        20: ballPosition
+        21: ballDirection
+        22: ballSpeed
+        23: ballSpeedCap
+        24: ballSpawnSpeed
+        25: ballAcceleration
+        26: ballSpawnCountdown
+        27: setballspawncountdown
+        28: setballspawncountdownoriginal
+        29: ballMotion
+        30: motionMultiplier
+        31: ballDirectionRate
+        32: ballDirectionRateInit
+        33: ballHitPosition
+        34: ballNextFramePosition
+        35: phasePosition
+        36: phasePosition1
+        37: phasePosition2
+        38: BallCollisionSurfaceNormal
+        39: CollisionSurfaceDistances
+        40: CollisionSurfaceIndex
+        41: antiGhostMode
+        42: antiGhostPrevDistance
+        43: antiGhostStallTimer
+        44: circleCenter
+        45: CenterOffLimitsSize
+        46: SphereSize
+        47: waterLevel
+        48: bouncePadToggle
+        49: bouncePadRange
+        50: bouncePadCooldownLength
+        51: bouncePadDistance
+        52: bouncePadStrength
+        53: bouncePadSuperjumpNerf
+        54: bouncePad1
+        55: bouncePad2
+        56: bouncePad3
+        57: bouncePad4
+        58: mobilityMode
+        59: moveSpeed
+        60: gravity
+        61: jumpVerticalSpeed
+        62: Abilities
+        63: endlessMode
+        64: Sandbox
+        65: xray
+        66: tracingMode
+        67: tracingPoints
+        68: RedGreenColorblindMode
+        69: WatermarkEnabled
+        70: doubleSensEnabled
+        71: Teamsscoretowin
+        72: enablepassing
+        73: passingassistid
+        74: passingplayer
+        75: antiOrbitMode
+        76: antiOrbitRadius
+        77: antiOrbitPressureRate
+        78: bozo_Bot
+        79: BozoTracing
+        80: bozoBehaviorModes
+        81: bozoAggression
+        82: bozoWillOrbit
+        83: bozoWillGhostDash
+        84: bozoWillEdash
+        85: OrbitTolerance
+        86: IsOrbiting
+        87: bozoIsGhostDashing
+        88: botJumping
+        89: bozoHasJumped
+        90: Sandboxballpos
+        91: Sandboxballdir
+        92: Sandboxballspd
+        93: Sandboxxyz
+        94: Sandboxplusminus
+        95: Sandboxselected
+        96: Critalert
+        97: ballPhysicsMode
+        98: ballRedirectAge
+        99: experimentalSteeringRate
+        100: reboundIncomingDirection
+        101: reboundInfluence
+        102: experimentalReboundMin
+        103: experimentalReboundMax
+        104: experimentalHomingStart
+        105: experimentalHomingHold
+        106: experimentalHomingRamp
+        107: experimentalSurfaceHoming
+        108: enableDashPassing
+        109: killCounterEnabled
+        110: debugRules
+        111: killLeaderboardPlayers
+        112: killLeaderboardSortedPlayers
+    player:
+        0: hasMoved
+        1: thirdPerson
+        2: simpleHUD
+        3: bouncePadCooldown
+        4: moveSpeed
+        5: currentGravity
+        6: stunCooldown
+        7: canDash
+        8: canDeflect
+        9: dashOnCooldown
+        10: antiRubberbanding
+        11: dashNerf
+        12: sensHigh
+        13: SpecialAbility
+        14: Abilitycooldown
+        15: Abilityready
+        16: Abilitydesc
+        17: Critslash
+        18: Critalert
+        19: outlineColor
+        20: outlineFade
+        21: outlineFadeDark
+        22: outlineFadeBright
+        23: orbitPenalty
+        24: orbitTimer
+        25: orbitHeat
+        26: kills
+}
+
+subroutines {
+    0: playDeathEffect
+    1: deflectFail
+    3: dashBall
+    4: ballCurve
+    5: deleteBall
+    6: collisionTarget
+    8: alert
+    9: setupFinal
+    10: randomTarget
+    11: startRound
+    12: simpleIslandCollision
+    13: startBall
+    14: stopBall
+    15: startModernBall
+    16: startAstroBall
+    17: startRetroBall
+    18: TDMcollision
+    19: resetOrbitRoundState
+    20: simpleIslandSideCollision
+    21: startLegacyPlusBall
+    22: startExperimentalBall
+}
+
+//Strict optimizations enabled
+rule ("Settings - Workshop settings") {
+    event {
+        Ongoing - Global;
+    }
+    actions {
+        "- Experimental is a curated playtest ruleset for rebound physics and\ncompetitive fixes, while still allowing manual bot/feature testing.\n00 - Preset: ruleset identity. Custom is last and has no runtime overrides."
+        Set Global Variable(presetMode, Workshop Setting Combo(Custom String("00 - Preset"), Custom String("preset"), 0, Array(Custom String("Default"), Custom String("Tournament"), Custom String("Tournament+"), Custom String("Rapid\n~Workshop Expanse"), Custom String("v1"), Custom String("v7"), Custom String("Experimental"), Custom String("Custom")), 0));
+        "10 - Ball: core ball tuning is preset-controlled unless Preset is Custom."
+        Set Global Variable(ballSpawnSpeed, Workshop Setting Integer(Custom String("10 - Ball"), Custom String("start speed"), 60, 0, 200, 0));
+        Set Global Variable(ballSpeedCap, Workshop Setting Integer(Custom String("10 - Ball"), Custom String("max speed"), 400, 60, 800, 1));
+        Set Global Variable(ballAcceleration, Divide(Workshop Setting Integer(Custom String("10 - Ball"), Custom String("acceleration"), 25, 0, 300, 2), 100));
+        Set Global Variable(ballMotion, Workshop Setting Combo(Custom String("10 - Ball"), Custom String("motion"), 0, Array(Custom String("modern"), Custom String("rapid\n~Workshop Expanse"), Custom String("astro"), Custom String("retro")), 3));
+        Set Global Variable(ballPhysicsMode, Workshop Setting Combo(Custom String("10 - Ball"), Custom String("physics engine"), 0, Array(Custom String("original"), Custom String("Legacy+"), Custom String("experimental")), 4));
+        Set Global Variable(antiGhostMode, Workshop Setting Combo(Custom String("10 - Ball"), Custom String("anti-ghost correction"), 0, Array(Custom String("off"), Custom String("track"), Custom String("steer")), 5));
+        "Experimental tuning sliders. These only affect the Experimental physics engine."
+        Set Global Variable(experimentalReboundMin, Divide(Workshop Setting Integer(Custom String("10 - Ball"), Custom String("exp incoming min %"), 8, 0, 30, 6), 100));
+        Set Global Variable(experimentalReboundMax, Divide(Workshop Setting Integer(Custom String("10 - Ball"), Custom String("exp incoming max %"), 12, 0, 40, 7), 100));
+        Set Global Variable(experimentalHomingStart, Divide(Workshop Setting Integer(Custom String("10 - Ball"), Custom String("exp homing start %"), 55, 20, 100, 8), 100));
+        Set Global Variable(experimentalHomingHold, Divide(Workshop Setting Integer(Custom String("10 - Ball"), Custom String("exp homing hold ms"), 40, 0, 250, 9), 1000));
+        Set Global Variable(experimentalHomingRamp, Divide(Workshop Setting Integer(Custom String("10 - Ball"), Custom String("exp homing ramp ms"), 240, 25, 1000, 10), 1000));
+        Set Global Variable(experimentalSurfaceHoming, Divide(Workshop Setting Integer(Custom String("10 - Ball"), Custom String("exp surface homing %"), 70, 20, 100, 11), 100));
+        "20 - Arena: core arena/environment tuning is preset-controlled unless Preset is Custom."
+        Set Global Variable(waterLevel, Workshop Setting Combo(Custom String("20 - Arena"), Custom String("water"), 0, Array(Custom String("moderate"), Custom String("none"), Custom String("minimal"), Custom String("flood")), 0));
+        Set Global Variable(bouncePadToggle, Workshop Setting Toggle(Custom String("20 - Arena"), Custom String("bounce pads"), False, 1));
+        "30 - Player: mobility is preset-controlled unless Preset is Custom. Double sens is a casual add-on."
+        Set Global Variable(mobilityMode, Workshop Setting Combo(Custom String("30 - Player"), Custom String("mobility"), 0, Array(Custom String("agile"), Custom String("balanced"), Custom String("sluggish")), 0));
+        Set Global Variable(doubleSensEnabled, Workshop Setting Toggle(Custom String("30 - Player"), Custom String("double sens"), False, 1));
+        "40 - Match: match/tournament structure is preset-controlled unless Preset is Custom."
+        Set Global Variable(matchTime, Multiply(Workshop Setting Integer(Custom String("40 - Match"), Custom String("match length"), 15, 5, 60, 0), 60));
+        Set Global Variable(tournamentMode, Workshop Setting Toggle(Custom String("40 - Match"), Custom String("tournament mode"), False, 1));
+        Set Global Variable(totalRounds, Workshop Setting Integer(Custom String("40 - Match"), Custom String("tournament rounds"), 30, 1, 50, 2));
+        Set Global Variable(breaksEnabled, Workshop Setting Toggle(Custom String("40 - Match"), Custom String("breaks"), True, 3));
+        Set Global Variable(roundsUntilBreak, Workshop Setting Integer(Custom String("40 - Match"), Custom String("break every"), 10, 4, 25, 4));
+        Set Global Variable(breakLength, Workshop Setting Integer(Custom String("40 - Match"), Custom String("break length"), 60, 1, 120, 5));
+        "50 - Features: casual/gameplay add-ons. Presets leave these manual."
+        Set Global Variable(Abilities, Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0));
+        Set Global Variable(bozo_Bot, Workshop Setting Toggle(Custom String("50 - Features"), Custom String("bot"), False, 1));
+        Set Global Variable(duelMode, Workshop Setting Toggle(Custom String("50 - Features"), Custom String("duels"), False, 2));
+        Set Global Variable(endlessMode, Workshop Setting Toggle(Custom String("50 - Features"), Custom String("endless mode"), False, 3));
+        Set Global Variable(Sandbox, Workshop Setting Toggle(Custom String("50 - Features"), Custom String("Sandbox mode"), False, 4));
+        "60 - Competitive: competitive test systems. Tournament controls these explicitly."
+        Set Global Variable(antiOrbitMode, Workshop Setting Toggle(Custom String("60 - Competitive"), Custom String("AntiOrbit"), False, 0));
+        Set Global Variable(antiOrbitRadius, Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("AntiOrbit radius"), 14, 10, 20, 1));
+        Set Global Variable(antiOrbitPressureRate, Divide(Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("AntiOrbit pressure"), 2, 1, 5, 2), 100));
+        "70 - Teams: native TDM support. These only matter when the Custom Game mode is Team Deathmatch.\nDash passing allows dash to trigger a same-team pass when normal passing is enabled."
+        Set Global Variable(Teamsscoretowin, Workshop Setting Integer(Custom String("70 - Teams"), Custom String("score to win"), 0, 0, 30, 0));
+        Set Global Variable(enablepassing, Workshop Setting Toggle(Custom String("70 - Teams"), Custom String("passing"), False, 1));
+        Set Global Variable(enableDashPassing, Workshop Setting Toggle(Custom String("70 - Teams"), Custom String("dash passing"), False, 2));
+        "80 - Visual: visual helpers. Presets leave these manual."
+        Set Global Variable(xray, Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("x-ray"), False, 0));
+        Set Global Variable(tracingMode, Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("tracing mode"), False, 1));
+        Set Global Variable(killCounterEnabled, Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("kill tracker"), False, 2));
+        "90 - Debug: developer/test HUD helpers. Presets leave these manual."
+        Set Global Variable(debugRules, Workshop Setting Toggle(Custom String("90 - Debug"), Custom String("debug HUD"), False, 0));
+        "Shared core ruleset defaults for every non-Custom preset.\nCustom (index 7) intentionally skips this block so every visible setting is manual."
+        If(Compare(Global.presetMode, !=, 7));
+            Set Global Variable(matchTime, 900);
+            Set Global Variable(tournamentMode, False);
+            Set Global Variable(totalRounds, 30);
+            Set Global Variable(breaksEnabled, True);
+            Set Global Variable(roundsUntilBreak, 10);
+            Set Global Variable(breakLength, 60);
+            Set Global Variable(ballSpawnSpeed, 60);
+            Set Global Variable(ballSpeedCap, 400);
+            Set Global Variable(ballAcceleration, 0.25);
+            Set Global Variable(ballMotion, 0);
+            Set Global Variable(ballPhysicsMode, 0);
+            Set Global Variable(waterLevel, 0);
+            Set Global Variable(bouncePadToggle, False);
+            Set Global Variable(mobilityMode, 0);
+            If(Compare(Global.presetMode, ==, 1));
+                "Tournament: current conservative tournament setup."
+                Set Global Variable(tournamentMode, True);
+                Set Global Variable(antiGhostMode, 0);
+                Set Global Variable(antiOrbitMode, False);
+            Else If(Compare(Global.presetMode, ==, 2));
+                "Tournament+: future tournament candidate with AntiOrbit and steer-based anti-ghost correction.\nOriginal physics remains forced until Legacy+/Experimental are tournament-proven."
+                Set Global Variable(tournamentMode, True);
+                Set Global Variable(antiGhostMode, 2);
+                Set Global Variable(antiOrbitMode, True);
+                Set Global Variable(antiOrbitRadius, 14);
+                Set Global Variable(antiOrbitPressureRate, 0.02);
+            Else If(Compare(Global.presetMode, ==, 3));
+                "Rapid: Workshop Expanse-style fast/bouncy preset."
+                Set Global Variable(waterLevel, 3);
+                Set Global Variable(ballMotion, 1);
+                Set Global Variable(bouncePadToggle, True);
+                Set Global Variable(mobilityMode, 1);
+            Else If(Compare(Global.presetMode, ==, 4));
+                "v1: dry Workshop Island feel with otherwise standard gameplay."
+                Set Global Variable(waterLevel, 1);
+            Else If(Compare(Global.presetMode, ==, 5));
+                "v7-style preset shell. Deeper v7 parity remains deferred."
+                Set Global Variable(waterLevel, 3);
+                Set Global Variable(bouncePadToggle, True);
+                Set Global Variable(mobilityMode, 2);
+            Else If(Compare(Global.presetMode, ==, 6));
+                "Experimental: curated rebound-physics test ruleset, not tournament-safe yet.\nKeep the bot setting manual so Bot + Experimental can be tested together."
+                Set Global Variable(ballPhysicsMode, 2);
+                Set Global Variable(antiGhostMode, 0);
+                Set Global Variable(antiOrbitMode, True);
+                Set Global Variable(antiOrbitRadius, 14);
+                Set Global Variable(antiOrbitPressureRate, 0.02);
+            End;
+        End;
+        If(Compare(Global.ballMotion, ==, 0));
+            Set Global Variable(motionMultiplier, 1);
+        Else If(Compare(Global.ballMotion, ==, 1));
+            Set Global Variable(motionMultiplier, 0.5);
+        End;
+        If(Compare(Global.mobilityMode, ==, 0));
+            Set Global Variable(moveSpeed, 190);
+            Set Global Variable(gravity, 80);
+            Set Global Variable(jumpVerticalSpeed, 180);
+        Else If(Compare(Global.mobilityMode, ==, 1));
+            Set Global Variable(moveSpeed, 150);
+            Set Global Variable(gravity, 90);
+            Set Global Variable(jumpVerticalSpeed, 150);
+        Else If(Compare(Global.mobilityMode, ==, 2));
+            Set Global Variable(moveSpeed, 100);
+            Set Global Variable(gravity, 100);
+            Set Global Variable(jumpVerticalSpeed, 100);
+        End;
+        If(Compare(Global.waterLevel, ==, 0));
+            Set Global Variable(waterLevel, -15);
+        Else If(Compare(Global.waterLevel, ==, 1));
+            Set Global Variable(waterLevel, -1000);
+        Else If(Compare(Global.waterLevel, ==, 2));
+            Set Global Variable(waterLevel, -26);
+        Else If(Compare(Global.waterLevel, ==, 3));
+            Set Global Variable(waterLevel, -0.5);
+        End;
+        If(Global.bozo_Bot);
+            Set Global Variable(bozo_Bot, 1);
+    }
+}
+
+rule ("Settings - Watermark") {
+    event {
+        Ongoing - Global;
+    }
+    actions {
+        Set Global Variable(WatermarkEnabled, False);
+    }
+}
+
+disabled rule ("Settings - Red-green colorblind filter") {
+    event {
+        Ongoing - Global;
+    }
+    actions {
+        Set Global Variable(RedGreenColorblindMode, True);
+    }
+}
+
+rule ("Initialization - Set Workshop Island") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))) == True;
+    }
+    actions {
+        Set Global Variable(circleCenter, Vector(0, 1.199, 0));
+        Set Global Variable(SphereSize, 60);
+    }
+}
+
+rule ("Initialization - Set Workshop Chamber") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Current Map == Map(Workshop Chamber);
+    }
+    actions {
+        Set Global Variable(circleCenter, Vector(0, 1.199, 0));
+        Set Global Variable(SphereSize, 29.7);
+    }
+}
+
+rule ("Initialization - Set Workshop Expanse Center") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Or(Compare(Current Map, ==, Map(Workshop Expanse)), Compare(Current Map, ==, Map(Workshop Expanse Night))) == True;
+    }
+    actions {
+        Set Global Variable(circleCenter, Vector(0, 1.199, 0));
+        Set Global Variable(SphereSize, 50);
+    }
+}
+
+rule ("Initialization - Set Workshop Green Screen") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Current Map == Map(Workshop Green Screen);
+    }
+    actions {
+        Set Global Variable(circleCenter, Vector(0, 1.199, 0));
+        Set Global Variable(SphereSize, 60);
+    }
+}
+
+rule ("Initialization - Set Oasis University Center") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Current Map == Map(Oasis University);
+    }
+    actions {
+        Set Global Variable(circleCenter, Vector(-192.609, 60.349, 2.252));
+        Set Global Variable(SphereSize, 25);
+    }
+}
+
+rule ("Initialization - Set Kings Row center (NOTE: Lower the max players! This arena is smaller then the others!)") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Or(Compare(Current Map, ==, Map(King's Row)), Compare(Current Map, ==, Map(King's Row Winter))) == True;
+    }
+    actions {
+        Set Global Variable(circleCenter, Vector(-20.504, 40.538, -74.601));
+        Set Global Variable(SphereSize, 23);
+    }
+}
+
+rule ("Initialization - Set Blizz World center (fun fact: you can't use the name of the company who made this game in rule names)") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Or(Compare(Current Map, ==, Map(Blizzard World)), Compare(Current Map, ==, Map(Blizzard World Winter))) == True;
+    }
+    actions {
+        Set Global Variable(circleCenter, Vector(2.554, -4.651, -71.211));
+        Set Global Variable(SphereSize, 23);
+    }
+}
+
+rule ("Initialization - player variables") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    actions {
+        Set Player Variable(Event Player, Critalert, False);
+        Set Player Variable(Event Player, sensHigh, False);
+        Set Player Variable(Event Player, orbitPenalty, 0);
+        Set Player Variable(Event Player, orbitTimer, 0);
+        Set Player Variable(Event Player, orbitHeat, 0);
+        Set Aim Speed(Event Player, 100);
+        Set Player Variable(Event Player, Abilityready, False);
+        Set Player Variable(Event Player, Abilitycooldown, 0);
+        Set Status(Event Player, Null, Invincible, 9999);
+        Disable Built-In Game Mode Respawning(Event Player);
+        Set Player Variable(Event Player, bouncePadCooldown, Global.bouncePadCooldownLength);
+        Set Player Variable(Event Player, stunCooldown, 0);
+        Chase Player Variable At Rate(Event Player, stunCooldown, 0, 1, None);
+        Enable Death Spectate All Players(Event Player);
+        Enable Death Spectate Target HUD(Event Player);
+        Set Player Variable(Event Player, thirdPerson, True);
+        Start Camera(Event Player, Update Every Frame(Ray Cast Hit Position(Eye Position(Event Player), Add(Add(Add(Event Player, World Vector Of(Vector(-0.5, 0, 0), Event Player, Rotation)), Vector(0, 1.5, 0)), Multiply(Facing Direction Of(Event Player), -2)), Null, All Players(All Teams), False)), Add(Event Player, Multiply(Facing Direction Of(Event Player), 1000)), 0);
+        Set Player Variable(Event Player, simpleHUD, 0);
+        Disable Game Mode HUD(Event Player);
+        Set Player Variable(Event Player, canDash, True);
+        Set Player Variable(Event Player, dashOnCooldown, False);
+        Set Player Variable(Event Player, canDeflect, True);
+        Set Player Variable(Event Player, antiRubberbanding, False);
+        Set Player Variable(Event Player, SpecialAbility, 1);
+        "Has to be last, to avoid variable conflicts!!"
+        Wait(3, Ignore Condition);
+        Small Message(Event Player, Custom String("anti-rubberbanding [{0}]", Input Binding String(Button(Melee))));
+        Small Message(Event Player, Custom String("switch perspective [{0}]", Input Binding String(Button(Reload))));
+        Small Message(Event Player, Custom String("simple HUD [{0}]", Input Binding String(Button(Interact))));
+    }
+}
+
+rule ("Initialization - global variables") {
+    event {
+        Ongoing - Global;
+    }
+    actions {
+        Set Global Variable(setballspawncountdownoriginal, 5);
+        Set Global Variable(setballspawncountdown, Global.setballspawncountdownoriginal);
+        Set Global Variable(ballSpawnCountdown, Global.setballspawncountdownoriginal);
+        Disable Built-In Game Mode Scoring;
+        Disable Built-In Game Mode Completion;
+        Disable Built-In Game Mode Music;
+        Disable Built-In Game Mode Announcer;
+        Set Global Variable(bouncePadStrength, 30);
+        Set Global Variable(bouncePadDistance, 12);
+        Set Global Variable(bouncePadSuperjumpNerf, 3);
+        Set Global Variable(ballSpeed, Global.ballSpawnSpeed);
+        Set Global Variable(CenterOffLimitsSize, 3.5);
+        Set Global Variable(IsInFinalDuel, False);
+        Set Global Variable(bouncePadCooldownLength, 3);
+        Set Global Variable(ballPosition, Down);
+        Set Global Variable(roundsUntilBreakInit, Global.roundsUntilBreak);
+        Set Global Variable(roundEndCall, False);
+        Set Global Variable(ballHitPosition, Null);
+        Set Global Variable(phasePosition, Down);
+        Set Global Variable(phasePosition1, Down);
+        Set Global Variable(phasePosition2, Down);
+        If(Compare(Global.ballDirectionRate, ==, 4));
+            Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
+        End;
+        Set Global Variable(tracingPoints, 1);
+        If(Compare(Global.ballMotion, ==, 0));
+            Set Global Variable(ballDirectionRateInit, 1.75);
+            Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
+        Else If(Compare(Global.ballMotion, ==, 1));
+            Set Global Variable(ballDirectionRateInit, 5);
+            Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
+        Else;
+            Set Global Variable(ballDirectionRate, 6);
+        End;
+        Set Global Variable(experimentalSteeringRate, Global.ballDirectionRate);
+        Set Global Variable(reboundInfluence, Global.experimentalReboundMin);
+        Set Global Variable(duelQueue, Empty Array);
+        Set Global Variable(killLeaderboardPlayers, Empty Array);
+        Set Global Variable(killLeaderboardSortedPlayers, Empty Array);
+        Set Global Variable(Sandboxxyz, 1);
+        Set Global Variable(Sandboxselected, 1);
+        Set Global Variable(Sandboxballpos, Global.ballPosition);
+        Set Global Variable(Sandboxballdir, Add(Global.ballPosition, Up));
+        Set Global Variable(Sandboxballspd, Global.ballSpeed);
+        Set Global Variable(Sandboxplusminus, 1);
+        Set Global Variable(antiGhostPrevDistance, 999);
+        Set Global Variable(antiGhostStallTimer, 0);
+        Set Global Variable(ballRedirectAge, 999);
+        Set Global Variable(Critalert, False);
+    }
+}
+
+rule ("Initialization - map sphere") {
+    event {
+        Ongoing - Global;
+    }
+    actions {
+        Create Effect(All Players(All Teams), Sphere, Color(Black), Vector(X Component Of(Global.circleCenter), Y Component Of(Global.circleCenter), Z Component Of(Global.circleCenter)), Global.CenterOffLimitsSize, Visible To Position and Radius);
+        "Workshop Island doesn't need a circle."
+        If(And(Compare(Current Map, !=, Map(Workshop Island)), Compare(Current Map, !=, Map(Workshop Island Night))));
+            Create Effect(All Players(All Teams), Light Shaft, Color(Black), Vector(X Component Of(Global.circleCenter), Subtract(Y Component Of(Global.circleCenter), 15), Z Component Of(Global.circleCenter)), Global.SphereSize, Visible To Position and Radius);
+        Else;
+            Create Effect(Filtered Array(All Players(All Teams), Compare(Distance Between(Position Of(Current Array Element), Global.circleCenter), >=, Subtract(Global.SphereSize, 10))), Light Shaft, Color(Black), Vector(X Component Of(Global.circleCenter), Subtract(Y Component Of(Global.circleCenter), 15), Z Component Of(Global.circleCenter)), Global.SphereSize, Visible To Position and Radius);
+    }
+}
+
+rule ("Initialization - bounce pads") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.bouncePadToggle == True;
+    }
+    actions {
+        Set Global Variable(bouncePadDistance, 12);
+        Set Global Variable(bouncePadRange, 2.75);
+        Set Global Variable(bouncePad1, Vector(Add(X Component Of(Global.circleCenter), Global.bouncePadDistance), Y Component Of(Global.circleCenter), Z Component Of(Global.circleCenter)));
+        Set Global Variable(bouncePad2, Vector(Add(X Component Of(Global.circleCenter), Multiply(Global.bouncePadDistance, -1)), Y Component Of(Global.circleCenter), Z Component Of(Global.circleCenter)));
+        Set Global Variable(bouncePad3, Vector(X Component Of(Global.circleCenter), Y Component Of(Global.circleCenter), Add(Z Component Of(Global.circleCenter), Global.bouncePadDistance)));
+        Set Global Variable(bouncePad4, Vector(X Component Of(Global.circleCenter), Y Component Of(Global.circleCenter), Add(Z Component Of(Global.circleCenter), Multiply(Global.bouncePadDistance, -1))));
+        Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, ==, 0)), Ring, Color(Sky Blue), Global.bouncePad1, 2, Visible To Position and Radius);
+        Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, ==, 0)), Ring, Color(Sky Blue), Global.bouncePad2, 2, Visible To Position and Radius);
+        Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, ==, 0)), Ring, Color(Sky Blue), Global.bouncePad3, 2, Visible To Position and Radius);
+        Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, ==, 0)), Ring, Color(Sky Blue), Global.bouncePad4, 2, Visible To Position and Radius);
+        Skip If(Global.RedGreenColorblindMode, 5);
+        Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(White), Global.bouncePad1, 2, Visible To Position and Radius);
+        Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(White), Global.bouncePad2, 2, Visible To Position and Radius);
+        Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(White), Global.bouncePad3, 2, Visible To Position and Radius);
+        Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(White), Global.bouncePad4, 2, Visible To Position and Radius);
+        Abort;
+        //lbl_0:
+        Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(Yellow), Global.bouncePad1, 2, Visible To Position and Radius);
+        Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(Yellow), Global.bouncePad2, 2, Visible To Position and Radius);
+        Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(Yellow), Global.bouncePad3, 2, Visible To Position and Radius);
+        Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(Yellow), Global.bouncePad4, 2, Visible To Position and Radius);
+    }
+}
+
+rule ("Initialization - Apply high mobility mode") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Game In Progress == True;
+    }
+    actions {
+        Set Jump Vertical Speed(Event Player, Global.jumpVerticalSpeed);
+        Set Gravity(Event Player, Global.gravity);
+        Set Move Speed(Event Player, Global.moveSpeed);
+        Set Player Variable(Event Player, currentGravity, Global.gravity);
+    }
+}
+
+rule ("Initialization - Match length") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Is Game In Progress == True;
+        Global.tournamentMode == False;
+    }
+    actions {
+        Set Match Time(Global.matchTime);
+    }
+}
+
+rule ("Initialization - Disable inspector") {
+    event {
+        Ongoing - Global;
+    }
+    actions {
+        Disable Inspector Recording;
+    }
+}
+
+rule ("HUD - community text") {
+    event {
+        Ongoing - Global;
+    }
+    actions {
+        Create HUD Text(All Players(All Teams), Null, Custom String("version 1.3.2"), Null, Right, -100, Null, Color(Orange), Null, Visible To and String, Default Visibility);
+        Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Custom String("Discord: discord.gg/genjiball"), Null, Null, Left, -5, Color(Aqua), Null, Null, Visible To and String, Default Visibility);
+    }
+}
+
+rule ("HUD - target player text") {
+    event {
+        Ongoing - Global;
+    }
+    actions {
+        "white normal"
+        Create HUD Text(Remove From Array(All Players(All Teams), Global.target), Null, Null, Custom String("{0}{1}{0}", Icon String(Warning), Global.target), Left, -3, Null, Null, Color(White), Visible To and String, Default Visibility);
+        "red when you're targeted"
+        Create HUD Text(Global.target, Null, Null, Custom String("{0}{1}{0}", Icon String(Warning), Global.target), Left, -3, Null, Null, Color(Red), Visible To and String, Default Visibility);
+    }
+}
+
+rule ("HUD - ball speed text") {
+    event {
+        Ongoing - Global;
+    }
+    actions {
+        "Entity creation fail protection"
+        Wait(1, Ignore Condition);
+        "ball speed text color change with speed"
+        Create HUD Text(If-Then-Else(Compare(Global.ballSpeed, <, 40), All Players(All Teams), Empty Array), Null, Null, Custom String("BALL SPEED: {0}", Global.ballSpeed), Left, -4, Null, Null, Color(Blue), Visible To and String, Default Visibility);
+        Create HUD Text(If-Then-Else(And(Compare(Global.ballSpeed, >=, 40), Compare(Global.ballSpeed, <, 50)), All Players(All Teams), Empty Array), Null, Null, Custom String("BALL SPEED: {0}", Global.ballSpeed), Left, -4, Null, Null, Color(Sky Blue), Visible To and String, Default Visibility);
+        Create HUD Text(If-Then-Else(And(Compare(Global.ballSpeed, >=, 50), Compare(Global.ballSpeed, <, 65)), All Players(All Teams), Empty Array), Null, Null, Custom String("BALL SPEED: {0}", Global.ballSpeed), Left, -4, Null, Null, Color(Green), Visible To and String, Default Visibility);
+        Create HUD Text(If-Then-Else(And(Compare(Global.ballSpeed, >=, 65), Compare(Global.ballSpeed, <, 69)), All Players(All Teams), Empty Array), Null, Null, Custom String("BALL SPEED: {0}", Global.ballSpeed), Left, -4, Null, Null, Color(Yellow), Visible To and String, Default Visibility);
+        Create HUD Text(If-Then-Else(And(Compare(Global.ballSpeed, >=, 69), Compare(Global.ballSpeed, <, 70)), All Players(All Teams), Empty Array), Null, Null, Custom String("BALL SPEED: ;)"), Left, -4, Null, Null, Color(Yellow), Visible To and String, Default Visibility);
+        Create HUD Text(If-Then-Else(And(Compare(Global.ballSpeed, >=, 70), Compare(Global.ballSpeed, <, 80)), All Players(All Teams), Empty Array), Null, Null, Custom String("BALL SPEED: {0}", Global.ballSpeed), Left, -4, Null, Null, Color(Yellow), Visible To and String, Default Visibility);
+        Create HUD Text(If-Then-Else(And(Compare(Global.ballSpeed, >=, 80), Compare(Global.ballSpeed, <, 100)), All Players(All Teams), Empty Array), Null, Null, Custom String("BALL SPEED: {0}", Global.ballSpeed), Left, -4, Null, Null, Color(Orange), Visible To and String, Default Visibility);
+        Create HUD Text(If-Then-Else(And(Compare(Global.ballSpeed, >=, 100), Compare(Global.ballSpeed, <, 150)), All Players(All Teams), Empty Array), Null, Null, Custom String("BALL SPEED: {0}", Global.ballSpeed), Left, -4, Null, Null, Color(Purple), Visible To and String, Default Visibility);
+        Create HUD Text(If-Then-Else(And(Compare(Global.ballSpeed, >=, 150), Compare(Global.ballSpeed, <, 200)), All Players(All Teams), Empty Array), Null, Null, Custom String("BALL SPEED: {0}", Global.ballSpeed), Left, -4, Null, Null, Color(Violet), Visible To and String, Default Visibility);
+        Create HUD Text(If-Then-Else(And(Compare(Global.ballSpeed, >=, 200), Compare(Global.ballSpeed, <, 220)), All Players(All Teams), Empty Array), Null, Null, Custom String("BALL SPEED: touch grass"), Left, -4, Null, Null, Color(Rose), Visible To and String, Default Visibility);
+        Create HUD Text(If-Then-Else(And(Compare(Global.ballSpeed, >=, 220), Compare(Global.ballSpeed, <, 350)), All Players(All Teams), Empty Array), Null, Null, Custom String("BALL SPEED: {0}", Global.ballSpeed), Left, -4, Null, Null, Color(Rose), Visible To and String, Default Visibility);
+        Create HUD Text(If-Then-Else(And(Compare(Global.ballSpeed, >=, 350), Compare(Global.ballSpeed, <, 400)), All Players(All Teams), Empty Array), Null, Null, Custom String("BALL SPEED: ???"), Left, -4, Null, Null, Color(Rose), Visible To and String, Default Visibility);
+        Create HUD Text(If-Then-Else(And(Compare(Global.ballSpeed, >=, 400), Compare(Global.ballSpeed, <, 450)), All Players(All Teams), Empty Array), Null, Null, Custom String("BALL SPEED: you good??"), Left, -4, Null, Null, Color(Rose), Visible To and String, Default Visibility);
+        Create HUD Text(If-Then-Else(And(Compare(Global.ballSpeed, >=, 450), Compare(Global.ballSpeed, <, 700)), All Players(All Teams), Empty Array), Null, Null, Custom String("BALL SPEED: {0}", Global.ballSpeed), Left, -4, Null, Null, Color(Rose), Visible To and String, Default Visibility);
+        Create HUD Text(If-Then-Else(And(Compare(Global.ballSpeed, >=, 700), Compare(Global.ballSpeed, <, 750)), All Players(All Teams), Empty Array), Null, Null, Custom String("BALL SPEED: get a life"), Left, -4, Null, Null, Color(Black), Visible To and String, Default Visibility);
+        Create HUD Text(If-Then-Else(Compare(Global.ballSpeed, >=, 750), All Players(All Teams), Empty Array), Null, Null, Custom String("BALL SPEED: {0}", Global.ballSpeed), Left, -4, Null, Null, Color(Black), Visible To and String, Default Visibility);
+    }
+}
+
+rule ("HUD - controls text") {
+    event {
+        Ongoing - Global;
+    }
+    actions {
+        Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("change perspective [{0}]", Input Binding String(Button(Reload))), Null, Left, 0, Null, Color(White), Null, Visible To and String, Default Visibility);
+        If(Compare(Global.Sandbox, ==, False));
+            Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("simple hud [{0}]", Input Binding String(Button(Interact))), Null, Left, 0, Null, Color(White), Null, Visible To and String, Default Visibility);
+        End;
+        If(And(Global.doubleSensEnabled, Not(Global.Abilities)));
+            Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("double sens [{0}]", Input Binding String(Button(Ultimate))), Null, Left, 0, Null, Color(White), Null, Visible To and String, Default Visibility);
+    }
+}
+
+rule ("HUD - add-ons text") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Is Game In Progress == True;
+    }
+    actions {
+        "__end__()\nif endlessMode:\nhudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == 0), \"•endless\", HudPosition.RIGHT, -2, Color.BLUE, HudReeval.VISIBILITY_AND_STRING)\n__end__()"
+        If(Global.tracingMode);
+            Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("tracing: dont lose sight with the ball!"), Null, Top, -1, Null, Color(White), Null, Visible To and String, Default Visibility);
+        End;
+        If(Global.tournamentMode);
+            Create HUD Text(All Players(All Teams), Custom String("Tournament"), Null, Null, Right, 8, Color(Black), Null, Null, Visible To and String, Default Visibility);
+            Create HUD Text(All Players(All Teams), Null, Null, Custom String("ROUNDS LEFT: {0}", Global.totalRounds), Right, 9, Null, Null, Color(Purple), Visible To and String, Default Visibility);
+            Create HUD Text(All Players(All Teams), Null, Null, Custom String("ROUNDS UNTIL BREAK: {0}", Global.roundsUntilBreak), Right, 10, Null, Null, Color(Purple), Visible To and String, Default Visibility);
+    }
+}
+
+rule ("Debug - server load HUD") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.debugRules == True;
+    }
+    actions {
+        "Host-only server-load diagnostics for test builds. Presets never force this on/off."
+        Create HUD Text(Host Player, Null, Custom String("Server Load"), Server Load, Right, 0, Color(White), Color(White), Color(White), Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Null, Custom String("Server Load Average"), Server Load Average, Right, 1, Color(White), Color(White), Color(White), Visible To and String, Default Visibility);
+        Create HUD Text(Host Player, Null, Custom String("Server Load Peak"), Server Load Peak, Right, 2, Color(White), Color(White), Color(White), Visible To and String, Default Visibility);
+    }
+}
+
+rule ("Debug - ball state HUD") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.debugRules == True;
+        Global.ballIsOut == True;
+        Global.target != Null;
+    }
+    actions {
+        "Host-only ball/target diagnostics for physics and collision testing."
+        Create HUD Text(Host Player, Null, Null, Custom String("BALL DEBUG\nSpeed: {0} / {1}\nPhysics: {2}", Global.ballSpeed, Global.ballSpeedCap, Custom String("{0}  Motion: {1}\nDistance: {2}", Global.ballPhysicsMode, Global.ballMotion, Custom String("{0}\nDirection rate: {1}", Distance Between(Global.ballPosition, Eye Position(Global.target)), Global.ballDirectionRate))), Right, 3, Null, Null, Color(White), Visible To and String, Default Visibility);
+    }
+}
+
+rule ("Debug - anti-orbit values") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.debugRules == True;
+        Global.target != Null;
+    }
+    actions {
+        "Host-only AntiOrbit diagnostics. Useful even when AntiOrbit is disabled, because it confirms state reset/decay."
+        Create HUD Text(Host Player, Null, Null, Custom String("ORBIT DEBUG\nTarget: {0}\nTimer: {1}\nPenalty: {2}", Global.target, (Global.target).orbitTimer, Custom String("{0}\nHeat: {1}", (Global.target).orbitPenalty, (Global.target).orbitHeat)), Right, 4, Null, Null, Color(White), Visible To and String, Default Visibility);
+    }
+}
+
+rule ("Kill Tracker - cache players") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.killCounterEnabled == True;
+    }
+    actions {
+        "Cache once per tick instead of sorting once per HUD row. Host-only display, real players only."
+        Set Global Variable(killLeaderboardPlayers, Filtered Array(All Players(All Teams), Not(Is Dummy Bot(Current Array Element))));
+        Set Global Variable(killLeaderboardSortedPlayers, Sorted Array(Global.killLeaderboardPlayers, (Current Array Element).kills));
+        Wait(0.25, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Kill Tracker - header") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.killCounterEnabled == True;
+        Count Of(Global.killLeaderboardSortedPlayers) > 0;
+    }
+    actions {
+        Create HUD Text(Host Player, Custom String("KILLS"), Null, Null, Left, 8, Color(Orange), Null, Null, Visible To and String, Default Visibility);
+    }
+}
+
+rule ("Kill Tracker - display") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.killCounterEnabled == True;
+        Has Spawned(Event Player) == True;
+        Is Dummy Bot(Event Player) == False;
+        Count Of(Global.killLeaderboardSortedPlayers) > 0;
+        Index Of Array Value(Global.killLeaderboardSortedPlayers, Event Player) >= 0;
+    }
+    actions {
+        Create HUD Text(Host Player, Null, Null, Custom String("{0}. {1} — {2} KO", Subtract(Count Of(Global.killLeaderboardSortedPlayers), Index Of Array Value(Global.killLeaderboardSortedPlayers, Event Player)), Event Player, (Event Player).kills), Left, Subtract(Add(8, Count Of(Global.killLeaderboardSortedPlayers)), Index Of Array Value(Global.killLeaderboardSortedPlayers, Event Player)), Null, Null, Color(White), Visible To Sort Order and String, Default Visibility);
+    }
+}
+
+rule ("HUD - anti rubberbanding hud text") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    actions {
+        Create HUD Text(Event Player, Null, Custom String("anti-rubberbanding [{0}]: {1}", Input Binding String(Button(Melee)), If-Then-Else((Event Player).antiRubberbanding, Custom String("On"), Custom String("Off"))), Null, Left, 0, Null, Color(White), Null, Visible To and String, Default Visibility);
+    }
+}
+
+rule ("HUD - zen mode cooldown") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    actions {
+        Create HUD Text(If-Then-Else(Compare((Event Player).simpleHUD, ==, 2), Event Player, Null), Null, Null, Custom String("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"), Top, 10, Null, Null, Color(White), Visible To and String, Default Visibility);
+        Create HUD Text(If-Then-Else(Compare((Event Player).simpleHUD, ==, 2), Event Player, Null), Custom String("{0}\nDeflect", Ability Icon String(Hero(Genji), Button(Ability 2))), Null, Null, Top, 12, If-Then-Else(And(And(And(And(And((Event Player).canDeflect, Not(Has Status(Event Player, Knocked Down))), Not(Has Status(Event Player, Asleep))), Is Alive(Event Player)), Not(Is Using Ability 2(Event Player))), Not(Is Using Ability 1(Event Player))), Color(Blue), If-Then-Else(Is Using Ability 2(Event Player), Color(Green), Color(Gray))), Null, Null, Visible To and Color, Default Visibility);
+        Create HUD Text(If-Then-Else(Compare((Event Player).simpleHUD, ==, 2), Event Player, Null), Custom String("{0}\nDash", Ability Icon String(Hero(Genji), Button(Ability 1))), Null, Null, Top, 11, If-Then-Else(And(And(And(And(And((Event Player).canDash, Not((Event Player).dashOnCooldown)), Not(Has Status(Event Player, Knocked Down))), Not(Has Status(Event Player, Asleep))), Is Alive(Event Player)), Not(Is Using Ability 1(Event Player))), Color(Blue), If-Then-Else(Is Using Ability 1(Event Player), Color(Green), Color(Gray))), Null, Null, Visible To and Color, Default Visibility);
+    }
+}
+
+rule ("HUD - Watermark") {
+    event {
+        Ongoing - Global;
+    }
+    actions {
+        Skip If(Not(Global.WatermarkEnabled), 1);
+        "Please don't be a child and try to take credit for this game. If you actually have contributed something you are free to add here. But if not, don't touch this. You are free to disable it."
+        Create HUD Text(All Players(All Teams), Null, Custom String("원작자 u/Mazawrath. v1.0.0N"), Null, Left, -1000, Null, Color(Aqua), Null, Visible To and String, Visible Always);
+        //lbl_0:
+    }
+}
+
+rule ("Appearance - target effects") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Is Game In Progress == True;
+    }
+    actions {
+        Create Effect(Remove From Array(All Players(All Teams), Global.target), Orb, Color(White), Update Every Frame(Global.ballPosition), 1, Visible To Position and Radius);
+        Create Projectile Effect(All Players(All Teams), Sigma Hypersphere, Null, Update Every Frame(Global.ballPosition), Global.ballDirection, 0.01, Visible To Position Direction and Size);
+        If(Compare(Current Game Mode, ==, Game Mode(Team Deathmatch)));
+            If(And(Compare(Global.passingplayer, ==, Global.prevTarget), Compare(Team Of(Global.target), ==, Team Of(Global.prevTarget))));
+                Create Effect(Global.target, Orb, Color(Sky Blue), Update Every Frame(Global.ballPosition), 1, Visible To Position and Radius);
+                Create Effect(If-Then-Else(Is Alive(Global.target), Remove From Array(All Players(All Teams), Global.target), Null), Good Aura, Color(Red), Global.target, 1, Visible To Position and Radius);
+                Create Effect(If-Then-Else(Compare(Local Player, ==, Global.target), Local Player, Null), Good Aura, If-Then-Else((Local Player).thirdPerson, Color(Gray), Color(Red)), Local Player, 0.8, Visible To Position Radius and Color);
+                Create Effect(Global.target, Good Aura, Color(Blue), Global.ballPosition, 1, Visible To Position and Radius);
+            End;
+        Else If(Not(Global.RedGreenColorblindMode));
+            Create Effect(Global.target, Orb, Color(Red), Update Every Frame(Global.ballPosition), 1, Visible To Position and Radius);
+            Create Effect(If-Then-Else(Is Alive(Global.target), Remove From Array(All Players(All Teams), Global.target), Null), Good Aura, Color(Red), Global.target, 1, Visible To Position and Radius);
+            Create Effect(If-Then-Else(Compare(Local Player, ==, Global.target), Local Player, Null), Good Aura, If-Then-Else((Local Player).thirdPerson, Color(Gray), Color(Red)), Local Player, 0.8, Visible To Position Radius and Color);
+            Create Effect(Global.target, Good Aura, Color(Blue), Global.ballPosition, 1, Visible To Position and Radius);
+        Else;
+            Create Effect(Global.target, Orb, Color(Blue), Update Every Frame(Global.ballPosition), 0.4, Visible To Position and Radius);
+            Create Effect(All Players(All Teams), Good Aura, Color(Blue), Global.target, 1, Visible To Position and Radius);
+            Create Effect(Global.target, Good Aura, Color(Blue), Global.target, 1, Visible To Position and Radius);
+        End;
+        If(Global.xray);
+            Create Icon(If-Then-Else(And(Global.ballIsOut, Not(Is In Line of Sight(Eye Position(Global.target), Global.ballPosition, All Barriers Block LOS))), Global.target, Null), Update Every Frame(Global.ballPosition), Heart, Visible To and Position, Color(Red), True);
+    }
+}
+
+rule ("Appearance - ball countdown") {
+    event {
+        Ongoing - Global;
+    }
+    actions {
+        Create In-World Text(If-Then-Else(Global.ballIsOut, Null, Remove From Array(All Players(All Teams), Global.target)), Custom String("BALL SPAWNING IN: {0}", Round To Integer(Global.ballSpawnCountdown, Up)), Vector(X Component Of(Global.circleCenter), Add(Y Component Of(Global.circleCenter), 2.5), Z Component Of(Global.circleCenter)), 2.5, Clip Against Surfaces, Visible To Position and String, Color(Sky Blue), Default Visibility);
+        Create In-World Text(If-Then-Else(Global.ballIsOut, Null, Global.target), Custom String("BALL SPAWNING IN: {0}", Round To Integer(Global.ballSpawnCountdown, Up)), Vector(X Component Of(Global.circleCenter), Add(Y Component Of(Global.circleCenter), 2.5), Z Component Of(Global.circleCenter)), 2.5, Clip Against Surfaces, Visible To Position and String, Color(Red), Default Visibility);
+    }
+}
+
+rule ("Check for <2 players") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Is Game In Progress == True;
+        Number Of Players(All Teams) == 1;
+        Current Game Mode == Game Mode(Deathmatch);
+    }
+    actions {
+        Set Global Variable(IsInFinalDuel, False);
+        Set Global Variable(IsEnoughPlayersToStart, False);
+        Stop Chasing Global Variable(ballSpawnCountdown);
+        Call Subroutine(deleteBall);
+        Skip If(Compare(Global.RoundInProgress, ==, False), 1);
+        Set Global Variable(RoundInProgress, False);
+        //lbl_0:
+        Big Message(All Players(All Teams), Custom String("Waiting for players"));
+    }
+}
+
+rule ("Wait for more players") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Is Game In Progress == True;
+        Or(Compare(Number Of Players(All Teams), >, 1), Compare(Global.Sandbox, ==, True)) == True;
+        Global.IsEnoughPlayersToStart == False;
+        Current Game Mode == Game Mode(Deathmatch);
+    }
+    actions {
+        Skip If(Compare(Global.Sandbox, ==, True), 1);
+        Abort If(Compare(Number Of Players(All Teams), <, 2));
+        //lbl_0:
+        Big Message(All Players(All Teams), Custom String("Lets begin!"));
+        Set Global Variable(IsEnoughPlayersToStart, True);
+        Call Subroutine(startRound);
+    }
+}
+
+rule ("Player joins game") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).hasMoved == False;
+        Has Spawned(Event Player) == True;
+    }
+    actions {
+        Skip If(Not(And(Global.RoundInProgress, Is Game In Progress)), 1);
+        Kill(Event Player, Null);
+        //lbl_0:
+        Teleport(Event Player, Add(Global.circleCenter, Vector(Random Integer(-10, 10), 8, Random Integer(-10, 10))));
+        Set Player Variable(Event Player, hasMoved, True);
+    }
+}
+
+rule ("Controls - primary fire triggers dash") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Button Held(Event Player, Button(Primary Fire)) == True;
+        "Naz: This is remnent code from a dark and lawless time in the development of this game. Leave it be...\n@Condition \"{0}\".format(eventPlayer) != \"bytestats\""
+        Is Dummy Bot(Event Player) == False;
+        Is Button Held(Event Player, Button(Ability 1)) == False;
+        (Event Player).canDash == True;
+        (Event Player).dashOnCooldown == False;
+    }
+    actions {
+        If(Compare((Event Player).antiRubberbanding, ==, True));
+            Allow Button(Event Player, Button(Ability 1));
+            Press Button(Event Player, Button(Ability 1));
+            Disallow Button(Event Player, Button(Ability 1));
+        Else;
+            Press Button(Event Player, Button(Ability 1));
+    }
+}
+
+rule ("Controls - secondary fire triggers deflect") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Button Held(Event Player, Button(Secondary Fire)) == True;
+        "Naz: This is remnent code from a dark and lawless time in the development of this game. Leave it be...\n@Condition \"{0}\".format(eventPlayer) != \"bytestats\""
+        Is Dummy Bot(Event Player) == False;
+        Is Using Ability 1(Event Player) == False;
+        Is Button Held(Event Player, Button(Ability 2)) == False;
+        (Event Player).canDeflect == True;
+    }
+    actions {
+        If(Compare((Event Player).antiRubberbanding, ==, True));
+            Allow Button(Event Player, Button(Ability 2));
+            Press Button(Event Player, Button(Ability 2));
+            Disallow Button(Event Player, Button(Ability 2));
+        Else;
+            Press Button(Event Player, Button(Ability 2));
+    }
+}
+
+rule ("Controls - Dash slow (gravity shift)") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Using Ability 1(Event Player) == True;
+    }
+    actions {
+        Set Player Variable(Event Player, moveSpeed, 0);
+        Chase Player Variable At Rate(Event Player, moveSpeed, 100, Raise To Power(Max((Event Player).moveSpeed, 16), 1.25), Destination and Rate);
+        While(Compare((Event Player).moveSpeed, !=, 100));
+            Set Move Speed(Event Player, Multiply(Global.moveSpeed, Divide((Event Player).moveSpeed, 100)));
+            Skip If(Compare((Event Player).currentGravity, ==, 0), 1);
+            Set Gravity(Event Player, Multiply(Global.gravity, Divide((Event Player).moveSpeed, 100)));
+            //lbl_0:
+            Wait(0.1, Ignore Condition);
+        End;
+        Set Move Speed(Event Player, Global.moveSpeed);
+        Skip If(Compare((Event Player).currentGravity, ==, 0), 1);
+        Set Gravity(Event Player, Global.gravity);
+        //lbl_1:
+    }
+}
+
+rule ("Controls - Shorten deflect length") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Using Ability 2(Event Player) == True;
+        Is Using Ultimate(Event Player) == False;
+    }
+    actions {
+        Wait(0.3, Ignore Condition);
+        If(Is Dummy Bot(Event Player));
+            If(Or(Compare(Global.bozoWillEdash, ==, True), Compare(Global.bozoWillGhostDash, ==, True)));
+                Press Button(Event Player, Button(Ability 1));
+                Set Global Variable(bozoWillGhostDash, False);
+                Set Global Variable(bozoWillEdash, False);
+            End;
+        End;
+        Set Ability 2 Enabled(Event Player, False);
+        Set Ability 1 Enabled(Event Player, False);
+        Set Player Variable(Event Player, canDeflect, False);
+        Set Player Variable(Event Player, canDash, False);
+        Wait(0.5, Ignore Condition);
+        Set Ability 2 Enabled(Event Player, True);
+        Set Ability 1 Enabled(Event Player, True);
+        Set Player Variable(Event Player, canDeflect, True);
+        Set Player Variable(Event Player, canDash, True);
+    }
+}
+
+rule ("Controls - anti-rubberbanding button lock") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Dummy Bot(Event Player) == False;
+        (Event Player).antiRubberbanding == True;
+    }
+    actions {
+        Disallow Button(Event Player, Button(Ability 1));
+        Disallow Button(Event Player, Button(Ability 2));
+    }
+}
+
+rule ("Controls - Ability 1 dash queue") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Button Held(Event Player, Button(Ability 1)) == True;
+        "Naz: This is remnent code from a dark and lawless time in the development of this game. Leave it be...\n@Condition \"{0}\".format(eventPlayer) != \"bytestats\""
+        Is Dummy Bot(Event Player) == False;
+        Is Using Ability 1(Event Player) == False;
+        (Event Player).canDash == True;
+        (Event Player).dashOnCooldown == False;
+    }
+    actions {
+        If(Compare((Event Player).antiRubberbanding, ==, True));
+            Allow Button(Event Player, Button(Ability 1));
+            Press Button(Event Player, Button(Ability 1));
+            Disallow Button(Event Player, Button(Ability 1));
+        Else;
+            Press Button(Event Player, Button(Ability 1));
+    }
+}
+
+rule ("Controls - Ability 2 deflect queue") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Button Held(Event Player, Button(Ability 2)) == True;
+        "Naz: This is remnent code from a dark and lawless time in the development of this game. Leave it be...\n@Condition \"{0}\".format(eventPlayer) != \"bytestats\""
+        Is Dummy Bot(Event Player) == False;
+        Is Using Ability 1(Event Player) == False;
+        Is Using Ability 2(Event Player) == False;
+        (Event Player).canDeflect == True;
+    }
+    actions {
+        If(Compare((Event Player).antiRubberbanding, ==, True));
+            Allow Button(Event Player, Button(Ability 2));
+            Press Button(Event Player, Button(Ability 2));
+            Disallow Button(Event Player, Button(Ability 2));
+        Else;
+            Press Button(Event Player, Button(Ability 2));
+    }
+}
+
+rule ("Controls - Dash cooldown") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Alive(Event Player) == True;
+        Is Using Ability 1(Event Player) == True;
+    }
+    actions {
+        Set Player Variable(Event Player, dashOnCooldown, True);
+        Wait Until(Not(Is Using Ability 1(Event Player)), 0.5);
+        Wait Until(Compare((Event Player).dashOnCooldown, ==, False), 3.04);
+        Set Player Variable(Event Player, dashOnCooldown, False);
+    }
+}
+
+rule ("Control - Dash reset") {
+    event {
+        Player Earned Elimination;
+        All;
+        All;
+    }
+    actions {
+        Set Player Variable(Event Player, dashOnCooldown, False);
+    }
+}
+
+rule ("Controls - Switch perspective (reload)") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.breakInProgress == False;
+        Is Button Held(Event Player, Button(Reload)) == True;
+        Is Alive(Event Player) == True;
+    }
+    actions {
+        If(Not((Event Player).thirdPerson));
+            Set Player Variable(Event Player, thirdPerson, True);
+            Wait(0.01, Ignore Condition);
+            Start Camera(Event Player, Update Every Frame(Ray Cast Hit Position(Eye Position(Event Player), Add(Add(Add(Event Player, World Vector Of(Vector(-0.5, 0, 0), Event Player, Rotation)), Vector(0, 1.5, 0)), Multiply(Facing Direction Of(Event Player), -2)), Null, All Players(All Teams), False)), Add(Event Player, Multiply(Facing Direction Of(Event Player), 1000)), 0);
+            Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Color(White), Event Player, 10);
+        Else;
+            Stop Camera(Event Player);
+            Set Player Variable(Event Player, thirdPerson, False);
+            Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Color(White), Event Player, 10);
+        End;
+        Wait(0.1, Ignore Condition);
+    }
+}
+
+rule ("Controls - toggle anti rubberbanding (melee)") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Button Held(Event Player, Button(Melee)) == True;
+        Is Dummy Bot(Event Player) == False;
+    }
+    actions {
+        If(Compare((Event Player).antiRubberbanding, ==, True));
+            Set Player Variable(Event Player, antiRubberbanding, False);
+            Allow Button(Event Player, Button(Ability 1));
+            Allow Button(Event Player, Button(Ability 2));
+            Small Message(Event Player, Custom String("anti rubberbanding: off"));
+        Else If(Compare((Event Player).antiRubberbanding, ==, False));
+            Set Player Variable(Event Player, antiRubberbanding, True);
+            Disallow Button(Event Player, Button(Ability 1));
+            Disallow Button(Event Player, Button(Ability 2));
+            Small Message(Event Player, Custom String("anti rubberbanding: on"));
+        End;
+        Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Color(White), Event Player, 10);
+        Wait(0.1, Ignore Condition);
+    }
+}
+
+rule ("Controls - double sens toggle") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.doubleSensEnabled == True;
+        Global.Abilities == False;
+        Is Dummy Bot(Event Player) == False;
+        Is Alive(Event Player) == True;
+        Is Button Held(Event Player, Button(Ultimate)) == True;
+    }
+    actions {
+        If(Compare((Event Player).sensHigh, ==, True));
+            Set Player Variable(Event Player, sensHigh, False);
+            Set Aim Speed(Event Player, 100);
+            Small Message(Event Player, Custom String("double sens: normal"));
+        Else;
+            Set Player Variable(Event Player, sensHigh, True);
+            Set Aim Speed(Event Player, 275);
+            Small Message(Event Player, Custom String("double sens: high"));
+        End;
+        Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Color(White), Event Player, 10);
+        Wait Until(Not(Is Button Held(Event Player, Button(Ultimate))), 99999);
+    }
+}
+
+rule ("Controls - double sens reset when disabled") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).sensHigh == True;
+        Or(Compare(Global.doubleSensEnabled, ==, False), Compare(Global.Abilities, ==, True)) == True;
+    }
+    actions {
+        Set Player Variable(Event Player, sensHigh, False);
+        Set Aim Speed(Event Player, 100);
+    }
+}
+
+rule ("Controls - Simple HUD (Interact)") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Button Held(Event Player, Button(Interact)) == True;
+        Is Alive(Event Player) == True;
+        Global.Sandbox == False;
+    }
+    actions {
+        If(Compare((Event Player).simpleHUD, ==, 2));
+            Set Player Variable(Event Player, simpleHUD, 0);
+            Enable Hero HUD(Event Player);
+            Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Color(White), Event Player, 10);
+            Small Message(Event Player, Custom String("simple hud: off"));
+            Abort;
+        End;
+        Wait Until(Not(Is Button Held(Event Player, Button(Interact))), 0.4);
+        If(Is Button Held(Event Player, Button(Interact)));
+            If(Compare((Event Player).simpleHUD, ==, 2));
+                Set Player Variable(Event Player, simpleHUD, 0);
+                Enable Hero HUD(Event Player);
+                Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Color(White), Event Player, 10);
+                Small Message(Event Player, Custom String("simple hud: off"));
+            Else;
+                Set Player Variable(Event Player, simpleHUD, 2);
+                Disable Hero HUD(Event Player);
+                Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Color(White), Event Player, 10);
+                Small Message(Event Player, Custom String("simple hud: zen mode"));
+            End;
+        Else;
+            If(Compare((Event Player).simpleHUD, ==, 0));
+                Set Player Variable(Event Player, simpleHUD, 1);
+                Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Color(White), Event Player, 10);
+                Small Message(Event Player, Custom String("simple hud: on"));
+            Else;
+                Set Player Variable(Event Player, simpleHUD, 0);
+                Enable Hero HUD(Event Player);
+                Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Color(White), Event Player, 10);
+                Small Message(Event Player, Custom String("simple hud: off"));
+            End;
+        End;
+        Wait(0.1, Ignore Condition);
+    }
+}
+
+rule ("Controls - Bounce when near pad 1") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.bouncePad1 != Null;
+        Distance Between(Position Of(Event Player), Global.bouncePad1) <= Global.bouncePadRange;
+        (Event Player).bouncePadCooldown == 0;
+        Is Alive(Event Player) == True;
+        Is Button Held(Event Player, Button(Jump)) == True;
+        Global.bouncePadToggle == True;
+    }
+    actions {
+        If((Event Player).dashNerf);
+            Apply Impulse(Event Player, Up, Subtract(Global.bouncePadStrength, Global.bouncePadSuperjumpNerf), To World, Cancel Contrary Motion);
+        Else;
+            Apply Impulse(Event Player, Up, Global.bouncePadStrength, To World, Cancel Contrary Motion);
+        End;
+        Set Player Variable(Event Player, bouncePadCooldown, Global.bouncePadCooldownLength);
+        Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.bouncePad1, 25);
+    }
+}
+
+rule ("Controls - Bounce when near pad 2") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.bouncePad2 != Null;
+        Distance Between(Position Of(Event Player), Global.bouncePad2) <= Global.bouncePadRange;
+        (Event Player).bouncePadCooldown == 0;
+        Is Alive(Event Player) == True;
+        Is Button Held(Event Player, Button(Jump)) == True;
+        Global.bouncePadToggle == True;
+    }
+    actions {
+        If((Event Player).dashNerf);
+            Apply Impulse(Event Player, Up, Subtract(Global.bouncePadStrength, Global.bouncePadSuperjumpNerf), To World, Cancel Contrary Motion);
+        Else;
+            Apply Impulse(Event Player, Up, Global.bouncePadStrength, To World, Cancel Contrary Motion);
+        End;
+        Set Player Variable(Event Player, bouncePadCooldown, Global.bouncePadCooldownLength);
+        Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.bouncePad2, 25);
+    }
+}
+
+rule ("Controls - Bounce when near pad 3") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.bouncePad3 != Null;
+        Distance Between(Position Of(Event Player), Global.bouncePad3) <= Global.bouncePadRange;
+        (Event Player).bouncePadCooldown == 0;
+        Is Alive(Event Player) == True;
+        Is Button Held(Event Player, Button(Jump)) == True;
+        Global.bouncePadToggle == True;
+    }
+    actions {
+        If((Event Player).dashNerf);
+            Apply Impulse(Event Player, Up, Subtract(Global.bouncePadStrength, Global.bouncePadSuperjumpNerf), To World, Cancel Contrary Motion);
+        Else;
+            Apply Impulse(Event Player, Up, Global.bouncePadStrength, To World, Cancel Contrary Motion);
+        End;
+        Set Player Variable(Event Player, bouncePadCooldown, Global.bouncePadCooldownLength);
+        Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.bouncePad3, 25);
+    }
+}
+
+rule ("Controls - Bounce when near pad 4") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.bouncePad4 != Null;
+        Distance Between(Position Of(Event Player), Global.bouncePad4) <= Global.bouncePadRange;
+        (Event Player).bouncePadCooldown == 0;
+        Is Alive(Event Player) == True;
+        Is Button Held(Event Player, Button(Jump)) == True;
+        Global.bouncePadToggle == True;
+    }
+    actions {
+        If((Event Player).dashNerf);
+            Apply Impulse(Event Player, Up, Subtract(Global.bouncePadStrength, Global.bouncePadSuperjumpNerf), To World, Cancel Contrary Motion);
+        Else;
+            Apply Impulse(Event Player, Up, Global.bouncePadStrength, To World, Cancel Contrary Motion);
+        End;
+        Set Player Variable(Event Player, bouncePadCooldown, Global.bouncePadCooldownLength);
+        Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), Global.bouncePad4, 25);
+    }
+}
+
+rule ("Active game - start round") {
+    event {
+        Subroutine;
+        startRound;
+    }
+    actions {
+        If(Compare(Global.Sandbox, ==, True));
+            Wait Until(And(Is Button Held(Host Player, Button(Ultimate)), Is Button Held(Host Player, Button(Reload))), 99999);
+        End;
+        Call Subroutine(randomTarget);
+        Chase Global Variable At Rate(ballSpawnCountdown, 0, 1, Destination and Rate);
+        Set Global Variable(RoundInProgress, True);
+        "New rounds should start with dash available again.\nThis only resets the custom dash cooldown flag; it does not alter dash/deflect timing mid-round."
+        Set Player Variable(All Players(All Teams), dashOnCooldown, False);
+        Call Subroutine(resetOrbitRoundState);
+        Chase Player Variable At Rate(All Players(All Teams), bouncePadCooldown, 0, 1, Destination and Rate);
+        Set Global Variable(ballSpawnCountdown, Global.setballspawncountdown);
+        Set Player Variable(All Living Players(All Teams), bouncePadCooldown, Subtract(Global.bouncePadCooldownLength, 1));
+    }
+}
+
+rule ("Active game - spawn ball") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.ballSpawnCountdown == 0;
+        Global.ballIsOut == False;
+        Is Alive(Global.target) == True;
+    }
+    actions {
+        If(Compare(Global.Sandbox, ==, True));
+            Set Global Variable(ballPosition, Global.Sandboxballpos);
+            Set Global Variable(ballDirection, Direction Towards(Global.Sandboxballpos, Global.Sandboxballdir));
+            Set Global Variable(ballSpeed, Global.Sandboxballspd);
+        Else;
+            Set Global Variable(ballPosition, Global.circleCenter);
+            Set Global Variable(ballDirection, Direction Towards(Global.ballPosition, Eye Position(Global.target)));
+            Set Global Variable(ballSpeed, Min(Global.ballSpawnSpeed, Global.ballSpeed));
+        End;
+        Start Rule(startBall, Restart Rule);
+    }
+}
+
+rule ("Subroutine - setup duel") {
+    event {
+        Subroutine;
+        setupFinal;
+    }
+    actions {
+        Skip If(Compare(Global.ballIsOut, ==, False), 1);
+        Call Subroutine(deleteBall);
+        //lbl_0:
+        Call Subroutine(randomTarget);
+        Stop Chasing Global Variable(ballSpawnCountdown);
+        If(Compare(Global.Sandbox, ==, True));
+            Wait Until(And(Is Button Held(Host Player, Button(Ultimate)), Is Button Held(Host Player, Button(Reload))), 99999);
+        End;
+        Set Global Variable(IsInFinalDuel, True);
+        Chase Global Variable At Rate(ballSpawnCountdown, 0, 1, Destination and Rate);
+        Set Player Variable(All Living Players(All Teams), bouncePadCooldown, Subtract(Global.bouncePadCooldownLength, 1));
+        If(Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))));
+            Start Forcing Player Position(First Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved)), Add(Global.circleCenter, Vector(-15, 0, 0)), False);
+            Start Forcing Player Position(Value In Array(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved), 1), Add(Global.circleCenter, Vector(15, 0, 0)), False);
+        Else;
+            Start Forcing Player Position(First Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved)), Add(Global.circleCenter, Multiply(Right, Divide(Global.SphereSize, 1.5))), False);
+            Start Forcing Player Position(Value In Array(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved), 1), Add(Global.circleCenter, Multiply(Left, Divide(Global.SphereSize, 1.5))), False);
+        End;
+        Set Status(All Living Players(All Teams), Null, Rooted, 1.5);
+        Wait(0, Ignore Condition);
+        Set Facing(First Of(All Living Players(All Teams)), Direction Towards(Position Of(First Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved))), Global.circleCenter), To World);
+        Set Facing(Value In Array(All Living Players(All Teams), 1), Direction Towards(Position Of(Value In Array(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved), 1)), Global.circleCenter), To World);
+        Big Message(All Players(All Teams), Custom String("{0} vs. {1}", First Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved)), Value In Array(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved), 1)));
+        Wait(0.1, Ignore Condition);
+        Stop Forcing Player Position(First Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved)));
+        Stop Forcing Player Position(Value In Array(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved), 1));
+    }
+}
+
+rule ("Active game - final duel") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Is Game In Progress == True;
+        Count Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved)) == 2;
+        Global.IsEnoughPlayersToStart == True;
+        Global.IsInFinalDuel == False;
+        Global.duelMode == False;
+        Global.endlessMode == False;
+        Current Game Mode == Game Mode(Deathmatch);
+    }
+    actions {
+        Wait(0.016, Abort When False);
+        Abort If Condition Is False;
+        Call Subroutine(setupFinal);
+    }
+}
+
+rule ("Active game - check for last player surviving") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Is Game In Progress == True;
+        Number Of Living Players(All Teams) == 1;
+        Global.IsEnoughPlayersToStart == True;
+        Global.duelMode == False;
+    }
+    actions {
+        Set Global Variable(IsInFinalDuel, False);
+        Modify Player Score(All Living Players(All Teams), 1);
+        Wait(0.25, Ignore Condition);
+        If(And(Or(Compare(Match Time, ==, 0), Global.TieBreakerActive), Not(Global.tournamentMode)));
+            "If there is alredy a tiebreaker, then the tiebreaker has ended.\nif TieBreakerActive:\nbreak\n__end__()"
+            Set Global Variable(HighestScore, Score Of(Last Of(Sorted Array(All Players(All Teams), Score Of(Current Array Element)))));
+            "Check if there is more than 1 person with the highest score"
+            If(Compare(Count Of(Filtered Array(All Players(All Teams), Compare(Score Of(Current Array Element), ==, Global.HighestScore))), >, 1));
+                "There is more than 1, activate tie breaker"
+                Set Global Variable(TieBreakerActive, True);
+            Else;
+                Set Global Variable(TieBreakerActive, False);
+                If(Compare(Match Time, ==, 0));
+                    Enable Built-In Game Mode Music;
+                    Enable Built-In Game Mode Completion;
+                End;
+            End;
+        End;
+        Stop Chasing Global Variable(ballSpawnCountdown);
+        Stop Chasing Player Variable(All Players(All Teams), bouncePadCooldown);
+        Big Message(All Players(All Teams), Custom String("{0} has won the round", First Of(All Living Players(All Teams))));
+        Wait(2, Ignore Condition);
+        Skip If(Global.duelMode, 8);
+        If(Not(Global.TieBreakerActive));
+            Resurrect(All Dead Players(All Teams));
+        Else;
+            "Kill anyone alive who doesn't have the highest score."
+            Kill(Filtered Array(All Living Players(All Teams), Compare(Score Of(Current Array Element), !=, Global.HighestScore)), Null);
+            "During tiebreaker, only revive the people who have the same score as the highest score."
+            Resurrect(Filtered Array(All Dead Players(All Teams), Compare(Score Of(Current Array Element), ==, Global.HighestScore)));
+            Wait(0.25, Ignore Condition);
+            Big Message(All Players(All Teams), Custom String("tiebreaker!"));
+        End;
+        //lbl_0:
+        Call Subroutine(startRound);
+    }
+}
+
+rule ("Active game - all players dead") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Number Of Living Players(All Teams) == 0;
+        Is Game In Progress == True;
+        Global.TieBreakerActive == False;
+        Global.duelMode == False;
+    }
+    actions {
+        Set Global Variable(IsInFinalDuel, False);
+        Skip If(Compare(Global.ballIsOut, ==, False), 1);
+        Call Subroutine(deleteBall);
+        //lbl_0:
+        Set Global Variable(RoundInProgress, False);
+        Stop Chasing Global Variable(ballSpawnCountdown);
+        Resurrect(All Dead Players(All Teams));
+        Stop Chasing Player Variable(All Players(All Teams), bouncePadCooldown);
+        Set Player Variable(All Players(All Teams), bouncePadCooldown, Global.bouncePadCooldownLength);
+        Set Global Variable(ballSpawnCountdown, Global.setballspawncountdown);
+        Wait(1, Ignore Condition);
+        Loop If Condition Is True;
+        Wait(2, Ignore Condition);
+        Abort If(Global.IsEnoughPlayersToStart);
+        Stop Chasing Global Variable(ballSpawnCountdown);
+        Call Subroutine(startRound);
+    }
+}
+
+rule ("Active game - end game") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Match Time == 0;
+        Global.RoundInProgress == False;
+        Global.TieBreakerActive == False;
+        Global.tournamentMode == False;
+        Current Game Mode == Game Mode(Deathmatch);
+    }
+    actions {
+        Enable Built-In Game Mode Music;
+        Enable Built-In Game Mode Completion;
+    }
+}
+
+rule ("Active game - target random player") {
+    event {
+        Subroutine;
+        randomTarget;
+    }
+    actions {
+        If(Compare(Global.Sandbox, ==, True));
+            Set Global Variable(target, Host Player);
+            Skip(2);
+        End;
+        Set Global Variable(target, Random Value In Array(Filtered Array(All Living Players(All Teams), And((Current Array Element).hasMoved, Compare(Global.prevTarget, !=, Current Array Element)))));
+        //lbl_0:
+        Wait(0.1, Ignore Condition);
+    }
+}
+
+rule ("Active game - target not existing fail safe") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.target == Null;
+    }
+    actions {
+        Call Subroutine(randomTarget);
+        Wait(1, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Duels - Global HUD") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.duelMode == True;
+    }
+    actions {
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("current duel: {0} vs. {1}", First Of(All Living Players(All Teams)), Value In Array(All Living Players(All Teams), 1)), Top, -1, Null, Null, Color(Purple), Visible To and String, Default Visibility);
+    }
+}
+
+rule ("Duels - Queue HUD") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.duelMode == True;
+    }
+    actions {
+        Create HUD Text(If-Then-Else(Is Dead(Event Player), Event Player, Null), Null, Custom String("You fight in {0} rounds.", Add(Index Of Array Value(Global.duelQueue, Event Player), 1)), Null, Top, -1, Null, Color(Purple), Null, Visible To and String, Default Visibility);
+    }
+}
+
+rule ("Duels - kill players when more than two alive") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.duelMode == True;
+        Is Game In Progress == False;
+        Number Of Living Players(All Teams) > 2;
+    }
+    actions {
+        Kill(First Of(Remove From Array(All Living Players(All Teams), Global.target)), Null);
+        Wait(0.5, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Duels - start game") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.duelMode == True;
+        Is Game In Progress == True;
+        Count Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved)) == 2;
+    }
+    actions {
+        Wait(0.016, Abort When False);
+        Abort If Condition Is False;
+        Call Subroutine(setupFinal);
+    }
+}
+
+rule ("Duels - not enough players alive") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.duelMode == True;
+        Is Game In Progress == True;
+        Number Of Living Players(All Teams) < 2;
+        Count Of(Global.duelQueue) > 0;
+    }
+    actions {
+        Call Subroutine(deleteBall);
+        Stop Chasing Global Variable(ballSpawnCountdown);
+        If(Is Alive(First Of(All Living Players(All Teams))));
+            Modify Player Score(All Living Players(All Teams), 1);
+            Big Message(All Players(All Teams), Custom String("{0} wins, congrats!", First Of(All Living Players(All Teams))));
+            Wait(2, Ignore Condition);
+        End;
+        Resurrect(First Of(Global.duelQueue));
+        Wait(0.5, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Duels - queue dead player") {
+    event {
+        Player Died;
+        All;
+        All;
+    }
+    conditions {
+        Global.duelMode == True;
+    }
+    actions {
+        Modify Global Variable(duelQueue, Append To Array, Event Player);
+    }
+}
+
+rule ("Duels - remove living player from queue") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Alive(Event Player) == True;
+        Global.duelMode == True;
+    }
+    actions {
+        Modify Global Variable(duelQueue, Remove From Array By Value, Event Player);
+    }
+}
+
+rule ("Duels - remove leaving player from queue") {
+    event {
+        Player Left Match;
+        All;
+        All;
+    }
+    conditions {
+        Global.duelMode == True;
+    }
+    actions {
+        Modify Global Variable(duelQueue, Remove From Array By Value, Event Player);
+    }
+}
+
+rule ("Collision - ball reaches player") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.ballIsOut == True;
+        Distance Between(Global.ballPosition, Eye Position(Global.target)) <= 1.9;
+    }
+    actions {
+        Call Subroutine(collisionTarget);
+    }
+}
+
+rule ("Collision - collision check") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.ballIsOut == True;
+        Global.ballSpeed > 150;
+    }
+    actions {
+        If(Compare(Global.ballHitPosition, !=, Null));
+            "-o--x--------o->Between last ballPosition & middlePosition"
+            Set Global Variable(phasePosition1, Add(Global.ballHitPosition, Global.phasePosition));
+            Modify Global Variable(phasePosition1, Divide, 2);
+            "-o-----x-----o->Between last & current ballPosition"
+            Set Global Variable(phasePosition, Global.ballHitPosition);
+            Set Global Variable(ballHitPosition, Null);
+        Else;
+            "-o--x--------o->Between last ballPosition & middlePosition"
+            Set Global Variable(phasePosition1, Add(Global.phasePosition, Global.ballPosition));
+            Modify Global Variable(phasePosition1, Divide, 2);
+            Modify Global Variable(phasePosition1, Add, Global.phasePosition);
+            Modify Global Variable(phasePosition1, Divide, 2);
+            Modify Global Variable(phasePosition, Add, Global.ballPosition);
+            Modify Global Variable(phasePosition, Divide, 2);
+        End;
+        "-o--------x--o->Between phasePosition & current ballPosition & phasePosition"
+        Set Global Variable(phasePosition2, Add(Global.phasePosition, Global.ballPosition));
+        Modify Global Variable(phasePosition2, Divide, 2);
+        "-o-----------x->"
+        If(Compare(Distance Between(Global.ballPosition, Eye Position(Global.target)), <=, 1.9));
+            Call Subroutine(collisionTarget);
+        Else If(Compare(Distance Between(Global.phasePosition, Eye Position(Global.target)), <=, 1.9));
+            Call Subroutine(collisionTarget);
+        Else If(Compare(Distance Between(Global.phasePosition1, Eye Position(Global.target)), <=, 1.9));
+            Call Subroutine(collisionTarget);
+        Else If(Compare(Distance Between(Global.phasePosition2, Eye Position(Global.target)), <=, 1.9));
+            Call Subroutine(collisionTarget);
+        End;
+        "Save last ballPosition for next loop"
+        Set Global Variable(phasePosition, Evaluate Once(Global.ballPosition));
+        Wait(0, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Collision - collision sub") {
+    event {
+        Subroutine;
+        collisionTarget;
+    }
+    actions {
+        If(Compare(Global.ballSpeedCap, ==, Global.ballSpeed));
+            Skip If(And(Global.bozo_Bot, Is Dummy Bot(Global.target)), 7);
+        End;
+        If(And(Global.bozo_Bot, Is Dummy Bot(Global.target)));
+            Press Button(Global.target, Button(Ability 2));
+        End;
+        Skip If(Is Using Ability 1(Global.target), 4);
+        "Only when Tracing mode == true"
+        Skip If(Compare(Global.tracingPoints, ==, 0), 1);
+        Skip If(Is Using Ability 2(Global.target), 2);
+        //lbl_0:
+        //lbl_2:
+        Call Subroutine(deflectFail);
+        Abort;
+        //lbl_1:
+        //lbl_3:
+        If(And(Compare(Global.ballPhysicsMode, ==, 2), Compare(Global.ballMotion, !=, 2)));
+            "layered on top of original Modern movement. The deflector's 3D facing\ndirection remains dominant, while incoming ball momentum contributes\nslightly more on side-angle redirects so geometry matters."
+            Set Global Variable(reboundIncomingDirection, Direction Towards(Vector(0, 0, 0), Evaluate Once(Global.ballDirection)));
+            Set Global Variable(reboundInfluence, Add(Global.experimentalReboundMin, Multiply(Divide(Min(Angle Between Vectors(Global.reboundIncomingDirection, Facing Direction Of(Global.target)), Subtract(180, Angle Between Vectors(Global.reboundIncomingDirection, Facing Direction Of(Global.target)))), 90), Subtract(Global.experimentalReboundMax, Global.experimentalReboundMin))));
+            Set Global Variable(ballDirection, Direction Towards(Vector(0, 0, 0), Add(Multiply(Facing Direction Of(Global.target), Subtract(1, Global.reboundInfluence)), Multiply(Global.reboundIncomingDirection, Global.reboundInfluence))));
+        Else;
+            Set Global Variable(ballDirection, Multiply(Facing Direction Of(Global.target), If-Then-Else(Compare(Global.ballMotion, ==, 2), Global.ballSpeed, 1)));
+        End;
+        Set Global Variable(prevTarget, Global.target);
+        If(Is Using Ability 1(Global.prevTarget));
+            Call Subroutine(dashBall);
+        End;
+        If(Compare((Global.prevTarget).Critslash, ==, True));
+            "ballSpeed = min(ballSpeedCap, ballSpeed * 1.2)"
+            Set Player Variable(Global.prevTarget, Critalert, True);
+            Set Player Variable(Global.prevTarget, Critslash, False);
+        Else;
+            Set Global Variable(ballSpeed, Min(Global.ballSpeedCap, Multiply(Global.ballSpeed, 1.05)));
+        End;
+        If(Compare(Current Game Mode, ==, Game Mode(Team Deathmatch)));
+            Call Subroutine(TDMcollision);
+        End;
+        Skip If(Compare(Current Game Mode, ==, Game Mode(Team Deathmatch)), 3);
+        Set Global Variable(target, First Of(Sorted Array(Filtered Array(Remove From Array(All Living Players(All Teams), Global.target), (Current Array Element).hasMoved), Angle Between Vectors(Facing Direction Of(Global.target), Direction Towards(Global.target, Position Of(Current Array Element))))));
+        Play Effect(All Players(All Teams), Explosion Sound, Color(White), Evaluate Once(Position Of(Global.prevTarget)), 150);
+        Play Effect(All Players(All Teams), Baptiste Biotic Launcher Explosion Sound, Color(White), Evaluate Once(Position Of(Global.prevTarget)), 20);
+        //lbl_4:
+        "Redirect-sensitive systems should start fresh after the ball changes target."
+        Set Global Variable(ballRedirectAge, 0);
+        Set Global Variable(experimentalSteeringRate, Multiply(Global.ballDirectionRate, Global.experimentalHomingStart));
+        Set Global Variable(antiGhostPrevDistance, 999);
+        Set Global Variable(antiGhostStallTimer, 0);
+        If(And(Compare(Global.ballMotion, ==, 0), Compare(Global.ballPhysicsMode, !=, 2)));
+            Start Rule(ballCurve, Restart Rule);
+        End;
+    }
+}
+
+rule ("Collision - deflect fail sub") {
+    event {
+        Subroutine;
+        deflectFail;
+    }
+    actions {
+        If(And(And(Compare(Global.killCounterEnabled, ==, True), Compare(Global.prevTarget, !=, Null)), Not(Is Dummy Bot(Global.prevTarget))));
+            Modify Player Variable(Global.prevTarget, kills, Add, 1);
+        End;
+        Kill(Global.target, Global.prevTarget);
+        Call Subroutine(playDeathEffect);
+        If(Compare(Number Of Living Players(All Teams), ==, 1));
+            Call Subroutine(alert);
+            Call Subroutine(deleteBall);
+            Abort;
+        End;
+        If(Global.endlessMode);
+            "ballDirection *= -1"
+            Set Global Variable(target, First Of(Sorted Array(Filtered Array(Remove From Array(All Living Players(All Teams), Global.target), (Current Array Element).hasMoved), Angle Between Vectors(Global.ballDirection, Direction Towards(Global.ballPosition, Position Of(Current Array Element))))));
+        Else;
+            Call Subroutine(deleteBall);
+            Call Subroutine(randomTarget);
+        End;
+    }
+}
+
+rule ("Collision - play death effect sub") {
+    event {
+        Subroutine;
+        playDeathEffect;
+    }
+    actions {
+        Play Effect(All Players(All Teams), Ashe Dynamite Explosion Sound, Color(Sky Blue), Position Of(Global.ballPosition), 80);
+        If(Global.endlessMode);
+            Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(White), Global.ballPosition, 2);
+            Abort;
+        End;
+        Play Effect(All Players(All Teams), Ashe Dynamite Explosion Effect, Team 1, Position Of(Global.ballPosition), 40);
+        Play Effect(All Players(All Teams), DVa Self Destruct Explosion Effect, All Teams, Position Of(Global.ballPosition), 40);
+        Play Effect(All Players(All Teams), Doomfist Meteor Strike Impact Effect, Team 1, Position Of(Global.ballPosition), 40);
+    }
+}
+
+rule ("Collision - dash sub") {
+    event {
+        Subroutine;
+        dashBall;
+    }
+    actions {
+        If(Compare((Global.prevTarget).stunCooldown, <=, 0));
+            Set Status(Global.prevTarget, Null, Knocked Down, 1);
+            Set Player Variable(Global.prevTarget, stunCooldown, 0.6);
+        End;
+    }
+}
+
+rule ("Collision - ball curve sub") {
+    event {
+        Subroutine;
+        ballCurve;
+    }
+    actions {
+        If(Compare(Global.ballMotion, ==, 0));
+            Set Global Variable(ballDirectionRate, 6);
+            "chaseOverTime(ballDirectionRate, ballDirectionRateInit, 0.04, ChaseTimeReeval.NONE)"
+            Wait(0.05, Ignore Condition);
+            Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
+        End;
+    }
+}
+
+rule ("Collision - delete ball sub") {
+    event {
+        Subroutine;
+        deleteBall;
+    }
+    actions {
+        Start Rule(stopBall, Restart Rule);
+        Set Global Variable(prevTarget, Null);
+        Set Global Variable(ballPosition, Down);
+        Set Global Variable(ballDirection, Vector(0, 0, 0));
+        Set Global Variable(ballSpawnCountdown, 2);
+        Set Global Variable(ballHitPosition, Null);
+        Set Global Variable(phasePosition, Down);
+        Set Global Variable(phasePosition1, Down);
+        Set Global Variable(phasePosition2, Down);
+        Set Global Variable(antiGhostPrevDistance, 999);
+        Set Global Variable(antiGhostStallTimer, 0);
+        Set Global Variable(ballRedirectAge, 999);
+        Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
+        Set Global Variable(experimentalSteeringRate, Global.ballDirectionRateInit);
+        Set Global Variable(reboundIncomingDirection, Vector(0, 0, 0));
+        Set Global Variable(reboundInfluence, Global.experimentalReboundMin);
+    }
+}
+
+rule ("Ball behavior - start ball") {
+    event {
+        Subroutine;
+        startBall;
+    }
+    actions {
+        Set Global Variable(ballIsOut, True);
+        "Spawned balls start already aimed at the target; redirect ramp applies after deflects."
+        Set Global Variable(ballRedirectAge, 999);
+        Set Global Variable(experimentalSteeringRate, Global.ballDirectionRate);
+        Set Global Variable(reboundIncomingDirection, Global.ballDirection);
+        Set Global Variable(reboundInfluence, Global.experimentalReboundMin);
+        If(Compare(Global.ballPhysicsMode, ==, 1));
+            Start Rule(startLegacyPlusBall, Restart Rule);
+        Else If(Compare(Global.ballPhysicsMode, ==, 2));
+            Start Rule(startExperimentalBall, Restart Rule);
+        Else If(Or(Compare(Global.ballMotion, ==, 0), Compare(Global.ballMotion, ==, 1)));
+            Start Rule(startModernBall, Restart Rule);
+        Else If(Compare(Global.ballMotion, ==, 2));
+            Start Rule(startAstroBall, Restart Rule);
+        Else If(Compare(Global.ballMotion, ==, 3));
+            Start Rule(startRetroBall, Restart Rule);
+        End;
+    }
+}
+
+rule ("Ball behavior - stop ball") {
+    event {
+        Subroutine;
+        stopBall;
+    }
+    actions {
+        Set Global Variable(ballIsOut, False);
+        Stop Chasing Global Variable(ballDirection);
+        Stop Chasing Global Variable(ballPosition);
+        Stop Chasing Global Variable(ballSpeed);
+    }
+}
+
+rule ("Ball behavior - modern motion") {
+    event {
+        Subroutine;
+        startModernBall;
+    }
+    actions {
+        Chase Global Variable At Rate(ballPosition, Add(Global.ballPosition, Multiply(Multiply(Global.ballDirection, Global.ballSpeed), Global.motionMultiplier)), Global.ballSpeed, Destination and Rate);
+        Chase Global Variable At Rate(ballSpeed, Global.ballSpeedCap, Global.ballAcceleration, Destination and Rate);
+        Chase Global Variable At Rate(ballDirection, Direction Towards(Global.ballPosition, Eye Position(Global.target)), Update Every Frame(Global.ballDirectionRate), Destination and Rate);
+    }
+}
+
+rule ("Ball behavior - Legacy+ motion") {
+    event {
+        Subroutine;
+        startLegacyPlusBall;
+    }
+    actions {
+        "Legacy+ is a chase-free test path for the modern/rapid motion styles.\nAstro and retro still use their original engines for now."
+        If(Compare(Global.ballMotion, ==, 2));
+            Start Rule(startAstroBall, Restart Rule);
+            Abort;
+        Else If(Compare(Global.ballMotion, ==, 3));
+            Start Rule(startRetroBall, Restart Rule);
+            Abort;
+        End;
+        While(Global.ballIsOut);
+            Set Global Variable(ballSpeed, Min(Global.ballSpeedCap, Add(Global.ballSpeed, Multiply(Global.ballAcceleration, 0.016))));
+            If(Compare(Global.target, !=, Null));
+                Set Global Variable(ballDirection, Direction Towards(Vector(0, 0, 0), Add(Global.ballDirection, Multiply(Multiply(Direction Towards(Global.ballPosition, Eye Position(Global.target)), Global.ballDirectionRate), 0.016))));
+            End;
+            Modify Global Variable(ballPosition, Add, Multiply(Multiply(Multiply(Global.ballDirection, Global.ballSpeed), Global.motionMultiplier), 0.016));
+            Wait(0.016, Ignore Condition);
+        End;
+    }
+}
+
+rule ("Ball behavior - experimental hybrid motion") {
+    event {
+        Subroutine;
+        startExperimentalBall;
+    }
+    actions {
+        "direction is mostly player aim with a small 3D incoming-momentum influence,\nthen homing returns smoothly. The tuning sliders in 10 - Ball control\nthe incoming-momentum influence and homing handoff so the feel can be\nadjusted in-game while playtesting."
+        If(Compare(Global.ballMotion, ==, 2));
+            Start Rule(startAstroBall, Restart Rule);
+            Abort;
+        Else If(Compare(Global.ballMotion, ==, 3));
+            Start Rule(startRetroBall, Restart Rule);
+            Abort;
+        End;
+        Chase Global Variable At Rate(ballPosition, Add(Global.ballPosition, Multiply(Multiply(Global.ballDirection, Global.ballSpeed), Global.motionMultiplier)), Global.ballSpeed, Destination and Rate);
+        Chase Global Variable At Rate(ballSpeed, Global.ballSpeedCap, Global.ballAcceleration, Destination and Rate);
+        Set Global Variable(experimentalSteeringRate, Global.ballDirectionRate);
+        Chase Global Variable At Rate(ballDirection, Direction Towards(Global.ballPosition, Eye Position(Global.target)), Update Every Frame(Global.experimentalSteeringRate), Destination and Rate);
+        While(Global.ballIsOut);
+            Set Global Variable(ballRedirectAge, Min(999, Add(Global.ballRedirectAge, 0.016)));
+            If(Compare(Global.target, !=, Null));
+                "Dodgeball Hybrid homing handoff: throw/rebound identity first,\nthen a smooth return to normal Modern steering. This uses no\nclose-range magnetic tightening; AntiOrbit handles true orbit abuse."
+                If(Compare(Global.ballRedirectAge, <, Global.experimentalHomingHold));
+                    Set Global Variable(experimentalSteeringRate, Multiply(Global.ballDirectionRate, Global.experimentalHomingStart));
+                Else If(Compare(Global.ballRedirectAge, <, Add(Global.experimentalHomingHold, Global.experimentalHomingRamp)));
+                    Set Global Variable(experimentalSteeringRate, Multiply(Global.ballDirectionRate, Add(Global.experimentalHomingStart, Multiply(Divide(Subtract(Global.ballRedirectAge, Global.experimentalHomingHold), Global.experimentalHomingRamp), Subtract(1, Global.experimentalHomingStart)))));
+                Else;
+                    Set Global Variable(experimentalSteeringRate, Global.ballDirectionRate);
+                End;
+            End;
+            Wait(0.016, Ignore Condition);
+        End;
+    }
+}
+
+rule ("Ball Physics - retro motion") {
+    event {
+        Subroutine;
+        startRetroBall;
+    }
+    actions {
+        Chase Global Variable At Rate(ballPosition, Eye Position(Global.target), Global.ballSpeed, Destination and Rate);
+        Chase Global Variable At Rate(ballSpeed, Global.ballSpeedCap, Global.ballAcceleration, Destination and Rate);
+    }
+}
+
+rule ("Ball Physics - astro motion") {
+    event {
+        Subroutine;
+        startAstroBall;
+    }
+    actions {
+        Chase Global Variable At Rate(ballPosition, Update Every Frame(Add(Global.ballPosition, Global.ballDirection)), Update Every Frame(Magnitude Of(Global.ballDirection)), Destination and Rate);
+        "ballDirection is the ball's velocity"
+        Chase Global Variable At Rate(ballDirection, Update Every Frame(Subtract(Add(Multiply(Global.ballDirection, 0.93), Eye Position(Global.target)), Global.ballPosition)), Update Every Frame(Multiply(Square Root(Multiply(Subtract(Global.ballSpeed, Max(Dot Product(Global.ballDirection, Direction Towards(Global.ballPosition, Eye Position(Global.target))), 0)), Global.ballSpeed)), 3)), Destination and Rate);
+        "ballSpeed is the ball's acceleration coefficient"
+        Chase Global Variable At Rate(ballSpeed, Global.ballSpeedCap, Global.ballAcceleration, Destination and Rate);
+        Wait(0.016, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Ball Physics - anti ghost correction") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.antiGhostMode != 0;
+        Global.ballIsOut == True;
+        Global.ballMotion == 0;
+        Global.target != Null;
+        Is Alive(Global.target) == True;
+    }
+    actions {
+        "Mode 2 = steer. If the ball is close to the target and its current\ndirection is far off from the ideal target direction, temporarily raise\nsteering strength. Experimental leaves AntiGhost off by default;\nTournament+ uses Steer."
+        If(Compare(Distance Between(Global.ballPosition, Eye Position(Global.target)), <=, 7));
+            If(Compare(Global.antiGhostMode, ==, 1));
+                If(Compare(Global.antiGhostPrevDistance, ==, 999));
+                    Set Global Variable(antiGhostPrevDistance, Distance Between(Global.ballPosition, Eye Position(Global.target)));
+                End;
+                If(Compare(Distance Between(Global.ballPosition, Eye Position(Global.target)), >=, Subtract(Global.antiGhostPrevDistance, 0.05)));
+                    Modify Global Variable(antiGhostStallTimer, Add, 0.05);
+                Else;
+                    Set Global Variable(antiGhostStallTimer, 0);
+                End;
+                Set Global Variable(antiGhostPrevDistance, Distance Between(Global.ballPosition, Eye Position(Global.target)));
+                If(Compare(Global.antiGhostStallTimer, >=, 0.15));
+                    If(Compare(Global.ballDirectionRate, <, 4));
+                        Set Global Variable(ballDirectionRate, 4);
+                    End;
+                Else If(Compare(Global.ballDirectionRate, ==, 4));
+                    Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
+                End;
+            Else If(Compare(Global.antiGhostMode, ==, 2));
+                If(Compare(Angle Between Vectors(Global.ballDirection, Direction Towards(Global.ballPosition, Eye Position(Global.target))), >=, 35));
+                    Set Global Variable(antiGhostStallTimer, 0);
+                    Set Global Variable(antiGhostPrevDistance, Distance Between(Global.ballPosition, Eye Position(Global.target)));
+                    If(Compare(Global.ballDirectionRate, <, 4));
+                        Set Global Variable(ballDirectionRate, 4);
+                    End;
+                Else If(Compare(Global.ballDirectionRate, ==, 4));
+                    Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
+                End;
+            End;
+        Else;
+            Set Global Variable(antiGhostPrevDistance, 999);
+            Set Global Variable(antiGhostStallTimer, 0);
+            If(Compare(Global.ballDirectionRate, ==, 4));
+                Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
+            End;
+        End;
+        Wait(0.05, Abort When False);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Ball Physics - general collision") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.ballIsOut == True;
+        Update Every Frame(Is In Line of Sight(Global.ballPosition, Add(Global.ballPosition, Multiply(Multiply(Global.ballDirection, If-Then-Else(Compare(Global.ballMotion, !=, 2), Global.ballSpeed, 1)), 0.033)), Barriers Do Not Block LOS)) == False;
+        Y Component Of(Global.ballPosition) > 7.5;
+        Or(Or(Or(Or(Compare(Z Component Of(Global.ballPosition), >, 20), Compare(Z Component Of(Global.ballPosition), <, -20)), Compare(X Component Of(Global.ballPosition), >, 20)), Compare(X Component Of(Global.ballPosition), <, -20)), Compare(Y Component Of(Global.ballPosition), >, 0)) == True;
+    }
+    actions {
+        Set Global Variable(ballNextFramePosition, Add(Global.ballPosition, Multiply(Multiply(Global.ballDirection, Global.ballSpeed), 0.066)));
+        "Used for phasingprotection in Ball/Target - collision check"
+        Set Global Variable(ballHitPosition, Ray Cast Hit Position(Global.ballPosition, Global.ballNextFramePosition, Null, All Players(All Teams), False));
+        If(Or(Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))), And(Compare(Y Component Of(Global.ballHitPosition), <, -0.5), Compare(Y Component Of(Global.ballHitPosition), >, -3.5))));
+            Set Global Variable(CollisionSurfaceDistances, Array(Distance Between(Global.ballHitPosition, Vector(20, Y Component Of(Global.ballHitPosition), Z Component Of(Global.ballHitPosition))), Distance Between(Global.ballHitPosition, Vector(-20, Y Component Of(Global.ballHitPosition), Z Component Of(Global.ballHitPosition))), Distance Between(Global.ballHitPosition, Vector(X Component Of(Global.ballHitPosition), Y Component Of(Global.ballHitPosition), 20)), Distance Between(Global.ballHitPosition, Vector(X Component Of(Global.ballHitPosition), Y Component Of(Global.ballHitPosition), -20))));
+            Call Subroutine(simpleIslandSideCollision);
+        Else;
+            Set Global Variable(BallCollisionSurfaceNormal, Ray Cast Hit Normal(Global.ballPosition, Global.ballNextFramePosition, Null, All Players(All Teams), False));
+            Modify Global Variable(ballDirection, Subtract, Multiply(Multiply(2, Dot Product(Global.ballDirection, Global.BallCollisionSurfaceNormal)), Global.BallCollisionSurfaceNormal));
+        End;
+        If(Compare(Global.ballPhysicsMode, ==, 2));
+            "Surface rebounds use their own tuning slider so wall/platform bounces\ncan read physically without resetting to the full player-deflect window."
+            Set Global Variable(experimentalSteeringRate, Multiply(Global.ballDirectionRate, Global.experimentalSurfaceHoming));
+            Set Global Variable(ballRedirectAge, Add(Global.experimentalHomingHold, Multiply(Global.experimentalHomingRamp, Max(0, Min(1, Divide(Subtract(Global.experimentalSurfaceHoming, Global.experimentalHomingStart), Max(0.01, Subtract(1, Global.experimentalHomingStart))))))));
+            Set Global Variable(antiGhostPrevDistance, 999);
+            Set Global Variable(antiGhostStallTimer, 0);
+        End;
+        Play Effect(All Players(All Teams), Pharah Barrage Explosion Effect, All Teams, Global.ballHitPosition, 1);
+        Play Effect(All Players(All Teams), Echo Sticky Bomb Explosion Sound, Color(White), Global.ballHitPosition, 30);
+        Wait(0.02, Abort When False);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Ball Physics - island collision") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.ballIsOut == True;
+        Z Component Of(Global.ballPosition) < 20.2;
+        Z Component Of(Global.ballPosition) > -20.2;
+        X Component Of(Global.ballPosition) < 20.2;
+        X Component Of(Global.ballPosition) > -20.2;
+        Y Component Of(Global.ballPosition) < 0;
+        Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))) == True;
+    }
+    actions {
+        Set Global Variable(CollisionSurfaceDistances, Array(Distance Between(Global.ballPosition, Vector(X Component Of(Global.ballPosition), 0, Z Component Of(Global.ballPosition))), Distance Between(Global.ballPosition, Vector(20, Y Component Of(Global.ballPosition), Z Component Of(Global.ballPosition))), Distance Between(Global.ballPosition, Vector(-20, Y Component Of(Global.ballPosition), Z Component Of(Global.ballPosition))), Distance Between(Global.ballPosition, Vector(X Component Of(Global.ballPosition), Y Component Of(Global.ballPosition), 20)), Distance Between(Global.ballPosition, Vector(X Component Of(Global.ballPosition), Y Component Of(Global.ballPosition), -20))));
+        Call Subroutine(simpleIslandCollision);
+        If(Compare(Global.ballPhysicsMode, ==, 2));
+            "Floor/platform rebounds use the same surface tuning slider as walls."
+            Set Global Variable(experimentalSteeringRate, Multiply(Global.ballDirectionRate, Global.experimentalSurfaceHoming));
+            Set Global Variable(ballRedirectAge, Add(Global.experimentalHomingHold, Multiply(Global.experimentalHomingRamp, Max(0, Min(1, Divide(Subtract(Global.experimentalSurfaceHoming, Global.experimentalHomingStart), Max(0.01, Subtract(1, Global.experimentalHomingStart))))))));
+            Set Global Variable(antiGhostPrevDistance, 999);
+            Set Global Variable(antiGhostStallTimer, 0);
+        End;
+        Play Effect(All Players(All Teams), Pharah Barrage Explosion Effect, All Teams, Global.ballPosition, 1);
+        Play Effect(All Players(All Teams), Echo Sticky Bomb Explosion Sound, Color(White), Global.ballPosition, 30);
+        Wait(0.02, Abort When False);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Subroutine - simple island collision") {
+    event {
+        Subroutine;
+        simpleIslandCollision;
+    }
+    actions {
+        Set Global Variable(CollisionSurfaceIndex, Index Of Array Value(Global.CollisionSurfaceDistances, First Of(Sorted Array(Global.CollisionSurfaceDistances, Current Array Element))));
+        If(Compare(Global.CollisionSurfaceIndex, ==, 0));
+            If(Compare(Y Component Of(Global.ballDirection), <, 0));
+                Modify Global Variable(ballDirection, Multiply, Vector(1, -1, 1));
+            Else;
+                Set Global Variable(CollisionSurfaceIndex, Index Of Array Value(Global.CollisionSurfaceDistances, Value In Array(Sorted Array(Global.CollisionSurfaceDistances, Current Array Element), 1)));
+            End;
+        End;
+        If(Compare(Global.CollisionSurfaceIndex, ==, 1));
+            If(Compare(X Component Of(Global.ballDirection), <, 0));
+                Modify Global Variable(ballDirection, Multiply, Vector(-1, 1, 1));
+            End;
+        Else If(Compare(Global.CollisionSurfaceIndex, ==, 2));
+            If(Compare(X Component Of(Global.ballDirection), >, 0));
+                Modify Global Variable(ballDirection, Multiply, Vector(-1, 1, 1));
+            End;
+        Else If(Compare(Global.CollisionSurfaceIndex, ==, 3));
+            If(Compare(Z Component Of(Global.ballDirection), <, 0));
+                Modify Global Variable(ballDirection, Multiply, Vector(1, 1, -1));
+            End;
+        Else If(Compare(Global.CollisionSurfaceIndex, ==, 4));
+            If(Compare(Z Component Of(Global.ballDirection), >, 0));
+                Modify Global Variable(ballDirection, Multiply, Vector(1, 1, -1));
+            End;
+        End;
+    }
+}
+
+rule ("Subroutine - simple island side collision") {
+    event {
+        Subroutine;
+        simpleIslandSideCollision;
+    }
+    actions {
+        "Side-only collision helper for low/platform edge raycast hits.\nExpects four distances: +X, -X, +Z, -Z.\nDo not route this through simpleIslandCollision(), which expects\na five-surface layout with floor/top at index 0."
+        Set Global Variable(CollisionSurfaceIndex, Index Of Array Value(Global.CollisionSurfaceDistances, First Of(Sorted Array(Global.CollisionSurfaceDistances, Current Array Element))));
+        If(Compare(Global.CollisionSurfaceIndex, ==, 0));
+            If(Compare(X Component Of(Global.ballDirection), <, 0));
+                Modify Global Variable(ballDirection, Multiply, Vector(-1, 1, 1));
+            End;
+        Else If(Compare(Global.CollisionSurfaceIndex, ==, 1));
+            If(Compare(X Component Of(Global.ballDirection), >, 0));
+                Modify Global Variable(ballDirection, Multiply, Vector(-1, 1, 1));
+            End;
+        Else If(Compare(Global.CollisionSurfaceIndex, ==, 2));
+            If(Compare(Z Component Of(Global.ballDirection), <, 0));
+                Modify Global Variable(ballDirection, Multiply, Vector(1, 1, -1));
+            End;
+        Else If(Compare(Global.CollisionSurfaceIndex, ==, 3));
+            If(Compare(Z Component Of(Global.ballDirection), >, 0));
+                Modify Global Variable(ballDirection, Multiply, Vector(1, 1, -1));
+            End;
+        End;
+    }
+}
+
+rule ("Ball Physics - chamber x collision") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        "This collision is the lazy way but its only for chamber so who cares"
+        Current Map == Map(Workshop Chamber);
+        Global.ballIsOut == True;
+        Or(Compare(Add(X Component Of(Global.ballPosition), 0), >, 20), Compare(X Component Of(Global.ballPosition), <, -20)) == True;
+    }
+    actions {
+        If(Or(And(Compare(Add(X Component Of(Global.ballPosition), 0), >, 20), Compare(X Component Of(Global.ballDirection), >, 0)), And(Compare(X Component Of(Global.ballPosition), <, -20), Compare(X Component Of(Global.ballDirection), <, 0))));
+            Set Global Variable(ballDirection, Vector(Multiply(X Component Of(Global.ballDirection), -1), Y Component Of(Global.ballDirection), Z Component Of(Global.ballDirection)));
+            Play Effect(All Players(All Teams), Bad Explosion, Color(White), Global.ballPosition, 1);
+        End;
+        Wait(0.016, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Ball Physics - chamber y collision") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Current Map == Map(Workshop Chamber);
+        Global.ballIsOut == True;
+        Subtract(Compare(Add(Y Component Of(Global.ballPosition), 0), >, 40), Compare(Y Component Of(Global.ballPosition), <, 0)) == True;
+    }
+    actions {
+        If(Or(And(Compare(Add(Y Component Of(Global.ballPosition), 0), >, 40), Compare(Y Component Of(Global.ballDirection), >, 0)), And(Compare(Y Component Of(Global.ballPosition), <, 0), Compare(Y Component Of(Global.ballDirection), <, 0))));
+            Set Global Variable(ballDirection, Vector(X Component Of(Global.ballDirection), Multiply(Y Component Of(Global.ballDirection), -1), Z Component Of(Global.ballDirection)));
+            Play Effect(All Players(All Teams), Bad Explosion, Color(White), Global.ballPosition, 1);
+        End;
+        Wait(0.016, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Ball Physics - chamber z collision") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Current Map == Map(Workshop Chamber);
+        Global.ballIsOut == True;
+        Or(Compare(Add(Z Component Of(Global.ballPosition), 0), >, 20), Compare(Z Component Of(Global.ballPosition), <, -20)) == True;
+    }
+    actions {
+        If(Or(And(Compare(Add(Z Component Of(Global.ballPosition), 0), >, 20), Compare(Z Component Of(Global.ballDirection), >, 0)), And(Compare(Z Component Of(Global.ballPosition), <, -20), Compare(Z Component Of(Global.ballDirection), <, 0))));
+            Set Global Variable(ballDirection, Vector(X Component Of(Global.ballDirection), Y Component Of(Global.ballDirection), Multiply(Z Component Of(Global.ballDirection), -1)));
+            Play Effect(All Players(All Teams), Bad Explosion, Color(White), Global.ballPosition, 1);
+        End;
+        Wait(0.016, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Ball Physics - water") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        "(Global.currentMap == Map(Workshop Island) || Global.currentMap == 196) == True;"
+        Global.ballIsOut == True;
+        Or(Or(Or(Compare(X Component Of(Global.ballPosition), >, 20), Compare(X Component Of(Global.ballPosition), <, -20)), Compare(Z Component Of(Global.ballPosition), >, 20)), Compare(Z Component Of(Global.ballPosition), <, -20)) == True;
+        Y Component Of(Global.ballPosition) < Global.waterLevel;
+        Y Component Of(Global.ballDirection) < 0;
+        Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))) == True;
+    }
+    actions {
+        Modify Global Variable(ballDirection, Multiply, Vector(1, 0, 1));
+        Play Effect(All Players(All Teams), Ring Explosion, Color(White), Global.ballPosition, 2);
+    }
+}
+
+rule ("Map restrictions - put out center") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Distance Between(Position Of(Event Player), Global.circleCenter) < Add(Global.CenterOffLimitsSize, 0.5);
+    }
+    actions {
+        Apply Impulse(Event Player, Direction Towards(Global.circleCenter, Event Player), 10, To World, Cancel Contrary Motion);
+        Apply Impulse(Event Player, Up, 1.5, To World, Incorporate Contrary Motion);
+        Wait(0.25, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Map restrictions - player dashes too far out of bounds") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Distance Between(Position Of(Event Player), Vector(X Component Of(Global.circleCenter), Y Component Of(Position Of(Event Player)), Z Component Of(Global.circleCenter))) > Add(Global.SphereSize, 5);
+    }
+    actions {
+        "Workshop Island Fix\n@Condition (__getCurrentMap__() != Map.WORKSHOP_ISLAND and __getCurrentMap__() != Map.WORKSHOP_ISLAND_NIGHT) == true"
+        Set Status(Event Player, Null, Rooted, 3);
+        Apply Impulse(Event Player, Vector(X Component Of(Direction Towards(Position Of(Event Player), Global.circleCenter)), 0, Z Component Of(Direction Towards(Position Of(Event Player), Global.circleCenter))), 20, To World, Cancel Contrary Motion);
+        Apply Impulse(Event Player, Up, 3, To World, Cancel Contrary Motion);
+        Big Message(Event Player, Custom String("Do not dash out of the arena!"));
+    }
+}
+
+rule ("Map restrictions - push to circle") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Distance Between(Position Of(Event Player), Vector(X Component Of(Global.circleCenter), Y Component Of(Position Of(Event Player)), Z Component Of(Global.circleCenter))) > Subtract(Global.SphereSize, 1.5);
+        "Workshop Island Fix"
+        Current Map != Map(Workshop Island);
+        Current Map != Map(Workshop Island Night);
+    }
+    actions {
+        Apply Impulse(Event Player, Vector(X Component Of(Direction Towards(Position Of(Event Player), Global.circleCenter)), 0, Z Component Of(Direction Towards(Position Of(Event Player), Global.circleCenter))), 6, To World, Cancel Contrary Motion);
+        Apply Impulse(Event Player, Up, 3, To World, Incorporate Contrary Motion);
+        Wait(0.25, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Map restrictions - player falls off Workshop Island") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))) == True;
+        Y Component Of(Position Of(Event Player)) < -0.5;
+    }
+    actions {
+        "A MAN HAS FALLEN INTO THE LAKE IN WORKSHOP ISLAND! START THE NEW RESCUE RULE! HEY! BUILD THE NEW WORSHOP RULE, AND OFF TO THE RESCUE! PREPARE THE CONDITION, TELEPORT THE PLAYER, AND MAKE THE RESCUE! THE NEW 2.3.0 UPDATE FROM OVERWATCH WORKSHOP!"
+        If(Is Dead(Event Player));
+            Teleport(Event Player, Add(Global.circleCenter, Vector(Random Integer(-10, 10), 8, Random Integer(-10, 10))));
+            If(Compare(Event Player, ==, Global.target));
+                If(Global.ballIsOut);
+                    Call Subroutine(deleteBall);
+                End;
+            End;
+        End;
+        Wait(0.5, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Map restrictions - water surface 1") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Update Every Frame(Compare(Y Component Of(Position Of(Event Player)), <, 0)) == True;
+        Y Component Of(Position Of(Event Player)) >= -0.15;
+        Y Component Of(Velocity Of(Event Player)) <= 0;
+        Is Alive(Event Player) == True;
+        Is Using Ability 1(Event Player) == False;
+        "Workshop Island Fix"
+        Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))) == True;
+    }
+    actions {
+        Abort If(And(And(And(Compare(X Component Of(Position Of(Event Player)), <, 20.25), Compare(X Component Of(Position Of(Event Player)), >, -20.25)), Compare(Z Component Of(Position Of(Event Player)), <, 20.25)), Compare(Z Component Of(Position Of(Event Player)), >, -20.25)));
+        Set Player Variable(Event Player, currentGravity, 0);
+        Set Gravity(Event Player, 0);
+        If(Compare(Y Component Of(Velocity Of(Event Player)), <, 0));
+            Apply Impulse(Event Player, Down, 0.001, To World, Cancel Contrary Motion);
+            Apply Impulse(Event Player, Up, 0.001, To World, Cancel Contrary Motion);
+        End;
+        Wait(0.1, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Map restrictions - water surface 2") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Y Component Of(Position Of(Event Player)) < -0.15;
+        Y Component Of(Position Of(Event Player)) >= -1.25;
+        Y Component Of(Velocity Of(Event Player)) <= 0;
+        Is Alive(Event Player) == True;
+        Is Using Ability 1(Event Player) == False;
+        "Workshop Island Fix"
+        Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))) == True;
+    }
+    actions {
+        Abort If(And(And(And(Compare(X Component Of(Position Of(Event Player)), <, 20.25), Compare(X Component Of(Position Of(Event Player)), >, -20.25)), Compare(Z Component Of(Position Of(Event Player)), <, 20.25)), Compare(Z Component Of(Position Of(Event Player)), >, -20.25)));
+        Set Player Variable(Event Player, currentGravity, 0);
+        Set Gravity(Event Player, 0);
+        Apply Impulse(Event Player, Up, 1, To World, Cancel Contrary Motion);
+        Wait(0.1, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Map restrictions - water resistance") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Or(Or(Or(Compare(X Component Of(Position Of(Event Player)), >, 35), Compare(X Component Of(Position Of(Event Player)), <, -35)), Compare(Z Component Of(Position Of(Event Player)), >, 35)), Compare(Z Component Of(Position Of(Event Player)), <, -35)) == True;
+        Y Component Of(Position Of(Event Player)) <= 0;
+        Y Component Of(Position Of(Event Player)) >= -1.5;
+        Is Alive(Event Player) == True;
+        Is Using Ability 1(Event Player) == False;
+        Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))) == True;
+    }
+    actions {
+        If(Or(Or(Or(Compare(X Component Of(Position Of(Event Player)), >, 37), Compare(X Component Of(Position Of(Event Player)), <, -37)), Compare(Z Component Of(Position Of(Event Player)), >, 37)), Compare(Z Component Of(Position Of(Event Player)), <, -37)));
+            Apply Impulse(Event Player, Multiply(Direction Towards(Position Of(Event Player), Global.circleCenter), Vector(1, 0, 1)), 10, To World, Cancel Contrary Motion);
+            Wait(0.1, Ignore Condition);
+        Else;
+            Apply Impulse(Event Player, Multiply(Direction Towards(Position Of(Event Player), Global.circleCenter), Vector(1, 0, 1)), 5, To World, Incorporate Contrary Motion);
+            Wait(0.05, Ignore Condition);
+        End;
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Map restrictions - water") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Y Component Of(Position Of(Event Player)) < -1.5;
+        Is Alive(Event Player) == True;
+        "Workshop Island Fix"
+        Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))) == True;
+    }
+    actions {
+        If(Or(Or(Or(Compare(X Component Of(Position Of(Event Player)), <, 35), Compare(X Component Of(Position Of(Event Player)), >, -35)), Compare(Z Component Of(Position Of(Event Player)), <, 35)), Compare(Z Component Of(Position Of(Event Player)), >, -35)));
+            "Prevents people from going under the ledge on Workshop Island, which caused ball to go into floor.  Used to be an annoying stunkill"
+            Apply Impulse(Event Player, Up, 2, To World, Cancel Contrary Motion);
+            Apply Impulse(Event Player, Direction Towards(Event Player, Global.circleCenter), 2, To World, Incorporate Contrary Motion);
+        End;
+        If(Or(Or(Or(Compare(X Component Of(Position Of(Event Player)), >, 35), Compare(X Component Of(Position Of(Event Player)), <, -35)), Compare(Z Component Of(Position Of(Event Player)), >, 35)), Compare(Z Component Of(Position Of(Event Player)), <, -35)));
+            Apply Impulse(Event Player, Direction Towards(Event Player, Global.circleCenter), 3, To World, Incorporate Contrary Motion);
+            Apply Impulse(Event Player, Up, 0.3, To World, Cancel Contrary Motion);
+        End;
+        Wait(0.008, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Map restrictions - water leave") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Y Component Of(Position Of(Event Player)) >= 0;
+        Is Alive(Event Player) == True;
+        "Workshop Island Fix"
+        Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))) == True;
+        (Event Player).currentGravity != Global.gravity;
+    }
+    actions {
+        Set Gravity(Event Player, Global.gravity);
+        Set Player Variable(Event Player, currentGravity, Global.gravity);
+    }
+}
+
+rule ("Map restrictions - island enter") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        X Component Of(Position Of(Event Player)) < 20.25;
+        X Component Of(Position Of(Event Player)) > -20.25;
+        Z Component Of(Position Of(Event Player)) < 20.25;
+        Z Component Of(Position Of(Event Player)) > -20.25;
+        Is Alive(Event Player) == True;
+        "Workshop Island Fix"
+        Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))) == True;
+    }
+    actions {
+        Set Player Variable(Event Player, currentGravity, Global.gravity);
+        Set Gravity(Event Player, Global.gravity);
+    }
+}
+
+rule ("Subroutine - Round end call") {
+    event {
+        Subroutine;
+        alert;
+    }
+    actions {
+        Modify Global Variable(totalRounds, Subtract, 1);
+        Modify Global Variable(roundsUntilBreak, Subtract, 1);
+    }
+}
+
+rule ("Tournament - game ends after 0 Rounds left") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.totalRounds <= 0;
+        Global.tournamentMode == True;
+    }
+    actions {
+        Wait(1, Ignore Condition);
+        Set Match Time(0);
+        Enable Built-In Game Mode Completion;
+    }
+}
+
+rule ("Tournament - break") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.roundsUntilBreak <= 0;
+        Global.breaksEnabled == True;
+        Global.tournamentMode == True;
+    }
+    actions {
+        Set Global Variable(setballspawncountdown, Global.breakLength);
+        Big Message(All Players(All Teams), Custom String("Break time!"));
+        Wait(Add(Global.breakLength, 1), Ignore Condition);
+        Set Global Variable(setballspawncountdown, Global.setballspawncountdownoriginal);
+        Modify Global Variable(roundsUntilBreak, Add, Global.roundsUntilBreakInit);
+    }
+}
+
+rule ("Tournament - forbid dashing into the water") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.tournamentMode == True;
+        Y Component Of(Position Of(Event Player)) < -1;
+        Y Component Of(Velocity Of(Event Player)) < 0;
+        Event Player != Global.target;
+        Is Using Ability 1(Event Player) == True;
+    }
+    actions {
+        Teleport(Event Player, Subtract(Position Of(Event Player), Normalize(Velocity Of(Event Player))));
+        Start Forcing Player Position(Event Player, Position Of(Event Player), False);
+        Wait Until(Not(Is Using Ability 1(Event Player)), 0.5);
+        Stop Forcing Player Position(Event Player);
+    }
+}
+
+rule ("Tournament - no orbit abusing") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.tournamentMode == True;
+        Global.antiOrbitMode == False;
+        Event Player == Global.target;
+        "@Condition (angleBetweenVectors(ballDirection, directionTowards(ballPosition, eventPlayer.getEyePosition())) < 100 and angleBetweenVectors(ballDirection, directionTowards(ballPosition, eventPlayer.getEyePosition())) > -100) == true"
+        Global.ballIsOut == True;
+        Distance Between(Eye Position(Event Player), Global.ballPosition) < 20;
+        Global.ballSpeed < 80;
+    }
+    actions {
+        "smallMessage(getAllPlayers(), \"Orbit start\")"
+        Wait(7.5, Abort When False);
+        Abort If Condition Is False;
+        "smallMessage(getAllPlayers(), \"...still orbiting...\")"
+        Set Status(Event Player, Null, Asleep, 5);
+        Apply Impulse(Event Player, Add(Global.ballDirection, Up), 10, To World, Cancel Contrary Motion XYZ);
+    }
+}
+
+rule ("AntiOrbit - no orbit abusing") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.antiOrbitMode == True;
+        Event Player == Global.target;
+        Global.ballIsOut == True;
+        Is Alive(Event Player) == True;
+    }
+    actions {
+        "AntiOrbit mirrors the original tournament anti-orbit punishment, but\nuses pressure/heat to shorten the sleep timer when orbiting persists.\nDistance and speed checks stay in the body so ballPosition/ballSpeed do\nnot live in @Condition clauses."
+        If(Compare(Distance Between(Eye Position(Event Player), Global.ballPosition), >=, Global.antiOrbitRadius));
+            Wait(0.1, Ignore Condition);
+            Loop If Condition Is True;
+            Abort;
+        End;
+        If(Compare(Global.ballSpeed, >=, 80));
+            Wait(0.1, Ignore Condition);
+            Loop If Condition Is True;
+            Abort;
+        End;
+        Wait(Max(5.5, Subtract(7.5, Multiply(Add((Event Player).orbitPenalty, (Event Player).orbitHeat), 5))), Abort When False);
+        Abort If Condition Is False;
+        Abort If(Not(And(Compare(Distance Between(Eye Position(Event Player), Global.ballPosition), <, Global.antiOrbitRadius), Compare(Global.ballSpeed, <, 80))));
+        Set Status(Event Player, Null, Asleep, 5);
+        Apply Impulse(Event Player, Add(Global.ballDirection, Up), 10, To World, Cancel Contrary Motion XYZ);
+    }
+}
+
+rule ("AntiOrbit - track pressure") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.antiOrbitMode == True;
+        Is Alive(Event Player) == True;
+        Global.ballIsOut == True;
+        Event Player == Global.target;
+    }
+    actions {
+        If(Compare(Distance Between(Global.ballPosition, Eye Position(Event Player)), <, Global.antiOrbitRadius));
+            Modify Player Variable(Event Player, orbitTimer, Add, 0.25);
+            If(Compare((Event Player).orbitTimer, >, 2.5));
+                Set Player Variable(Event Player, orbitPenalty, Min(Add((Event Player).orbitPenalty, Global.antiOrbitPressureRate), 0.25));
+                Set Player Variable(Event Player, orbitHeat, Min(Add((Event Player).orbitHeat, Multiply(Global.antiOrbitPressureRate, 0.2)), 0.2));
+            End;
+        Else;
+            Set Player Variable(Event Player, orbitTimer, Max(Subtract((Event Player).orbitTimer, 0.5), 0));
+            Set Player Variable(Event Player, orbitPenalty, Max(Subtract((Event Player).orbitPenalty, 0.02), 0));
+        End;
+        Wait(0.25, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("AntiOrbit - reset when disabled") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.antiOrbitMode == False;
+    }
+    actions {
+        Set Player Variable(Event Player, orbitTimer, 0);
+        Set Player Variable(Event Player, orbitPenalty, 0);
+        Set Player Variable(Event Player, orbitHeat, 0);
+    }
+}
+
+rule ("AntiOrbit - decay heat") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.antiOrbitMode == True;
+        Is Game In Progress == True;
+        Global.breakInProgress == False;
+        Global.RoundInProgress == True;
+        Global.ballIsOut == True;
+        Event Player != Global.target;
+        (Event Player).orbitHeat > 0;
+        Has Status(Event Player, Asleep) == False;
+    }
+    actions {
+        Set Player Variable(Event Player, orbitHeat, Max(Subtract((Event Player).orbitHeat, 0.002), 0));
+        Set Player Variable(Event Player, orbitPenalty, Max(Subtract((Event Player).orbitPenalty, 0.005), 0));
+        Set Player Variable(Event Player, orbitTimer, 0);
+        Wait(0.5, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("AntiOrbit - round cleanup") {
+    event {
+        Subroutine;
+        resetOrbitRoundState;
+    }
+    actions {
+        Set Player Variable(All Players(All Teams), orbitTimer, 0);
+        Set Player Variable(All Players(All Teams), orbitPenalty, 0);
+        Set Player Variable(All Players(All Teams), orbitHeat, 0);
+    }
+}
+
+rule ("Tracing mode - gained") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.tracingMode == True;
+        Event Player == Global.target;
+        Angle Between Vectors(Facing Direction Of(Event Player), Direction Towards(Eye Position(Event Player), Global.ballPosition)) <= 45;
+    }
+    actions {
+        "@Condition eventPlayer.isInViewAngle(ballPosition, 70) == true"
+        Clear Status(Event Player, Burning);
+        Stop Chasing Global Variable(tracingPoints);
+        Set Global Variable(tracingPoints, 0.3);
+    }
+}
+
+rule ("Tracing mode - lost") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.tracingMode == True;
+        Event Player == Global.target;
+        Angle Between Vectors(Facing Direction Of(Event Player), Direction Towards(Eye Position(Event Player), Global.ballPosition)) > 45;
+    }
+    actions {
+        "@Condition eventPlayer.isInViewAngle(ballPosition, 70) == false"
+        Chase Global Variable At Rate(tracingPoints, 0, 1, Destination and Rate);
+    }
+}
+
+rule ("zBozo - spawn") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        "Currently only able to decide between 0 or 1 (false/true) bozo bots"
+        Global.bozo_Bot > 0;
+    }
+    actions {
+        While(Compare(Global.bozo_Bot, >, 0));
+            Modify Global Variable(bozo_Bot, Subtract, 1);
+            Create Dummy Bot(Hero(Genji), All Teams, Add(12, Global.bozo_Bot), Null, Host Player);
+            Wait(0.1, Ignore Condition);
+        End;
+        Set Global Variable(bozo_Bot, True);
+        Set Global Variable(bozoHasJumped, False);
+        Set Global Variable(OrbitTolerance, 0);
+        Set Global Variable(BozoTracing, False);
+    }
+}
+
+rule ("zBozo - name") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.bozo_Bot == True;
+        Is Dummy Bot(Event Player) == True;
+    }
+    actions {
+        Start Forcing Dummy Bot Name(Event Player, Custom String("zSh4d0Ws bozo"));
+    }
+}
+
+rule ("zBozo - face target while deflecting") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.bozo_Bot == True;
+        Distance Between(Eye Position(Event Player), Position Of(Global.ballPosition)) <= Multiply(2, Divide(Global.ballSpeed, 20));
+        Global.target == Event Player;
+        Is Dummy Bot(Event Player) == True;
+        Global.ballIsOut == True;
+        Is Alive(Event Player) == True;
+        Is Using Ability 1(Event Player) == False;
+        Is Using Ability 2(Event Player) == False;
+        Has Status(Event Player, Stunned) == False;
+        Global.bozoIsGhostDashing != True;
+    }
+    actions {
+        If(Compare((Event Player).canDash, ==, True));
+            If(Compare(Random Integer(0, 8), ==, 0));
+                If(Compare(Global.ballSpeed, <, 80));
+                    Start Facing(Event Player, Direction From Angles(Add(Horizontal Angle From Direction(Direction Towards(Eye Position(Event Player), Eye Position(Evaluate Once(Random Value In Array(Remove From Array(All Living Players(All Teams), Event Player)))))), Evaluate Once(Random Integer(-35, 35))), Evaluate Once(Random Integer(-35, 35))), 10000, To World, Direction and Turn Rate);
+                Else;
+                    Start Facing(Event Player, Direction From Angles(Add(Horizontal Angle From Direction(Direction Towards(Eye Position(Event Player), Eye Position(Evaluate Once(Random Value In Array(Remove From Array(All Living Players(All Teams), Event Player)))))), Evaluate Once(Random Integer(-10, 10))), Evaluate Once(Random Integer(-10, 10))), 10000, To World, Direction and Turn Rate);
+                End;
+            Else;
+                Start Facing(Event Player, Vector(Random Integer(-360, 360), Random Integer(-360, 360), Random Integer(-360, 360)), 10000, To World, Direction and Turn Rate);
+            End;
+        Else;
+            If(Compare(Random Integer(0, 1), ==, 0));
+                Start Facing(Event Player, Direction From Angles(Add(Horizontal Angle From Direction(Direction Towards(Eye Position(Event Player), Eye Position(Player Closest To Reticle(Event Player, All Teams)))), Evaluate Once(Random Integer(-90, -45))), Evaluate Once(Random Integer(-90, 90))), 10000, To World, Direction and Turn Rate);
+            Else;
+                Start Facing(Event Player, Direction From Angles(Add(Horizontal Angle From Direction(Direction Towards(Eye Position(Event Player), Eye Position(Player Closest To Reticle(Event Player, All Teams)))), Evaluate Once(Random Integer(45, 90))), Evaluate Once(Random Integer(-90, 90))), 10000, To World, Direction and Turn Rate);
+            End;
+            Wait(0, Ignore Condition);
+            Loop If(Is True For Any(Remove From Array(All Living Players(All Teams), Event Player), Is In View Angle(Event Player, Eye Position(Current Array Element), 30)));
+        End;
+        Wait Until(Or(Compare(Global.target, !=, Event Player), Is Dead(Event Player)), 99999);
+        If(Compare(Angle Between Vectors(Multiply(Global.ballDirection, -1), Direction Towards(Global.target, Global.ballPosition)), <, 20));
+            "if distance(eventPlayer.getEyePosition(), target.getEyePosition()) < ballSpeed * 0.3:\nbozoWillEdash = true\nbigMessage(getAllPlayers(), \"EDASH\")"
+            If(Compare(Distance Between(Eye Position(Event Player), Global.ballPosition), <, Global.ballSpeed));
+                Set Global Variable(bozoWillGhostDash, True);
+            End;
+        End;
+        Wait(0.3, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("zBozo - face the Ball") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.bozo_Bot == True;
+        Is Dummy Bot(Event Player) == True;
+        Distance Between(Eye Position(Event Player), Global.ballPosition) >= Multiply(2, Divide(Global.ballSpeed, 20));
+        Is Alive(Event Player) == True;
+        Global.bozoIsGhostDashing != True;
+        Is Using Ability 1(Event Player) == False;
+        Is Using Ability 2(Event Player) == False;
+        Has Status(Event Player, Stunned) == False;
+    }
+    actions {
+        Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Divide(Add(Global.ballPosition, Eye Position(Global.target)), 2)), 1000, To World, Direction and Turn Rate);
+    }
+}
+
+rule ("zBozo - behavior changes after round") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.roundEndCall == True;
+    }
+    actions {
+        Set Global Variable(bozoBehaviorModes, Random Value In Array(Array(2)));
+        If(Compare(Global.bozoBehaviorModes, ==, 1));
+            Set Global Variable(bozoAggression, 10);
+        Else If(Compare(Global.bozoBehaviorModes, ==, 2));
+            Set Global Variable(bozoAggression, 5);
+    }
+}
+
+rule ("zBozo - Movement reworked") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.bozo_Bot == True;
+        Is Game In Progress == True;
+        Is Dummy Bot(Event Player) == True;
+        Global.bozoWillOrbit != True;
+        Is Alive(Event Player) == True;
+    }
+    actions {
+        "@Condition (eventPlayer.getPosition().x < 18 or eventPlayer.getPosition().x > -18 or eventPlayer.getPosition().z < 18 or eventPlayer.getPosition().z > -18) == true"
+        If(Or(Or(Or(Compare(X Component Of(Position Of(Event Player)), >, 18), Compare(X Component Of(Position Of(Event Player)), <, -18)), Compare(Z Component Of(Position Of(Event Player)), >, 18)), Compare(Z Component Of(Position Of(Event Player)), <, -18)));
+            Stop Throttle In Direction(Event Player);
+            Start Throttle In Direction(Event Player, Direction Towards(Position Of(Event Player), Vector(0, 0, 0)), 1, To World, Replace existing throttle, None);
+            "bigMessage(getAllPlayers(), \"ANTIFLOAT\")"
+            Wait(Random Real(1, 1.5), Ignore Condition);
+            Loop If Condition Is True;
+        End;
+        If(Compare(Event Player, !=, Global.target));
+            If(Compare(Distance Between(Position Of(Event Player), Position Of(Global.target)), >=, Global.bozoAggression));
+                Start Throttle In Direction(Event Player, Direction Towards(Position Of(Event Player), Global.target), 0.8, To Player, Replace existing throttle, None);
+                Wait(Random Real(0.5, 3), Ignore Condition);
+                Loop If Condition Is True;
+            Else;
+                Stop Throttle In Direction(Event Player);
+                Start Throttle In Direction(Event Player, Evaluate Once(Direction Towards(Eye Position(Global.target), Eye Position(Event Player))), 1, To World, Replace existing throttle, Direction and Magnitude);
+                Wait(Random Real(1, 1.5), Ignore Condition);
+                Loop If Condition Is True;
+            End;
+        Else;
+            Start Throttle In Direction(Event Player, Direction Towards(Position Of(Event Player), Vector(Random Real(-15, 15), 0, Random Real(-15, 15))), 0.8, To Player, Replace existing throttle, None);
+            Wait(Random Real(0.5, 3), Ignore Condition);
+            Loop If Condition Is True;
+    }
+}
+
+rule ("zBozo - Let him Orbit") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.bozo_Bot == True;
+        Is Dummy Bot(Event Player) == True;
+        Global.ballIsOut == True;
+        Distance Between(Position Of(Event Player), Global.ballPosition) < Add(5, Divide(Global.ballSpeed, 30));
+        Global.bozoWillOrbit == True;
+    }
+    actions {
+        Set Global Variable(IsOrbiting, True);
+        Start Throttle In Direction(Event Player, Divide(Add(Multiply(Global.ballDirection, -1), Multiply(Direction Towards(Global.ballPosition, Eye Position(Event Player)), 2)), 2), 1, To World, Replace existing throttle, Direction and Magnitude);
+        "eventPlayer.startThrottleInDirection(random.choice([vect(180, 0, 0), vect(-180, 0, 0)]), 1, Relativity.TO_PLAYER)"
+        Set Global Variable(OrbitTolerance, 999);
+        "bigMessage(getAllPlayers(), \"ORBIT\")"
+        Wait Until(Or(Compare(Global.target, !=, Event Player), Is Dead(Event Player)), 99999);
+        Stop Throttle In Direction(Event Player);
+        Set Global Variable(IsOrbiting, False);
+        Set Global Variable(bozoWillOrbit, 0);
+    }
+}
+
+rule ("zBozo - bozos move being chosen") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Dummy Bot(Event Player) == True;
+        Event Player == Global.target;
+    }
+    actions {
+        If(Compare(Global.bozoBehaviorModes, ==, 1));
+            If(Compare(Random Integer(1, 10), ==, 5));
+                Set Global Variable(bozoWillOrbit, True);
+    }
+}
+
+rule ("zBozo - Edash when needed") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.bozo_Bot == True;
+        Is Dummy Bot(Event Player) == True;
+        Global.ballIsOut == True;
+        Is Using Ability 2(Event Player) == True;
+    }
+    actions {
+        "@Condition (eventPlayer.isUsingAbility2() or bozoWillEdash) == true"
+        Wait Until(And(Compare(Event Player, !=, Global.target), Or(Is Using Ability 1(Global.target), Is Using Ability 2(Global.target))), 0.25);
+        If(Compare(Event Player, ==, Global.target));
+            If(Compare(Angle Between Vectors(Global.ballDirection, Direction Towards(Global.ballPosition, Eye Position(Event Player))), <, 20));
+                Set Global Variable(bozoWillEdash, True);
+                Set Facing(Event Player, Evaluate Once(Direction Towards(Eye Position(Event Player), Global.ballPosition)), To World);
+                Start Facing(Event Player, Evaluate Once(Direction Towards(Eye Position(Event Player), Global.ballPosition)), 10000, To World, Direction and Turn Rate);
+                "bigMessage(getAllPlayers(), \"EDASHING\")"
+                Wait Until(Or(Is Button Held(Event Player, Button(Ability 1)), Is Dead(Event Player)), 1);
+                Set Global Variable(bozoWillEdash, False);
+            End;
+        Else If(Compare(Event Player, ==, Global.prevTarget));
+            If(Or(Is Using Ability 1(Global.target), Is Using Ability 2(Global.target)));
+                If(Compare(Angle Between Vectors(Global.ballDirection, Direction Towards(Global.ballPosition, Eye Position(Global.target))), <, 20));
+                    Set Global Variable(bozoWillEdash, True);
+                    Set Facing(Event Player, Evaluate Once(Direction Towards(Eye Position(Event Player), Global.ballPosition)), To World);
+                    Start Facing(Event Player, Evaluate Once(Direction Towards(Eye Position(Event Player), Global.ballPosition)), 10000, To World, Direction and Turn Rate);
+                    "bigMessage(getAllPlayers(), \"EDASHING\")"
+                    Wait Until(Or(Is Button Held(Event Player, Button(Ability 1)), Is Dead(Event Player)), 1);
+                    Set Global Variable(bozoWillEdash, False);
+    }
+}
+
+rule ("zBozo - Jumping") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.bozo_Bot == True;
+        Is Dummy Bot(Event Player) == True;
+        Global.ballIsOut == True;
+    }
+    actions {
+        Set Global Variable(botJumping, Random Value In Array(Array(1, 2)));
+        If(Compare(Global.botJumping, ==, 2));
+            Press Button(Event Player, Button(Jump));
+            Wait(0.35, Ignore Condition);
+            Press Button(Event Player, Button(Jump));
+            Wait(Random Integer(5, 15), Ignore Condition);
+        Else;
+            Press Button(Event Player, Button(Jump));
+            Wait(Random Integer(3, 7), Ignore Condition);
+        End;
+        Loop;
+    }
+}
+
+rule ("zBozo - GhostDash") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.bozo_Bot == True;
+        Is Dummy Bot(Event Player) == True;
+        Global.ballIsOut == True;
+        Global.bozoWillGhostDash == True;
+    }
+    actions {
+        Set Global Variable(bozoIsGhostDashing, True);
+        If(Compare(Global.target, ==, Event Player));
+            If(Compare(Distance Between(Eye Position(Event Player), Global.ballPosition), <, Multiply(Global.ballSpeed, 0.3)));
+                Set Facing(Event Player, Evaluate Once(Facing Direction Of(Global.ballDirection)), To World);
+                Start Facing(Event Player, Evaluate Once(Facing Direction Of(Global.ballDirection)), 10000, To World, Direction and Turn Rate);
+            End;
+        Else;
+            Set Facing(Event Player, Multiply(Evaluate Once(Facing Direction Of(Global.ballDirection)), -1), To World);
+            Start Facing(Event Player, Multiply(Evaluate Once(Facing Direction Of(Global.ballDirection)), -1), 1000, To World, Direction and Turn Rate);
+            Wait Until(Or(Is Button Held(Event Player, Button(Ability 1)), Is Dead(Event Player)), 99999);
+        End;
+        Set Global Variable(bozoIsGhostDashing, False);
+    }
+}
+
+rule ("zBozo - randomize facing near ball") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.bozo_Bot == True;
+        Distance Between(Eye Position(Event Player), Position Of(Global.ballPosition)) <= Multiply(2, Divide(Global.ballSpeed, 20));
+        "@Condition target != eventPlayer"
+        Is Dummy Bot(Event Player) == True;
+        Global.ballIsOut == True;
+        Is Alive(Event Player) == True;
+        "@Condition eventPlayer.isUsingAbility2() == false"
+        Global.bozoIsGhostDashing != True;
+        Ability Cooldown(Event Player, Button(Ability 1)) != 0;
+    }
+    actions {
+        Set Facing(Event Player, Vector(Random Real(-360, 360), Random Real(-360, 360), Random Real(-360, 360)), To World);
+        Start Facing(Event Player, Vector(Random Real(-360, 360), Random Real(-360, 360), Random Integer(-360, 360)), 10000, To World, Direction and Turn Rate);
+        Wait(0.3, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("†Tombstone†") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Alive(Event Player) == True;
+        (Event Player).hasMoved == True;
+        Is Game In Progress == True;
+        Array Contains(Array(Custom String("ifyoureadthisyouverygayong"), Custom String("ren")), Custom String("{0}", Event Player)) == True;
+    }
+    actions {
+        Communicate(Event Player, Emote Up);
+        Communicate(Event Player, Emote Left);
+        Communicate(Event Player, Emote Right);
+        Communicate(Event Player, Emote Down);
+        Big Message(All Players(All Teams), Custom String("@{0}, is being banhammered!", Event Player));
+        Wait(1, Ignore Condition);
+        Set Status(Event Player, Null, Hacked, 9999);
+        Set Status(Event Player, Null, Burning, 9999);
+        Wait(3.5, Ignore Condition);
+        Remove Player(Event Player);
+    }
+}
+
+rule ("Player rank - Expert (elo > 1500)") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Custom String("{0}", Event Player) == Custom String("");
+    }
+    actions {
+        Set Player Variable(Event Player, outlineColor, Vector(128, 0, 128));
+    }
+}
+
+rule ("Player rank - Master (elo > 2000)") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Custom String("{0}", Event Player) == Custom String("");
+    }
+    actions {
+        Set Player Variable(Event Player, outlineColor, Vector(192, 192, 192));
+    }
+}
+
+rule ("Player rank - Legendary (elo > 2500)") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Custom String("{0}", Event Player) == Custom String("");
+    }
+    actions {
+        Set Player Variable(Event Player, outlineColor, Vector(255, 165, 0));
+    }
+}
+
+rule ("Player rank - Apply outline") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).outlineColor != Null;
+    }
+    actions {
+        Start Forcing Player Outlines(Event Player, If-Then-Else(Compare(Event Player, ==, Global.target), Remove From Array(All Players(All Teams), Event Player), All Players(All Teams)), True, Update Every Frame(Custom Color(X Component Of((Event Player).outlineColor), Y Component Of((Event Player).outlineColor), Z Component Of((Event Player).outlineColor), 255)), Always);
+        Start Forcing Player Outlines(Event Player, If-Then-Else(Compare(Event Player, ==, Global.target), Event Player, Null), True, Custom Color(255, 0, 0, 255), Always);
+        Wait(0, Ignore Condition);
+        Loop;
+    }
+}
+
+rule ("Player rank - Apply fade") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).outlineFade == True;
+    }
+    actions {
+        Set Player Variable(Event Player, outlineFadeBright, Add((Event Player).outlineColor, Divide((Event Player).outlineColor, 2)));
+        Set Player Variable(Event Player, outlineFadeDark, Subtract((Event Player).outlineColor, Divide((Event Player).outlineColor, 3)));
+        While(True);
+            Chase Player Variable Over Time(Event Player, outlineColor, (Event Player).outlineFadeBright, 0.5, None);
+            Wait(0.5, Ignore Condition);
+            Chase Player Variable Over Time(Event Player, outlineColor, (Event Player).outlineFadeDark, 1, None);
+            Wait(1.5, Ignore Condition);
+            Chase Player Variable Over Time(Event Player, outlineColor, (Event Player).outlineFadeBright, 0.5, None);
+            Wait(0.5, Ignore Condition);
+            Chase Player Variable Over Time(Event Player, outlineColor, (Event Player).outlineColor, 0.5, None);
+            Wait(0.5, Ignore Condition);
+        End;
+    }
+}
+
+rule ("GENJI BALL ABILITIES :OOOOOO - selection") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Button Held(Event Player, Button(Reload)) == True;
+        Is Dummy Bot(Event Player) == False;
+        Is Game In Progress == True;
+        Global.ballIsOut == False;
+        Global.Abilities == True;
+    }
+    actions {
+        Wait Until(Not(Is Button Held(Event Player, Button(Reload))), 0.4);
+        If(Is Button Held(Event Player, Button(Reload)));
+            If(Compare((Event Player).SpecialAbility, >, 3));
+                Set Player Variable(Event Player, SpecialAbility, 1);
+            Else;
+                Modify Player Variable(Event Player, SpecialAbility, Add, 1);
+            End;
+            Big Message(Event Player, Custom String("Ability changed"));
+    }
+}
+
+rule ("Gb Abilities - Description") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.Abilities == True;
+    }
+    actions {
+        Skip If(Compare((Event Player).Abilitydesc, ==, 1), 4);
+        Wait(4, Ignore Condition);
+        Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("change ability after round: hold [{0}] current: [{1}]", Input Binding String(Button(Reload)), (Event Player).SpecialAbility), Null, Right, -132, Null, Color(White), Null, Visible To and String, Default Visibility);
+        Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Ability cooldown: [{0}]", (Event Player).Abilitycooldown), Null, Right, -134, Null, Color(White), Null, Visible To and String, Default Visibility);
+        Set Player Variable(Event Player, Abilitydesc, 1);
+        //lbl_0:
+        If(Compare((Event Player).SpecialAbility, ==, 1));
+            Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Ability: 1. Super Jump: Press [{0}] and [{1}] to jump high", Input Binding String(Button(Crouch)), Input Binding String(Button(Jump))), Null, Right, -133, Null, Color(White), Null, Visible To and String, Default Visibility);
+            Wait Until(Compare((Event Player).SpecialAbility, !=, 1), 99999);
+            Destroy HUD Text(Last Text ID);
+            Loop;
+        Else If(Compare((Event Player).SpecialAbility, ==, 2));
+            Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Ability: 2. Switch Target: Press [{0}] to become the target. Double click to make it not beam you.", Input Binding String(Button(Ultimate))), Null, Right, -133, Null, Color(White), Null, Visible To and String, Default Visibility);
+            Wait Until(Compare((Event Player).SpecialAbility, !=, 2), 99999);
+            Destroy HUD Text(Last Text ID);
+            Loop;
+        Else If(Compare((Event Player).SpecialAbility, ==, 3));
+            Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Ability: 3. Blink: Press [{0}] to teleport into the direction youre looking at. You will pass through the ball.", Input Binding String(Button(Ultimate))), Null, Right, -133, Null, Color(White), Null, Visible To and String, Default Visibility);
+            Wait Until(Compare((Event Player).SpecialAbility, !=, 3), 99999);
+            Destroy HUD Text(Last Text ID);
+            Loop;
+        Else If(Compare((Event Player).SpecialAbility, ==, 4));
+            Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Ability: 4. Critical slash: Press [{0}] to make your next hit powerful, speeding up the ball way more.", Input Binding String(Button(Ultimate))), Null, Right, -133, Null, Color(White), Null, Visible To and String, Default Visibility);
+            Wait Until(Compare((Event Player).SpecialAbility, !=, 4), 99999);
+            Destroy HUD Text(Last Text ID);
+            Loop;
+        Else If(Compare((Event Player).SpecialAbility, ==, 5));
+            Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Ability: 3."), Null, Right, -133, Null, Color(White), Null, Visible To and String, Default Visibility);
+            Wait Until(Compare((Event Player).SpecialAbility, !=, 5), 99999);
+            Destroy HUD Text(Last Text ID);
+            Loop;
+        Else If(Compare((Event Player).SpecialAbility, ==, 6));
+            Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Ability: 3."), Null, Right, -133, Null, Color(White), Null, Visible To and String, Default Visibility);
+            Wait Until(Compare((Event Player).SpecialAbility, !=, 6), 99999);
+            Destroy HUD Text(Last Text ID);
+            Loop;
+        Else;
+            Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Ability: Invalid Ability"), Null, Right, -133, Null, Color(White), Null, Visible To and String, Default Visibility);
+            Wait Until(Compare((Event Player).SpecialAbility, <=, 6), 99999);
+            Destroy HUD Text(Last Text ID);
+            Loop;
+    }
+}
+
+rule ("Gb Abilities - Cd") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).Abilitycooldown > 0;
+        Global.Abilities == True;
+    }
+    actions {
+        Chase Player Variable At Rate(Event Player, Abilitycooldown, 0, 1, Destination and Rate);
+        Wait Until(Compare((Event Player).Abilitycooldown, <=, 0), 99999);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Gb Abilities - Reset cd on round end") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).Abilitycooldown <= 0;
+        Is Alive(All Players(All Teams)) == True;
+        Global.Abilities == True;
+    }
+    actions {
+        Set Player Variable(Event Player, Abilitycooldown, 0);
+        Wait Until(Is Dead(All Players(All Teams)), 99999);
+    }
+}
+
+rule ("Gb Abilities - 1. High jump ready") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Alive(Event Player) == True;
+        (Event Player).Abilitycooldown <= 0;
+        Is Crouching(Event Player) == True;
+        Is On Ground(Event Player) == True;
+        Is Game In Progress == True;
+        (Event Player).Abilityready == False;
+        (Event Player).SpecialAbility == 1;
+        Global.Abilities == True;
+    }
+    actions {
+        Set Player Variable(Event Player, Abilityready, True);
+        Wait(0.016, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Gb Abilities - 1. Cancel high jump ready") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).Abilityready == True;
+        Or(Or(Or(Not(And(Is On Ground(Event Player), Is Crouching(Event Player))), False), Is Dead(Event Player)), Compare((Event Player).Abilitycooldown, >, 0)) == True;
+        (Event Player).SpecialAbility == 1;
+        Global.Abilities == True;
+    }
+    actions {
+        Wait(0.016, Ignore Condition);
+        Set Player Variable(Event Player, Abilityready, False);
+        Wait(0.016, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Gb Abilities - 1. High jump") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Button Held(Event Player, Button(Jump)) == True;
+        (Event Player).Abilityready == True;
+        (Event Player).SpecialAbility == 1;
+        Global.Abilities == True;
+    }
+    actions {
+        Apply Impulse(Event Player, Up, 25, To Player, Cancel Contrary Motion);
+        Set Player Variable(Event Player, Abilitycooldown, 10);
+        Play Effect(All Players(All Teams), Winston Jump Pack Landing Sound, Color(White), Event Player, 100);
+    }
+}
+
+rule ("Gb Abilities - 2. Target switch ready") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.target != Event Player;
+        (Event Player).Abilitycooldown <= 0;
+        Global.ballIsOut == True;
+        Is Alive(Event Player) == True;
+        (Event Player).SpecialAbility == 2;
+        Global.Abilities == True;
+    }
+    actions {
+        Set Player Variable(Event Player, Abilityready, True);
+        Wait(0.016, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Gb Abilities - 2. Cancel Target switch ready") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).SpecialAbility == 2;
+        Or(Or(Or(Is Dead(Event Player), Compare((Event Player).Abilitycooldown, >, 0)), Compare(Global.ballIsOut, !=, True)), Compare(Global.target, ==, Event Player)) == True;
+        Global.Abilities == True;
+    }
+    actions {
+        Set Player Variable(Event Player, Abilityready, False);
+        Wait(0.016, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Gb Abilities - 2. Target switch") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).SpecialAbility == 2;
+        Is Button Held(Event Player, Button(Ultimate)) == True;
+        (Event Player).Abilityready == True;
+        Global.Abilities == True;
+    }
+    actions {
+        Wait Until(Not(Is Button Held(Event Player, Button(Ultimate))), 99999);
+        Wait(0.15, Ignore Condition);
+        Abort If(Is Dead(Event Player));
+        Skip If(Is Button Held(Event Player, Button(Ultimate)), 5);
+        Set Global Variable(target, Event Player);
+        Set Global Variable(ballDirection, Direction Towards(Global.ballPosition, Eye Position(Event Player)));
+        Set Player Variable(Event Player, Abilitycooldown, 20);
+        Play Effect(All Players(All Teams), Moira Fade Disappear Sound, Color(White), Event Player, 200);
+        Abort;
+        //lbl_0:
+        Set Global Variable(target, Event Player);
+        Set Player Variable(Event Player, Abilitycooldown, 15);
+        Play Effect(All Players(All Teams), Moira Fade Disappear Sound, Color(White), Event Player, 200);
+    }
+}
+
+rule ("Gb Abilities - 3. Blink ready") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).SpecialAbility == 3;
+        Is Using Ability 1(Event Player) == False;
+        (Event Player).Abilitycooldown <= 0;
+        Is Alive(Event Player) == True;
+        Global.Abilities == True;
+    }
+    actions {
+        Set Player Variable(Event Player, Abilityready, True);
+        Wait(0.016, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Gb Abilities - 3. Cancel Blink ready") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).SpecialAbility == 3;
+        Or(Or(Is Dead(Event Player), Compare((Event Player).Abilitycooldown, >, 0)), Is Using Ability 1(Event Player)) == True;
+        Global.Abilities == True;
+    }
+    actions {
+        Set Player Variable(Event Player, Abilityready, False);
+        Wait(0.016, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Gb Abilities - 3. Blink") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).SpecialAbility == 3;
+        (Event Player).Abilityready == True;
+        Is Button Held(Event Player, Button(Ultimate)) == True;
+        Global.Abilities == True;
+    }
+    actions {
+        Teleport(Event Player, Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 20)), Null, Event Player, True));
+        Set Player Variable(Event Player, Abilitycooldown, 10);
+        Play Effect(All Players(All Teams), Sombra Translocating Sound, Color(White), Event Player, 100);
+    }
+}
+
+rule ("Gb Abilities - 4. Critslash ready") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).SpecialAbility == 4;
+        (Event Player).Abilitycooldown <= 0;
+        Is Alive(Event Player) == True;
+        Global.ballIsOut == True;
+        Global.Abilities == True;
+    }
+    actions {
+        Set Player Variable(Event Player, Abilityready, True);
+        Wait(0.016, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Gb Abilities - 4. Cancel critslash ready") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).SpecialAbility == 4;
+        Or(Or(Compare((Event Player).Abilitycooldown, >, 0), Is Dead(Event Player)), Compare(Global.ballIsOut, ==, False)) == True;
+        Global.Abilities == True;
+    }
+    actions {
+        Set Player Variable(Event Player, Abilityready, False);
+        Set Player Variable(Event Player, Critslash, False);
+        Wait(0.016, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Gb Abilities - 4. Critical slash") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).SpecialAbility == 4;
+        (Event Player).Abilityready == True;
+        Is Button Held(Event Player, Button(Ultimate)) == True;
+        Global.Abilities == True;
+    }
+    actions {
+        Set Player Variable(Event Player, Critslash, True);
+        Start Forcing Player Outlines(Event Player, All Players(All Teams), True, Custom Color(200, 40, 0, 255), Default);
+        Wait Until(Compare((Event Player).Critslash, ==, False), 99999);
+        Set Player Variable(Event Player, Abilitycooldown, 17);
+        Stop Forcing Player Outlines(Event Player, All Players(All Teams));
+    }
+}
+
+disabled rule ("Teams - Winning Team") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Or(And(Compare(Match Time, ==, 0), Compare(Global.Teamsscoretowin, ==, 0)), Or(And(Compare(Global.Teamsscoretowin, >, 0), Compare(Team Score(Team 1), ==, Global.Teamsscoretowin)), And(Compare(Global.Teamsscoretowin, >, 0), Compare(Team Score(Team 2), ==, Global.Teamsscoretowin)))) == True;
+        Global.RoundInProgress == False;
+        Global.TieBreakerActive == False;
+        Global.tournamentMode == False;
+        Current Game Mode == Game Mode(Team Deathmatch);
+    }
+    actions {
+        Enable Built-In Game Mode Announcer;
+        If(Compare(Global.Teamsscoretowin, ==, 0));
+            If(Compare(Team Score(Team 1), >, Team Score(Team 2)));
+                Declare Team Victory(Team 1);
+            Else;
+                Declare Team Victory(Team 2);
+            End;
+        Else If(Compare(Team Score(Team 1), ==, Global.Teamsscoretowin));
+            Declare Team Victory(Team 1);
+        Else;
+            Declare Team Victory(Team 2);
+    }
+}
+
+disabled rule ("Teams - Passing aura") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.enablepassing == True;
+        Current Game Mode == Game Mode(Team Deathmatch);
+        Is Button Held(Event Player, Button(Secondary Fire)) == True;
+    }
+    actions {
+        Create Effect(Filtered Array(All Players(Team Of(Event Player)), And(Compare(Current Array Element, !=, Event Player), Is Alive(Current Array Element))), Bad Aura, Color(Sky Blue), Eye Position(Event Player), 1.5, Position and Radius);
+        Wait Until(Or(Not(Is Button Held(Event Player, Button(Secondary Fire))), Is Dead(Event Player)), 60);
+        Destroy Effect(Last Created Entity);
+    }
+}
+
+disabled rule ("Teams - check for <2 players") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Current Game Mode == Game Mode(Team Deathmatch);
+        Is Game In Progress == True;
+        And(Number Of Players(Team 1), Number Of Players(Team 2)) == False;
+    }
+    actions {
+        Set Global Variable(IsInFinalDuel, False);
+        Set Global Variable(IsEnoughPlayersToStart, False);
+        Stop Chasing Global Variable(ballSpawnCountdown);
+        Call Subroutine(deleteBall);
+        Skip If(Compare(Global.RoundInProgress, ==, False), 1);
+        Set Global Variable(RoundInProgress, False);
+        //lbl_0:
+        Big Message(All Players(All Teams), Custom String("Waiting for players"));
+        Pause Match Time;
+    }
+}
+
+disabled rule ("Teams - wait for more players") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Current Game Mode == Game Mode(Team Deathmatch);
+        Number Of Players(Team 1) != False;
+        Number Of Players(Team 2) != False;
+        Global.IsEnoughPlayersToStart == False;
+    }
+    actions {
+        Abort If(Compare(Number Of Players(All Teams), <, 2));
+        Big Message(All Players(All Teams), Custom String("Lets begin!"));
+        Set Global Variable(IsEnoughPlayersToStart, True);
+        Call Subroutine(startRound);
+    }
+}
+
+rule ("Teams - TDM collision") {
+    event {
+        Subroutine;
+        TDMcollision;
+    }
+    actions {
+        "TDM passing is intentionally native-TDM only. FFA behavior is unaffected.\nA pass can be triggered with Secondary Fire / Ability 2, and optionally Dash."
+        If(And(Compare(Global.enablepassing, ==, True), Or(Or(Is Button Held(Global.prevTarget, Button(Secondary Fire)), Is Using Ability 2(Global.prevTarget)), And(Compare(Global.enableDashPassing, ==, True), Is Using Ability 1(Global.prevTarget)))));
+            Play Effect(All Players(All Teams), Ring Explosion, Color(Sky Blue), Position Of(Global.prevTarget), 10);
+            Play Effect(All Players(All Teams), Moira Fade Disappear Sound, Color(White), Position Of(Global.prevTarget), 100);
+            Set Player Health(Global.prevTarget, 100);
+            Stop Assist(Global.passingassistid);
+            If(Compare(Number Of Living Players(Team Of(Global.prevTarget)), ==, 1));
+                If(Compare(Global.presetMode, !=, 0));
+                    Set Global Variable(target, Global.prevTarget);
+                Else;
+                    Call Subroutine(deflectFail);
+                End;
+            Else;
+                Set Global Variable(passingplayer, Global.prevTarget);
+                Start Assist(Global.passingplayer, All Players(All Teams), None);
+                Set Global Variable(passingassistid, Last Assist ID);
+                Set Global Variable(target, First Of(Sorted Array(Filtered Array(Remove From Array(All Living Players(Team Of(Global.prevTarget)), Global.prevTarget), (Current Array Element).hasMoved), Angle Between Vectors(Facing Direction Of(Global.prevTarget), Direction Towards(Global.prevTarget, Position Of(Current Array Element))))));
+            End;
+        Else;
+            If(Or(Compare(Team Of(Global.prevTarget), !=, Team 1), Compare(Team Of(Global.prevTarget), !=, Team 2)));
+                Stop Assist(Global.passingassistid);
+            End;
+            Heal(Global.prevTarget, Null, 100);
+            Set Global Variable(target, First Of(Sorted Array(Filtered Array(Remove From Array(All Living Players(Opposite Team Of(Team Of(Global.prevTarget))), Global.prevTarget), (Current Array Element).hasMoved), Angle Between Vectors(Facing Direction Of(Global.prevTarget), Direction Towards(Global.prevTarget, Position Of(Current Array Element))))));
+        End;
+    }
+}
+
+disabled rule ("Teams - end assist after 1s") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Current Game Mode == Game Mode(Team Deathmatch);
+        Global.passingplayer != Null;
+    }
+    actions {
+        Wait Until(Compare(Global.prevTarget, !=, Global.passingplayer), 10);
+        Wait(1, Ignore Condition);
+        Stop Assist(Global.passingassistid);
+        Set Global Variable(passingplayer, Null);
+    }
+}
+
+disabled rule ("Teams - Final duel") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Current Game Mode == Game Mode(Team Deathmatch);
+        Is Game In Progress == True;
+        Global.RoundInProgress != False;
+        Count Of(Filtered Array(All Living Players(Team 1), (Current Array Element).hasMoved)) == 1;
+        Count Of(Filtered Array(All Living Players(Team 2), (Current Array Element).hasMoved)) == 1;
+        Global.IsInFinalDuel == False;
+        Global.IsEnoughPlayersToStart == True;
+        Global.endlessMode == False;
+    }
+    actions {
+        Wait(0.016, Abort When False);
+        Abort If Condition Is False;
+        Call Subroutine(setupFinal);
+    }
+}
+
+disabled rule ("Teams - Last surviving") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Current Game Mode == Game Mode(Team Deathmatch);
+        Is Game In Progress == True;
+        Global.IsEnoughPlayersToStart == True;
+        Or(Compare(Number Of Living Players(Team 1), ==, 0), Compare(Number Of Living Players(Team 2), ==, 0)) == True;
+    }
+    actions {
+        Set Global Variable(IsInFinalDuel, False);
+        If(Compare(Number Of Living Players(Team 1), ==, 0));
+            Modify Team Score(Team 2, 1);
+        Else;
+            Modify Team Score(Team 1, 1);
+        End;
+        Wait(0.25, Ignore Condition);
+        If(And(Or(Compare(Match Time, ==, 0), Global.TieBreakerActive), Not(Global.tournamentMode)));
+            Set Global Variable(HighestScore, Score Of(Last Of(Sorted Array(All Players(All Teams), Score Of(Current Array Element)))));
+            "Check if there is more than 1 person with the highest score"
+            If(Compare(Team Score(Team 1), ==, Team Score(Team 2)));
+                "There is more than 1, activate tie breaker"
+                Set Global Variable(TieBreakerActive, True);
+            Else;
+                Set Global Variable(TieBreakerActive, False);
+                If(Compare(Match Time, ==, 0));
+                    Enable Built-In Game Mode Music;
+                    Enable Built-In Game Mode Completion;
+                End;
+            End;
+        End;
+        Stop Chasing Global Variable(ballSpawnCountdown);
+        Stop Chasing Player Variable(All Players(All Teams), bouncePadCooldown);
+        Big Message(All Players(All Teams), Custom String("{0} has won the round", First Of(All Living Players(All Teams))));
+        Wait(2, Ignore Condition);
+        Skip If(Global.duelMode, 8);
+        If(Not(Global.TieBreakerActive));
+            Resurrect(All Dead Players(All Teams));
+        Else;
+            "Kill anyone alive who doesn't have the highest score."
+            Kill(Filtered Array(All Living Players(All Teams), Compare(Score Of(Current Array Element), !=, Global.HighestScore)), Null);
+            "During tiebreaker, only revive the people who have the same score as the highest score."
+            Resurrect(Filtered Array(All Dead Players(All Teams), Compare(Score Of(Current Array Element), ==, Global.HighestScore)));
+            Wait(0.25, Ignore Condition);
+            Big Message(All Players(All Teams), Custom String("tiebreaker!"));
+        End;
+        //lbl_0:
+        Call Subroutine(startRound);
+    }
+}
+
+rule ("Sandbox - Set Ball spawnpoint") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.Sandbox == True;
+        Is Dummy Bot(Event Player) == False;
+        Is Game In Progress == True;
+        Global.ballIsOut == False;
+        Is Button Held(Event Player, Button(Interact)) == True;
+        Global.Sandboxselected == 1;
+    }
+    actions {
+        If(Compare(Global.Sandboxxyz, ==, 1));
+            If(Is Button Held(Event Player, Button(Ultimate)));
+                If(Compare(Global.Sandboxplusminus, ==, 1));
+                    Modify Global Variable(Sandboxballpos, Add, Left);
+                Else;
+                    Modify Global Variable(Sandboxballpos, Add, Right);
+                End;
+            Else;
+                If(Compare(Global.Sandboxplusminus, ==, 1));
+                    Modify Global Variable(Sandboxballpos, Add, Vector(0.25, 0, 0));
+                Else;
+                    Modify Global Variable(Sandboxballpos, Add, Vector(-0.25, 0, 0));
+                End;
+            End;
+        Else If(Compare(Global.Sandboxxyz, ==, 2));
+            If(Is Button Held(Event Player, Button(Ultimate)));
+                If(Compare(Global.Sandboxplusminus, ==, 1));
+                    Modify Global Variable(Sandboxballpos, Add, Up);
+                Else;
+                    Modify Global Variable(Sandboxballpos, Add, Down);
+                End;
+            Else;
+                If(Compare(Global.Sandboxplusminus, ==, 1));
+                    Modify Global Variable(Sandboxballpos, Add, Vector(0, 0.25, 0));
+                Else;
+                    Modify Global Variable(Sandboxballpos, Add, Vector(0, -0.25, 0));
+                End;
+            End;
+        Else If(Compare(Global.Sandboxxyz, ==, 3));
+            If(Is Button Held(Event Player, Button(Ultimate)));
+                If(Compare(Global.Sandboxplusminus, ==, 1));
+                    Modify Global Variable(Sandboxballpos, Add, Forward);
+                Else;
+                    Modify Global Variable(Sandboxballpos, Add, Backward);
+                End;
+            Else;
+                If(Compare(Global.Sandboxplusminus, ==, 1));
+                    Modify Global Variable(Sandboxballpos, Add, Vector(0, 0, 0.25));
+                Else;
+                    Modify Global Variable(Sandboxballpos, Add, Vector(0, 0, -0.25));
+    }
+}
+
+rule ("Sandbox - Set Ball direction") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.Sandbox == True;
+        Is Dummy Bot(Event Player) == False;
+        Is Game In Progress == True;
+        Global.ballIsOut == False;
+        Is Button Held(Event Player, Button(Interact)) == True;
+        Global.Sandboxselected == 2;
+    }
+    actions {
+        If(Compare(Global.Sandboxxyz, ==, 1));
+            If(Is Button Held(Event Player, Button(Ultimate)));
+                If(Compare(Global.Sandboxplusminus, ==, 1));
+                    Modify Global Variable(Sandboxballdir, Add, Left);
+                Else;
+                    Modify Global Variable(Sandboxballdir, Add, Right);
+                End;
+            Else;
+                If(Compare(Global.Sandboxplusminus, ==, 1));
+                    Modify Global Variable(Sandboxballdir, Add, Vector(0.25, 0, 0));
+                Else;
+                    Modify Global Variable(Sandboxballdir, Add, Vector(-0.25, 0, 0));
+                End;
+            End;
+        Else If(Compare(Global.Sandboxxyz, ==, 2));
+            If(Is Button Held(Event Player, Button(Ultimate)));
+                If(Compare(Global.Sandboxplusminus, ==, 1));
+                    Modify Global Variable(Sandboxballdir, Add, Up);
+                Else;
+                    Modify Global Variable(Sandboxballdir, Add, Down);
+                End;
+            Else;
+                If(Compare(Global.Sandboxplusminus, ==, 1));
+                    Modify Global Variable(Sandboxballdir, Add, Vector(0, 0.25, 0));
+                Else;
+                    Modify Global Variable(Sandboxballdir, Add, Vector(0, -0.25, 0));
+                End;
+            End;
+        Else If(Compare(Global.Sandboxxyz, ==, 3));
+            If(Is Button Held(Event Player, Button(Ultimate)));
+                If(Compare(Global.Sandboxplusminus, ==, 1));
+                    Modify Global Variable(Sandboxballdir, Add, Forward);
+                Else;
+                    Modify Global Variable(Sandboxballdir, Add, Backward);
+                End;
+            Else;
+                If(Compare(Global.Sandboxplusminus, ==, 1));
+                    Modify Global Variable(Sandboxballdir, Add, Vector(0, 0, 0.25));
+                Else;
+                    Modify Global Variable(Sandboxballdir, Add, Vector(0, 0, -0.25));
+    }
+}
+
+rule ("Sandbox - Set Ball speed") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.Sandbox == True;
+        Is Dummy Bot(Event Player) == False;
+        Is Game In Progress == True;
+        Global.ballIsOut == False;
+        Is Button Held(Event Player, Button(Interact)) == True;
+        Global.Sandboxselected == 3;
+        Is Game In Progress == True;
+    }
+    actions {
+        If(Is Button Held(Event Player, Button(Ultimate)));
+            If(Compare(Global.Sandboxplusminus, ==, 1));
+                Modify Global Variable(Sandboxballspd, Add, 10);
+            Else;
+                Modify Global Variable(Sandboxballspd, Add, -10);
+            End;
+        Else;
+            If(Compare(Global.Sandboxplusminus, ==, 1));
+                Modify Global Variable(Sandboxballspd, Add, 1);
+            Else;
+                Modify Global Variable(Sandboxballspd, Add, -1);
+    }
+}
+
+rule ("Sandbox - Change xyz and +/-") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Global.Sandbox == True;
+        Is Dummy Bot(Event Player) == False;
+        Is Game In Progress == True;
+        Global.ballIsOut == False;
+        Or(Is Button Held(Event Player, Button(Jump)), Is Button Held(Event Player, Button(Crouch))) == True;
+    }
+    actions {
+        Abort If Condition Is False;
+        Wait(0.25, Ignore Condition);
+        If(And(Is Button Held(Event Player, Button(Jump)), Is Button Held(Event Player, Button(Crouch))));
+            Modify Global Variable(Sandboxplusminus, Multiply, -1);
+            Big Message(All Players(All Teams), Custom String("+/- switched"));
+        Else If(Is Button Held(Event Player, Button(Jump)));
+            If(Compare(Global.Sandboxxyz, ==, 3));
+                Big Message(All Players(All Teams), Custom String("Invalid input"));
+            Else;
+                Modify Global Variable(Sandboxxyz, Add, 1);
+                Big Message(All Players(All Teams), Custom String("axis +1"));
+            End;
+        Else If(Is Button Held(Event Player, Button(Crouch)));
+            If(Compare(Global.Sandboxxyz, ==, 1));
+                Big Message(All Players(All Teams), Custom String("Invalid input"));
+            Else;
+                Modify Global Variable(Sandboxxyz, Subtract, 1);
+                Big Message(All Players(All Teams), Custom String("axis -1"));
+    }
+}
+
+rule ("Sandbox - Switch between pos/dir/spd") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Button Held(Event Player, Button(Reload)) == True;
+        Is Dummy Bot(Event Player) == False;
+        Is Game In Progress == True;
+        Global.ballIsOut == False;
+        Global.Sandbox == True;
+    }
+    actions {
+        Wait Until(Not(Is Button Held(Event Player, Button(Reload))), 0.4);
+        If(Is Button Held(Event Player, Button(Reload)));
+            If(Compare(Global.Sandboxselected, >, 2));
+                Set Global Variable(Sandboxselected, 1);
+            Else;
+                Modify Global Variable(Sandboxselected, Add, 1);
+            End;
+            Big Message(Event Player, Custom String("Switched pos/dir/spd to {0}", Global.Sandboxselected));
+    }
+}
+
+rule ("Sandbox - Show ball spawnpoint and direction") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.Sandbox == True;
+        Is Game In Progress == True;
+        Global.ballIsOut == False;
+    }
+    actions {
+        Create Effect(All Players(All Teams), Orb, Color(Green), Global.Sandboxballpos, 0.2, Position and Radius);
+        Create Effect(All Players(All Teams), Orb, Color(Yellow), Add(Global.Sandboxballpos, Global.Sandboxballdir), 0.1, Position and Radius);
+    }
+}
+
+rule ("Sandbox - Controls desc") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.Sandbox == True;
+    }
+    actions {
+        Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Press [{0}] / [{1}] to switch the axis youre editing. press both to switch between negative and positive.", Input Binding String(Button(Jump)), Input Binding String(Button(Crouch))), Null, Left, 999, Null, Color(White), Null, Visible To and String, Default Visibility);
+        Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Hold [{0}] to switch between position/direction/speed", Input Binding String(Button(Reload))), Null, Left, 999, Null, Color(White), Null, Visible To and String, Default Visibility);
+        Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Press [{0}] to add/substract, hold [{1}] while doing so to add/substract more. (dont hold long, because itll deactivate sandbox)", Input Binding String(Button(Interact)), Input Binding String(Button(Ultimate))), Null, Left, 999, Null, Color(White), Null, Visible To and String, Default Visibility);
+        Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Current settings: Ballpos: [{0}] Balldirection: [{1}] Ballspeed: [{2}]", Global.Sandboxballpos, Global.Sandboxballdir, Global.Sandboxballspd), Null, Left, 999, Null, Color(White), Null, Visible To and String, Default Visibility);
+        Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Start the round by pressing [{0}] and [{1}]", Input Binding String(Button(Ultimate)), Input Binding String(Button(Reload))), Null, Left, 999, Null, Color(White), Null, Visible To and String, Default Visibility);
+    }
+}
+
+disabled rule ("Gb Abilities - stack crit slashes") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        (Event Player).Critalert == True;
+        Global.Abilities == True;
+        Is Dummy Bot(Event Player) == False;
+    }
+    actions {
+        Set Player Variable(Event Player, Critalert, False);
+        Wait(0.032, Restart When True);
+        Modify Global Variable(ballSpeed, Multiply, 1.75);
+        Wait(5, Ignore Condition);
+        Modify Global Variable(ballSpeed, Divide, 1.75);
+        Modify Global Variable(ballSpeed, Multiply, 1.25);
+    }
+}
+

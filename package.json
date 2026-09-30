@@ -1,0 +1,14 @@
+{
+  "name": "genjiball-ce",
+  "version": "1.3.2",
+  "private": true,
+  "description": "Genji Ball Community Edition, an Overwatch Workshop game mode written in OverPy.",
+  "scripts": {
+    "build": "overpy compile -i src/main.opy -o workshop/genjiball.txt",
+    "check": "node tools/check.mjs",
+    "decompile": "node tools/decompile.mjs"
+  },
+  "devDependencies": {
+    "overpy": "9.7.16"
+  }
+}

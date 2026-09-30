@@ -1,0 +1,24 @@
+name: Feature / idea
+description: Suggest a new feature, setting or gameplay change
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What's the idea?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why?
+      description: What problem does it solve, or what does it make more fun?
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Should it be on by default?
+      options:
+        - "No, behind a Workshop setting"
+        - "Yes, change default gameplay"
+        - "Only in a specific preset (Tournament, Rapid, ...)"
+        - "Not sure"

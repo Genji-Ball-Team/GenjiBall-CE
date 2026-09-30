@@ -1,0 +1,39 @@
+name: Bug report
+description: Something in the game mode doesn't work as it should
+labels: ["bug"]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Version / branch
+      description: Shown in the top right of the HUD, or the branch you built from.
+      placeholder: v1.3.2
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      placeholder: |
+        1. Preset: Tournament, map: Workshop Island
+        2. 4 players
+        3. Deflect the ball while ...
+    validations:
+      required: true
+  - type: input
+    id: settings
+    attributes:
+      label: Workshop settings changed from default
+      placeholder: "Preset: Custom, physics engine: Legacy+, bot: on"
+  - type: textarea
+    id: media
+    attributes:
+      label: Clips / screenshots
+      description: A short clip helps a lot with physics bugs.

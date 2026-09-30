@@ -1,0 +1,311 @@
+#Player input: dash, deflect, toggles, bounce pads
+
+rule "Controls - primary fire triggers dash":
+    @Event eachPlayer
+    @Condition eventPlayer.isHoldingButton(Button.PRIMARY_FIRE) == true
+    #Naz: This is remnent code from a dark and lawless time in the development of this game. Leave it be...
+    #@Condition "{0}".format(eventPlayer) != "bytestats"
+    @Condition eventPlayer.isDummy() == false
+    @Condition eventPlayer.isHoldingButton(Button.ABILITY_1) == false
+    @Condition eventPlayer.canDash == true
+    @Condition eventPlayer.dashOnCooldown == false
+    
+    if eventPlayer.antiRubberbanding == true:
+        eventPlayer.allowButton(Button.ABILITY_1)
+        eventPlayer.forceButtonPress(Button.ABILITY_1)
+        eventPlayer.disallowButton(Button.ABILITY_1)
+    else:
+        eventPlayer.forceButtonPress(Button.ABILITY_1)
+
+
+rule "Controls - secondary fire triggers deflect":
+    @Event eachPlayer
+    @Condition eventPlayer.isHoldingButton(Button.SECONDARY_FIRE) == true
+    #Naz: This is remnent code from a dark and lawless time in the development of this game. Leave it be...
+    #@Condition "{0}".format(eventPlayer) != "bytestats"
+    @Condition eventPlayer.isDummy() == false
+    @Condition eventPlayer.isUsingAbility1() == false
+    @Condition eventPlayer.isHoldingButton(Button.ABILITY_2) == false
+    @Condition eventPlayer.canDeflect == true
+    
+    if eventPlayer.antiRubberbanding == true:
+        eventPlayer.allowButton(Button.ABILITY_2)
+        eventPlayer.forceButtonPress(Button.ABILITY_2)
+        eventPlayer.disallowButton(Button.ABILITY_2)
+    else:
+        eventPlayer.forceButtonPress(Button.ABILITY_2)
+
+
+rule "Controls - Dash slow (gravity shift)":
+    @Event eachPlayer
+    @Condition eventPlayer.isUsingAbility1() == true
+    
+    eventPlayer.moveSpeed = 0
+    chaseAtRate(eventPlayer.moveSpeed, 100, max(eventPlayer.moveSpeed, 16) ** 1.25)
+    while eventPlayer.moveSpeed != 100:
+        eventPlayer.setMoveSpeed(moveSpeed * (eventPlayer.moveSpeed / 100))
+        if eventPlayer.currentGravity == 0:
+            goto lbl_0
+        eventPlayer.setGravity(gravity * (eventPlayer.moveSpeed / 100))
+        lbl_0:
+        wait(0.1)
+    eventPlayer.setMoveSpeed(moveSpeed)
+    if eventPlayer.currentGravity == 0:
+        goto lbl_1
+    eventPlayer.setGravity(gravity)
+    lbl_1:
+
+
+rule "Controls - Shorten deflect length":
+    @Event eachPlayer
+    @Condition eventPlayer.isUsingAbility2() == true
+    @Condition eventPlayer.isUsingUltimate() == false
+    
+    wait(0.3)
+    if eventPlayer.isDummy():
+        if bozoWillEdash == true or bozoWillGhostDash == true:
+            eventPlayer.forceButtonPress(Button.ABILITY_1)
+            bozoWillGhostDash = false
+            bozoWillEdash = false
+    eventPlayer.setAbility2Enabled(false)
+    eventPlayer.setAbility1Enabled(false)
+    eventPlayer.canDeflect = false
+    eventPlayer.canDash = false
+    wait(0.5)
+    eventPlayer.setAbility2Enabled(true)
+    eventPlayer.setAbility1Enabled(true)
+    eventPlayer.canDeflect = true
+    eventPlayer.canDash = true
+
+
+rule "Controls - anti-rubberbanding button lock":
+    @Event eachPlayer
+    @Condition eventPlayer.isDummy() == false
+    @Condition eventPlayer.antiRubberbanding == true
+    
+    eventPlayer.disallowButton(Button.ABILITY_1)
+    eventPlayer.disallowButton(Button.ABILITY_2)
+
+
+rule "Controls - Ability 1 dash queue":
+    @Event eachPlayer
+    @Condition eventPlayer.isHoldingButton(Button.ABILITY_1) == true
+    #Naz: This is remnent code from a dark and lawless time in the development of this game. Leave it be...
+    #@Condition "{0}".format(eventPlayer) != "bytestats"
+    @Condition eventPlayer.isDummy() == false
+    @Condition eventPlayer.isUsingAbility1() == false
+    @Condition eventPlayer.canDash == true
+    @Condition eventPlayer.dashOnCooldown == false
+    
+    if eventPlayer.antiRubberbanding == true:
+        eventPlayer.allowButton(Button.ABILITY_1)
+        eventPlayer.forceButtonPress(Button.ABILITY_1)
+        eventPlayer.disallowButton(Button.ABILITY_1)
+    else:
+        eventPlayer.forceButtonPress(Button.ABILITY_1)
+
+
+rule "Controls - Ability 2 deflect queue":
+    @Event eachPlayer
+    @Condition eventPlayer.isHoldingButton(Button.ABILITY_2) == true
+    #Naz: This is remnent code from a dark and lawless time in the development of this game. Leave it be...
+    #@Condition "{0}".format(eventPlayer) != "bytestats"
+    @Condition eventPlayer.isDummy() == false
+    @Condition eventPlayer.isUsingAbility1() == false
+    @Condition eventPlayer.isUsingAbility2() == false
+    @Condition eventPlayer.canDeflect == true
+    
+    if eventPlayer.antiRubberbanding == true:
+        eventPlayer.allowButton(Button.ABILITY_2)
+        eventPlayer.forceButtonPress(Button.ABILITY_2)
+        eventPlayer.disallowButton(Button.ABILITY_2)
+    else:
+        eventPlayer.forceButtonPress(Button.ABILITY_2)
+
+
+rule "Controls - Dash cooldown":
+    @Event eachPlayer
+    @Condition eventPlayer.isAlive() == true
+    @Condition eventPlayer.isUsingAbility1() == true
+    
+    eventPlayer.dashOnCooldown = true
+    waitUntil(not eventPlayer.isUsingAbility1(), 0.5)
+    waitUntil(eventPlayer.dashOnCooldown == false, 3.04)
+    eventPlayer.dashOnCooldown = false
+
+
+rule "Control - Dash reset":
+    @Event playerEarnedElimination
+    
+    eventPlayer.dashOnCooldown = false
+
+
+rule "Controls - Switch perspective (reload)":
+    @Event eachPlayer
+    @Condition breakInProgress == false
+    @Condition eventPlayer.isHoldingButton(Button.RELOAD) == true
+    @Condition eventPlayer.isAlive() == true
+    
+    if not eventPlayer.thirdPerson:
+        eventPlayer.thirdPerson = true
+        wait(0.01)
+        eventPlayer.startCamera(updateEveryFrame(raycastHitPosition(eventPlayer.getEyePosition(), eventPlayer + worldVector(vect(-0.5, 0, 0), eventPlayer, Transform.ROTATION) + vect(0, 1.5, 0) + eventPlayer.getFacingDirection() * -2, null, getAllPlayers(), false)), eventPlayer + eventPlayer.getFacingDirection() * 1000)
+        playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
+    else:
+        eventPlayer.stopCamera()
+        eventPlayer.thirdPerson = false
+        playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
+    wait(0.1)
+
+
+rule "Controls - toggle anti rubberbanding (melee)":
+    @Event eachPlayer
+    @Condition eventPlayer.isHoldingButton(Button.MELEE) == true
+    @Condition eventPlayer.isDummy() == false
+    
+    if eventPlayer.antiRubberbanding == true:
+        eventPlayer.antiRubberbanding = false
+        eventPlayer.allowButton(Button.ABILITY_1)
+        eventPlayer.allowButton(Button.ABILITY_2)
+        smallMessage(eventPlayer, "anti rubberbanding: off")
+    elif eventPlayer.antiRubberbanding == false:
+        eventPlayer.antiRubberbanding = true
+        eventPlayer.disallowButton(Button.ABILITY_1)
+        eventPlayer.disallowButton(Button.ABILITY_2)
+        smallMessage(eventPlayer, "anti rubberbanding: on")
+    playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
+    wait(0.1)
+
+
+rule "Controls - double sens toggle":
+    @Event eachPlayer
+    @Condition doubleSensEnabled == true
+    @Condition Abilities == false
+    @Condition eventPlayer.isDummy() == false
+    @Condition eventPlayer.isAlive() == true
+    @Condition eventPlayer.isHoldingButton(Button.ULTIMATE) == true
+    
+    if eventPlayer.sensHigh == true:
+        eventPlayer.sensHigh = false
+        eventPlayer.setAimSpeed(100)
+        smallMessage(eventPlayer, "double sens: normal")
+    else:
+        eventPlayer.sensHigh = true
+        eventPlayer.setAimSpeed(275)
+        smallMessage(eventPlayer, "double sens: high")
+    playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
+    waitUntil(not eventPlayer.isHoldingButton(Button.ULTIMATE), 99999)
+
+
+rule "Controls - double sens reset when disabled":
+    @Event eachPlayer
+    @Condition eventPlayer.sensHigh == true
+    @Condition (doubleSensEnabled == false or Abilities == true) == true
+    
+    eventPlayer.sensHigh = false
+    eventPlayer.setAimSpeed(100)
+
+
+rule "Controls - Simple HUD (Interact)":
+    @Event eachPlayer
+    @Condition eventPlayer.isHoldingButton(Button.INTERACT) == true
+    @Condition eventPlayer.isAlive() == true
+    @Condition Sandbox == false
+    
+    if eventPlayer.simpleHUD == 2:
+        eventPlayer.simpleHUD = 0
+        eventPlayer.enableHeroHud()
+        playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
+        smallMessage(eventPlayer, "simple hud: off")
+        return
+    waitUntil(not eventPlayer.isHoldingButton(Button.INTERACT), 0.4)
+    if eventPlayer.isHoldingButton(Button.INTERACT):
+        if eventPlayer.simpleHUD == 2:
+            eventPlayer.simpleHUD = 0
+            eventPlayer.enableHeroHud()
+            playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
+            smallMessage(eventPlayer, "simple hud: off")
+        else:
+            eventPlayer.simpleHUD = 2
+            eventPlayer.disableHeroHud()
+            playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
+            smallMessage(eventPlayer, "simple hud: zen mode")
+    else:
+        if eventPlayer.simpleHUD == 0:
+            eventPlayer.simpleHUD = 1
+            playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
+            smallMessage(eventPlayer, "simple hud: on")
+        else:
+            eventPlayer.simpleHUD = 0
+            eventPlayer.enableHeroHud()
+            playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
+            smallMessage(eventPlayer, "simple hud: off")
+    wait(0.1)
+
+
+rule "Controls - Bounce when near pad 1":
+    @Event eachPlayer
+    @Condition bouncePad1 != null
+    @Condition distance(eventPlayer.getPosition(), bouncePad1) <= bouncePadRange
+    @Condition eventPlayer.bouncePadCooldown == 0
+    @Condition eventPlayer.isAlive() == true
+    @Condition eventPlayer.isHoldingButton(Button.JUMP) == true
+    @Condition bouncePadToggle == true
+    
+    if eventPlayer.dashNerf:
+        eventPlayer.applyImpulse(Vector.UP, bouncePadStrength - bouncePadSuperjumpNerf, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
+    else:
+        eventPlayer.applyImpulse(Vector.UP, bouncePadStrength, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
+    eventPlayer.bouncePadCooldown = bouncePadCooldownLength
+    playEffect(getAllPlayers(), DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, bouncePad1, 25)
+
+
+rule "Controls - Bounce when near pad 2":
+    @Event eachPlayer
+    @Condition bouncePad2 != null
+    @Condition distance(eventPlayer.getPosition(), bouncePad2) <= bouncePadRange
+    @Condition eventPlayer.bouncePadCooldown == 0
+    @Condition eventPlayer.isAlive() == true
+    @Condition eventPlayer.isHoldingButton(Button.JUMP) == true
+    @Condition bouncePadToggle == true
+    
+    if eventPlayer.dashNerf:
+        eventPlayer.applyImpulse(Vector.UP, bouncePadStrength - bouncePadSuperjumpNerf, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
+    else:
+        eventPlayer.applyImpulse(Vector.UP, bouncePadStrength, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
+    eventPlayer.bouncePadCooldown = bouncePadCooldownLength
+    playEffect(getAllPlayers(), DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, bouncePad2, 25)
+
+
+rule "Controls - Bounce when near pad 3":
+    @Event eachPlayer
+    @Condition bouncePad3 != null
+    @Condition distance(eventPlayer.getPosition(), bouncePad3) <= bouncePadRange
+    @Condition eventPlayer.bouncePadCooldown == 0
+    @Condition eventPlayer.isAlive() == true
+    @Condition eventPlayer.isHoldingButton(Button.JUMP) == true
+    @Condition bouncePadToggle == true
+    
+    if eventPlayer.dashNerf:
+        eventPlayer.applyImpulse(Vector.UP, bouncePadStrength - bouncePadSuperjumpNerf, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
+    else:
+        eventPlayer.applyImpulse(Vector.UP, bouncePadStrength, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
+    eventPlayer.bouncePadCooldown = bouncePadCooldownLength
+    playEffect(getAllPlayers(), DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, bouncePad3, 25)
+
+
+rule "Controls - Bounce when near pad 4":
+    @Event eachPlayer
+    @Condition bouncePad4 != null
+    @Condition distance(eventPlayer.getPosition(), bouncePad4) <= bouncePadRange
+    @Condition eventPlayer.bouncePadCooldown == 0
+    @Condition eventPlayer.isAlive() == true
+    @Condition eventPlayer.isHoldingButton(Button.JUMP) == true
+    @Condition bouncePadToggle == true
+    
+    if eventPlayer.dashNerf:
+        eventPlayer.applyImpulse(Vector.UP, bouncePadStrength - bouncePadSuperjumpNerf, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
+    else:
+        eventPlayer.applyImpulse(Vector.UP, bouncePadStrength, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
+    eventPlayer.bouncePadCooldown = bouncePadCooldownLength
+    playEffect(getAllPlayers(), DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, bouncePad4, 25)
