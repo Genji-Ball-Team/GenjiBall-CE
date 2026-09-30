@@ -3,7 +3,8 @@
 Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It gets a version number when a release is cut.
 
 ## Unreleased
-n- The Teams variant shows its own version: the HUD, lobby description and mode name say 1.3.2T.
+
+- The Teams variant shows its own version: the HUD, lobby description and mode name say 1.3.2T.
 
 ## v1.3.2 (Community Edition import)
 
