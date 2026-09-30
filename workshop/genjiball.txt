@@ -157,12 +157,7 @@ variables {
         87: bozoIsGhostDashing
         88: botJumping
         89: bozoHasJumped
-        90: Sandboxballpos
-        91: Sandboxballdir
-        92: Sandboxballspd
-        93: Sandboxxyz
-        94: Sandboxplusminus
-        95: Sandboxselected
+        90: sandboxState
         96: Critalert
         97: ballPhysicsMode
         98: ballRedirectAge
@@ -459,12 +454,8 @@ rule ("Initialization - global variables") {
         Set Global Variable(duelQueue, Empty Array);
         Set Global Variable(killLeaderboardPlayers, Empty Array);
         Set Global Variable(killLeaderboardSortedPlayers, Empty Array);
-        Set Global Variable(Sandboxxyz, 1);
-        Set Global Variable(Sandboxselected, 1);
-        Set Global Variable(Sandboxballpos, Global.ballPosition);
-        Set Global Variable(Sandboxballdir, Add(Global.ballPosition, Up));
-        Set Global Variable(Sandboxballspd, Global.ballSpeed);
-        Set Global Variable(Sandboxplusminus, 1);
+        "Sandbox spawn point, aim point and speed, plus the editor state (SandboxField in config/constants.opy)"
+        Set Global Variable(sandboxState, Array(Global.ballPosition, Add(Global.ballPosition, Up), Global.ballSpeed, 1, 1, 1));
         Set Global Variable(antiGhostPrevDistance, 999);
         Set Global Variable(antiGhostStallTimer, 0);
         Set Global Variable(ballRedirectAge, 999);
@@ -1258,9 +1249,9 @@ rule ("Active game - spawn ball") {
     }
     actions {
         If(Compare(Global.Sandbox, ==, True));
-            Set Global Variable(ballPosition, Global.Sandboxballpos);
-            Set Global Variable(ballDirection, Direction Towards(Global.Sandboxballpos, Global.Sandboxballdir));
-            Set Global Variable(ballSpeed, Global.Sandboxballspd);
+            Set Global Variable(ballPosition, First Of(Global.sandboxState));
+            Set Global Variable(ballDirection, Direction Towards(First Of(Global.sandboxState), Value In Array(Global.sandboxState, 1)));
+            Set Global Variable(ballSpeed, Value In Array(Global.sandboxState, 2));
         Else;
             Set Global Variable(ballPosition, Global.circleCenter);
             Set Global Variable(ballDirection, Direction Towards(Global.ballPosition, Eye Position(Global.target)));
@@ -3337,49 +3328,49 @@ rule ("Sandbox - Set Ball spawnpoint") {
         Is Game In Progress == True;
         Global.ballIsOut == False;
         Is Button Held(Event Player, Button(Interact)) == True;
-        Global.Sandboxselected == 1;
+        Value In Array(Global.sandboxState, 5) == 1;
     }
     actions {
-        If(Compare(Global.Sandboxxyz, ==, 1));
+        If(Compare(Value In Array(Global.sandboxState, 3), ==, 1));
             If(Is Button Held(Event Player, Button(Ultimate)));
-                If(Compare(Global.Sandboxplusminus, ==, 1));
-                    Modify Global Variable(Sandboxballpos, Add, Left);
+                If(Compare(Value In Array(Global.sandboxState, 4), ==, 1));
+                    Modify Global Variable At Index(sandboxState, 0, Add, Left);
                 Else;
-                    Modify Global Variable(Sandboxballpos, Add, Right);
+                    Modify Global Variable At Index(sandboxState, 0, Add, Right);
                 End;
             Else;
-                If(Compare(Global.Sandboxplusminus, ==, 1));
-                    Modify Global Variable(Sandboxballpos, Add, Vector(0.25, 0, 0));
+                If(Compare(Value In Array(Global.sandboxState, 4), ==, 1));
+                    Modify Global Variable At Index(sandboxState, 0, Add, Vector(0.25, 0, 0));
                 Else;
-                    Modify Global Variable(Sandboxballpos, Add, Vector(-0.25, 0, 0));
+                    Modify Global Variable At Index(sandboxState, 0, Add, Vector(-0.25, 0, 0));
                 End;
             End;
-        Else If(Compare(Global.Sandboxxyz, ==, 2));
+        Else If(Compare(Value In Array(Global.sandboxState, 3), ==, 2));
             If(Is Button Held(Event Player, Button(Ultimate)));
-                If(Compare(Global.Sandboxplusminus, ==, 1));
-                    Modify Global Variable(Sandboxballpos, Add, Up);
+                If(Compare(Value In Array(Global.sandboxState, 4), ==, 1));
+                    Modify Global Variable At Index(sandboxState, 0, Add, Up);
                 Else;
-                    Modify Global Variable(Sandboxballpos, Add, Down);
+                    Modify Global Variable At Index(sandboxState, 0, Add, Down);
                 End;
             Else;
-                If(Compare(Global.Sandboxplusminus, ==, 1));
-                    Modify Global Variable(Sandboxballpos, Add, Vector(0, 0.25, 0));
+                If(Compare(Value In Array(Global.sandboxState, 4), ==, 1));
+                    Modify Global Variable At Index(sandboxState, 0, Add, Vector(0, 0.25, 0));
                 Else;
-                    Modify Global Variable(Sandboxballpos, Add, Vector(0, -0.25, 0));
+                    Modify Global Variable At Index(sandboxState, 0, Add, Vector(0, -0.25, 0));
                 End;
             End;
-        Else If(Compare(Global.Sandboxxyz, ==, 3));
+        Else If(Compare(Value In Array(Global.sandboxState, 3), ==, 3));
             If(Is Button Held(Event Player, Button(Ultimate)));
-                If(Compare(Global.Sandboxplusminus, ==, 1));
-                    Modify Global Variable(Sandboxballpos, Add, Forward);
+                If(Compare(Value In Array(Global.sandboxState, 4), ==, 1));
+                    Modify Global Variable At Index(sandboxState, 0, Add, Forward);
                 Else;
-                    Modify Global Variable(Sandboxballpos, Add, Backward);
+                    Modify Global Variable At Index(sandboxState, 0, Add, Backward);
                 End;
             Else;
-                If(Compare(Global.Sandboxplusminus, ==, 1));
-                    Modify Global Variable(Sandboxballpos, Add, Vector(0, 0, 0.25));
+                If(Compare(Value In Array(Global.sandboxState, 4), ==, 1));
+                    Modify Global Variable At Index(sandboxState, 0, Add, Vector(0, 0, 0.25));
                 Else;
-                    Modify Global Variable(Sandboxballpos, Add, Vector(0, 0, -0.25));
+                    Modify Global Variable At Index(sandboxState, 0, Add, Vector(0, 0, -0.25));
     }
 }
 
@@ -3395,49 +3386,49 @@ rule ("Sandbox - Set Ball direction") {
         Is Game In Progress == True;
         Global.ballIsOut == False;
         Is Button Held(Event Player, Button(Interact)) == True;
-        Global.Sandboxselected == 2;
+        Value In Array(Global.sandboxState, 5) == 2;
     }
     actions {
-        If(Compare(Global.Sandboxxyz, ==, 1));
+        If(Compare(Value In Array(Global.sandboxState, 3), ==, 1));
             If(Is Button Held(Event Player, Button(Ultimate)));
-                If(Compare(Global.Sandboxplusminus, ==, 1));
-                    Modify Global Variable(Sandboxballdir, Add, Left);
+                If(Compare(Value In Array(Global.sandboxState, 4), ==, 1));
+                    Modify Global Variable At Index(sandboxState, 1, Add, Left);
                 Else;
-                    Modify Global Variable(Sandboxballdir, Add, Right);
+                    Modify Global Variable At Index(sandboxState, 1, Add, Right);
                 End;
             Else;
-                If(Compare(Global.Sandboxplusminus, ==, 1));
-                    Modify Global Variable(Sandboxballdir, Add, Vector(0.25, 0, 0));
+                If(Compare(Value In Array(Global.sandboxState, 4), ==, 1));
+                    Modify Global Variable At Index(sandboxState, 1, Add, Vector(0.25, 0, 0));
                 Else;
-                    Modify Global Variable(Sandboxballdir, Add, Vector(-0.25, 0, 0));
+                    Modify Global Variable At Index(sandboxState, 1, Add, Vector(-0.25, 0, 0));
                 End;
             End;
-        Else If(Compare(Global.Sandboxxyz, ==, 2));
+        Else If(Compare(Value In Array(Global.sandboxState, 3), ==, 2));
             If(Is Button Held(Event Player, Button(Ultimate)));
-                If(Compare(Global.Sandboxplusminus, ==, 1));
-                    Modify Global Variable(Sandboxballdir, Add, Up);
+                If(Compare(Value In Array(Global.sandboxState, 4), ==, 1));
+                    Modify Global Variable At Index(sandboxState, 1, Add, Up);
                 Else;
-                    Modify Global Variable(Sandboxballdir, Add, Down);
+                    Modify Global Variable At Index(sandboxState, 1, Add, Down);
                 End;
             Else;
-                If(Compare(Global.Sandboxplusminus, ==, 1));
-                    Modify Global Variable(Sandboxballdir, Add, Vector(0, 0.25, 0));
+                If(Compare(Value In Array(Global.sandboxState, 4), ==, 1));
+                    Modify Global Variable At Index(sandboxState, 1, Add, Vector(0, 0.25, 0));
                 Else;
-                    Modify Global Variable(Sandboxballdir, Add, Vector(0, -0.25, 0));
+                    Modify Global Variable At Index(sandboxState, 1, Add, Vector(0, -0.25, 0));
                 End;
             End;
-        Else If(Compare(Global.Sandboxxyz, ==, 3));
+        Else If(Compare(Value In Array(Global.sandboxState, 3), ==, 3));
             If(Is Button Held(Event Player, Button(Ultimate)));
-                If(Compare(Global.Sandboxplusminus, ==, 1));
-                    Modify Global Variable(Sandboxballdir, Add, Forward);
+                If(Compare(Value In Array(Global.sandboxState, 4), ==, 1));
+                    Modify Global Variable At Index(sandboxState, 1, Add, Forward);
                 Else;
-                    Modify Global Variable(Sandboxballdir, Add, Backward);
+                    Modify Global Variable At Index(sandboxState, 1, Add, Backward);
                 End;
             Else;
-                If(Compare(Global.Sandboxplusminus, ==, 1));
-                    Modify Global Variable(Sandboxballdir, Add, Vector(0, 0, 0.25));
+                If(Compare(Value In Array(Global.sandboxState, 4), ==, 1));
+                    Modify Global Variable At Index(sandboxState, 1, Add, Vector(0, 0, 0.25));
                 Else;
-                    Modify Global Variable(Sandboxballdir, Add, Vector(0, 0, -0.25));
+                    Modify Global Variable At Index(sandboxState, 1, Add, Vector(0, 0, -0.25));
     }
 }
 
@@ -3453,21 +3444,21 @@ rule ("Sandbox - Set Ball speed") {
         Is Game In Progress == True;
         Global.ballIsOut == False;
         Is Button Held(Event Player, Button(Interact)) == True;
-        Global.Sandboxselected == 3;
+        Value In Array(Global.sandboxState, 5) == 3;
         Is Game In Progress == True;
     }
     actions {
         If(Is Button Held(Event Player, Button(Ultimate)));
-            If(Compare(Global.Sandboxplusminus, ==, 1));
-                Modify Global Variable(Sandboxballspd, Add, 10);
+            If(Compare(Value In Array(Global.sandboxState, 4), ==, 1));
+                Modify Global Variable At Index(sandboxState, 2, Add, 10);
             Else;
-                Modify Global Variable(Sandboxballspd, Add, -10);
+                Modify Global Variable At Index(sandboxState, 2, Add, -10);
             End;
         Else;
-            If(Compare(Global.Sandboxplusminus, ==, 1));
-                Modify Global Variable(Sandboxballspd, Add, 1);
+            If(Compare(Value In Array(Global.sandboxState, 4), ==, 1));
+                Modify Global Variable At Index(sandboxState, 2, Add, 1);
             Else;
-                Modify Global Variable(Sandboxballspd, Add, -1);
+                Modify Global Variable At Index(sandboxState, 2, Add, -1);
     }
 }
 
@@ -3488,20 +3479,20 @@ rule ("Sandbox - Change xyz and +/-") {
         Abort If Condition Is False;
         Wait(0.25, Ignore Condition);
         If(And(Is Button Held(Event Player, Button(Jump)), Is Button Held(Event Player, Button(Crouch))));
-            Modify Global Variable(Sandboxplusminus, Multiply, -1);
+            Modify Global Variable At Index(sandboxState, 4, Multiply, -1);
             Big Message(All Players(All Teams), Custom String("+/- switched"));
         Else If(Is Button Held(Event Player, Button(Jump)));
-            If(Compare(Global.Sandboxxyz, ==, 3));
+            If(Compare(Value In Array(Global.sandboxState, 3), ==, 3));
                 Big Message(All Players(All Teams), Custom String("Invalid input"));
             Else;
-                Modify Global Variable(Sandboxxyz, Add, 1);
+                Modify Global Variable At Index(sandboxState, 3, Add, 1);
                 Big Message(All Players(All Teams), Custom String("axis +1"));
             End;
         Else If(Is Button Held(Event Player, Button(Crouch)));
-            If(Compare(Global.Sandboxxyz, ==, 1));
+            If(Compare(Value In Array(Global.sandboxState, 3), ==, 1));
                 Big Message(All Players(All Teams), Custom String("Invalid input"));
             Else;
-                Modify Global Variable(Sandboxxyz, Subtract, 1);
+                Modify Global Variable At Index(sandboxState, 3, Subtract, 1);
                 Big Message(All Players(All Teams), Custom String("axis -1"));
     }
 }
@@ -3522,12 +3513,12 @@ rule ("Sandbox - Switch between pos/dir/spd") {
     actions {
         Wait Until(Not(Is Button Held(Event Player, Button(Reload))), 0.4);
         If(Is Button Held(Event Player, Button(Reload)));
-            If(Compare(Global.Sandboxselected, >, 2));
-                Set Global Variable(Sandboxselected, 1);
+            If(Compare(Value In Array(Global.sandboxState, 5), >, 2));
+                Set Global Variable At Index(sandboxState, 5, 1);
             Else;
-                Modify Global Variable(Sandboxselected, Add, 1);
+                Modify Global Variable At Index(sandboxState, 5, Add, 1);
             End;
-            Big Message(Event Player, Custom String("Switched pos/dir/spd to {0}", Global.Sandboxselected));
+            Big Message(Event Player, Custom String("Switched pos/dir/spd to {0}", Value In Array(Global.sandboxState, 5)));
     }
 }
 
@@ -3541,8 +3532,8 @@ rule ("Sandbox - Show ball spawnpoint and direction") {
         Global.ballIsOut == False;
     }
     actions {
-        Create Effect(All Players(All Teams), Orb, Color(Green), Global.Sandboxballpos, 0.2, Position and Radius);
-        Create Effect(All Players(All Teams), Orb, Color(Yellow), Add(Global.Sandboxballpos, Global.Sandboxballdir), 0.1, Position and Radius);
+        Create Effect(All Players(All Teams), Orb, Color(Green), First Of(Global.sandboxState), 0.2, Position and Radius);
+        Create Effect(All Players(All Teams), Orb, Color(Yellow), Add(First Of(Global.sandboxState), Value In Array(Global.sandboxState, 1)), 0.1, Position and Radius);
     }
 }
 
@@ -3557,7 +3548,7 @@ rule ("Sandbox - Controls desc") {
         Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Press [{0}] / [{1}] to switch the axis youre editing. press both to switch between negative and positive.", Input Binding String(Button(Jump)), Input Binding String(Button(Crouch))), Null, Left, 999, Null, Color(White), Null, Visible To and String, Default Visibility);
         Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Hold [{0}] to switch between position/direction/speed", Input Binding String(Button(Reload))), Null, Left, 999, Null, Color(White), Null, Visible To and String, Default Visibility);
         Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Press [{0}] to add/substract, hold [{1}] while doing so to add/substract more. (dont hold long, because itll deactivate sandbox)", Input Binding String(Button(Interact)), Input Binding String(Button(Ultimate))), Null, Left, 999, Null, Color(White), Null, Visible To and String, Default Visibility);
-        Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Current settings: Ballpos: [{0}] Balldirection: [{1}] Ballspeed: [{2}]", Global.Sandboxballpos, Global.Sandboxballdir, Global.Sandboxballspd), Null, Left, 999, Null, Color(White), Null, Visible To and String, Default Visibility);
+        Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Current settings: Ballpos: [{0}] Balldirection: [{1}] Ballspeed: [{2}]", First Of(Global.sandboxState), Value In Array(Global.sandboxState, 1), Value In Array(Global.sandboxState, 2)), Null, Left, 999, Null, Color(White), Null, Visible To and String, Default Visibility);
         Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Start the round by pressing [{0}] and [{1}]", Input Binding String(Button(Ultimate)), Input Binding String(Button(Reload))), Null, Left, 999, Null, Color(White), Null, Visible To and String, Default Visibility);
     }
 }

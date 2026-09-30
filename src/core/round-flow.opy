@@ -23,9 +23,9 @@ rule "Active game - spawn ball":
     @Condition target.isAlive() == true
     
     if Sandbox == true:
-        ballPosition = Sandboxballpos
-        ballDirection = directionTowards(Sandboxballpos, Sandboxballdir)
-        ballSpeed = Sandboxballspd
+        ballPosition = sandboxState[SandboxField.BALL_POSITION]
+        ballDirection = directionTowards(sandboxState[SandboxField.BALL_POSITION], sandboxState[SandboxField.BALL_DIRECTION])
+        ballSpeed = sandboxState[SandboxField.BALL_SPEED]
     else:
         ballPosition = circleCenter
         ballDirection = directionTowards(ballPosition, target.getEyePosition())
