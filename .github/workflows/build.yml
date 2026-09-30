@@ -14,5 +14,5 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Compile OverPy and check workshop/genjiball.txt is up to date
+      - name: Compile OverPy, check workshop/genjiball.txt is up to date and core rules match the feel-lock
         run: npm run check

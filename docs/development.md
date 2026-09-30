@@ -17,10 +17,27 @@ The OverPy version is pinned in `package.json`, so everyone builds identical out
 |---|---|
 | `npm ci` | Install the pinned OverPy version |
 | `npm run build` | Compile `src/main.opy` → `workshop/genjiball.txt` |
-| `npm run check` | Compile and fail if `workshop/genjiball.txt` is stale (this is what CI runs) |
+| `npm run check` | Compile and fail if `workshop/genjiball.txt` is stale or a [feel-locked](#feel-lock) rule changed (this is what CI runs) |
+| `npm run feel-lock:update` | Rewrite `tools/feel-lock.json` after a deliberate ball feel change |
 | `npm run decompile -- in.txt out.opy` | Turn Workshop code copied from the game into OverPy |
 
 The build prints many **warnings** (chased variables in conditions, dark colors, legacy impulse flags). They were all present in v1.3.2 and are not errors. It's still welcome to fix them, one topic per PR.
+
+## Feel-lock
+
+The Workshop has no tests, so a refactor could change how the ball feels without anyone noticing. The feel-lock guards against that. `tools/feel-lock.json` is a snapshot of the **compiled** code of the core rules, in their list order:
+
+- every rule and subroutine in `08-collision.opy`, `09-ball-physics.opy` and `06-round-flow.opy` (new rules added to those files are locked automatically)
+- the dash/deflect timing rules in `05-controls.opy` (listed by name in `tools/feel-lock.mjs`)
+
+`npm run check` compiles the source and compares. It fails, naming the rule, when a locked rule's compiled code changes, a locked rule is added, removed or renamed, or the locked rules change order relative to each other. Because it compares compiled code, comments and formatting in the source don't count, but any change to a value, condition or action does.
+
+What it doesn't lock: rules outside that list, and a locked rule's absolute position. Adding a HUD rule early in the list is fine. Placing a rule between locked rules that reacts to the same variables in the same tick can still change feel, so check [Rule order](architecture.md#rule-order) when you do that.
+
+**When the check fails:**
+
+- If you didn't mean to change ball feel (a cleanup, a rename, moving code around), your change isn't behaviour-neutral. Fix it until the check passes.
+- If you did mean to, run `npm run feel-lock:update` and commit `tools/feel-lock.json` with your change. Its diff shows reviewers exactly which compiled rules changed. The PR needs the **`ball feel`** label (CI fails without it) and an in-game playtest. New feel changes should be a default-off toggle, per the label's description.
 
 ## Testing in-game
 
