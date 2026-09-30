@@ -48,9 +48,25 @@ npm run decompile -- my-export.txt my-export.opy
 
 Find the rules you changed in `my-export.opy` and copy them into the matching file in `src/rules/`. Then build and check that `git diff` only shows your change.
 
+## Ball and player feel
+
+Tournament players rely on the game feeling exactly the same from version to version. So for v1.3.3 onward, these rules apply to every PR:
+
+1. **Feel changes go behind a toggle that is off by default.** This covers any change to how the **ball** moves, collides or deflects, and any change to how a **player** moves or controls (dash, deflect, mobility, timings). Add a Workshop setting, off by default, and keep the old behaviour when it's off.
+2. **No preset forces these toggles on.** With the toggle off, `Default` and `Tournament` stay identical to v1.3.2. A host who wants the new behaviour turns it on themselves.
+3. **Making a hardcoded number configurable is fine, if the default is the current value.** For example, turning a fixed `0.3` s deflect window into a setting is OK when the setting defaults to `0.3`.
+4. **Label the PR** `ball feel` or `player feel`, and say in the description which toggle controls it.
+
+Changing the default feel itself (flipping a toggle on, or changing a default value) needs agreement on Discord or in the issue first, and happens in its own PR.
+
+Two things back this up:
+
+- The **feel-lock** (`npm run check`, also in CI) fails when the compiled code of a core ball rule changes. See [docs/development.md](docs/development.md#feel-lock). Note that it only covers the core ball rules, not every player control, so the rules above still apply where it can't see.
+- [`.github/CODEOWNERS`](.github/CODEOWNERS) asks a maintainer to review any change to the core files: collision, ball physics, controls timing and round flow.
+
 ## Guidelines
 
-- **Keep gameplay changes opt-in** unless there's agreement on Discord or in the issue that the default should change. Tournament players rely on the default feel staying stable.
+- **Keep gameplay changes opt-in.** See [Ball and player feel](#ball-and-player-feel) above.
 - **Don't change a variable's index** in `src/variables.opy`. Add new variables with an unused index. The Workshop has a limit of 128 global and 128 player variables. `npm run check` shows how many are left.
 - **Rule order matters.** Rules run top to bottom, and `main.opy` includes files in order. Put new rules next to the ones they relate to.
 - **Keep one topic per PR.** A small PR gets reviewed and merged much faster than a big one.
