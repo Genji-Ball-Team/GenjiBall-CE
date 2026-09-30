@@ -10,6 +10,10 @@ This repository is the community-maintained home of the mode's source code. It i
 
 ## Play it
 
+**Quickest way:** use the import code **`C62PC`**, the current v1.3.2 version (by FROZONE). In Overwatch, go to **Play → Custom Games → Import Code** and enter `C62PC`.
+
+Or paste the code yourself:
+
 1. Grab the latest stable Workshop code from [Releases](../../releases). [`workshop/genjiball.txt`](workshop/genjiball.txt) on `main` is the latest development build and may include unreleased changes.
 2. In Overwatch, create a Custom Game, open **Settings**, and use the **Import / paste settings** button (top right).
 3. Start the game. The default map is Workshop Island (Night).

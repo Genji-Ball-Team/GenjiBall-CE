@@ -2,6 +2,18 @@
 
 ## Importing the code
 
+### With an import code
+
+| Version | Import code | Published by |
+|---|---|---|
+| v1.3.2 (current) | **`C62PC`** | FROZONE |
+
+In Overwatch: **Play → Custom Games → Import Code**, and enter the code.
+
+When a new version is released, a maintainer adds its import code to this table and to the release notes. Import codes can only be created in-game.
+
+### By pasting the Workshop code
+
 1. Get the Workshop code from the latest [release](../../../releases). That's the stable version. [`workshop/genjiball.txt`](../workshop/genjiball.txt) on `main` is the latest development build, and each version branch (e.g. `v1.3.2`) has the code for that release.
 2. In Overwatch: **Play → Custom Games → Create**.
 3. Open **Settings** and click the **Import** / paste icon in the top right. Your clipboard needs to contain the code.
