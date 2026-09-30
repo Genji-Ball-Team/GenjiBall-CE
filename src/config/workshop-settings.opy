@@ -48,58 +48,50 @@ rule "Settings - Workshop settings":
     killCounterEnabled = createWorkshopSettingBool("80 - Visual", "kill tracker", false, 2)
     #90 - Debug: developer/test HUD helpers. Presets leave these manual.
     debugRules = createWorkshopSettingBool("90 - Debug", "debug HUD", false)
-    #Shared core ruleset defaults for every non-Custom preset.
-    #Custom (index 7) intentionally skips this block so every visible setting is manual.
+    #Presets: one row per preset, in Preset order, one column per forced setting
+    #(PresetColumn in config/constants.opy). MANUAL keeps the host's value.
+    #Custom has no row, so every visible setting stays manual.
+    #Tournament: current conservative tournament setup.
+    #Tournament+: future tournament candidate with AntiOrbit and steer-based anti-ghost correction.
+    #  Original physics stays forced until Legacy+/Experimental are tournament-proven.
+    #Rapid: Workshop Expanse-style fast/bouncy preset.
+    #v1: dry Workshop Island feel with otherwise standard gameplay.
+    #v7: v7-style preset shell. Deeper v7 parity remains deferred.
+    #Experimental: curated rebound-physics test ruleset, not tournament-safe yet.
+    #  The bot setting stays manual so Bot + Experimental can be tested together.
     if presetMode != Preset.CUSTOM:
-        matchTime = 900
-        tournamentMode = false
-        totalRounds = 30
-        breaksEnabled = true
-        roundsUntilBreak = 10
-        breakLength = 60
-        ballSpawnSpeed = 60
-        ballSpeedCap = 400
-        ballAcceleration = 0.25
-        ballMotion = BallMotion.MODERN
-        ballPhysicsMode = BallPhysics.ORIGINAL
-        waterLevel = Water.MODERATE
-        bouncePadToggle = false
-        mobilityMode = Mobility.AGILE
-        if presetMode == Preset.TOURNAMENT:
-            #Tournament: current conservative tournament setup.
-            tournamentMode = true
-            antiGhostMode = AntiGhost.OFF
-            antiOrbitMode = false
-        elif presetMode == Preset.TOURNAMENT_PLUS:
-            #Tournament+: future tournament candidate with AntiOrbit and steer-based anti-ghost correction.
-            #Original physics remains forced until Legacy+/Experimental are tournament-proven.
-            tournamentMode = true
-            antiGhostMode = AntiGhost.STEER
-            antiOrbitMode = true
-            antiOrbitRadius = 14
-            antiOrbitPressureRate = 0.02
-        elif presetMode == Preset.RAPID:
-            #Rapid: Workshop Expanse-style fast/bouncy preset.
-            waterLevel = Water.FLOOD
-            ballMotion = BallMotion.RAPID
-            bouncePadToggle = true
-            mobilityMode = Mobility.BALANCED
-        elif presetMode == Preset.V1:
-            #v1: dry Workshop Island feel with otherwise standard gameplay.
-            waterLevel = Water.NONE
-        elif presetMode == Preset.V7:
-            #v7-style preset shell. Deeper v7 parity remains deferred.
-            waterLevel = Water.FLOOD
-            bouncePadToggle = true
-            mobilityMode = Mobility.SLUGGISH
-        elif presetMode == Preset.EXPERIMENTAL:
-            #Experimental: curated rebound-physics test ruleset, not tournament-safe yet.
-            #Keep the bot setting manual so Bot + Experimental can be tested together.
-            ballPhysicsMode = BallPhysics.EXPERIMENTAL
-            antiGhostMode = AntiGhost.OFF
-            antiOrbitMode = true
-            antiOrbitRadius = 14
-            antiOrbitPressureRate = 0.02
+        presetRow = [
+            #match, tourn, rounds, breaks, every, length, start, max, accel, motion,               physics,                  water,          pads,  mobility,          anti-ghost,      AntiOrbit, radius, pressure
+            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     Water.MODERATE, false, Mobility.AGILE,    MANUAL,          MANUAL,    MANUAL, MANUAL], #Default
+            [900,   true,  30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     Water.MODERATE, false, Mobility.AGILE,    AntiGhost.OFF,   false,     MANUAL, MANUAL], #Tournament
+            [900,   true,  30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     Water.MODERATE, false, Mobility.AGILE,    AntiGhost.STEER, true,      14,     0.02],   #Tournament+
+            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.RAPID,     BallPhysics.ORIGINAL,     Water.FLOOD,    true,  Mobility.BALANCED, MANUAL,          MANUAL,    MANUAL, MANUAL], #Rapid
+            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     Water.NONE,     false, Mobility.AGILE,    MANUAL,          MANUAL,    MANUAL, MANUAL], #v1
+            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     Water.FLOOD,    true,  Mobility.SLUGGISH, MANUAL,          MANUAL,    MANUAL, MANUAL], #v7
+            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.EXPERIMENTAL, Water.MODERATE, false, Mobility.AGILE,    AntiGhost.OFF,   true,      14,     0.02],   #Experimental
+        ][presetMode]
+        matchTime = presetRow[PresetColumn.MATCH_TIME]
+        tournamentMode = presetRow[PresetColumn.TOURNAMENT_MODE]
+        totalRounds = presetRow[PresetColumn.TOTAL_ROUNDS]
+        breaksEnabled = presetRow[PresetColumn.BREAKS_ENABLED]
+        roundsUntilBreak = presetRow[PresetColumn.ROUNDS_UNTIL_BREAK]
+        breakLength = presetRow[PresetColumn.BREAK_LENGTH]
+        ballSpawnSpeed = presetRow[PresetColumn.BALL_SPAWN_SPEED]
+        ballSpeedCap = presetRow[PresetColumn.BALL_SPEED_CAP]
+        ballAcceleration = presetRow[PresetColumn.BALL_ACCELERATION]
+        ballMotion = presetRow[PresetColumn.BALL_MOTION]
+        ballPhysicsMode = presetRow[PresetColumn.BALL_PHYSICS]
+        waterLevel = presetRow[PresetColumn.WATER]
+        bouncePadToggle = presetRow[PresetColumn.BOUNCE_PADS]
+        mobilityMode = presetRow[PresetColumn.MOBILITY]
+        if presetRow[PresetColumn.ANTI_GHOST] != MANUAL:
+            antiGhostMode = presetRow[PresetColumn.ANTI_GHOST]
+        if presetRow[PresetColumn.ANTI_ORBIT] != MANUAL:
+            antiOrbitMode = presetRow[PresetColumn.ANTI_ORBIT]
+        if presetRow[PresetColumn.ANTI_ORBIT_RADIUS] != MANUAL:
+            antiOrbitRadius = presetRow[PresetColumn.ANTI_ORBIT_RADIUS]
+        if presetRow[PresetColumn.ANTI_ORBIT_PRESSURE] != MANUAL:
+            antiOrbitPressureRate = presetRow[PresetColumn.ANTI_ORBIT_PRESSURE]
     if ballMotion == BallMotion.MODERN:
         motionMultiplier = 1
     elif ballMotion == BallMotion.RAPID:
