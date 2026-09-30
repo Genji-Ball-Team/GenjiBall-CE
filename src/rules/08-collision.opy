@@ -84,14 +84,9 @@ def collisionTarget():
         prevTarget.Critslash = false
     else:
         ballSpeed = min(ballSpeedCap, ballSpeed * 1.05)
-    if getCurrentGamemode() == Gamemode.TDM:
-        TDMcollision()
-    if getCurrentGamemode() == Gamemode.TDM:
-        goto lbl_4
     target = sorted(getLivingPlayers(Team.ALL).exclude(target).filter(lambda x: x.hasMoved), lambda x: angleBetweenVectors(target.getFacingDirection(), directionTowards(target, x.getPosition())))[0]
     playEffect(getAllPlayers(), DynamicEffect.EXPLOSION_SOUND, Color.WHITE, evalOnce(prevTarget.getPosition()), 150)
     playEffect(getAllPlayers(), DynamicEffect.BAPTISTE_BIOTIC_LAUNCHER_EXPLOSION_SOUND, Color.WHITE, evalOnce(prevTarget.getPosition()), 20)
-    lbl_4:
     #Redirect-sensitive systems should start fresh after the ball changes target.
     ballRedirectAge = 0
     experimentalSteeringRate = ballDirectionRate * experimentalHomingStart

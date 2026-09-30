@@ -145,10 +145,6 @@ variables {
         68: RedGreenColorblindMode
         69: WatermarkEnabled
         70: doubleSensEnabled
-        71: Teamsscoretowin
-        72: enablepassing
-        73: passingassistid
-        74: passingplayer
         75: antiOrbitMode
         76: antiOrbitRadius
         77: antiOrbitPressureRate
@@ -182,7 +178,6 @@ variables {
         105: experimentalHomingHold
         106: experimentalHomingRamp
         107: experimentalSurfaceHoming
-        108: enableDashPassing
         109: killCounterEnabled
         110: debugRules
         111: killLeaderboardPlayers
@@ -234,7 +229,6 @@ subroutines {
     15: startModernBall
     16: startAstroBall
     17: startRetroBall
-    18: TDMcollision
     19: resetOrbitRoundState
     20: simpleIslandSideCollision
     21: startLegacyPlusBall
@@ -286,10 +280,6 @@ rule ("Settings - Workshop settings") {
         Set Global Variable(antiOrbitMode, Workshop Setting Toggle(Custom String("60 - Competitive"), Custom String("AntiOrbit"), False, 0));
         Set Global Variable(antiOrbitRadius, Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("AntiOrbit radius"), 14, 10, 20, 1));
         Set Global Variable(antiOrbitPressureRate, Divide(Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("AntiOrbit pressure"), 2, 1, 5, 2), 100));
-        "70 - Teams: native TDM support. These only matter when the Custom Game mode is Team Deathmatch.\nDash passing allows dash to trigger a same-team pass when normal passing is enabled."
-        Set Global Variable(Teamsscoretowin, Workshop Setting Integer(Custom String("70 - Teams"), Custom String("score to win"), 0, 0, 30, 0));
-        Set Global Variable(enablepassing, Workshop Setting Toggle(Custom String("70 - Teams"), Custom String("passing"), False, 1));
-        Set Global Variable(enableDashPassing, Workshop Setting Toggle(Custom String("70 - Teams"), Custom String("dash passing"), False, 2));
         "80 - Visual: visual helpers. Presets leave these manual."
         Set Global Variable(xray, Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("x-ray"), False, 0));
         Set Global Variable(tracingMode, Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("tracing mode"), False, 1));
@@ -888,14 +878,7 @@ rule ("Appearance - target effects") {
     actions {
         Create Effect(Remove From Array(All Players(All Teams), Global.target), Orb, Color(White), Update Every Frame(Global.ballPosition), 1, Visible To Position and Radius);
         Create Projectile Effect(All Players(All Teams), Sigma Hypersphere, Null, Update Every Frame(Global.ballPosition), Global.ballDirection, 0.01, Visible To Position Direction and Size);
-        If(Compare(Current Game Mode, ==, Game Mode(Team Deathmatch)));
-            If(And(Compare(Global.passingplayer, ==, Global.prevTarget), Compare(Team Of(Global.target), ==, Team Of(Global.prevTarget))));
-                Create Effect(Global.target, Orb, Color(Sky Blue), Update Every Frame(Global.ballPosition), 1, Visible To Position and Radius);
-                Create Effect(If-Then-Else(Is Alive(Global.target), Remove From Array(All Players(All Teams), Global.target), Null), Good Aura, Color(Red), Global.target, 1, Visible To Position and Radius);
-                Create Effect(If-Then-Else(Compare(Local Player, ==, Global.target), Local Player, Null), Good Aura, If-Then-Else((Local Player).thirdPerson, Color(Gray), Color(Red)), Local Player, 0.8, Visible To Position Radius and Color);
-                Create Effect(Global.target, Good Aura, Color(Blue), Global.ballPosition, 1, Visible To Position and Radius);
-            End;
-        Else If(Not(Global.RedGreenColorblindMode));
+        If(Not(Global.RedGreenColorblindMode));
             Create Effect(Global.target, Orb, Color(Red), Update Every Frame(Global.ballPosition), 1, Visible To Position and Radius);
             Create Effect(If-Then-Else(Is Alive(Global.target), Remove From Array(All Players(All Teams), Global.target), Null), Good Aura, Color(Red), Global.target, 1, Visible To Position and Radius);
             Create Effect(If-Then-Else(Compare(Local Player, ==, Global.target), Local Player, Null), Good Aura, If-Then-Else((Local Player).thirdPerson, Color(Gray), Color(Red)), Local Player, 0.8, Visible To Position Radius and Color);
@@ -1872,14 +1855,9 @@ rule ("Collision - collision sub") {
         Else;
             Set Global Variable(ballSpeed, Min(Global.ballSpeedCap, Multiply(Global.ballSpeed, 1.05)));
         End;
-        If(Compare(Current Game Mode, ==, Game Mode(Team Deathmatch)));
-            Call Subroutine(TDMcollision);
-        End;
-        Skip If(Compare(Current Game Mode, ==, Game Mode(Team Deathmatch)), 3);
         Set Global Variable(target, First Of(Sorted Array(Filtered Array(Remove From Array(All Living Players(All Teams), Global.target), (Current Array Element).hasMoved), Angle Between Vectors(Facing Direction Of(Global.target), Direction Towards(Global.target, Position Of(Current Array Element))))));
         Play Effect(All Players(All Teams), Explosion Sound, Color(White), Evaluate Once(Position Of(Global.prevTarget)), 150);
         Play Effect(All Players(All Teams), Baptiste Biotic Launcher Explosion Sound, Color(White), Evaluate Once(Position Of(Global.prevTarget)), 20);
-        //lbl_4:
         "Redirect-sensitive systems should start fresh after the ball changes target."
         Set Global Variable(ballRedirectAge, 0);
         Set Global Variable(experimentalSteeringRate, Multiply(Global.ballDirectionRate, Global.experimentalHomingStart));
@@ -3635,213 +3613,6 @@ rule ("Gb Abilities - 4. Critical slash") {
         Wait Until(Compare((Event Player).Critslash, ==, False), 99999);
         Set Player Variable(Event Player, Abilitycooldown, 17);
         Stop Forcing Player Outlines(Event Player, All Players(All Teams));
-    }
-}
-
-disabled rule ("Teams - Winning Team") {
-    event {
-        Ongoing - Global;
-    }
-    conditions {
-        Or(And(Compare(Match Time, ==, 0), Compare(Global.Teamsscoretowin, ==, 0)), Or(And(Compare(Global.Teamsscoretowin, >, 0), Compare(Team Score(Team 1), ==, Global.Teamsscoretowin)), And(Compare(Global.Teamsscoretowin, >, 0), Compare(Team Score(Team 2), ==, Global.Teamsscoretowin)))) == True;
-        Global.RoundInProgress == False;
-        Global.TieBreakerActive == False;
-        Global.tournamentMode == False;
-        Current Game Mode == Game Mode(Team Deathmatch);
-    }
-    actions {
-        Enable Built-In Game Mode Announcer;
-        If(Compare(Global.Teamsscoretowin, ==, 0));
-            If(Compare(Team Score(Team 1), >, Team Score(Team 2)));
-                Declare Team Victory(Team 1);
-            Else;
-                Declare Team Victory(Team 2);
-            End;
-        Else If(Compare(Team Score(Team 1), ==, Global.Teamsscoretowin));
-            Declare Team Victory(Team 1);
-        Else;
-            Declare Team Victory(Team 2);
-    }
-}
-
-disabled rule ("Teams - Passing aura") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        Global.enablepassing == True;
-        Current Game Mode == Game Mode(Team Deathmatch);
-        Is Button Held(Event Player, Button(Secondary Fire)) == True;
-    }
-    actions {
-        Create Effect(Filtered Array(All Players(Team Of(Event Player)), And(Compare(Current Array Element, !=, Event Player), Is Alive(Current Array Element))), Bad Aura, Color(Sky Blue), Eye Position(Event Player), 1.5, Position and Radius);
-        Wait Until(Or(Not(Is Button Held(Event Player, Button(Secondary Fire))), Is Dead(Event Player)), 60);
-        Destroy Effect(Last Created Entity);
-    }
-}
-
-disabled rule ("Teams - check for <2 players") {
-    event {
-        Ongoing - Global;
-    }
-    conditions {
-        Current Game Mode == Game Mode(Team Deathmatch);
-        Is Game In Progress == True;
-        And(Number Of Players(Team 1), Number Of Players(Team 2)) == False;
-    }
-    actions {
-        Set Global Variable(IsInFinalDuel, False);
-        Set Global Variable(IsEnoughPlayersToStart, False);
-        Stop Chasing Global Variable(ballSpawnCountdown);
-        Call Subroutine(deleteBall);
-        Skip If(Compare(Global.RoundInProgress, ==, False), 1);
-        Set Global Variable(RoundInProgress, False);
-        //lbl_0:
-        Big Message(All Players(All Teams), Custom String("Waiting for players"));
-        Pause Match Time;
-    }
-}
-
-disabled rule ("Teams - wait for more players") {
-    event {
-        Ongoing - Global;
-    }
-    conditions {
-        Current Game Mode == Game Mode(Team Deathmatch);
-        Number Of Players(Team 1) != False;
-        Number Of Players(Team 2) != False;
-        Global.IsEnoughPlayersToStart == False;
-    }
-    actions {
-        Abort If(Compare(Number Of Players(All Teams), <, 2));
-        Big Message(All Players(All Teams), Custom String("Lets begin!"));
-        Set Global Variable(IsEnoughPlayersToStart, True);
-        Call Subroutine(startRound);
-    }
-}
-
-rule ("Teams - TDM collision") {
-    event {
-        Subroutine;
-        TDMcollision;
-    }
-    actions {
-        "TDM passing is intentionally native-TDM only. FFA behavior is unaffected.\nA pass can be triggered with Secondary Fire / Ability 2, and optionally Dash."
-        If(And(Compare(Global.enablepassing, ==, True), Or(Or(Is Button Held(Global.prevTarget, Button(Secondary Fire)), Is Using Ability 2(Global.prevTarget)), And(Compare(Global.enableDashPassing, ==, True), Is Using Ability 1(Global.prevTarget)))));
-            Play Effect(All Players(All Teams), Ring Explosion, Color(Sky Blue), Position Of(Global.prevTarget), 10);
-            Play Effect(All Players(All Teams), Moira Fade Disappear Sound, Color(White), Position Of(Global.prevTarget), 100);
-            Set Player Health(Global.prevTarget, 100);
-            Stop Assist(Global.passingassistid);
-            If(Compare(Number Of Living Players(Team Of(Global.prevTarget)), ==, 1));
-                If(Compare(Global.presetMode, !=, 0));
-                    Set Global Variable(target, Global.prevTarget);
-                Else;
-                    Call Subroutine(deflectFail);
-                End;
-            Else;
-                Set Global Variable(passingplayer, Global.prevTarget);
-                Start Assist(Global.passingplayer, All Players(All Teams), None);
-                Set Global Variable(passingassistid, Last Assist ID);
-                Set Global Variable(target, First Of(Sorted Array(Filtered Array(Remove From Array(All Living Players(Team Of(Global.prevTarget)), Global.prevTarget), (Current Array Element).hasMoved), Angle Between Vectors(Facing Direction Of(Global.prevTarget), Direction Towards(Global.prevTarget, Position Of(Current Array Element))))));
-            End;
-        Else;
-            If(Or(Compare(Team Of(Global.prevTarget), !=, Team 1), Compare(Team Of(Global.prevTarget), !=, Team 2)));
-                Stop Assist(Global.passingassistid);
-            End;
-            Heal(Global.prevTarget, Null, 100);
-            Set Global Variable(target, First Of(Sorted Array(Filtered Array(Remove From Array(All Living Players(Opposite Team Of(Team Of(Global.prevTarget))), Global.prevTarget), (Current Array Element).hasMoved), Angle Between Vectors(Facing Direction Of(Global.prevTarget), Direction Towards(Global.prevTarget, Position Of(Current Array Element))))));
-        End;
-    }
-}
-
-disabled rule ("Teams - end assist after 1s") {
-    event {
-        Ongoing - Global;
-    }
-    conditions {
-        Current Game Mode == Game Mode(Team Deathmatch);
-        Global.passingplayer != Null;
-    }
-    actions {
-        Wait Until(Compare(Global.prevTarget, !=, Global.passingplayer), 10);
-        Wait(1, Ignore Condition);
-        Stop Assist(Global.passingassistid);
-        Set Global Variable(passingplayer, Null);
-    }
-}
-
-disabled rule ("Teams - Final duel") {
-    event {
-        Ongoing - Global;
-    }
-    conditions {
-        Current Game Mode == Game Mode(Team Deathmatch);
-        Is Game In Progress == True;
-        Global.RoundInProgress != False;
-        Count Of(Filtered Array(All Living Players(Team 1), (Current Array Element).hasMoved)) == 1;
-        Count Of(Filtered Array(All Living Players(Team 2), (Current Array Element).hasMoved)) == 1;
-        Global.IsInFinalDuel == False;
-        Global.IsEnoughPlayersToStart == True;
-        Global.endlessMode == False;
-    }
-    actions {
-        Wait(0.016, Abort When False);
-        Abort If Condition Is False;
-        Call Subroutine(setupFinal);
-    }
-}
-
-disabled rule ("Teams - Last surviving") {
-    event {
-        Ongoing - Global;
-    }
-    conditions {
-        Current Game Mode == Game Mode(Team Deathmatch);
-        Is Game In Progress == True;
-        Global.IsEnoughPlayersToStart == True;
-        Or(Compare(Number Of Living Players(Team 1), ==, 0), Compare(Number Of Living Players(Team 2), ==, 0)) == True;
-    }
-    actions {
-        Set Global Variable(IsInFinalDuel, False);
-        If(Compare(Number Of Living Players(Team 1), ==, 0));
-            Modify Team Score(Team 2, 1);
-        Else;
-            Modify Team Score(Team 1, 1);
-        End;
-        Wait(0.25, Ignore Condition);
-        If(And(Or(Compare(Match Time, ==, 0), Global.TieBreakerActive), Not(Global.tournamentMode)));
-            Set Global Variable(HighestScore, Score Of(Last Of(Sorted Array(All Players(All Teams), Score Of(Current Array Element)))));
-            "Check if there is more than 1 person with the highest score"
-            If(Compare(Team Score(Team 1), ==, Team Score(Team 2)));
-                "There is more than 1, activate tie breaker"
-                Set Global Variable(TieBreakerActive, True);
-            Else;
-                Set Global Variable(TieBreakerActive, False);
-                If(Compare(Match Time, ==, 0));
-                    Enable Built-In Game Mode Music;
-                    Enable Built-In Game Mode Completion;
-                End;
-            End;
-        End;
-        Stop Chasing Global Variable(ballSpawnCountdown);
-        Stop Chasing Player Variable(All Players(All Teams), bouncePadCooldown);
-        Big Message(All Players(All Teams), Custom String("{0} has won the round", First Of(All Living Players(All Teams))));
-        Wait(2, Ignore Condition);
-        Skip If(Global.duelMode, 8);
-        If(Not(Global.TieBreakerActive));
-            Resurrect(All Dead Players(All Teams));
-        Else;
-            "Kill anyone alive who doesn't have the highest score."
-            Kill(Filtered Array(All Living Players(All Teams), Compare(Score Of(Current Array Element), !=, Global.HighestScore)), Null);
-            "During tiebreaker, only revive the people who have the same score as the highest score."
-            Resurrect(Filtered Array(All Dead Players(All Teams), Compare(Score Of(Current Array Element), ==, Global.HighestScore)));
-            Wait(0.25, Ignore Condition);
-            Big Message(All Players(All Teams), Custom String("tiebreaker!"));
-        End;
-        //lbl_0:
-        Call Subroutine(startRound);
     }
 }
 

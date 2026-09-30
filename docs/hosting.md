@@ -57,7 +57,7 @@ These appear in the custom game under **Settings → Workshop → Settings**, gr
 What "Default" forces (all non-Custom presets start from this):
 match length 15 min, tournament off, 30 rounds, breaks on every 10 rounds for 60 s, ball start speed 60, max speed 400, acceleration 25, motion modern, physics original, water moderate, bounce pads off, mobility agile.
 
-Settings **not** touched by any preset: everything in *50 - Features*, *70 - Teams*, *80 - Visual*, *90 - Debug*, and double sens. Anti-ghost and AntiOrbit are only forced by the presets listed above.
+Settings **not** touched by any preset: everything in *50 - Features*, *80 - Visual*, *90 - Debug*, and double sens. Anti-ghost and AntiOrbit are only forced by the presets listed above.
 
 ### 10 - Ball
 
@@ -118,16 +118,6 @@ Settings **not** touched by any preset: everything in *50 - Features*, *70 - Tea
 | AntiOrbit | off | | Punishes stalling a slow ball around yourself. See [playing.md](playing.md#anti-orbit) |
 | AntiOrbit radius | 14 | 10–20 m | How close the ball has to be to count as orbiting |
 | AntiOrbit pressure | 2 | 1–5 | How fast repeated orbiting shortens the punishment timer |
-
-### 70 - Teams
-
-These only matter if you switch the custom game to **Team Deathmatch**. Team support is **incomplete** in v1.3.2, and most team rules are disabled in the code. See `src/rules/18-teams.opy`.
-
-| Setting | Default | What it does |
-|---|---|---|
-| score to win | 0 | 0 = use the match timer |
-| passing | off | Lets you pass the ball to a teammate |
-| dash passing | off | Dashing also counts as a pass |
 
 ### 80 - Visual
 
