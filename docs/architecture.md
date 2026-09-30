@@ -4,7 +4,7 @@ This is a map of the game logic for contributors. It assumes you know roughly wh
 
 ## Source layout
 
-`src/main.opy` is the entry point. It `#!include`s everything else **in order**. The Workshop runs rules top to bottom, so order matters when several rules react to the same thing.
+`src/main.opy` is the entry point. It `#!include`s everything else **in order**. The Workshop runs rules top to bottom, so order matters when several rules react to the same thing. [Rule order](#rule-order) lists exactly which parts of the order matter.
 
 | File | Contents |
 |---|---|
@@ -29,7 +29,7 @@ This is a map of the game logic for contributors. It assumes you know roughly wh
 | `rules/17-abilities.opy` | Custom abilities (super jump, switch target, blink, crit slash) |
 | `rules/18-teams.opy` | Team Deathmatch support (mostly disabled) |
 | `rules/19-sandbox.opy` | Sandbox practice tools |
-| `rules/20-abilities-experimental.opy` | A disabled crit-slash rule (kept last to preserve original rule order) |
+| `rules/20-abilities-experimental.opy` | A disabled crit-slash rule (last only because it was last in v1.3.2; it has no order constraint) |
 
 ## The core loop
 
@@ -102,6 +102,81 @@ Both call `collisionTarget()`. That checks whether the target is deflecting (`is
 **Anti-ghost** only applies to modern motion. It temporarily raises `ballDirectionRate` to 4 when the ball is near the target but not converging.
 
 > **Chase warning:** OverPy reports warnings like *"rule condition will possibly not trigger properly … because the global variable 'ballPosition' is chased"*. This is a known Workshop quirk: conditions on chased variables don't always re-evaluate. Existing rules have worked with it for years. Newer code (e.g. AntiOrbit) avoids it by checking chased variables in the rule body instead of in conditions. Please do the same in new rules.
+
+## Rule order
+
+The order in `src/main.opy` (and inside each file) is still the v1.3.2 order. This section lists the parts of that order that actually change behaviour. **Any rule not listed here can be moved freely.** If you add a rule that reacts to the same variables in the same tick as a rule listed here, add it to this list.
+
+### How the Workshop orders rules
+
+- Every server tick, rules are checked in list order. A variable change made by one rule is seen by rules **later** in the list during the same tick, and by rules **earlier** in the list only on the next tick.
+- Rules with no conditions (and no event) all start in the first tick, in list order. So anything that reads a value once at startup must come after the rule that sets it.
+- Rules whose condition simply waits for a variable are robust to order: moving them changes timing by at most one tick. They're only listed here when that one tick is visible, or when two rules can fire in the same tick and the first one changes what the second one does.
+- Subroutines (`def`) run where they're called (`Call Subroutine`), so where a `def` sits in the file doesn't matter. The subroutines started with `async(...)` (`startBall`, the motion engines, `stopBall`, `ballCurve`) haven't been checked in-game for placement effects; leave them where they are unless you test it.
+- Two rules with the same HUD position and sort order are drawn in the order they were created, which is rule order.
+
+### Constraints
+
+Each line reads "A must stay before B". Rules are named as they appear in-game.
+
+**Startup (first tick)**
+
+| Keep before | Why |
+|---|---|
+| `Settings - Workshop settings` → everything else | It must be the first rule. It reads the Workshop settings and applies presets, and the startup rules below read the results. |
+| `Settings - Workshop settings` → `Initialization - global variables` | Init copies `ballSpawnSpeed` into `ballSpeed`, `roundsUntilBreak` into `roundsUntilBreakInit`, `experimentalReboundMin` into `reboundInfluence`, and picks `ballDirectionRateInit` from `ballMotion`. Swapped, the ball would use the pre-preset defaults (0). |
+| `Settings - Workshop settings` → `HUD - controls text` | The HUD rule reads `Sandbox`, `doubleSensEnabled` and `Abilities` once, when it starts. |
+| `Settings - Watermark` → `HUD - Watermark` | The HUD rule checks `WatermarkEnabled` once. It only matters if the watermark is ever turned on. |
+| `Settings - Red-green colorblind filter` (disabled) → `Initialization - bounce pads`, `Appearance - target effects` | Both read `RedGreenColorblindMode` once when they create their effects. Only matters when the filter rule is enabled. |
+| `Initialization - Set <map>` (all seven) → `Initialization - bounce pads` | The bounce pad positions are computed once from `circleCenter`. |
+| `Initialization - player variables` → `Initialization - global variables` | Existing quirk: players who are already in the lobby when the mode starts (usually the host) get `bouncePadCooldown = bouncePadCooldownLength` before that global is set, so they start with 0. Swapping would change that. Treat any fix as a deliberate change. |
+
+**Lobby and round flow**
+
+| Keep before | Why |
+|---|---|
+| `Check for <2 players` → `Wait for more players` | In Sandbox with one player both conditions are true in the same tick. The check has to reset `IsEnoughPlayersToStart` first, then the wait rule starts the round. |
+| `Check for <2 players` → `Active game - check for last player surviving` | When a player leaves a two-player round, both fire in the same tick. The check runs first and clears `IsEnoughPlayersToStart`, which stops the other rule from awarding a round win to the player left behind. |
+| `Active game - spawn ball` → `08-collision` and `09-ball-physics` rules | In the tick the ball spawns, `ballPosition`/`ballDirection` are set before the collision and bounce rules look at them. |
+
+**Collision and physics** (these are the rules the feel-lock protects)
+
+| Keep before | Why |
+|---|---|
+| `Collision - ball reaches player` → `Collision - collision check` | Both can detect the same hit. The single-shot rule handles it first; the check loop then sees the new target and doesn't double-trigger. |
+| `Collision - collision check` → `Ball Physics - general collision` | The check reads `ballHitPosition` from the previous tick, then general collision writes this tick's hit. Swapped, the phasing interpolation would use a different point. |
+| `08-collision` rules → `09-ball-physics` bounce rules | When a deflect and a wall hit land in the same tick, the deflect sets the new direction first and the bounce reflects that. Swapped, the bounce would be applied to the old direction and then thrown away by the deflect. |
+| `Ball Physics - anti ghost correction` → `Ball Physics - general collision`, `Ball Physics - island collision` | Anti-ghost can raise `ballDirectionRate` to 4. With the experimental engine, a surface bounce computes `experimentalSteeringRate` from `ballDirectionRate`, so in a shared tick the bounce uses the raised rate. |
+| `Ball Physics - general collision` → `Ball Physics - chamber x/y/z collision` | On Workshop Chamber both can bounce the ball in the same tick, and a normal-based reflect followed by an axis flip is not the same as the reverse. |
+| `Ball Physics - island collision` → `Ball Physics - water` | On Workshop Island their areas overlap in a thin band at the platform edge (|x| or |z| between 20 and 20.2). Island collision flips a downward ball up, and water then no longer triggers. Swapped, water flattens the ball first and island collision picks a side wall instead. |
+| `08-collision` → `Tracing mode - gained` / `Tracing mode - lost` | `collisionTarget()` reads `tracingPoints`, so a hit uses the previous tick's tracing state. |
+| `08-collision` → `Gb Abilities - 2. Target switch` | A target switch in the same tick as a deflect overrides the deflect's new target. Swapped, the deflect would win. |
+
+The three chamber rules (`x`, `y`, `z`) each flip a different axis, so they can be reordered among themselves.
+
+**Controls** (dash/deflect timing)
+
+| Keep before | Why |
+|---|---|
+| `Controls - primary fire triggers dash`, `Controls - secondary fire triggers deflect` → `Controls - Shorten deflect length` → `Controls - Ability 1 dash queue`, `Controls - Ability 2 deflect queue` | `Shorten deflect length` re-enables `canDash`/`canDeflect`. The queue rules below it see that in the same tick, the mouse-button rules above it one tick later. That tick is part of how buffered inputs feel. |
+| `Controls - Dash cooldown` → `Control - Dash reset` | If a dash starts in the same tick its user earns an elimination, the cooldown sets `dashOnCooldown` first and the reset clears it. Swapped, the reset would be lost. |
+| `05-controls` → `10-map-restrictions` water rules | `Controls - Dash slow (gravity shift)` and `Map restrictions - water leave` / `island enter` all set gravity. The water rules come later and win in a shared tick. |
+
+**AntiOrbit**
+
+| Keep before | Why |
+|---|---|
+| `AntiOrbit - no orbit abusing` → `AntiOrbit - track pressure` | When a player becomes the target, both start in the same tick. The sleep timer is computed from the penalty before this tick's pressure is added. |
+
+**HUD**
+
+| Keep before | Why |
+|---|---|
+| `HUD - controls text` → `HUD - anti rubberbanding hud text` | Both draw on the left at sort order 0, so their rule order is their line order on screen. |
+
+### Free to move
+
+With the constraints above kept, these have no order dependency: `07-duels`, `11-tournament`, `14-bot-zbozo`, `15-tombstone`, `16-player-rank`, `18-teams`, `19-sandbox`, `20-abilities-experimental`, the rest of `03-hud`, the rest of `10-map-restrictions`, the rest of `17-abilities`, and every `def` that's only called with `Call Subroutine`.
 
 ## Settings and presets
 
