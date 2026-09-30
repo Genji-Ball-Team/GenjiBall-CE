@@ -3142,32 +3142,6 @@ rule ("zBozo - randomize facing near ball") {
     }
 }
 
-rule ("†Tombstone†") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        Is Alive(Event Player) == True;
-        (Event Player).hasMoved == True;
-        Is Game In Progress == True;
-        Array Contains(Array(Custom String("ifyoureadthisyouverygayong"), Custom String("ren")), Custom String("{0}", Event Player)) == True;
-    }
-    actions {
-        Communicate(Event Player, Emote Up);
-        Communicate(Event Player, Emote Left);
-        Communicate(Event Player, Emote Right);
-        Communicate(Event Player, Emote Down);
-        Big Message(All Players(All Teams), Custom String("@{0}, is being banhammered!", Event Player));
-        Wait(1, Ignore Condition);
-        Set Status(Event Player, Null, Hacked, 9999);
-        Set Status(Event Player, Null, Burning, 9999);
-        Wait(3.5, Ignore Condition);
-        Remove Player(Event Player);
-    }
-}
-
 rule ("GENJI BALL ABILITIES :OOOOOO - selection") {
     event {
         Ongoing - Each Player;
