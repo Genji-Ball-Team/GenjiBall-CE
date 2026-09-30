@@ -9,6 +9,7 @@
 
 - [ ] I edited the OverPy source in `src/`, not `workshop/genjiball.txt` by hand
 - [ ] I ran `npm run build` and committed the updated `workshop/genjiball.txt`
+- [ ] If `tools/feel-lock.json` changed: this is a deliberate ball feel change and the PR has the `ball feel` label
 - [ ] I tested it in a custom game (paste `workshop/genjiball.txt` into the Workshop)
 - [ ] I updated the docs in `docs/` if I changed settings, controls or gameplay
 - [ ] I added a line to `CHANGELOG.md` under "Unreleased"

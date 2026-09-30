@@ -6,7 +6,8 @@
   "scripts": {
     "build": "overpy compile -i src/main.opy -o workshop/genjiball.txt",
     "check": "node tools/check.mjs",
-    "decompile": "node tools/decompile.mjs"
+    "decompile": "node tools/decompile.mjs",
+    "feel-lock:update": "node tools/feel-lock.mjs"
   },
   "devDependencies": {
     "overpy": "9.7.16"

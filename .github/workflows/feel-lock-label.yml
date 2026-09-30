@@ -1,0 +1,31 @@
+name: Feel-lock label
+
+# A PR that changes tools/feel-lock.json changes how the ball feels on purpose.
+# It must carry the `ball feel` label so reviewers know to playtest it.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Require the `ball feel` label when the snapshot changes
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          HAS_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'ball feel') }}
+        run: |
+          if ! git cat-file -e "$BASE_SHA:tools/feel-lock.json" 2>/dev/null; then
+            echo "tools/feel-lock.json is new in this PR; creating the snapshot doesn't change ball feel."
+          elif git diff --quiet "$BASE_SHA...$HEAD_SHA" -- tools/feel-lock.json; then
+            echo "tools/feel-lock.json unchanged."
+          elif [ "$HAS_LABEL" = "true" ]; then
+            echo "tools/feel-lock.json changed and the PR has the 'ball feel' label."
+          else
+            echo "::error::tools/feel-lock.json changed. This PR changes ball feel: add the 'ball feel' label."
+            exit 1
+          fi
