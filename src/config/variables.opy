@@ -80,12 +80,7 @@ globalvar ballRedirectAge 98
 globalvar experimentalSteeringRate 99
 globalvar reboundIncomingDirection 100
 globalvar reboundInfluence 101
-globalvar experimentalReboundMin 102
-globalvar experimentalReboundMax 103
-globalvar experimentalHomingStart 104
-globalvar experimentalHomingHold 105
-globalvar experimentalHomingRamp 106
-globalvar experimentalSurfaceHoming 107
+globalvar experimentalTuning 102
 globalvar killCounterEnabled 109
 globalvar debugRules 110
 globalvar killLeaderboardPlayers 111

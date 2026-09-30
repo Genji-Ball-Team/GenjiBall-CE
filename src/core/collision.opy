@@ -71,7 +71,7 @@ def collisionTarget():
         #direction remains dominant, while incoming ball momentum contributes
         #slightly more on side-angle redirects so geometry matters.
         reboundIncomingDirection = directionTowards(vect(0, 0, 0), evalOnce(ballDirection))
-        reboundInfluence = experimentalReboundMin + (((min(angleBetweenVectors(reboundIncomingDirection, target.getFacingDirection()), 180 - angleBetweenVectors(reboundIncomingDirection, target.getFacingDirection()))) / 90) * (experimentalReboundMax - experimentalReboundMin))
+        reboundInfluence = experimentalTuning[ExperimentalTuning.REBOUND_MIN] + (((min(angleBetweenVectors(reboundIncomingDirection, target.getFacingDirection()), 180 - angleBetweenVectors(reboundIncomingDirection, target.getFacingDirection()))) / 90) * (experimentalTuning[ExperimentalTuning.REBOUND_MAX] - experimentalTuning[ExperimentalTuning.REBOUND_MIN]))
         ballDirection = directionTowards(vect(0, 0, 0), target.getFacingDirection() * (1 - reboundInfluence) + reboundIncomingDirection * reboundInfluence)
     else:
         ballDirection = target.getFacingDirection() * (ballSpeed if ballMotion == BallMotion.ASTRO else 1)
@@ -89,7 +89,7 @@ def collisionTarget():
     playEffect(getAllPlayers(), DynamicEffect.BAPTISTE_BIOTIC_LAUNCHER_EXPLOSION_SOUND, Color.WHITE, evalOnce(prevTarget.getPosition()), 20)
     #Redirect-sensitive systems should start fresh after the ball changes target.
     ballRedirectAge = 0
-    experimentalSteeringRate = ballDirectionRate * experimentalHomingStart
+    experimentalSteeringRate = ballDirectionRate * experimentalTuning[ExperimentalTuning.HOMING_START]
     antiGhostPrevDistance = 999
     antiGhostStallTimer = 0
     if ballMotion == BallMotion.MODERN and ballPhysicsMode != BallPhysics.EXPERIMENTAL:
@@ -163,4 +163,4 @@ def deleteBall():
     ballDirectionRate = ballDirectionRateInit
     experimentalSteeringRate = ballDirectionRateInit
     reboundIncomingDirection = vect(0, 0, 0)
-    reboundInfluence = experimentalReboundMin
+    reboundInfluence = experimentalTuning[ExperimentalTuning.REBOUND_MIN]

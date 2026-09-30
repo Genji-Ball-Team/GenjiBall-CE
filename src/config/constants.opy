@@ -71,6 +71,15 @@ enum BallPhysics:
     LEGACY_PLUS
     EXPERIMENTAL
 
+#Fields of experimentalTuning, the "10 - Ball > exp ..." settings (Experimental physics engine only)
+enum ExperimentalTuning:
+    REBOUND_MIN     #share of the incoming direction kept on a straight-on deflect
+    REBOUND_MAX     #same, for a side-on deflect
+    HOMING_START    #homing strength right after a deflect
+    HOMING_HOLD     #seconds homing stays at HOMING_START
+    HOMING_RAMP     #seconds to ramp back to full homing
+    SURFACE_HOMING  #homing strength right after a wall or floor bounce
+
 #antiGhostMode ("10 - Ball > anti-ghost correction")
 enum AntiGhost:
     OFF

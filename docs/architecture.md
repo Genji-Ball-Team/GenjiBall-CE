@@ -100,7 +100,7 @@ Both call `collisionTarget()`. That checks whether the target is deflecting (`is
 |---|---|---|
 | original + modern/rapid | `startModernBall` | Workshop `chaseAtRate` on position, speed and direction. The direction chases "towards target" at `ballDirectionRate` (1.75 modern, 5 rapid). Right after a deflect, `ballCurve` briefly raises the rate to 6 for a sharper curve |
 | Legacy+ | `startLegacyPlusBall` | Manual integration every tick (`wait()` loop). No chase |
-| experimental | `startExperimentalBall` | Like modern, but deflect direction = facing direction blended with the incoming direction (`reboundInfluence`), and homing strength ramps from `experimentalHomingStart` back to 100% |
+| experimental | `startExperimentalBall` | Like modern, but deflect direction = facing direction blended with the incoming direction (`reboundInfluence`), and homing strength ramps from the "exp homing start %" setting back to 100%. The six "exp …" settings live in `experimentalTuning` (fields in `ExperimentalTuning`) |
 | astro (any engine) | `startAstroBall` | `ballDirection` is a velocity vector with gravity-like pull toward the target, so it orbits |
 | retro (any engine) | `startRetroBall` | Chases position directly to the target's eyes. No curve |
 
@@ -135,7 +135,7 @@ Each line reads "A must stay before B". Rules are named as they appear in-game.
 | Keep before | Why |
 |---|---|
 | `Settings - Workshop settings` → everything else | It must be the first rule. It reads the Workshop settings and applies presets, and the startup rules below read the results. |
-| `Settings - Workshop settings` → `Initialization - global variables` | Init copies `ballSpawnSpeed` into `ballSpeed`, `roundsUntilBreak` into `roundsUntilBreakInit`, `experimentalReboundMin` into `reboundInfluence`, and picks `ballDirectionRateInit` from `ballMotion`. Swapped, the ball would use the pre-preset defaults (0). |
+| `Settings - Workshop settings` → `Initialization - global variables` | Init copies `ballSpawnSpeed` into `ballSpeed`, `roundsUntilBreak` into `roundsUntilBreakInit`, the "exp incoming min %" value into `reboundInfluence`, and picks `ballDirectionRateInit` from `ballMotion`. Swapped, the ball would use the pre-preset defaults (0). |
 | `Settings - Workshop settings` → `HUD - controls text` | The HUD rule reads `Sandbox`, `doubleSensEnabled` and `Abilities` once, when it starts. |
 | `Settings - Watermark` → `HUD - Watermark` | The HUD rule checks `WatermarkEnabled` once. It only matters if the watermark is ever turned on. |
 | `Settings - Red-green colorblind filter` (disabled) → `Initialization - bounce pads`, `Appearance - target effects` | Both read `RedGreenColorblindMode` once when they create their effects. Only matters when the filter rule is enabled. |
