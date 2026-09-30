@@ -145,7 +145,6 @@ variables {
         68: RedGreenColorblindMode
         69: WatermarkEnabled
         70: doubleSensEnabled
-        71: presetRow
         75: antiOrbitMode
         76: antiOrbitRadius
         77: antiOrbitPressureRate
@@ -183,6 +182,7 @@ variables {
         110: debugRules
         111: killLeaderboardPlayers
         112: killLeaderboardSortedPlayers
+        115: presetRow
     player:
         0: hasMoved
         1: thirdPerson
