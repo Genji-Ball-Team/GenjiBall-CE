@@ -8,6 +8,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 - The release workflow updates an existing release instead of failing when a tag is re-pushed.
 - Added the feel-lock: `npm run check` fails when a core ball rule (collision, physics, round flow, dash/deflect timing) changes or moves. `npm run feel-lock:update` records a deliberate change, which needs the `ball feel` label.
 - Documented which parts of the rule order matter (`docs/architecture.md`, "Rule order") and marked the order-sensitive includes in `src/main.opy`.
+- Wrote down the ball and player feel policy (`CONTRIBUTING.md`): feel changes go behind a default-off toggle, no preset turns them on, and Default and Tournament stay identical to v1.3.2. Added a PR template checkbox and `.github/CODEOWNERS` for the core files.
 
 ## v1.3.2 (Community Edition import)
 
