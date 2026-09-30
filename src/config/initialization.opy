@@ -72,12 +72,8 @@ rule "Initialization - global variables":
     duelQueue = []
     killLeaderboardPlayers = []
     killLeaderboardSortedPlayers = []
-    Sandboxxyz = 1
-    Sandboxselected = 1
-    Sandboxballpos = ballPosition
-    Sandboxballdir = ballPosition + Vector.UP
-    Sandboxballspd = ballSpeed
-    Sandboxplusminus = 1
+    #Sandbox spawn point, aim point and speed, plus the editor state (SandboxField in config/constants.opy)
+    sandboxState = [ballPosition, ballPosition + Vector.UP, ballSpeed, 1, 1, 1]
     antiGhostPrevDistance = 999
     antiGhostStallTimer = 0
     ballRedirectAge = 999

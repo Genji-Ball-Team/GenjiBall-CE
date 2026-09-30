@@ -84,12 +84,7 @@ globalvar IsOrbiting 86
 globalvar bozoIsGhostDashing 87
 globalvar botJumping 88
 globalvar bozoHasJumped 89
-globalvar Sandboxballpos 90
-globalvar Sandboxballdir 91
-globalvar Sandboxballspd 92
-globalvar Sandboxxyz 93
-globalvar Sandboxplusminus 94
-globalvar Sandboxselected 95
+globalvar sandboxState 90
 globalvar Critalert 96
 globalvar ballPhysicsMode 97
 globalvar ballRedirectAge 98

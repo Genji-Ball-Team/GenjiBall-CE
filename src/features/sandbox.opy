@@ -7,41 +7,41 @@ rule "Sandbox - Set Ball spawnpoint":
     @Condition isGameInProgress() == true
     @Condition ballIsOut == false
     @Condition eventPlayer.isHoldingButton(Button.INTERACT) == true
-    @Condition Sandboxselected == 1
+    @Condition sandboxState[SandboxField.EDITING] == 1
     
-    if Sandboxxyz == 1:
+    if sandboxState[SandboxField.AXIS] == 1:
         if eventPlayer.isHoldingButton(Button.ULTIMATE):
-            if Sandboxplusminus == 1:
-                Sandboxballpos += Vector.LEFT
+            if sandboxState[SandboxField.SIGN] == 1:
+                sandboxState[SandboxField.BALL_POSITION] += Vector.LEFT
             else:
-                Sandboxballpos += Vector.RIGHT
+                sandboxState[SandboxField.BALL_POSITION] += Vector.RIGHT
         else:
-            if Sandboxplusminus == 1:
-                Sandboxballpos += vect(0.25, 0, 0)
+            if sandboxState[SandboxField.SIGN] == 1:
+                sandboxState[SandboxField.BALL_POSITION] += vect(0.25, 0, 0)
             else:
-                Sandboxballpos += vect(-0.25, 0, 0)
-    elif Sandboxxyz == 2:
+                sandboxState[SandboxField.BALL_POSITION] += vect(-0.25, 0, 0)
+    elif sandboxState[SandboxField.AXIS] == 2:
         if eventPlayer.isHoldingButton(Button.ULTIMATE):
-            if Sandboxplusminus == 1:
-                Sandboxballpos += Vector.UP
+            if sandboxState[SandboxField.SIGN] == 1:
+                sandboxState[SandboxField.BALL_POSITION] += Vector.UP
             else:
-                Sandboxballpos += Vector.DOWN
+                sandboxState[SandboxField.BALL_POSITION] += Vector.DOWN
         else:
-            if Sandboxplusminus == 1:
-                Sandboxballpos += vect(0, 0.25, 0)
+            if sandboxState[SandboxField.SIGN] == 1:
+                sandboxState[SandboxField.BALL_POSITION] += vect(0, 0.25, 0)
             else:
-                Sandboxballpos += vect(0, -0.25, 0)
-    elif Sandboxxyz == 3:
+                sandboxState[SandboxField.BALL_POSITION] += vect(0, -0.25, 0)
+    elif sandboxState[SandboxField.AXIS] == 3:
         if eventPlayer.isHoldingButton(Button.ULTIMATE):
-            if Sandboxplusminus == 1:
-                Sandboxballpos += Vector.FORWARD
+            if sandboxState[SandboxField.SIGN] == 1:
+                sandboxState[SandboxField.BALL_POSITION] += Vector.FORWARD
             else:
-                Sandboxballpos += Vector.BACKWARD
+                sandboxState[SandboxField.BALL_POSITION] += Vector.BACKWARD
         else:
-            if Sandboxplusminus == 1:
-                Sandboxballpos += vect(0, 0, 0.25)
+            if sandboxState[SandboxField.SIGN] == 1:
+                sandboxState[SandboxField.BALL_POSITION] += vect(0, 0, 0.25)
             else:
-                Sandboxballpos += vect(0, 0, -0.25)
+                sandboxState[SandboxField.BALL_POSITION] += vect(0, 0, -0.25)
 
 
 rule "Sandbox - Set Ball direction":
@@ -51,41 +51,41 @@ rule "Sandbox - Set Ball direction":
     @Condition isGameInProgress() == true
     @Condition ballIsOut == false
     @Condition eventPlayer.isHoldingButton(Button.INTERACT) == true
-    @Condition Sandboxselected == 2
+    @Condition sandboxState[SandboxField.EDITING] == 2
     
-    if Sandboxxyz == 1:
+    if sandboxState[SandboxField.AXIS] == 1:
         if eventPlayer.isHoldingButton(Button.ULTIMATE):
-            if Sandboxplusminus == 1:
-                Sandboxballdir += Vector.LEFT
+            if sandboxState[SandboxField.SIGN] == 1:
+                sandboxState[SandboxField.BALL_DIRECTION] += Vector.LEFT
             else:
-                Sandboxballdir += Vector.RIGHT
+                sandboxState[SandboxField.BALL_DIRECTION] += Vector.RIGHT
         else:
-            if Sandboxplusminus == 1:
-                Sandboxballdir += vect(0.25, 0, 0)
+            if sandboxState[SandboxField.SIGN] == 1:
+                sandboxState[SandboxField.BALL_DIRECTION] += vect(0.25, 0, 0)
             else:
-                Sandboxballdir += vect(-0.25, 0, 0)
-    elif Sandboxxyz == 2:
+                sandboxState[SandboxField.BALL_DIRECTION] += vect(-0.25, 0, 0)
+    elif sandboxState[SandboxField.AXIS] == 2:
         if eventPlayer.isHoldingButton(Button.ULTIMATE):
-            if Sandboxplusminus == 1:
-                Sandboxballdir += Vector.UP
+            if sandboxState[SandboxField.SIGN] == 1:
+                sandboxState[SandboxField.BALL_DIRECTION] += Vector.UP
             else:
-                Sandboxballdir += Vector.DOWN
+                sandboxState[SandboxField.BALL_DIRECTION] += Vector.DOWN
         else:
-            if Sandboxplusminus == 1:
-                Sandboxballdir += vect(0, 0.25, 0)
+            if sandboxState[SandboxField.SIGN] == 1:
+                sandboxState[SandboxField.BALL_DIRECTION] += vect(0, 0.25, 0)
             else:
-                Sandboxballdir += vect(0, -0.25, 0)
-    elif Sandboxxyz == 3:
+                sandboxState[SandboxField.BALL_DIRECTION] += vect(0, -0.25, 0)
+    elif sandboxState[SandboxField.AXIS] == 3:
         if eventPlayer.isHoldingButton(Button.ULTIMATE):
-            if Sandboxplusminus == 1:
-                Sandboxballdir += Vector.FORWARD
+            if sandboxState[SandboxField.SIGN] == 1:
+                sandboxState[SandboxField.BALL_DIRECTION] += Vector.FORWARD
             else:
-                Sandboxballdir += Vector.BACKWARD
+                sandboxState[SandboxField.BALL_DIRECTION] += Vector.BACKWARD
         else:
-            if Sandboxplusminus == 1:
-                Sandboxballdir += vect(0, 0, 0.25)
+            if sandboxState[SandboxField.SIGN] == 1:
+                sandboxState[SandboxField.BALL_DIRECTION] += vect(0, 0, 0.25)
             else:
-                Sandboxballdir += vect(0, 0, -0.25)
+                sandboxState[SandboxField.BALL_DIRECTION] += vect(0, 0, -0.25)
 
 
 rule "Sandbox - Set Ball speed":
@@ -95,19 +95,19 @@ rule "Sandbox - Set Ball speed":
     @Condition isGameInProgress() == true
     @Condition ballIsOut == false
     @Condition eventPlayer.isHoldingButton(Button.INTERACT) == true
-    @Condition Sandboxselected == 3
+    @Condition sandboxState[SandboxField.EDITING] == 3
     @Condition isGameInProgress() == true
     
     if eventPlayer.isHoldingButton(Button.ULTIMATE):
-        if Sandboxplusminus == 1:
-            Sandboxballspd += 10
+        if sandboxState[SandboxField.SIGN] == 1:
+            sandboxState[SandboxField.BALL_SPEED] += 10
         else:
-            Sandboxballspd += -10
+            sandboxState[SandboxField.BALL_SPEED] += -10
     else:
-        if Sandboxplusminus == 1:
-            Sandboxballspd++
+        if sandboxState[SandboxField.SIGN] == 1:
+            sandboxState[SandboxField.BALL_SPEED]++
         else:
-            Sandboxballspd += -1
+            sandboxState[SandboxField.BALL_SPEED] += -1
 
 
 rule "Sandbox - Change xyz and +/-":
@@ -122,19 +122,19 @@ rule "Sandbox - Change xyz and +/-":
         return
     wait(0.25)
     if eventPlayer.isHoldingButton(Button.JUMP) and eventPlayer.isHoldingButton(Button.CROUCH):
-        Sandboxplusminus *= -1
+        sandboxState[SandboxField.SIGN] *= -1
         bigMessage(getAllPlayers(), "+/- switched")
     elif eventPlayer.isHoldingButton(Button.JUMP):
-        if Sandboxxyz == 3:
+        if sandboxState[SandboxField.AXIS] == 3:
             bigMessage(getAllPlayers(), "Invalid input")
         else:
-            Sandboxxyz++
+            sandboxState[SandboxField.AXIS]++
             bigMessage(getAllPlayers(), "axis +1")
     elif eventPlayer.isHoldingButton(Button.CROUCH):
-        if Sandboxxyz == 1:
+        if sandboxState[SandboxField.AXIS] == 1:
             bigMessage(getAllPlayers(), "Invalid input")
         else:
-            Sandboxxyz--
+            sandboxState[SandboxField.AXIS]--
             bigMessage(getAllPlayers(), "axis -1")
 
 
@@ -148,11 +148,11 @@ rule "Sandbox - Switch between pos/dir/spd":
     
     waitUntil(not eventPlayer.isHoldingButton(Button.RELOAD), 0.4)
     if eventPlayer.isHoldingButton(Button.RELOAD):
-        if Sandboxselected > 2:
-            Sandboxselected = 1
+        if sandboxState[SandboxField.EDITING] > 2:
+            sandboxState[SandboxField.EDITING] = 1
         else:
-            Sandboxselected++
-        bigMessage(eventPlayer, "Switched pos/dir/spd to {0}".format(Sandboxselected))
+            sandboxState[SandboxField.EDITING]++
+        bigMessage(eventPlayer, "Switched pos/dir/spd to {0}".format(sandboxState[SandboxField.EDITING]))
 
 
 rule "Sandbox - Show ball spawnpoint and direction":
@@ -160,8 +160,8 @@ rule "Sandbox - Show ball spawnpoint and direction":
     @Condition isGameInProgress() == true
     @Condition ballIsOut == false
     
-    createEffect(getAllPlayers(), Effect.ORB, Color.GREEN, Sandboxballpos, 0.2, EffectReeval.POSITION_AND_RADIUS)
-    createEffect(getAllPlayers(), Effect.ORB, Color.YELLOW, Sandboxballpos + Sandboxballdir, 0.1, EffectReeval.POSITION_AND_RADIUS)
+    createEffect(getAllPlayers(), Effect.ORB, Color.GREEN, sandboxState[SandboxField.BALL_POSITION], 0.2, EffectReeval.POSITION_AND_RADIUS)
+    createEffect(getAllPlayers(), Effect.ORB, Color.YELLOW, sandboxState[SandboxField.BALL_POSITION] + sandboxState[SandboxField.BALL_DIRECTION], 0.1, EffectReeval.POSITION_AND_RADIUS)
 
 
 rule "Sandbox - Controls desc":
@@ -170,5 +170,5 @@ rule "Sandbox - Controls desc":
     hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "Press [{0}] / [{1}] to switch the axis youre editing. press both to switch between negative and positive.".format(inputBindingString(Button.JUMP), inputBindingString(Button.CROUCH)), HudPosition.LEFT, 999, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
     hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "Hold [{0}] to switch between position/direction/speed".format(inputBindingString(Button.RELOAD)), HudPosition.LEFT, 999, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
     hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "Press [{0}] to add/substract, hold [{1}] while doing so to add/substract more. (dont hold long, because itll deactivate sandbox)".format(inputBindingString(Button.INTERACT), inputBindingString(Button.ULTIMATE)), HudPosition.LEFT, 999, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
-    hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "Current settings: Ballpos: [{0}] Balldirection: [{1}] Ballspeed: [{2}]".format(Sandboxballpos, Sandboxballdir, Sandboxballspd), HudPosition.LEFT, 999, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+    hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "Current settings: Ballpos: [{0}] Balldirection: [{1}] Ballspeed: [{2}]".format(sandboxState[SandboxField.BALL_POSITION], sandboxState[SandboxField.BALL_DIRECTION], sandboxState[SandboxField.BALL_SPEED]), HudPosition.LEFT, 999, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
     hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "Start the round by pressing [{0}] and [{1}]".format(inputBindingString(Button.ULTIMATE), inputBindingString(Button.RELOAD)), HudPosition.LEFT, 999, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)

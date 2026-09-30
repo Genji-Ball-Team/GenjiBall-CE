@@ -43,6 +43,15 @@ enum MapColumn:
     CENTER
     RADIUS
 
+#Fields of sandboxState (features/sandbox.opy)
+enum SandboxField:
+    BALL_POSITION   #where the ball spawns
+    BALL_DIRECTION  #the point the ball flies towards
+    BALL_SPEED
+    AXIS            #axis being edited: 1 = x, 2 = y, 3 = z
+    SIGN            #1 = add, -1 = subtract
+    EDITING         #value being edited: 1 = position, 2 = direction, 3 = speed
+
 #ballMotion ("10 - Ball > motion")
 enum BallMotion:
     MODERN
