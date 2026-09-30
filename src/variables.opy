@@ -131,10 +131,6 @@ playervar Abilityready 15
 playervar Abilitydesc 16
 playervar Critslash 17
 playervar Critalert 18
-playervar outlineColor 19
-playervar outlineFade 20
-playervar outlineFadeDark 21
-playervar outlineFadeBright 22
 playervar orbitPenalty 23
 playervar orbitTimer 24
 playervar orbitHeat 25

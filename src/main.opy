@@ -33,7 +33,6 @@
 #!include "rules/13-tracing-mode.opy"
 #!include "rules/14-bot-zbozo.opy"
 #!include "rules/15-tombstone.opy"
-#!include "rules/16-player-rank.opy"
 #ORDER: after 08 ("2. Target switch" overrides a same-tick deflect).
 #!include "rules/17-abilities.opy"
 #!include "rules/19-sandbox.opy"

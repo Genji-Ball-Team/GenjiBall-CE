@@ -202,10 +202,6 @@ variables {
         16: Abilitydesc
         17: Critslash
         18: Critalert
-        19: outlineColor
-        20: outlineFade
-        21: outlineFadeDark
-        22: outlineFadeBright
         23: orbitPenalty
         24: orbitTimer
         25: orbitHeat
@@ -3169,90 +3165,6 @@ rule ("†Tombstone†") {
         Set Status(Event Player, Null, Burning, 9999);
         Wait(3.5, Ignore Condition);
         Remove Player(Event Player);
-    }
-}
-
-rule ("Player rank - Expert (elo > 1500)") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        Custom String("{0}", Event Player) == Custom String("");
-    }
-    actions {
-        Set Player Variable(Event Player, outlineColor, Vector(128, 0, 128));
-    }
-}
-
-rule ("Player rank - Master (elo > 2000)") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        Custom String("{0}", Event Player) == Custom String("");
-    }
-    actions {
-        Set Player Variable(Event Player, outlineColor, Vector(192, 192, 192));
-    }
-}
-
-rule ("Player rank - Legendary (elo > 2500)") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        Custom String("{0}", Event Player) == Custom String("");
-    }
-    actions {
-        Set Player Variable(Event Player, outlineColor, Vector(255, 165, 0));
-    }
-}
-
-rule ("Player rank - Apply outline") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        (Event Player).outlineColor != Null;
-    }
-    actions {
-        Start Forcing Player Outlines(Event Player, If-Then-Else(Compare(Event Player, ==, Global.target), Remove From Array(All Players(All Teams), Event Player), All Players(All Teams)), True, Update Every Frame(Custom Color(X Component Of((Event Player).outlineColor), Y Component Of((Event Player).outlineColor), Z Component Of((Event Player).outlineColor), 255)), Always);
-        Start Forcing Player Outlines(Event Player, If-Then-Else(Compare(Event Player, ==, Global.target), Event Player, Null), True, Custom Color(255, 0, 0, 255), Always);
-        Wait(0, Ignore Condition);
-        Loop;
-    }
-}
-
-rule ("Player rank - Apply fade") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        (Event Player).outlineFade == True;
-    }
-    actions {
-        Set Player Variable(Event Player, outlineFadeBright, Add((Event Player).outlineColor, Divide((Event Player).outlineColor, 2)));
-        Set Player Variable(Event Player, outlineFadeDark, Subtract((Event Player).outlineColor, Divide((Event Player).outlineColor, 3)));
-        While(True);
-            Chase Player Variable Over Time(Event Player, outlineColor, (Event Player).outlineFadeBright, 0.5, None);
-            Wait(0.5, Ignore Condition);
-            Chase Player Variable Over Time(Event Player, outlineColor, (Event Player).outlineFadeDark, 1, None);
-            Wait(1.5, Ignore Condition);
-            Chase Player Variable Over Time(Event Player, outlineColor, (Event Player).outlineFadeBright, 0.5, None);
-            Wait(0.5, Ignore Condition);
-            Chase Player Variable Over Time(Event Player, outlineColor, (Event Player).outlineColor, 0.5, None);
-            Wait(0.5, Ignore Condition);
-        End;
     }
 }
 
