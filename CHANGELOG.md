@@ -18,6 +18,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 - Merged the four bounce pad positions into one `bouncePads` array and the four `Controls - Bounce when near pad N` rules into one. Frees global slots 55–57; bounce pads work as before.
 - Merged the six Sandbox variables (spawn position, direction, speed, axis, +/-, pos/dir/spd selection) into one `sandboxState` array (`SandboxField` in `src/config/constants.opy`). Frees global slots 91–95; Sandbox works as before.
 - Merged the zBozo bot state (behaviour mode, aggression, orbit / ghost dash / edash flags) into one `botState` array (`BotField` in `src/config/constants.opy`) and removed four bot variables that were set but never read (`BozoTracing`, `bozoHasJumped`, `OrbitTolerance`, `IsOrbiting`) and `botJumping`. Frees global slots 79 and 81–89; the bot behaves as before.
+- Removed zBozo code that never ran: `roundEndCall` was never set to true, so the behaviour-mode, aggression and orbit rules and the bot's "back off" movement never fired, in v1.3.2 or since. Frees global slot 6; the bot behaves as before. `docs/playing.md` no longer says the bot orbits.
 
 ## v1.3.2 (Community Edition import)
 

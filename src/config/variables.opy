@@ -7,7 +7,6 @@ globalvar ballIsOut 2
 globalvar RoundInProgress 3
 globalvar IsEnoughPlayersToStart 4
 globalvar IsInFinalDuel 5
-globalvar roundEndCall 6
 globalvar HighestScore 7
 globalvar TieBreakerActive 8
 globalvar matchTime 9

@@ -74,22 +74,11 @@ rule "zBozo - face the Ball":
     eventPlayer.startFacing(directionTowards(eventPlayer.getEyePosition(), (ballPosition + target.getEyePosition()) / 2), 1000)
 
 
-rule "zBozo - behavior changes after round":
-    @Condition roundEndCall == true
-    
-    botState[BotField.BEHAVIOR_MODE] = random.choice([2])
-    if botState[BotField.BEHAVIOR_MODE] == 1:
-        botState[BotField.AGGRESSION] = 10
-    elif botState[BotField.BEHAVIOR_MODE] == 2:
-        botState[BotField.AGGRESSION] = 5
-
-
 rule "zBozo - Movement reworked":
     @Event eachPlayer
     @Condition bozo_Bot == true
     @Condition isGameInProgress() == true
     @Condition eventPlayer.isDummy() == true
-    @Condition botState[BotField.WILL_ORBIT] != true
     @Condition eventPlayer.isAlive() == true
     
     #@Condition (eventPlayer.getPosition().x < 18 or eventPlayer.getPosition().x > -18 or eventPlayer.getPosition().z < 18 or eventPlayer.getPosition().z > -18) == true
@@ -101,48 +90,15 @@ rule "zBozo - Movement reworked":
         if ruleCondition:
             loop()
     if eventPlayer != target:
-        if distance(eventPlayer.getPosition(), target.getPosition()) >= botState[BotField.AGGRESSION]:
-            eventPlayer.startThrottleInDirection(directionTowards(eventPlayer.getPosition(), target), 0.8, Relativity.TO_PLAYER, Throttle.REPLACE_EXISTING, ThrottleReeval.NONE)
-            wait(random.uniform(0.5, 3))
-            if ruleCondition:
-                loop()
-        else:
-            eventPlayer.stopThrottleInDirection()
-            eventPlayer.startThrottleInDirection(evalOnce(directionTowards(target.getEyePosition(), eventPlayer.getEyePosition())), 1, Relativity.TO_WORLD)
-            wait(random.uniform(1, 1.5))
-            if ruleCondition:
-                loop()
+        eventPlayer.startThrottleInDirection(directionTowards(eventPlayer.getPosition(), target), 0.8, Relativity.TO_PLAYER, Throttle.REPLACE_EXISTING, ThrottleReeval.NONE)
+        wait(random.uniform(0.5, 3))
+        if ruleCondition:
+            loop()
     else:
         eventPlayer.startThrottleInDirection(directionTowards(eventPlayer.getPosition(), vect(random.uniform(-15, 15), 0, random.uniform(-15, 15))), 0.8, Relativity.TO_PLAYER, Throttle.REPLACE_EXISTING, ThrottleReeval.NONE)
         wait(random.uniform(0.5, 3))
         if ruleCondition:
             loop()
-
-
-rule "zBozo - Let him Orbit":
-    @Event eachPlayer
-    @Condition bozo_Bot == true
-    @Condition eventPlayer.isDummy() == true
-    @Condition ballIsOut == true
-    @Condition distance(eventPlayer.getPosition(), ballPosition) < 5 + ballSpeed / 30
-    @Condition botState[BotField.WILL_ORBIT] == true
-    
-    eventPlayer.startThrottleInDirection((ballDirection * -1 + directionTowards(ballPosition, eventPlayer.getEyePosition()) * 2) / 2, 1, Relativity.TO_WORLD)
-    #eventPlayer.startThrottleInDirection(random.choice([vect(180, 0, 0), vect(-180, 0, 0)]), 1, Relativity.TO_PLAYER)
-    #bigMessage(getAllPlayers(), "ORBIT")
-    waitUntil(target != eventPlayer or eventPlayer.isDead(), 99999)
-    eventPlayer.stopThrottleInDirection()
-    botState[BotField.WILL_ORBIT] = 0
-
-
-rule "zBozo - bozos move being chosen":
-    @Event eachPlayer
-    @Condition eventPlayer.isDummy() == true
-    @Condition eventPlayer == target
-    
-    if botState[BotField.BEHAVIOR_MODE] == 1:
-        if random.randint(1, 10) == 5:
-            botState[BotField.WILL_ORBIT] = true
 
 
 rule "zBozo - Edash when needed":
