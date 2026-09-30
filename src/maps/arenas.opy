@@ -1,50 +1,38 @@
 #Arena center and size per map
 
-rule "Initialization - Set Workshop Island":
-    @Condition (__getCurrentMap__() == Map.WORKSHOP_ISLAND or __getCurrentMap__() == Map.WORKSHOP_ISLAND_NIGHT) == true
-    
-    circleCenter = vect(0, 1.199, 0)
-    SphereSize = 60
-
-
-rule "Initialization - Set Workshop Chamber":
-    @Condition __getCurrentMap__() == Map.WORKSHOP_CHAMBER
-    
-    circleCenter = vect(0, 1.199, 0)
-    SphereSize = 29.7
-
-
-rule "Initialization - Set Workshop Expanse Center":
-    @Condition (__getCurrentMap__() == Map.WORKSHOP_EXPANSE or __getCurrentMap__() == Map.WORKSHOP_EXPANSE_NIGHT) == true
-    
-    circleCenter = vect(0, 1.199, 0)
-    SphereSize = 50
-
-
-rule "Initialization - Set Workshop Green Screen":
-    @Condition __getCurrentMap__() == Map.WORKSHOP_GREEN_SCREEN
-    
-    circleCenter = vect(0, 1.199, 0)
-    SphereSize = 60
-
-
-rule "Initialization - Set Oasis University Center":
-    @Condition __getCurrentMap__() == Map.OASIS_UNIVERSITY
-    
-    circleCenter = vect(-192.609, 60.349, 2.252)
-    SphereSize = 25
-
-
-rule "Initialization - Set Kings Row center (NOTE: Lower the max players! This arena is smaller then the others!)":
-    @Condition (__getCurrentMap__() == Map.KINGS_ROW or __getCurrentMap__() == Map.KINGS_ROW_WINTER) == true
-    
-    circleCenter = vect(-20.504, 40.538, -74.601)
-    SphereSize = 23
-
-
-rule "Initialization - Set Blizz World center (fun fact: you can't use the name of the company who made this game in rule names)":
-    @Condition (__getCurrentMap__() == Map.BLIZZ_WORLD or __getCurrentMap__() == Map.BLIZZ_WORLD_WINTER) == true
-    
-    circleCenter = vect(2.554, -4.651, -71.211)
-    SphereSize = 23
-
+rule "Initialization - Set map":
+    #Maps: one row per supported map, one column per value (MapColumn in config/constants.opy).
+    #The map list and the row list must stay in the same order.
+    #Kings Row and Blizz World are smaller than the others: lower the max players there.
+    #Rule names can't contain "Blizzard", so the map is written "Blizz World" in rule names.
+    #Any other map has no row and no arena.
+    mapRow = [
+        #center,                        radius
+        [vect(0, 1.199, 0),             60],   #Workshop Island
+        [vect(0, 1.199, 0),             60],   #Workshop Island (Night)
+        [vect(0, 1.199, 0),             29.7], #Workshop Chamber
+        [vect(0, 1.199, 0),             50],   #Workshop Expanse
+        [vect(0, 1.199, 0),             50],   #Workshop Expanse (Night)
+        [vect(0, 1.199, 0),             60],   #Workshop Green Screen
+        [vect(-192.609, 60.349, 2.252), 25],   #Oasis University
+        [vect(-20.504, 40.538, -74.601), 23],  #King's Row
+        [vect(-20.504, 40.538, -74.601), 23],  #King's Row (Winter)
+        [vect(2.554, -4.651, -71.211),  23],   #Blizz World
+        [vect(2.554, -4.651, -71.211),  23],   #Blizz World (Winter)
+    ][[
+        Map.WORKSHOP_ISLAND,
+        Map.WORKSHOP_ISLAND_NIGHT,
+        Map.WORKSHOP_CHAMBER,
+        Map.WORKSHOP_EXPANSE,
+        Map.WORKSHOP_EXPANSE_NIGHT,
+        Map.WORKSHOP_GREEN_SCREEN,
+        Map.OASIS_UNIVERSITY,
+        Map.KINGS_ROW,
+        Map.KINGS_ROW_WINTER,
+        Map.BLIZZ_WORLD,
+        Map.BLIZZ_WORLD_WINTER,
+    ].index(__getCurrentMap__())]
+    circleCenter = mapRow[MapColumn.CENTER]
+    SphereSize = mapRow[MapColumn.RADIUS]
+    #Workshop Island has water and a ledge instead of a wall; several rules check this.
+    isIsland = __getCurrentMap__() == Map.WORKSHOP_ISLAND or __getCurrentMap__() == Map.WORKSHOP_ISLAND_NIGHT

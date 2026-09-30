@@ -38,6 +38,11 @@ enum PresetColumn:
 #A preset table cell that leaves the host's setting as is
 #!define MANUAL -1
 
+#Columns of the map table in maps/arenas.opy
+enum MapColumn:
+    CENTER
+    RADIUS
+
 #ballMotion ("10 - Ball > motion")
 enum BallMotion:
     MODERN

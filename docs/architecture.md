@@ -16,11 +16,11 @@ This is a map of the game logic for contributors. It assumes you know roughly wh
 
 | File | Contents |
 |---|---|
-| `config/constants.opy` | Named values (OverPy `enum`s) for presets and the preset table columns, ball motion, physics engine, anti-ghost, water, mobility, `simpleHUD` and ability ids. They compile to the same numbers |
+| `config/constants.opy` | Named values (OverPy `enum`s) for presets and the preset and map table columns, ball motion, physics engine, anti-ghost, water, mobility, `simpleHUD` and ability ids. They compile to the same numbers |
 | `config/lobby.opy` | Lobby, game mode, hero and extension settings (the part of the export that isn't rules) |
 | `config/variables.opy` | Every global/player variable and subroutine, with its **fixed index**, plus active extensions |
 | `config/workshop-settings.opy` | Reads the Workshop settings and applies presets |
-| `maps/arenas.opy` | Arena center and size per map |
+| `maps/arenas.opy` | Arena center and size per map (the map table), and `isIsland` |
 | `config/initialization.opy` | Initial variable values, map sphere, bounce pads, mobility, match length |
 | `ui/hud.opy` | All HUD text, debug overlays, kill tracker |
 | `ui/effects.opy` | Ball/target visuals, spawn countdown text |
@@ -73,7 +73,8 @@ The file table is in include order. When you add a file, include it in `main.opy
 | `ballPosition`, `ballDirection`, `ballSpeed` | The ball. There's no entity. The ball is just these variables plus effects drawn at `ballPosition` |
 | `ballSpawnCountdown` | Counts down to the next spawn (chased to 0) |
 | `RoundInProgress`, `IsEnoughPlayersToStart`, `IsInFinalDuel`, `TieBreakerActive` | Round state flags |
-| `circleCenter`, `SphereSize` | Arena center and radius, set per map in `maps/arenas.opy` |
+| `circleCenter`, `SphereSize` | Arena center and radius, looked up per map from the map table in `maps/arenas.opy` |
+| `isIsland` | True on Workshop Island (day or night). Set once in `maps/arenas.opy`. Use it instead of comparing `__getCurrentMap__()` |
 | `presetMode`, `ballMotion`, `ballPhysicsMode`, … | Settings from `config/workshop-settings.opy`. Most are named after their Workshop setting. Compare enum settings against `config/constants.opy` (`ballMotion == BallMotion.ASTRO`), not raw numbers |
 
 Per-player: `canDash`, `canDeflect`, `dashOnCooldown` (input gating), `hasMoved` (has spawned into the arena, used to exclude people who haven't really joined yet), `antiRubberbanding`, `simpleHUD` (`SimpleHud.OFF`, `ON`, `ZEN`), `orbit*` (AntiOrbit), `kills` (kill tracker).
@@ -138,7 +139,7 @@ Each line reads "A must stay before B". Rules are named as they appear in-game.
 | `Settings - Workshop settings` → `HUD - controls text` | The HUD rule reads `Sandbox`, `doubleSensEnabled` and `Abilities` once, when it starts. |
 | `Settings - Watermark` → `HUD - Watermark` | The HUD rule checks `WatermarkEnabled` once. It only matters if the watermark is ever turned on. |
 | `Settings - Red-green colorblind filter` (disabled) → `Initialization - bounce pads`, `Appearance - target effects` | Both read `RedGreenColorblindMode` once when they create their effects. Only matters when the filter rule is enabled. |
-| `Initialization - Set <map>` (all seven) → `Initialization - bounce pads` | The bounce pad positions are computed once from `circleCenter`. |
+| `Initialization - Set map` → `Initialization - map sphere`, `Initialization - bounce pads` | The bounce pad positions are computed once from `circleCenter`, and the map sphere reads `isIsland` once. |
 | `Initialization - player variables` → `Initialization - global variables` | Existing quirk: players who are already in the lobby when the mode starts (usually the host) get `bouncePadCooldown = bouncePadCooldownLength` before that global is set, so they start with 0. Swapping would change that. Treat any fix as a deliberate change. |
 
 **Lobby and round flow**
@@ -196,6 +197,12 @@ When you add a setting:
 1. Add a `createWorkshopSetting*` call in the right category, with a sort-order number.
 2. Decide whether presets should force it. If they should, add a `PresetColumn`, a cell to every row of the preset table (`MANUAL` where a preset leaves it alone) and the assignment below the table.
 3. Document it in [hosting.md](hosting.md).
+
+## Maps
+
+`Initialization - Set map` (`maps/arenas.opy`) looks the current map up in the map table once, at start: one row per supported map, with the arena center and radius (`MapColumn` in `config/constants.opy`). Day/night and winter variants have their own row. On any other map there's no arena. The same rule sets `isIsland`, which the Workshop Island water and ledge rules use as a condition.
+
+To add a map, add it to the map list and a row at the same position in the row list. If the map has water or ledges like Workshop Island, it needs its own restriction rules.
 
 ## Limits to keep in mind
 

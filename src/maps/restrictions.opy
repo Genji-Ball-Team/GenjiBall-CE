@@ -16,7 +16,7 @@ rule "Map restrictions - player dashes too far out of bounds":
     @Condition distance(eventPlayer.getPosition(), vect(circleCenter.x, eventPlayer.getPosition().y, circleCenter.z)) > SphereSize + 5
     
     #Workshop Island Fix
-    #@Condition (__getCurrentMap__() != Map.WORKSHOP_ISLAND and __getCurrentMap__() != Map.WORKSHOP_ISLAND_NIGHT) == true
+    #@Condition isIsland == false
     eventPlayer.setStatusEffect(null, Status.ROOTED, 3)
     eventPlayer.applyImpulse(vect(directionTowards(eventPlayer.getPosition(), circleCenter).x, 0, directionTowards(eventPlayer.getPosition(), circleCenter).z), 20, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
     eventPlayer.applyImpulse(Vector.UP, 3, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
@@ -27,8 +27,7 @@ rule "Map restrictions - push to circle":
     @Event eachPlayer
     @Condition distance(eventPlayer.getPosition(), vect(circleCenter.x, eventPlayer.getPosition().y, circleCenter.z)) > SphereSize - 1.5
     #Workshop Island Fix
-    @Condition __getCurrentMap__() != Map.WORKSHOP_ISLAND
-    @Condition __getCurrentMap__() != Map.WORKSHOP_ISLAND_NIGHT
+    @Condition isIsland == false
     
     eventPlayer.applyImpulse(vect(directionTowards(eventPlayer.getPosition(), circleCenter).x, 0, directionTowards(eventPlayer.getPosition(), circleCenter).z), 6, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
     eventPlayer.applyImpulse(Vector.UP, 3, Relativity.TO_WORLD, Impulse.INCORPORATE_CONTRARY_MOTION)
@@ -39,7 +38,7 @@ rule "Map restrictions - push to circle":
 
 rule "Map restrictions - player falls off Workshop Island":
     @Event eachPlayer
-    @Condition (__getCurrentMap__() == Map.WORKSHOP_ISLAND or __getCurrentMap__() == Map.WORKSHOP_ISLAND_NIGHT) == true
+    @Condition isIsland == true
     @Condition eventPlayer.getPosition().y < -0.5
     
     #A MAN HAS FALLEN INTO THE LAKE IN WORKSHOP ISLAND! START THE NEW RESCUE RULE! HEY! BUILD THE NEW WORSHOP RULE, AND OFF TO THE RESCUE! PREPARE THE CONDITION, TELEPORT THE PLAYER, AND MAKE THE RESCUE! THE NEW 2.3.0 UPDATE FROM OVERWATCH WORKSHOP!
@@ -61,7 +60,7 @@ rule "Map restrictions - water surface 1":
     @Condition eventPlayer.isAlive() == true
     @Condition eventPlayer.isUsingAbility1() == false
     #Workshop Island Fix
-    @Condition (__getCurrentMap__() == Map.WORKSHOP_ISLAND or __getCurrentMap__() == Map.WORKSHOP_ISLAND_NIGHT) == true
+    @Condition isIsland == true
     
     if eventPlayer.getPosition().x < 20.25 and eventPlayer.getPosition().x > -20.25 and eventPlayer.getPosition().z < 20.25 and eventPlayer.getPosition().z > -20.25:
         return
@@ -83,7 +82,7 @@ rule "Map restrictions - water surface 2":
     @Condition eventPlayer.isAlive() == true
     @Condition eventPlayer.isUsingAbility1() == false
     #Workshop Island Fix
-    @Condition (__getCurrentMap__() == Map.WORKSHOP_ISLAND or __getCurrentMap__() == Map.WORKSHOP_ISLAND_NIGHT) == true
+    @Condition isIsland == true
     
     if eventPlayer.getPosition().x < 20.25 and eventPlayer.getPosition().x > -20.25 and eventPlayer.getPosition().z < 20.25 and eventPlayer.getPosition().z > -20.25:
         return
@@ -102,7 +101,7 @@ rule "Map restrictions - water resistance":
     @Condition eventPlayer.getPosition().y >= -1.5
     @Condition eventPlayer.isAlive() == true
     @Condition eventPlayer.isUsingAbility1() == false
-    @Condition (__getCurrentMap__() == Map.WORKSHOP_ISLAND or __getCurrentMap__() == Map.WORKSHOP_ISLAND_NIGHT) == true
+    @Condition isIsland == true
     
     if eventPlayer.getPosition().x > 37 or eventPlayer.getPosition().x < -37 or eventPlayer.getPosition().z > 37 or eventPlayer.getPosition().z < -37:
         eventPlayer.applyImpulse(directionTowards(eventPlayer.getPosition(), circleCenter) * vect(1, 0, 1), 10, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
@@ -119,7 +118,7 @@ rule "Map restrictions - water":
     @Condition eventPlayer.getPosition().y < -1.5
     @Condition eventPlayer.isAlive() == true
     #Workshop Island Fix
-    @Condition (__getCurrentMap__() == Map.WORKSHOP_ISLAND or __getCurrentMap__() == Map.WORKSHOP_ISLAND_NIGHT) == true
+    @Condition isIsland == true
     
     if eventPlayer.getPosition().x < 35 or eventPlayer.getPosition().x > -35 or eventPlayer.getPosition().z < 35 or eventPlayer.getPosition().z > -35:
         #Prevents people from going under the ledge on Workshop Island, which caused ball to go into floor.  Used to be an annoying stunkill
@@ -138,7 +137,7 @@ rule "Map restrictions - water leave":
     @Condition eventPlayer.getPosition().y >= 0
     @Condition eventPlayer.isAlive() == true
     #Workshop Island Fix
-    @Condition (__getCurrentMap__() == Map.WORKSHOP_ISLAND or __getCurrentMap__() == Map.WORKSHOP_ISLAND_NIGHT) == true
+    @Condition isIsland == true
     @Condition eventPlayer.currentGravity != gravity
     
     eventPlayer.setGravity(gravity)
@@ -153,7 +152,7 @@ rule "Map restrictions - island enter":
     @Condition eventPlayer.getPosition().z > -20.25
     @Condition eventPlayer.isAlive() == true
     #Workshop Island Fix
-    @Condition (__getCurrentMap__() == Map.WORKSHOP_ISLAND or __getCurrentMap__() == Map.WORKSHOP_ISLAND_NIGHT) == true
+    @Condition isIsland == true
     
     eventPlayer.currentGravity = gravity
     eventPlayer.setGravity(gravity)

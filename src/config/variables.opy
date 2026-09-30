@@ -109,6 +109,8 @@ globalvar killCounterEnabled 109
 globalvar debugRules 110
 globalvar killLeaderboardPlayers 111
 globalvar killLeaderboardSortedPlayers 112
+globalvar mapRow 113
+globalvar isIsland 114
 globalvar presetRow 115
 
 #Player variables
