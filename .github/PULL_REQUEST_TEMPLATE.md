@@ -2,9 +2,8 @@
 
 <!-- A short description. Link the issue if there is one: "Fixes #12" -->
 
-## Which version branch?
-
-<!-- e.g. v1.3.2, v1.3.2T. PRs should target a version branch, not main. -->
+<!-- PRs normally target `main`. Only target a version branch (v1.3.2, v1.3.2T, ...)
+     for a variant, or for a hotfix to an old release. See docs/branching.md. -->
 
 ## Checklist
 

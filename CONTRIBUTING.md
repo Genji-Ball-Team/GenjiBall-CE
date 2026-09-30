@@ -24,16 +24,17 @@ For editing, [VS Code](https://code.visualstudio.com/) with the **OverPy** exten
 
 ## Making a change
 
-1. **Pick the branch.** Changes go to a version branch, not `main`. For the current version that's `v1.3.2`. See [docs/branching.md](docs/branching.md).
+1. **Create a branch from `main`.** That's where development happens. (Working on a variant like `v1.3.2T`, or a hotfix for an old version? Branch from that branch instead. See [docs/branching.md](docs/branching.md).)
    ```sh
-   git switch v1.3.2
+   git switch main
+   git pull
    git switch -c fix/ball-clips-through-floor
    ```
 2. **Edit the OverPy source** in `src/`. Don't edit `workshop/genjiball.txt` by hand, because it's regenerated on every build. [docs/development.md](docs/development.md) explains which file holds what.
 3. **Build:** `npm run build`
 4. **Test in-game.** Paste `workshop/genjiball.txt` into a custom game and try it. A second player, or the bot (`50 - Features > bot`), makes testing much easier.
 5. **Commit both** your `src/` changes and the rebuilt `workshop/genjiball.txt`.
-6. **Open a pull request** against the version branch. Fill in the template.
+6. **Open a pull request** against `main` (GitHub's default) and fill in the template.
 
 CI compiles your branch and fails if `workshop/genjiball.txt` doesn't match `src/`. If it fails, run `npm run build` and commit again.
 
