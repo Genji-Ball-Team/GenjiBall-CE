@@ -9,9 +9,6 @@ rule "zBozo - spawn":
         createDummy(Hero.GENJI, Team.ALL, 12 + bozo_Bot, null, hostPlayer)
         wait(0.1)
     bozo_Bot = true
-    bozoHasJumped = false
-    OrbitTolerance = 0
-    BozoTracing = false
 
 
 rule "zBozo - name":
@@ -33,7 +30,7 @@ rule "zBozo - face target while deflecting":
     @Condition eventPlayer.isUsingAbility1() == false
     @Condition eventPlayer.isUsingAbility2() == false
     @Condition eventPlayer.hasStatus(Status.STUNNED) == false
-    @Condition bozoIsGhostDashing != true
+    @Condition botState[BotField.GHOST_DASHING] != true
     
     if eventPlayer.canDash == true:
         if random.randint(0, 8) == 0:
@@ -54,10 +51,10 @@ rule "zBozo - face target while deflecting":
     waitUntil(target != eventPlayer or eventPlayer.isDead(), 99999)
     if angleBetweenVectors(ballDirection * -1, directionTowards(target, ballPosition)) < 20:
         #if distance(eventPlayer.getEyePosition(), target.getEyePosition()) < ballSpeed * 0.3:
-        #bozoWillEdash = true
+        #botState[BotField.WILL_EDASH] = true
         #bigMessage(getAllPlayers(), "EDASH")
         if distance(eventPlayer.getEyePosition(), ballPosition) < ballSpeed:
-            bozoWillGhostDash = true
+            botState[BotField.WILL_GHOST_DASH] = true
     wait(0.3)
     if ruleCondition:
         loop()
@@ -69,7 +66,7 @@ rule "zBozo - face the Ball":
     @Condition eventPlayer.isDummy() == true
     @Condition distance(eventPlayer.getEyePosition(), ballPosition) >= 2 * (ballSpeed / 20)
     @Condition eventPlayer.isAlive() == true
-    @Condition bozoIsGhostDashing != true
+    @Condition botState[BotField.GHOST_DASHING] != true
     @Condition eventPlayer.isUsingAbility1() == false
     @Condition eventPlayer.isUsingAbility2() == false
     @Condition eventPlayer.hasStatus(Status.STUNNED) == false
@@ -80,11 +77,11 @@ rule "zBozo - face the Ball":
 rule "zBozo - behavior changes after round":
     @Condition roundEndCall == true
     
-    bozoBehaviorModes = random.choice([2])
-    if bozoBehaviorModes == 1:
-        bozoAggression = 10
-    elif bozoBehaviorModes == 2:
-        bozoAggression = 5
+    botState[BotField.BEHAVIOR_MODE] = random.choice([2])
+    if botState[BotField.BEHAVIOR_MODE] == 1:
+        botState[BotField.AGGRESSION] = 10
+    elif botState[BotField.BEHAVIOR_MODE] == 2:
+        botState[BotField.AGGRESSION] = 5
 
 
 rule "zBozo - Movement reworked":
@@ -92,7 +89,7 @@ rule "zBozo - Movement reworked":
     @Condition bozo_Bot == true
     @Condition isGameInProgress() == true
     @Condition eventPlayer.isDummy() == true
-    @Condition bozoWillOrbit != true
+    @Condition botState[BotField.WILL_ORBIT] != true
     @Condition eventPlayer.isAlive() == true
     
     #@Condition (eventPlayer.getPosition().x < 18 or eventPlayer.getPosition().x > -18 or eventPlayer.getPosition().z < 18 or eventPlayer.getPosition().z > -18) == true
@@ -104,7 +101,7 @@ rule "zBozo - Movement reworked":
         if ruleCondition:
             loop()
     if eventPlayer != target:
-        if distance(eventPlayer.getPosition(), target.getPosition()) >= bozoAggression:
+        if distance(eventPlayer.getPosition(), target.getPosition()) >= botState[BotField.AGGRESSION]:
             eventPlayer.startThrottleInDirection(directionTowards(eventPlayer.getPosition(), target), 0.8, Relativity.TO_PLAYER, Throttle.REPLACE_EXISTING, ThrottleReeval.NONE)
             wait(random.uniform(0.5, 3))
             if ruleCondition:
@@ -128,17 +125,14 @@ rule "zBozo - Let him Orbit":
     @Condition eventPlayer.isDummy() == true
     @Condition ballIsOut == true
     @Condition distance(eventPlayer.getPosition(), ballPosition) < 5 + ballSpeed / 30
-    @Condition bozoWillOrbit == true
+    @Condition botState[BotField.WILL_ORBIT] == true
     
-    IsOrbiting = true
     eventPlayer.startThrottleInDirection((ballDirection * -1 + directionTowards(ballPosition, eventPlayer.getEyePosition()) * 2) / 2, 1, Relativity.TO_WORLD)
     #eventPlayer.startThrottleInDirection(random.choice([vect(180, 0, 0), vect(-180, 0, 0)]), 1, Relativity.TO_PLAYER)
-    OrbitTolerance = 999
     #bigMessage(getAllPlayers(), "ORBIT")
     waitUntil(target != eventPlayer or eventPlayer.isDead(), 99999)
     eventPlayer.stopThrottleInDirection()
-    IsOrbiting = false
-    bozoWillOrbit = 0
+    botState[BotField.WILL_ORBIT] = 0
 
 
 rule "zBozo - bozos move being chosen":
@@ -146,9 +140,9 @@ rule "zBozo - bozos move being chosen":
     @Condition eventPlayer.isDummy() == true
     @Condition eventPlayer == target
     
-    if bozoBehaviorModes == 1:
+    if botState[BotField.BEHAVIOR_MODE] == 1:
         if random.randint(1, 10) == 5:
-            bozoWillOrbit = true
+            botState[BotField.WILL_ORBIT] = true
 
 
 rule "zBozo - Edash when needed":
@@ -158,25 +152,25 @@ rule "zBozo - Edash when needed":
     @Condition ballIsOut == true
     @Condition eventPlayer.isUsingAbility2() == true
     
-    #@Condition (eventPlayer.isUsingAbility2() or bozoWillEdash) == true
+    #@Condition (eventPlayer.isUsingAbility2() or botState[BotField.WILL_EDASH]) == true
     waitUntil(eventPlayer != target and (target.isUsingAbility1() or target.isUsingAbility2()), 0.25)
     if eventPlayer == target:
         if angleBetweenVectors(ballDirection, directionTowards(ballPosition, eventPlayer.getEyePosition())) < 20:
-            bozoWillEdash = true
+            botState[BotField.WILL_EDASH] = true
             eventPlayer.setFacing(evalOnce(directionTowards(eventPlayer.getEyePosition(), ballPosition)), Relativity.TO_WORLD)
             eventPlayer.startFacing(evalOnce(directionTowards(eventPlayer.getEyePosition(), ballPosition)), 10000)
             #bigMessage(getAllPlayers(), "EDASHING")
             waitUntil(eventPlayer.isHoldingButton(Button.ABILITY_1) or eventPlayer.isDead(), 1)
-            bozoWillEdash = false
+            botState[BotField.WILL_EDASH] = false
     elif eventPlayer == prevTarget:
         if target.isUsingAbility1() or target.isUsingAbility2():
             if angleBetweenVectors(ballDirection, directionTowards(ballPosition, target.getEyePosition())) < 20:
-                bozoWillEdash = true
+                botState[BotField.WILL_EDASH] = true
                 eventPlayer.setFacing(evalOnce(directionTowards(eventPlayer.getEyePosition(), ballPosition)), Relativity.TO_WORLD)
                 eventPlayer.startFacing(evalOnce(directionTowards(eventPlayer.getEyePosition(), ballPosition)), 10000)
                 #bigMessage(getAllPlayers(), "EDASHING")
                 waitUntil(eventPlayer.isHoldingButton(Button.ABILITY_1) or eventPlayer.isDead(), 1)
-                bozoWillEdash = false
+                botState[BotField.WILL_EDASH] = false
 
 
 rule "zBozo - Jumping":
@@ -185,8 +179,7 @@ rule "zBozo - Jumping":
     @Condition eventPlayer.isDummy() == true
     @Condition ballIsOut == true
     
-    botJumping = random.choice([1, 2])
-    if botJumping == 2:
+    if random.choice([1, 2]) == 2:
         eventPlayer.forceButtonPress(Button.JUMP)
         wait(0.35)
         eventPlayer.forceButtonPress(Button.JUMP)
@@ -202,9 +195,9 @@ rule "zBozo - GhostDash":
     @Condition bozo_Bot == true
     @Condition eventPlayer.isDummy() == true
     @Condition ballIsOut == true
-    @Condition bozoWillGhostDash == true
+    @Condition botState[BotField.WILL_GHOST_DASH] == true
     
-    bozoIsGhostDashing = true
+    botState[BotField.GHOST_DASHING] = true
     if target == eventPlayer:
         if distance(eventPlayer.getEyePosition(), ballPosition) < ballSpeed * 0.3:
             eventPlayer.setFacing(evalOnce(ballDirection.getFacingDirection()), Relativity.TO_WORLD)
@@ -213,7 +206,7 @@ rule "zBozo - GhostDash":
         eventPlayer.setFacing(evalOnce(ballDirection.getFacingDirection()) * -1, Relativity.TO_WORLD)
         eventPlayer.startFacing(evalOnce(ballDirection.getFacingDirection()) * -1, 1000)
         waitUntil(eventPlayer.isHoldingButton(Button.ABILITY_1) or eventPlayer.isDead(), 99999)
-    bozoIsGhostDashing = false
+    botState[BotField.GHOST_DASHING] = false
 
 
 rule "zBozo - randomize facing near ball":
@@ -225,7 +218,7 @@ rule "zBozo - randomize facing near ball":
     @Condition ballIsOut == true
     @Condition eventPlayer.isAlive() == true
     #@Condition eventPlayer.isUsingAbility2() == false
-    @Condition bozoIsGhostDashing != true
+    @Condition botState[BotField.GHOST_DASHING] != true
     @Condition eventPlayer.getAbilityCooldown(Button.ABILITY_1) != 0
     
     eventPlayer.setFacing(vect(random.uniform(-360, 360), random.uniform(-360, 360), random.uniform(-360, 360)), Relativity.TO_WORLD)
