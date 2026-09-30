@@ -4,6 +4,9 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## Unreleased
 
+- `main` is now the development branch, and PRs go there. Version branches (`v1.3.2`, …) are release snapshots and variants.
+- The release workflow updates an existing release instead of failing when a tag is re-pushed.
+
 ## v1.3.2 (Community Edition import)
 
 - Imported the v1.3.2 Workshop code into this repository.
