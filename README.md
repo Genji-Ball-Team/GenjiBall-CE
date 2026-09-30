@@ -46,7 +46,7 @@ npm run build    # src/ -> workshop/genjiball.txt
 
 ## Credits
 
-Originally created by **Mazawrath**, with major updates by **zSh4d0W**, **ØøØøØzZØøØøØ**, and the Genji Dodgeball community. v1.3.2 was rebuilt by **Frozonovic**. See [CREDITS.md](CREDITS.md).
+Originally created by **Mazawrath**, with major updates by **zSh4d0W**, **ØøØøØzZØøØøØ**, and the Genji Dodgeball community. v1.3.2 was rebuilt by **Frozonovic** (FROZONE in-game). See [CREDITS.md](CREDITS.md).
 
 ## License
 
