@@ -183,6 +183,8 @@ variables {
         110: debugRules
         111: killLeaderboardPlayers
         112: killLeaderboardSortedPlayers
+        113: mapRow
+        114: isIsland
     player:
         0: hasMoved
         1: thirdPerson
@@ -363,94 +365,17 @@ disabled rule ("Settings - Red-green colorblind filter") {
     }
 }
 
-rule ("Initialization - Set Workshop Island") {
+rule ("Initialization - Set map") {
     event {
         Ongoing - Global;
     }
-    conditions {
-        Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))) == True;
-    }
     actions {
-        Set Global Variable(circleCenter, Vector(0, 1.199, 0));
-        Set Global Variable(SphereSize, 60);
-    }
-}
-
-rule ("Initialization - Set Workshop Chamber") {
-    event {
-        Ongoing - Global;
-    }
-    conditions {
-        Current Map == Map(Workshop Chamber);
-    }
-    actions {
-        Set Global Variable(circleCenter, Vector(0, 1.199, 0));
-        Set Global Variable(SphereSize, 29.7);
-    }
-}
-
-rule ("Initialization - Set Workshop Expanse Center") {
-    event {
-        Ongoing - Global;
-    }
-    conditions {
-        Or(Compare(Current Map, ==, Map(Workshop Expanse)), Compare(Current Map, ==, Map(Workshop Expanse Night))) == True;
-    }
-    actions {
-        Set Global Variable(circleCenter, Vector(0, 1.199, 0));
-        Set Global Variable(SphereSize, 50);
-    }
-}
-
-rule ("Initialization - Set Workshop Green Screen") {
-    event {
-        Ongoing - Global;
-    }
-    conditions {
-        Current Map == Map(Workshop Green Screen);
-    }
-    actions {
-        Set Global Variable(circleCenter, Vector(0, 1.199, 0));
-        Set Global Variable(SphereSize, 60);
-    }
-}
-
-rule ("Initialization - Set Oasis University Center") {
-    event {
-        Ongoing - Global;
-    }
-    conditions {
-        Current Map == Map(Oasis University);
-    }
-    actions {
-        Set Global Variable(circleCenter, Vector(-192.609, 60.349, 2.252));
-        Set Global Variable(SphereSize, 25);
-    }
-}
-
-rule ("Initialization - Set Kings Row center (NOTE: Lower the max players! This arena is smaller then the others!)") {
-    event {
-        Ongoing - Global;
-    }
-    conditions {
-        Or(Compare(Current Map, ==, Map(King's Row)), Compare(Current Map, ==, Map(King's Row Winter))) == True;
-    }
-    actions {
-        Set Global Variable(circleCenter, Vector(-20.504, 40.538, -74.601));
-        Set Global Variable(SphereSize, 23);
-    }
-}
-
-rule ("Initialization - Set Blizz World center (fun fact: you can't use the name of the company who made this game in rule names)") {
-    event {
-        Ongoing - Global;
-    }
-    conditions {
-        Or(Compare(Current Map, ==, Map(Blizzard World)), Compare(Current Map, ==, Map(Blizzard World Winter))) == True;
-    }
-    actions {
-        Set Global Variable(circleCenter, Vector(2.554, -4.651, -71.211));
-        Set Global Variable(SphereSize, 23);
+        "Kings Row and Blizz World are smaller than the others: lower the max players there.\nRule names can't contain \"Blizzard\", so the map is written \"Blizz World\" in rule names.\nAny other map has no row and no arena."
+        Set Global Variable(mapRow, Value In Array(Array(Array(Vector(0, 1.199, 0), 60), Array(Vector(0, 1.199, 0), 60), Array(Vector(0, 1.199, 0), 29.7), Array(Vector(0, 1.199, 0), 50), Array(Vector(0, 1.199, 0), 50), Array(Vector(0, 1.199, 0), 60), Array(Vector(-192.609, 60.349, 2.252), 25), Array(Vector(-20.504, 40.538, -74.601), 23), Array(Vector(-20.504, 40.538, -74.601), 23), Array(Vector(2.554, -4.651, -71.211), 23), Array(Vector(2.554, -4.651, -71.211), 23)), Index Of Array Value(Array(Map(Workshop Island), Map(Workshop Island Night), Map(Workshop Chamber), Map(Workshop Expanse), Map(Workshop Expanse Night), Map(Workshop Green Screen), Map(Oasis University), Map(King's Row), Map(King's Row Winter), Map(Blizzard World), Map(Blizzard World Winter)), Current Map)));
+        Set Global Variable(circleCenter, First Of(Global.mapRow));
+        Set Global Variable(SphereSize, Value In Array(Global.mapRow, 1));
+        "Workshop Island has water and a ledge instead of a wall; several rules check this."
+        Set Global Variable(isIsland, Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))));
     }
 }
 
@@ -557,7 +482,7 @@ rule ("Initialization - map sphere") {
     actions {
         Create Effect(All Players(All Teams), Sphere, Color(Black), Vector(X Component Of(Global.circleCenter), Y Component Of(Global.circleCenter), Z Component Of(Global.circleCenter)), Global.CenterOffLimitsSize, Visible To Position and Radius);
         "Workshop Island doesn't need a circle."
-        If(And(Compare(Current Map, !=, Map(Workshop Island)), Compare(Current Map, !=, Map(Workshop Island Night))));
+        If(Not(Global.isIsland));
             Create Effect(All Players(All Teams), Light Shaft, Color(Black), Vector(X Component Of(Global.circleCenter), Subtract(Y Component Of(Global.circleCenter), 15), Z Component Of(Global.circleCenter)), Global.SphereSize, Visible To Position and Radius);
         Else;
             Create Effect(Filtered Array(All Players(All Teams), Compare(Distance Between(Position Of(Current Array Element), Global.circleCenter), >=, Subtract(Global.SphereSize, 10))), Light Shaft, Color(Black), Vector(X Component Of(Global.circleCenter), Subtract(Y Component Of(Global.circleCenter), 15), Z Component Of(Global.circleCenter)), Global.SphereSize, Visible To Position and Radius);
@@ -2363,7 +2288,7 @@ rule ("Map restrictions - player dashes too far out of bounds") {
         Distance Between(Position Of(Event Player), Vector(X Component Of(Global.circleCenter), Y Component Of(Position Of(Event Player)), Z Component Of(Global.circleCenter))) > Add(Global.SphereSize, 5);
     }
     actions {
-        "Workshop Island Fix\n@Condition (__getCurrentMap__() != Map.WORKSHOP_ISLAND and __getCurrentMap__() != Map.WORKSHOP_ISLAND_NIGHT) == true"
+        "Workshop Island Fix\n@Condition isIsland == false"
         Set Status(Event Player, Null, Rooted, 3);
         Apply Impulse(Event Player, Vector(X Component Of(Direction Towards(Position Of(Event Player), Global.circleCenter)), 0, Z Component Of(Direction Towards(Position Of(Event Player), Global.circleCenter))), 20, To World, Cancel Contrary Motion);
         Apply Impulse(Event Player, Up, 3, To World, Cancel Contrary Motion);
@@ -2380,8 +2305,7 @@ rule ("Map restrictions - push to circle") {
     conditions {
         Distance Between(Position Of(Event Player), Vector(X Component Of(Global.circleCenter), Y Component Of(Position Of(Event Player)), Z Component Of(Global.circleCenter))) > Subtract(Global.SphereSize, 1.5);
         "Workshop Island Fix"
-        Current Map != Map(Workshop Island);
-        Current Map != Map(Workshop Island Night);
+        Global.isIsland == False;
     }
     actions {
         Apply Impulse(Event Player, Vector(X Component Of(Direction Towards(Position Of(Event Player), Global.circleCenter)), 0, Z Component Of(Direction Towards(Position Of(Event Player), Global.circleCenter))), 6, To World, Cancel Contrary Motion);
@@ -2398,7 +2322,7 @@ rule ("Map restrictions - player falls off Workshop Island") {
         All;
     }
     conditions {
-        Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))) == True;
+        Global.isIsland == True;
         Y Component Of(Position Of(Event Player)) < -0.5;
     }
     actions {
@@ -2429,7 +2353,7 @@ rule ("Map restrictions - water surface 1") {
         Is Alive(Event Player) == True;
         Is Using Ability 1(Event Player) == False;
         "Workshop Island Fix"
-        Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))) == True;
+        Global.isIsland == True;
     }
     actions {
         Abort If(And(And(And(Compare(X Component Of(Position Of(Event Player)), <, 20.25), Compare(X Component Of(Position Of(Event Player)), >, -20.25)), Compare(Z Component Of(Position Of(Event Player)), <, 20.25)), Compare(Z Component Of(Position Of(Event Player)), >, -20.25)));
@@ -2457,7 +2381,7 @@ rule ("Map restrictions - water surface 2") {
         Is Alive(Event Player) == True;
         Is Using Ability 1(Event Player) == False;
         "Workshop Island Fix"
-        Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))) == True;
+        Global.isIsland == True;
     }
     actions {
         Abort If(And(And(And(Compare(X Component Of(Position Of(Event Player)), <, 20.25), Compare(X Component Of(Position Of(Event Player)), >, -20.25)), Compare(Z Component Of(Position Of(Event Player)), <, 20.25)), Compare(Z Component Of(Position Of(Event Player)), >, -20.25)));
@@ -2481,7 +2405,7 @@ rule ("Map restrictions - water resistance") {
         Y Component Of(Position Of(Event Player)) >= -1.5;
         Is Alive(Event Player) == True;
         Is Using Ability 1(Event Player) == False;
-        Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))) == True;
+        Global.isIsland == True;
     }
     actions {
         If(Or(Or(Or(Compare(X Component Of(Position Of(Event Player)), >, 37), Compare(X Component Of(Position Of(Event Player)), <, -37)), Compare(Z Component Of(Position Of(Event Player)), >, 37)), Compare(Z Component Of(Position Of(Event Player)), <, -37)));
@@ -2505,7 +2429,7 @@ rule ("Map restrictions - water") {
         Y Component Of(Position Of(Event Player)) < -1.5;
         Is Alive(Event Player) == True;
         "Workshop Island Fix"
-        Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))) == True;
+        Global.isIsland == True;
     }
     actions {
         If(Or(Or(Or(Compare(X Component Of(Position Of(Event Player)), <, 35), Compare(X Component Of(Position Of(Event Player)), >, -35)), Compare(Z Component Of(Position Of(Event Player)), <, 35)), Compare(Z Component Of(Position Of(Event Player)), >, -35)));
@@ -2532,7 +2456,7 @@ rule ("Map restrictions - water leave") {
         Y Component Of(Position Of(Event Player)) >= 0;
         Is Alive(Event Player) == True;
         "Workshop Island Fix"
-        Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))) == True;
+        Global.isIsland == True;
         (Event Player).currentGravity != Global.gravity;
     }
     actions {
@@ -2554,7 +2478,7 @@ rule ("Map restrictions - island enter") {
         Z Component Of(Position Of(Event Player)) > -20.25;
         Is Alive(Event Player) == True;
         "Workshop Island Fix"
-        Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))) == True;
+        Global.isIsland == True;
     }
     actions {
         Set Player Variable(Event Player, currentGravity, Global.gravity);
