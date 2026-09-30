@@ -10,8 +10,8 @@ rule "GENJI BALL ABILITIES :OOOOOO - selection":
     
     waitUntil(not eventPlayer.isHoldingButton(Button.RELOAD), 0.4)
     if eventPlayer.isHoldingButton(Button.RELOAD):
-        if eventPlayer.SpecialAbility > 3:
-            eventPlayer.SpecialAbility = 1
+        if eventPlayer.SpecialAbility > AbilityId.BLINK:
+            eventPlayer.SpecialAbility = AbilityId.SUPER_JUMP
         else:
             eventPlayer.SpecialAbility++
         bigMessage(eventPlayer, "Ability changed")
@@ -24,43 +24,43 @@ rule "Gb Abilities - Description":
     if eventPlayer.Abilitydesc == 1:
         goto lbl_0
     wait(4)
-    hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == 0), "change ability after round: hold [{0}] current: [{1}]".format(inputBindingString(Button.RELOAD), eventPlayer.SpecialAbility), HudPosition.RIGHT, -132, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
-    hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == 0), "Ability cooldown: [{0}]".format(eventPlayer.Abilitycooldown), HudPosition.RIGHT, -134, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+    hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "change ability after round: hold [{0}] current: [{1}]".format(inputBindingString(Button.RELOAD), eventPlayer.SpecialAbility), HudPosition.RIGHT, -132, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+    hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "Ability cooldown: [{0}]".format(eventPlayer.Abilitycooldown), HudPosition.RIGHT, -134, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
     eventPlayer.Abilitydesc = 1
     lbl_0:
-    if eventPlayer.SpecialAbility == 1:
-        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == 0), "Ability: 1. Super Jump: Press [{0}] and [{1}] to jump high".format(inputBindingString(Button.CROUCH), inputBindingString(Button.JUMP)), HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
-        waitUntil(eventPlayer.SpecialAbility != 1, 99999)
+    if eventPlayer.SpecialAbility == AbilityId.SUPER_JUMP:
+        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "Ability: 1. Super Jump: Press [{0}] and [{1}] to jump high".format(inputBindingString(Button.CROUCH), inputBindingString(Button.JUMP)), HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+        waitUntil(eventPlayer.SpecialAbility != AbilityId.SUPER_JUMP, 99999)
         destroyHudText(getLastCreatedText())
         loop()
-    elif eventPlayer.SpecialAbility == 2:
-        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == 0), "Ability: 2. Switch Target: Press [{0}] to become the target. Double click to make it not beam you.".format(inputBindingString(Button.ULTIMATE)), HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
-        waitUntil(eventPlayer.SpecialAbility != 2, 99999)
+    elif eventPlayer.SpecialAbility == AbilityId.TARGET_SWITCH:
+        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "Ability: 2. Switch Target: Press [{0}] to become the target. Double click to make it not beam you.".format(inputBindingString(Button.ULTIMATE)), HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+        waitUntil(eventPlayer.SpecialAbility != AbilityId.TARGET_SWITCH, 99999)
         destroyHudText(getLastCreatedText())
         loop()
-    elif eventPlayer.SpecialAbility == 3:
-        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == 0), "Ability: 3. Blink: Press [{0}] to teleport into the direction youre looking at. You will pass through the ball.".format(inputBindingString(Button.ULTIMATE)), HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
-        waitUntil(eventPlayer.SpecialAbility != 3, 99999)
+    elif eventPlayer.SpecialAbility == AbilityId.BLINK:
+        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "Ability: 3. Blink: Press [{0}] to teleport into the direction youre looking at. You will pass through the ball.".format(inputBindingString(Button.ULTIMATE)), HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+        waitUntil(eventPlayer.SpecialAbility != AbilityId.BLINK, 99999)
         destroyHudText(getLastCreatedText())
         loop()
-    elif eventPlayer.SpecialAbility == 4:
-        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == 0), "Ability: 4. Critical slash: Press [{0}] to make your next hit powerful, speeding up the ball way more.".format(inputBindingString(Button.ULTIMATE)), HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
-        waitUntil(eventPlayer.SpecialAbility != 4, 99999)
+    elif eventPlayer.SpecialAbility == AbilityId.CRIT_SLASH:
+        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "Ability: 4. Critical slash: Press [{0}] to make your next hit powerful, speeding up the ball way more.".format(inputBindingString(Button.ULTIMATE)), HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+        waitUntil(eventPlayer.SpecialAbility != AbilityId.CRIT_SLASH, 99999)
         destroyHudText(getLastCreatedText())
         loop()
-    elif eventPlayer.SpecialAbility == 5:
-        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == 0), "Ability: 3.", HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
-        waitUntil(eventPlayer.SpecialAbility != 5, 99999)
+    elif eventPlayer.SpecialAbility == AbilityId.UNUSED_5:
+        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "Ability: 3.", HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+        waitUntil(eventPlayer.SpecialAbility != AbilityId.UNUSED_5, 99999)
         destroyHudText(getLastCreatedText())
         loop()
-    elif eventPlayer.SpecialAbility == 6:
-        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == 0), "Ability: 3.", HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
-        waitUntil(eventPlayer.SpecialAbility != 6, 99999)
+    elif eventPlayer.SpecialAbility == AbilityId.UNUSED_6:
+        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "Ability: 3.", HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+        waitUntil(eventPlayer.SpecialAbility != AbilityId.UNUSED_6, 99999)
         destroyHudText(getLastCreatedText())
         loop()
     else:
-        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == 0), "Ability: Invalid Ability", HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
-        waitUntil(eventPlayer.SpecialAbility <= 6, 99999)
+        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "Ability: Invalid Ability", HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+        waitUntil(eventPlayer.SpecialAbility <= AbilityId.UNUSED_6, 99999)
         destroyHudText(getLastCreatedText())
         loop()
 
@@ -94,7 +94,7 @@ rule "Gb Abilities - 1. High jump ready":
     @Condition eventPlayer.isOnGround() == true
     @Condition isGameInProgress() == true
     @Condition eventPlayer.Abilityready == false
-    @Condition eventPlayer.SpecialAbility == 1
+    @Condition eventPlayer.SpecialAbility == AbilityId.SUPER_JUMP
     @Condition Abilities == true
     
     eventPlayer.Abilityready = true
@@ -107,7 +107,7 @@ rule "Gb Abilities - 1. Cancel high jump ready":
     @Event eachPlayer
     @Condition eventPlayer.Abilityready == true
     @Condition (not (eventPlayer.isOnGround() and eventPlayer.isCrouching()) or false or eventPlayer.isDead() or eventPlayer.Abilitycooldown > 0) == true
-    @Condition eventPlayer.SpecialAbility == 1
+    @Condition eventPlayer.SpecialAbility == AbilityId.SUPER_JUMP
     @Condition Abilities == true
     
     wait()
@@ -121,7 +121,7 @@ rule "Gb Abilities - 1. High jump":
     @Event eachPlayer
     @Condition eventPlayer.isHoldingButton(Button.JUMP) == true
     @Condition eventPlayer.Abilityready == true
-    @Condition eventPlayer.SpecialAbility == 1
+    @Condition eventPlayer.SpecialAbility == AbilityId.SUPER_JUMP
     @Condition Abilities == true
     
     eventPlayer.applyImpulse(Vector.UP, 25, Relativity.TO_PLAYER, Impulse.CANCEL_CONTRARY_MOTION)
@@ -135,7 +135,7 @@ rule "Gb Abilities - 2. Target switch ready":
     @Condition eventPlayer.Abilitycooldown <= 0
     @Condition ballIsOut == true
     @Condition eventPlayer.isAlive() == true
-    @Condition eventPlayer.SpecialAbility == 2
+    @Condition eventPlayer.SpecialAbility == AbilityId.TARGET_SWITCH
     @Condition Abilities == true
     
     eventPlayer.Abilityready = true
@@ -146,7 +146,7 @@ rule "Gb Abilities - 2. Target switch ready":
 
 rule "Gb Abilities - 2. Cancel Target switch ready":
     @Event eachPlayer
-    @Condition eventPlayer.SpecialAbility == 2
+    @Condition eventPlayer.SpecialAbility == AbilityId.TARGET_SWITCH
     @Condition (eventPlayer.isDead() or eventPlayer.Abilitycooldown > 0 or ballIsOut != true or target == eventPlayer) == true
     @Condition Abilities == true
     
@@ -158,7 +158,7 @@ rule "Gb Abilities - 2. Cancel Target switch ready":
 
 rule "Gb Abilities - 2. Target switch":
     @Event eachPlayer
-    @Condition eventPlayer.SpecialAbility == 2
+    @Condition eventPlayer.SpecialAbility == AbilityId.TARGET_SWITCH
     @Condition eventPlayer.isHoldingButton(Button.ULTIMATE) == true
     @Condition eventPlayer.Abilityready == true
     @Condition Abilities == true
@@ -182,7 +182,7 @@ rule "Gb Abilities - 2. Target switch":
 
 rule "Gb Abilities - 3. Blink ready":
     @Event eachPlayer
-    @Condition eventPlayer.SpecialAbility == 3
+    @Condition eventPlayer.SpecialAbility == AbilityId.BLINK
     @Condition eventPlayer.isUsingAbility1() == false
     @Condition eventPlayer.Abilitycooldown <= 0
     @Condition eventPlayer.isAlive() == true
@@ -196,7 +196,7 @@ rule "Gb Abilities - 3. Blink ready":
 
 rule "Gb Abilities - 3. Cancel Blink ready":
     @Event eachPlayer
-    @Condition eventPlayer.SpecialAbility == 3
+    @Condition eventPlayer.SpecialAbility == AbilityId.BLINK
     @Condition (eventPlayer.isDead() or eventPlayer.Abilitycooldown > 0 or eventPlayer.isUsingAbility1()) == true
     @Condition Abilities == true
     
@@ -208,7 +208,7 @@ rule "Gb Abilities - 3. Cancel Blink ready":
 
 rule "Gb Abilities - 3. Blink":
     @Event eachPlayer
-    @Condition eventPlayer.SpecialAbility == 3
+    @Condition eventPlayer.SpecialAbility == AbilityId.BLINK
     @Condition eventPlayer.Abilityready == true
     @Condition eventPlayer.isHoldingButton(Button.ULTIMATE) == true
     @Condition Abilities == true
@@ -220,7 +220,7 @@ rule "Gb Abilities - 3. Blink":
 
 rule "Gb Abilities - 4. Critslash ready":
     @Event eachPlayer
-    @Condition eventPlayer.SpecialAbility == 4
+    @Condition eventPlayer.SpecialAbility == AbilityId.CRIT_SLASH
     @Condition eventPlayer.Abilitycooldown <= 0
     @Condition eventPlayer.isAlive() == true
     @Condition ballIsOut == true
@@ -234,7 +234,7 @@ rule "Gb Abilities - 4. Critslash ready":
 
 rule "Gb Abilities - 4. Cancel critslash ready":
     @Event eachPlayer
-    @Condition eventPlayer.SpecialAbility == 4
+    @Condition eventPlayer.SpecialAbility == AbilityId.CRIT_SLASH
     @Condition (eventPlayer.Abilitycooldown > 0 or eventPlayer.isDead() or ballIsOut == false) == true
     @Condition Abilities == true
     
@@ -247,7 +247,7 @@ rule "Gb Abilities - 4. Cancel critslash ready":
 
 rule "Gb Abilities - 4. Critical slash":
     @Event eachPlayer
-    @Condition eventPlayer.SpecialAbility == 4
+    @Condition eventPlayer.SpecialAbility == AbilityId.CRIT_SLASH
     @Condition eventPlayer.Abilityready == true
     @Condition eventPlayer.isHoldingButton(Button.ULTIMATE) == true
     @Condition Abilities == true

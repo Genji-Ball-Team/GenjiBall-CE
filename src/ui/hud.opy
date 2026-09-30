@@ -2,7 +2,7 @@
 
 rule "HUD - community text":
     hudSubheader(getAllPlayers(), "version 1.3.2", HudPosition.RIGHT, -100, Color.ORANGE, HudReeval.VISIBILITY_AND_STRING)
-    hudHeader(getAllPlayers().filter(lambda player: player.simpleHUD == 0), "Discord: discord.gg/genjiball", HudPosition.LEFT, -5, Color.AQUA, HudReeval.VISIBILITY_AND_STRING)
+    hudHeader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "Discord: discord.gg/genjiball", HudPosition.LEFT, -5, Color.AQUA, HudReeval.VISIBILITY_AND_STRING)
 
 
 rule "HUD - target player text":
@@ -35,11 +35,11 @@ rule "HUD - ball speed text":
 
 
 rule "HUD - controls text":
-    hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == 0), "change perspective [{0}]".format(inputBindingString(Button.RELOAD)), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+    hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "change perspective [{0}]".format(inputBindingString(Button.RELOAD)), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
     if Sandbox == false:
-        hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == 0), "simple hud [{0}]".format(inputBindingString(Button.INTERACT)), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+        hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "simple hud [{0}]".format(inputBindingString(Button.INTERACT)), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
     if doubleSensEnabled and not Abilities:
-        hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == 0), "double sens [{0}]".format(inputBindingString(Button.ULTIMATE)), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+        hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "double sens [{0}]".format(inputBindingString(Button.ULTIMATE)), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
 
 
 rule "HUD - add-ons text":
@@ -50,7 +50,7 @@ rule "HUD - add-ons text":
     #hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == 0), "•endless", HudPosition.RIGHT, -2, Color.BLUE, HudReeval.VISIBILITY_AND_STRING)
     #__end__()
     if tracingMode:
-        hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == 0), "tracing: dont lose sight with the ball!", HudPosition.TOP, -1, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+        hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "tracing: dont lose sight with the ball!", HudPosition.TOP, -1, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
     if tournamentMode:
         hudHeader(getAllPlayers(), "Tournament", HudPosition.RIGHT, 8, Color.BLACK, HudReeval.VISIBILITY_AND_STRING)
         hudSubtext(getAllPlayers(), "ROUNDS LEFT: {0}".format(totalRounds), HudPosition.RIGHT, 9, Color.PURPLE, HudReeval.VISIBILITY_AND_STRING)
@@ -121,9 +121,9 @@ rule "HUD - anti rubberbanding hud text":
 rule "HUD - zen mode cooldown":
     @Event eachPlayer
     
-    hudSubtext(eventPlayer if eventPlayer.simpleHUD == 2 else null, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", HudPosition.TOP, 10, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
-    hudHeader(eventPlayer if eventPlayer.simpleHUD == 2 else null, "{0}\nDeflect".format(abilityIconString(Hero.GENJI, Button.ABILITY_2)), HudPosition.TOP, 12, Color.BLUE if eventPlayer.canDeflect and not eventPlayer.hasStatus(Status.KNOCKED_DOWN) and not eventPlayer.hasStatus(Status.ASLEEP) and eventPlayer.isAlive() and not eventPlayer.isUsingAbility2() and not eventPlayer.isUsingAbility1() else Color.GREEN if eventPlayer.isUsingAbility2() else Color.GRAY, HudReeval.VISIBILITY_AND_COLOR)
-    hudHeader(eventPlayer if eventPlayer.simpleHUD == 2 else null, "{0}\nDash".format(abilityIconString(Hero.GENJI, Button.ABILITY_1)), HudPosition.TOP, 11, Color.BLUE if eventPlayer.canDash and not eventPlayer.dashOnCooldown and not eventPlayer.hasStatus(Status.KNOCKED_DOWN) and not eventPlayer.hasStatus(Status.ASLEEP) and eventPlayer.isAlive() and not eventPlayer.isUsingAbility1() else Color.GREEN if eventPlayer.isUsingAbility1() else Color.GRAY, HudReeval.VISIBILITY_AND_COLOR)
+    hudSubtext(eventPlayer if eventPlayer.simpleHUD == SimpleHud.ZEN else null, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", HudPosition.TOP, 10, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+    hudHeader(eventPlayer if eventPlayer.simpleHUD == SimpleHud.ZEN else null, "{0}\nDeflect".format(abilityIconString(Hero.GENJI, Button.ABILITY_2)), HudPosition.TOP, 12, Color.BLUE if eventPlayer.canDeflect and not eventPlayer.hasStatus(Status.KNOCKED_DOWN) and not eventPlayer.hasStatus(Status.ASLEEP) and eventPlayer.isAlive() and not eventPlayer.isUsingAbility2() and not eventPlayer.isUsingAbility1() else Color.GREEN if eventPlayer.isUsingAbility2() else Color.GRAY, HudReeval.VISIBILITY_AND_COLOR)
+    hudHeader(eventPlayer if eventPlayer.simpleHUD == SimpleHud.ZEN else null, "{0}\nDash".format(abilityIconString(Hero.GENJI, Button.ABILITY_1)), HudPosition.TOP, 11, Color.BLUE if eventPlayer.canDash and not eventPlayer.dashOnCooldown and not eventPlayer.hasStatus(Status.KNOCKED_DOWN) and not eventPlayer.hasStatus(Status.ASLEEP) and eventPlayer.isAlive() and not eventPlayer.isUsingAbility1() else Color.GREEN if eventPlayer.isUsingAbility1() else Color.GRAY, HudReeval.VISIBILITY_AND_COLOR)
 
 
 rule "HUD - Watermark":

@@ -50,7 +50,7 @@ rule "Settings - Workshop settings":
     debugRules = createWorkshopSettingBool("90 - Debug", "debug HUD", false)
     #Shared core ruleset defaults for every non-Custom preset.
     #Custom (index 7) intentionally skips this block so every visible setting is manual.
-    if presetMode != 7:
+    if presetMode != Preset.CUSTOM:
         matchTime = 900
         tournamentMode = false
         totalRounds = 30
@@ -60,69 +60,69 @@ rule "Settings - Workshop settings":
         ballSpawnSpeed = 60
         ballSpeedCap = 400
         ballAcceleration = 0.25
-        ballMotion = 0
-        ballPhysicsMode = 0
-        waterLevel = 0
+        ballMotion = BallMotion.MODERN
+        ballPhysicsMode = BallPhysics.ORIGINAL
+        waterLevel = Water.MODERATE
         bouncePadToggle = false
-        mobilityMode = 0
-        if presetMode == 1:
+        mobilityMode = Mobility.AGILE
+        if presetMode == Preset.TOURNAMENT:
             #Tournament: current conservative tournament setup.
             tournamentMode = true
-            antiGhostMode = 0
+            antiGhostMode = AntiGhost.OFF
             antiOrbitMode = false
-        elif presetMode == 2:
+        elif presetMode == Preset.TOURNAMENT_PLUS:
             #Tournament+: future tournament candidate with AntiOrbit and steer-based anti-ghost correction.
             #Original physics remains forced until Legacy+/Experimental are tournament-proven.
             tournamentMode = true
-            antiGhostMode = 2
+            antiGhostMode = AntiGhost.STEER
             antiOrbitMode = true
             antiOrbitRadius = 14
             antiOrbitPressureRate = 0.02
-        elif presetMode == 3:
+        elif presetMode == Preset.RAPID:
             #Rapid: Workshop Expanse-style fast/bouncy preset.
-            waterLevel = 3
-            ballMotion = 1
+            waterLevel = Water.FLOOD
+            ballMotion = BallMotion.RAPID
             bouncePadToggle = true
-            mobilityMode = 1
-        elif presetMode == 4:
+            mobilityMode = Mobility.BALANCED
+        elif presetMode == Preset.V1:
             #v1: dry Workshop Island feel with otherwise standard gameplay.
-            waterLevel = 1
-        elif presetMode == 5:
+            waterLevel = Water.NONE
+        elif presetMode == Preset.V7:
             #v7-style preset shell. Deeper v7 parity remains deferred.
-            waterLevel = 3
+            waterLevel = Water.FLOOD
             bouncePadToggle = true
-            mobilityMode = 2
-        elif presetMode == 6:
+            mobilityMode = Mobility.SLUGGISH
+        elif presetMode == Preset.EXPERIMENTAL:
             #Experimental: curated rebound-physics test ruleset, not tournament-safe yet.
             #Keep the bot setting manual so Bot + Experimental can be tested together.
-            ballPhysicsMode = 2
-            antiGhostMode = 0
+            ballPhysicsMode = BallPhysics.EXPERIMENTAL
+            antiGhostMode = AntiGhost.OFF
             antiOrbitMode = true
             antiOrbitRadius = 14
             antiOrbitPressureRate = 0.02
-    if ballMotion == 0:
+    if ballMotion == BallMotion.MODERN:
         motionMultiplier = 1
-    elif ballMotion == 1:
+    elif ballMotion == BallMotion.RAPID:
         motionMultiplier = 0.5
-    if mobilityMode == 0:
+    if mobilityMode == Mobility.AGILE:
         moveSpeed = 190
         gravity = 80
         jumpVerticalSpeed = 180
-    elif mobilityMode == 1:
+    elif mobilityMode == Mobility.BALANCED:
         moveSpeed = 150
         gravity = 90
         jumpVerticalSpeed = 150
-    elif mobilityMode == 2:
+    elif mobilityMode == Mobility.SLUGGISH:
         moveSpeed = 100
         gravity = 100
         jumpVerticalSpeed = 100
-    if waterLevel == 0:
+    if waterLevel == Water.MODERATE:
         waterLevel = -15
-    elif waterLevel == 1:
+    elif waterLevel == Water.NONE:
         waterLevel = -1000
-    elif waterLevel == 2:
+    elif waterLevel == Water.MINIMAL:
         waterLevel = -26
-    elif waterLevel == 3:
+    elif waterLevel == Water.FLOOD:
         waterLevel = -0.5
     if bozo_Bot:
         bozo_Bot = 1

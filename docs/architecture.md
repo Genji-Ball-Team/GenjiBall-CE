@@ -16,6 +16,7 @@ This is a map of the game logic for contributors. It assumes you know roughly wh
 
 | File | Contents |
 |---|---|
+| `config/constants.opy` | Named values (OverPy `enum`s) for presets, ball motion, physics engine, anti-ghost, water, mobility, `simpleHUD` and ability ids. They compile to the same numbers |
 | `config/lobby.opy` | Lobby, game mode, hero and extension settings (the part of the export that isn't rules) |
 | `config/variables.opy` | Every global/player variable and subroutine, with its **fixed index**, plus active extensions |
 | `config/workshop-settings.opy` | Reads the Workshop settings and applies presets |
@@ -73,9 +74,9 @@ The file table is in include order. When you add a file, include it in `main.opy
 | `ballSpawnCountdown` | Counts down to the next spawn (chased to 0) |
 | `RoundInProgress`, `IsEnoughPlayersToStart`, `IsInFinalDuel`, `TieBreakerActive` | Round state flags |
 | `circleCenter`, `SphereSize` | Arena center and radius, set per map in `maps/arenas.opy` |
-| `presetMode`, `ballMotion`, `ballPhysicsMode`, … | Settings from `config/workshop-settings.opy`. Most are named after their Workshop setting |
+| `presetMode`, `ballMotion`, `ballPhysicsMode`, … | Settings from `config/workshop-settings.opy`. Most are named after their Workshop setting. Compare enum settings against `config/constants.opy` (`ballMotion == BallMotion.ASTRO`), not raw numbers |
 
-Per-player: `canDash`, `canDeflect`, `dashOnCooldown` (input gating), `hasMoved` (has spawned into the arena, used to exclude people who haven't really joined yet), `antiRubberbanding`, `simpleHUD` (0 off, 1 simple, 2 zen), `orbit*` (AntiOrbit), `kills` (kill tracker).
+Per-player: `canDash`, `canDeflect`, `dashOnCooldown` (input gating), `hasMoved` (has spawned into the arena, used to exclude people who haven't really joined yet), `antiRubberbanding`, `simpleHUD` (`SimpleHud.OFF`, `ON`, `ZEN`), `orbit*` (AntiOrbit), `kills` (kill tracker).
 
 See `src/config/variables.opy` for the full list.
 

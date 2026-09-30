@@ -5,10 +5,11 @@
 #say which; docs/architecture.md ("Rule order") explains each one. Unmarked files
 #can be moved freely.
 #
-#Folders: config/ (settings, presets, variables), core/ (controls, round flow,
+#Folders: config/ (settings, presets, variables, named constants), core/ (controls, round flow,
 #collision, ball physics; feel-locked, see CONTRIBUTING.md), maps/ (per-map
 #setup and restrictions), features/ (optional modes and tools), ui/ (HUD, effects).
 
+#!include "config/constants.opy"
 #!include "config/lobby.opy"
 #!include "config/variables.opy"
 

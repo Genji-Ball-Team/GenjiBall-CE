@@ -212,31 +212,31 @@ rule "Controls - Simple HUD (Interact)":
     @Condition eventPlayer.isAlive() == true
     @Condition Sandbox == false
     
-    if eventPlayer.simpleHUD == 2:
-        eventPlayer.simpleHUD = 0
+    if eventPlayer.simpleHUD == SimpleHud.ZEN:
+        eventPlayer.simpleHUD = SimpleHud.OFF
         eventPlayer.enableHeroHud()
         playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
         smallMessage(eventPlayer, "simple hud: off")
         return
     waitUntil(not eventPlayer.isHoldingButton(Button.INTERACT), 0.4)
     if eventPlayer.isHoldingButton(Button.INTERACT):
-        if eventPlayer.simpleHUD == 2:
-            eventPlayer.simpleHUD = 0
+        if eventPlayer.simpleHUD == SimpleHud.ZEN:
+            eventPlayer.simpleHUD = SimpleHud.OFF
             eventPlayer.enableHeroHud()
             playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
             smallMessage(eventPlayer, "simple hud: off")
         else:
-            eventPlayer.simpleHUD = 2
+            eventPlayer.simpleHUD = SimpleHud.ZEN
             eventPlayer.disableHeroHud()
             playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
             smallMessage(eventPlayer, "simple hud: zen mode")
     else:
-        if eventPlayer.simpleHUD == 0:
-            eventPlayer.simpleHUD = 1
+        if eventPlayer.simpleHUD == SimpleHud.OFF:
+            eventPlayer.simpleHUD = SimpleHud.ON
             playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
             smallMessage(eventPlayer, "simple hud: on")
         else:
-            eventPlayer.simpleHUD = 0
+            eventPlayer.simpleHUD = SimpleHud.OFF
             eventPlayer.enableHeroHud()
             playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
             smallMessage(eventPlayer, "simple hud: off")

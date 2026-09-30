@@ -9,15 +9,15 @@ def startBall():
     experimentalSteeringRate = ballDirectionRate
     reboundIncomingDirection = ballDirection
     reboundInfluence = experimentalReboundMin
-    if ballPhysicsMode == 1:
+    if ballPhysicsMode == BallPhysics.LEGACY_PLUS:
         async(startLegacyPlusBall, AsyncBehavior.RESTART)
-    elif ballPhysicsMode == 2:
+    elif ballPhysicsMode == BallPhysics.EXPERIMENTAL:
         async(startExperimentalBall, AsyncBehavior.RESTART)
-    elif ballMotion == 0 or ballMotion == 1:
+    elif ballMotion == BallMotion.MODERN or ballMotion == BallMotion.RAPID:
         async(startModernBall, AsyncBehavior.RESTART)
-    elif ballMotion == 2:
+    elif ballMotion == BallMotion.ASTRO:
         async(startAstroBall, AsyncBehavior.RESTART)
-    elif ballMotion == 3:
+    elif ballMotion == BallMotion.RETRO:
         async(startRetroBall, AsyncBehavior.RESTART)
 
 
@@ -43,10 +43,10 @@ def startLegacyPlusBall():
     
     #Legacy+ is a chase-free test path for the modern/rapid motion styles.
     #Astro and retro still use their original engines for now.
-    if ballMotion == 2:
+    if ballMotion == BallMotion.ASTRO:
         async(startAstroBall, AsyncBehavior.RESTART)
         return
-    elif ballMotion == 3:
+    elif ballMotion == BallMotion.RETRO:
         async(startRetroBall, AsyncBehavior.RESTART)
         return
     while ballIsOut:
@@ -64,10 +64,10 @@ def startExperimentalBall():
     #then homing returns smoothly. The tuning sliders in 10 - Ball control
     #the incoming-momentum influence and homing handoff so the feel can be
     #adjusted in-game while playtesting.
-    if ballMotion == 2:
+    if ballMotion == BallMotion.ASTRO:
         async(startAstroBall, AsyncBehavior.RESTART)
         return
-    elif ballMotion == 3:
+    elif ballMotion == BallMotion.RETRO:
         async(startRetroBall, AsyncBehavior.RESTART)
         return
     chaseAtRate(ballPosition, ballPosition + ballDirection * ballSpeed * motionMultiplier, ballSpeed)
@@ -110,9 +110,9 @@ def startAstroBall():
 
 
 rule "Ball Physics - anti ghost correction":
-    @Condition antiGhostMode != 0
+    @Condition antiGhostMode != AntiGhost.OFF
     @Condition ballIsOut == true
-    @Condition ballMotion == 0
+    @Condition ballMotion == BallMotion.MODERN
     @Condition target != null
     @Condition target.isAlive() == true
     
@@ -121,7 +121,7 @@ rule "Ball Physics - anti ghost correction":
     #steering strength. Experimental leaves AntiGhost off by default;
     #Tournament+ uses Steer.
     if distance(ballPosition, target.getEyePosition()) <= 7:
-        if antiGhostMode == 1:
+        if antiGhostMode == AntiGhost.TRACK:
             if antiGhostPrevDistance == 999:
                 antiGhostPrevDistance = distance(ballPosition, target.getEyePosition())
             if distance(ballPosition, target.getEyePosition()) >= antiGhostPrevDistance - 0.05:
@@ -134,7 +134,7 @@ rule "Ball Physics - anti ghost correction":
                     ballDirectionRate = 4
             elif ballDirectionRate == 4:
                 ballDirectionRate = ballDirectionRateInit
-        elif antiGhostMode == 2:
+        elif antiGhostMode == AntiGhost.STEER:
             if angleBetweenVectors(ballDirection, directionTowards(ballPosition, target.getEyePosition())) >= 35:
                 antiGhostStallTimer = 0
                 antiGhostPrevDistance = distance(ballPosition, target.getEyePosition())
@@ -154,7 +154,7 @@ rule "Ball Physics - anti ghost correction":
 
 rule "Ball Physics - general collision":
     @Condition ballIsOut == true
-    @Condition (updateEveryFrame(isInLoS(ballPosition, ballPosition + ((ballDirection * (ballSpeed if ballMotion != 2 else 1)) * 0.033)))) == false
+    @Condition (updateEveryFrame(isInLoS(ballPosition, ballPosition + ((ballDirection * (ballSpeed if ballMotion != BallMotion.ASTRO else 1)) * 0.033)))) == false
     @Condition ballPosition.y > 7.5
     @Condition (ballPosition.z > 20 or ballPosition.z < -20 or ballPosition.x > 20 or ballPosition.x < -20 or ballPosition.y > 0) == true
     
@@ -167,7 +167,7 @@ rule "Ball Physics - general collision":
     else:
         BallCollisionSurfaceNormal = raycastHitNormal(ballPosition, ballNextFramePosition, null, getAllPlayers(), false)
         ballDirection -= 2 * dotProduct(ballDirection, BallCollisionSurfaceNormal) * BallCollisionSurfaceNormal
-    if ballPhysicsMode == 2:
+    if ballPhysicsMode == BallPhysics.EXPERIMENTAL:
         #Surface rebounds use their own tuning slider so wall/platform bounces
         #can read physically without resetting to the full player-deflect window.
         experimentalSteeringRate = ballDirectionRate * experimentalSurfaceHoming
@@ -192,7 +192,7 @@ rule "Ball Physics - island collision":
     
     CollisionSurfaceDistances = [distance(ballPosition, vect(ballPosition.x, 0, ballPosition.z)), distance(ballPosition, vect(20, ballPosition.y, ballPosition.z)), distance(ballPosition, vect(-20, ballPosition.y, ballPosition.z)), distance(ballPosition, vect(ballPosition.x, ballPosition.y, 20)), distance(ballPosition, vect(ballPosition.x, ballPosition.y, -20))]
     simpleIslandCollision()
-    if ballPhysicsMode == 2:
+    if ballPhysicsMode == BallPhysics.EXPERIMENTAL:
         #Floor/platform rebounds use the same surface tuning slider as walls.
         experimentalSteeringRate = ballDirectionRate * experimentalSurfaceHoming
         ballRedirectAge = experimentalHomingHold + (experimentalHomingRamp * (max(0, min(1, (experimentalSurfaceHoming - experimentalHomingStart) / (max(0.01, 1 - experimentalHomingStart))))))
