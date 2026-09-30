@@ -28,8 +28,8 @@ fix/some-bug ──PR──▶ main ──tag 1.3.3──▶ release
 When `main` is ready to ship as, say, 1.3.3:
 
 1. Bump the version text in a PR:
-   - `src/settings.opy`: the lobby description and mode name
-   - `src/rules/03-hud.opy`: the `"version 1.3.3"` HUD text
+   - `src/config/lobby.opy`: the lobby description and mode name
+   - `src/ui/hud.opy`: the `"version 1.3.3"` HUD text
    - `package.json`: `version`
    - `CHANGELOG.md`: move "Unreleased" under a `## v1.3.3` heading
 2. After it's merged, tag the commit and create the version branch:
@@ -79,4 +79,4 @@ npm run decompile -- original/genjiball-v1.3.1.txt src/main.opy
 npm run build
 ```
 
-You can split it into `src/rules/` the same way the current version is, but archived versions don't need it.
+You can split it into folders the same way the current version is, but archived versions don't need it.

@@ -2,7 +2,7 @@
 // Usage: npm run decompile -- <input.txt> <output.opy>
 //
 // Use this to bring changes made in-game back into src/. The output is one big file;
-// copy the rules you changed into the matching file under src/rules/.
+// copy the rules you changed into the matching file under src/ (see src/main.opy).
 import { readFile, writeFile } from "node:fs/promises";
 import overpy from "overpy";
 

@@ -1,11 +1,8 @@
 # Changes to these files need a maintainer's review.
 # They decide how the ball and players feel. See CONTRIBUTING.md, "Ball and player feel".
 
-# Core gameplay: controls timing, round flow, collision, ball physics
-/src/rules/05-controls.opy       @GenjiBallTeam
-/src/rules/06-round-flow.opy     @GenjiBallTeam
-/src/rules/08-collision.opy      @GenjiBallTeam
-/src/rules/09-ball-physics.opy   @GenjiBallTeam
+# Core gameplay: controls timing, lobby and round flow, collision, ball physics
+/src/core/                       @GenjiBallTeam
 
 # The feel-lock snapshot and the check that enforces it
 /tools/feel-lock.json            @GenjiBallTeam
