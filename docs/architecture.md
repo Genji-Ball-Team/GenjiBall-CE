@@ -24,7 +24,6 @@ This is a map of the game logic for contributors. It assumes you know roughly wh
 | `rules/12-anti-orbit.opy` | AntiOrbit pressure/heat system |
 | `rules/13-tracing-mode.opy` | Tracing mode |
 | `rules/14-bot-zbozo.opy` | The zBozo practice bot's AI |
-| `rules/15-tombstone.opy` | Name-based removal of specific players |
 | `rules/17-abilities.opy` | Custom abilities (super jump, switch target, blink, crit slash) |
 | `rules/19-sandbox.opy` | Sandbox practice tools |
 | `rules/20-abilities-experimental.opy` | A disabled crit-slash rule (last only because it was last in v1.3.2; it has no order constraint) |
@@ -174,7 +173,7 @@ The three chamber rules (`x`, `y`, `z`) each flip a different axis, so they can 
 
 ### Free to move
 
-With the constraints above kept, these have no order dependency: `07-duels`, `11-tournament`, `14-bot-zbozo`, `15-tombstone`, `19-sandbox`, `20-abilities-experimental`, the rest of `03-hud`, the rest of `10-map-restrictions`, the rest of `17-abilities`, and every `def` that's only called with `Call Subroutine`.
+With the constraints above kept, these have no order dependency: `07-duels`, `11-tournament`, `14-bot-zbozo`, `19-sandbox`, `20-abilities-experimental`, the rest of `03-hud`, the rest of `10-map-restrictions`, the rest of `17-abilities`, and every `def` that's only called with `Call Subroutine`.
 
 ## Settings and presets
 
@@ -220,7 +219,7 @@ How to read these:
 
 - **Rule names can't contain "Blizzard"**, so the map rule is called "Blizz World".
 - **Player rank** (rank-outline placeholders) isn't on `main`. The code is kept on the `feature/player-rank` branch. Its player variable slots (19–22) are free.
-- **`†Tombstone†`** removes players with specific names from the game.
+- **Tombstone** (name-based removal of specific players) isn't on `main`. The code is kept on the `feature/tombstone` branch.
 - **Teams** (Team Deathmatch support) isn't on `main`. It lives on the `v1.3.2T` variant branch. Its global variable slots (71–74, 108) and subroutine slot 18 are free.
 - **`HUD - Watermark`** is controlled by `WatermarkEnabled`, which `Settings - Watermark` sets to false.
 - **`Settings - Red-green colorblind filter`** is a disabled rule. Enable it to switch the target visuals to blue/yellow.
