@@ -51,7 +51,6 @@ rule "Initialization - global variables":
     bouncePadCooldownLength = 3
     ballPosition = Vector.DOWN
     roundsUntilBreakInit = roundsUntilBreak
-    roundEndCall = false
     ballHitPosition = null
     phasePosition = Vector.DOWN
     phasePosition1 = Vector.DOWN
@@ -70,7 +69,7 @@ rule "Initialization - global variables":
     experimentalSteeringRate = ballDirectionRate
     reboundInfluence = experimentalReboundMin
     duelQueue = []
-    #zBozo behaviour and pending moves (BotField in config/constants.opy)
+    #zBozo pending moves (BotField in config/constants.opy)
     botState = []
     killLeaderboardPlayers = []
     killLeaderboardSortedPlayers = []

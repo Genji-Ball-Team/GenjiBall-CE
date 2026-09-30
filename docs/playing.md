@@ -91,7 +91,7 @@ When you're the target and a wall blocks your view of the ball, a heart icon sho
 
 ### Bot
 
-Adds one practice bot, **"zSh4d0Ws bozo"**. It deflects, dashes, jumps and orbits. It's good for testing or solo practice.
+Adds one practice bot, **"zSh4d0Ws bozo"**. It deflects, dashes and jumps. It's good for testing or solo practice.
 
 ### Anti-orbit
 

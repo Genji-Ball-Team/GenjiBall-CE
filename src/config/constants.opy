@@ -54,9 +54,6 @@ enum SandboxField:
 
 #Fields of botState (features/bot-zbozo.opy)
 enum BotField:
-    BEHAVIOR_MODE    #1 = aggressive, may orbit; 2 = calmer
-    AGGRESSION       #distance the bot keeps from the target
-    WILL_ORBIT
     WILL_GHOST_DASH
     WILL_EDASH
     GHOST_DASHING
