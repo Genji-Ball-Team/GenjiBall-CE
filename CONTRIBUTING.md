@@ -45,12 +45,12 @@ That's fine. Copy the Workshop code out of the game, then:
 npm run decompile -- my-export.txt my-export.opy
 ```
 
-Find the rules you changed in `my-export.opy` and copy them into the matching file in `src/rules/`. Then build and check that `git diff` only shows your change.
+Find the rules you changed in `my-export.opy` and copy them into the matching file under `src/` (`src/main.opy` lists them). Then build and check that `git diff` only shows your change.
 
 ## Guidelines
 
 - **Keep gameplay changes opt-in** unless there's agreement on Discord or in the issue that the default should change. Tournament players rely on the default feel staying stable.
-- **Don't change a variable's index** in `src/variables.opy`. Add new variables with an unused index. The Workshop has a limit of 128 global and 128 player variables, and about 15 global slots are left.
+- **Don't change a variable's index** in `src/config/variables.opy`. Add new variables with an unused index. The Workshop has a limit of 128 global and 128 player variables, and about 15 global slots are left.
 - **Rule order matters.** Rules run top to bottom, and `main.opy` includes files in order. Put new rules next to the ones they relate to.
 - **Keep one topic per PR.** A small PR gets reviewed and merged much faster than a big one.
 - **Explain the "why"** in comments for anything non-obvious, especially physics tuning numbers.

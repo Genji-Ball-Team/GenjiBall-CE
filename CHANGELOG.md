@@ -5,6 +5,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 ## Unreleased
 
 - The Teams variant shows its own version: the HUD, lobby description and mode name say 1.3.2T.
+- Reorganised `src/` into `config/`, `core/`, `maps/`, `features/` and `ui/` folders, matching `main`. Files were moved and split only; the include order and the compiled Workshop code are unchanged. Teams is now `src/features/teams.opy`.
 
 ## v1.3.2 (Community Edition import)
 
