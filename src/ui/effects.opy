@@ -17,7 +17,7 @@ rule "Appearance - target effects":
         createEffect(localPlayer if localPlayer == target else null, Effect.GOOD_AURA, Color.GRAY if localPlayer.thirdPerson else Color.BLUE, localPlayer, 0.8)
         createEffect(target, Effect.GOOD_AURA, Color.YELLOW, ballPosition, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     if addOnSettings[AddOnSetting.XRAY]:
-        createIcon(target if ballIsOut and not isInLoS(target.getEyePosition(), ballPosition, BarrierLos.BLOCKED_BY_ALL_BARRIERS) else null, updateEveryFrame(ballPosition), Icon.HEART, IconReeval.VISIBILITY_AND_POSITION, Color.RED)
+        createIcon(target if ballIsOut and not isInLoS(target.getEyePosition(), ballPosition, BarrierLos.BLOCKED_BY_ALL_BARRIERS) else null, updateEveryFrame(ballPosition), Icon.HEART, IconReeval.VISIBILITY_AND_POSITION, Color.BLUE if addOnSettings[AddOnSetting.COLORBLIND] else Color.RED)
 
 
 rule "Appearance - ball countdown":

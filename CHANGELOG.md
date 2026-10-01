@@ -46,6 +46,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 - The lobby description now says v1.3.3 and asks players to report bugs as an issue at github.com/Genji-Ball-Team/GenjiBall-CE. The "More info" link is now workshop.codes/GenjiBall-CE instead of workshop.codes/genjiball, the page of the original mode. The mode name, HUD version text and `package.json` get bumped when v1.3.3 is released.
 - On a map the mode doesn't support, everyone now sees "This map isn't supported, so no round will start" at the top of the screen, with the list of supported maps, no round or duel starts, Duels doesn't kill extra players and the arena center and boundary don't push players. Before, the arena center and radius were left unset and the game broke without saying why.
 - Commented out the Oasis University, King's Row and Blizzard World arenas (and their Winter versions). Overwatch won't enable a non-Workshop map while Workshop extensions are on ("The current set of workshop extensions prohibits non-workshop maps"), so they couldn't be played. The six Workshop maps are unchanged.
+- With the red-green colorblind filter on, the x-ray heart icon is now blue instead of red, like the other target effects. With the filter off it is red as before.
 
 ## v1.3.2 (Community Edition import)
 
