@@ -1,0 +1,3 @@
+* text=auto eol=lf
+# Keep the original export byte-for-byte as it came out of the game.
+original/** -text
