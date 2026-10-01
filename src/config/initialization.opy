@@ -61,7 +61,9 @@ rule "Initialization - global variables":
         ballDirectionRateInit = ballFeel[BallFeel.RAPID_RATE]
         ballDirectionRate = ballDirectionRateInit
     else:
-        ballDirectionRate = 6
+        #Astro and retro don't steer with it, but deleteBall() resets ballDirectionRate to it
+        ballDirectionRateInit = 6
+        ballDirectionRate = ballDirectionRateInit
     #One entry per ExperimentalField (config/constants.opy). The incoming direction is set when the ball spawns.
     experimentalState = [999, ballDirectionRate, null, experimentalTuning[ExperimentalTuning.REBOUND_MIN]]
     duelQueue = []

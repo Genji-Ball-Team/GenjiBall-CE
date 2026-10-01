@@ -395,7 +395,9 @@ rule ("Initialization - global variables") {
             Set Global Variable(ballDirectionRateInit, Value In Array(Global.ballFeel, 4));
             Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
         Else;
-            Set Global Variable(ballDirectionRate, 6);
+            "Astro and retro don't steer with it, but deleteBall() resets ballDirectionRate to it"
+            Set Global Variable(ballDirectionRateInit, 6);
+            Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
         End;
         "One entry per ExperimentalField (config/constants.opy). The incoming direction is set when the ball spawns."
         Set Global Variable(experimentalState, Array(999, Global.ballDirectionRate, Null, First Of(Global.experimentalTuning)));
