@@ -1427,6 +1427,8 @@ rule ("Duels - kill players when more than two alive") {
     conditions {
         Value In Array(Global.addOnSettings, 5) == True;
         Is Game In Progress == False;
+        "Nothing starts a duel on an unsupported map, so don't kill anyone for one"
+        Value In Array(Global.mapRow, 1) != 0;
         Number Of Living Players(All Teams) > 2;
     }
     actions {

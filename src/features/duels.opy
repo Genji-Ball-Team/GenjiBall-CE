@@ -16,6 +16,8 @@ rule "Duels - Queue HUD":
 rule "Duels - kill players when more than two alive":
     @Condition addOnSettings[AddOnSetting.DUELS] == true
     @Condition isGameInProgress() == false
+    #Nothing starts a duel on an unsupported map, so don't kill anyone for one
+    @Condition MAP_UNSUPPORTED == false
     @Condition getNumberOfLivingPlayers(Team.ALL) > 2
     
     kill(getLivingPlayers(Team.ALL).exclude(target)[0])
