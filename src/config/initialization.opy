@@ -42,9 +42,6 @@ rule "Initialization - global variables":
     disableGamemodeCompletion()
     disableMusic()
     disableAnnouncer()
-    bouncePadStrength = 30
-    bouncePadDistance = 12
-    bouncePadSuperjumpNerf = 3
     ballSpeed = ballSpawnSpeed
     CenterOffLimitsSize = 3.5
     IsInFinalDuel = false
@@ -91,13 +88,13 @@ rule "Initialization - map sphere":
 rule "Initialization - bounce pads":
     @Condition bouncePadToggle == true
     
-    bouncePadDistance = 12
-    bouncePadRange = 2.75
+    #One entry per BouncePadField (config/constants.opy), in that order
+    bouncePadConfig = [30, 12, 2.75, 3]
     bouncePads = [
-        vect(circleCenter.x + bouncePadDistance, circleCenter.y, circleCenter.z),
-        vect(circleCenter.x + bouncePadDistance * -1, circleCenter.y, circleCenter.z),
-        vect(circleCenter.x, circleCenter.y, circleCenter.z + bouncePadDistance),
-        vect(circleCenter.x, circleCenter.y, circleCenter.z + bouncePadDistance * -1)
+        vect(circleCenter.x + bouncePadConfig[BouncePadField.DISTANCE], circleCenter.y, circleCenter.z),
+        vect(circleCenter.x + bouncePadConfig[BouncePadField.DISTANCE] * -1, circleCenter.y, circleCenter.z),
+        vect(circleCenter.x, circleCenter.y, circleCenter.z + bouncePadConfig[BouncePadField.DISTANCE]),
+        vect(circleCenter.x, circleCenter.y, circleCenter.z + bouncePadConfig[BouncePadField.DISTANCE] * -1)
     ]
     createEffect(getAllPlayers().filter(lambda player: player.bouncePadCooldown == 0), Effect.RING, Color.SKY_BLUE, bouncePads[0], 2, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     createEffect(getAllPlayers().filter(lambda player: player.bouncePadCooldown == 0), Effect.RING, Color.SKY_BLUE, bouncePads[1], 2, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)

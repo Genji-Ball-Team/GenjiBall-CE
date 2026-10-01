@@ -80,6 +80,13 @@ enum ExperimentalTuning:
     HOMING_RAMP     #seconds to ramp back to full homing
     SURFACE_HOMING  #homing strength right after a wall or floor bounce
 
+#Fields of bouncePadConfig ("Initialization - bounce pads")
+enum BouncePadField:
+    STRENGTH        #upward impulse of a bounce
+    DISTANCE        #distance of each pad from circleCenter
+    RANGE           #how close a player has to be to a pad to bounce
+    SUPERJUMP_NERF  #taken off STRENGTH while the player has dashNerf
+
 #Fields of addOnSettings, the add-on settings no preset forces
 enum AddOnSetting:
     DOUBLE_SENS     #"30 - Player > double sens"
