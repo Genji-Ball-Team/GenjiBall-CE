@@ -21,13 +21,11 @@ rule "Gb Abilities - Description":
     @Event eachPlayer
     @Condition Abilities == true
     
-    if eventPlayer.Abilitydesc == 1:
-        goto lbl_0
-    wait(4)
-    hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "change ability after round: hold [{0}] current: [{1}]".format(inputBindingString(Button.RELOAD), eventPlayer.SpecialAbility), HudPosition.RIGHT, -132, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
-    hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "Ability cooldown: [{0}]".format(eventPlayer.Abilitycooldown), HudPosition.RIGHT, -134, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
-    eventPlayer.Abilitydesc = 1
-    lbl_0:
+    if eventPlayer.Abilitydesc != 1:
+        wait(4)
+        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "change ability after round: hold [{0}] current: [{1}]".format(inputBindingString(Button.RELOAD), eventPlayer.SpecialAbility), HudPosition.RIGHT, -132, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "Ability cooldown: [{0}]".format(eventPlayer.Abilitycooldown), HudPosition.RIGHT, -134, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+        eventPlayer.Abilitydesc = 1
     if eventPlayer.SpecialAbility == AbilityId.SUPER_JUMP:
         hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "Ability: 1. Super Jump: Press [{0}] and [{1}] to jump high".format(inputBindingString(Button.CROUCH), inputBindingString(Button.JUMP)), HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
         waitUntil(eventPlayer.SpecialAbility != AbilityId.SUPER_JUMP, 99999)
@@ -167,16 +165,12 @@ rule "Gb Abilities - 2. Target switch":
     wait(0.15)
     if eventPlayer.isDead():
         return
+    target = eventPlayer
     if eventPlayer.isHoldingButton(Button.ULTIMATE):
-        goto lbl_0
-    target = eventPlayer
-    ballDirection = directionTowards(ballPosition, eventPlayer.getEyePosition())
-    eventPlayer.Abilitycooldown = 20
-    playEffect(getAllPlayers(), DynamicEffect.MOIRA_FADE_DISAPPEAR_SOUND, Color.WHITE, eventPlayer, 200)
-    return
-    lbl_0:
-    target = eventPlayer
-    eventPlayer.Abilitycooldown = 15
+        eventPlayer.Abilitycooldown = 15
+    else:
+        ballDirection = directionTowards(ballPosition, eventPlayer.getEyePosition())
+        eventPlayer.Abilitycooldown = 20
     playEffect(getAllPlayers(), DynamicEffect.MOIRA_FADE_DISAPPEAR_SOUND, Color.WHITE, eventPlayer, 200)
 
 

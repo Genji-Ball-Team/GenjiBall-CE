@@ -116,8 +116,6 @@ rule "HUD - zen mode cooldown":
 
 
 rule "HUD - Watermark":
-    if not WatermarkEnabled:
-        goto lbl_0
     #Please don't be a child and try to take credit for this game. If you actually have contributed something you are free to add here. But if not, don't touch this. You are free to disable it.
-    hudSubheader(getAllPlayers(), "원작자 u/Mazawrath. v1.0.0N", HudPosition.LEFT, -1000, Color.AQUA, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
-    lbl_0:
+    if WatermarkEnabled:
+        hudSubheader(getAllPlayers(), "원작자 u/Mazawrath. v1.0.0N", HudPosition.LEFT, -1000, Color.AQUA, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)

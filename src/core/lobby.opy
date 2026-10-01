@@ -9,10 +9,7 @@ rule "Check for <2 players":
     IsEnoughPlayersToStart = false
     stopChasing(ballSpawnCountdown)
     deleteBall()
-    if RoundInProgress == false:
-        goto lbl_0
     RoundInProgress = false
-    lbl_0:
     bigMessage(getAllPlayers(), "Waiting for players")
 
 
@@ -22,11 +19,8 @@ rule "Wait for more players":
     @Condition IsEnoughPlayersToStart == false
     @Condition getCurrentGamemode() == Gamemode.FFA
     
-    if Sandbox == true:
-        goto lbl_0
-    if getNumberOfPlayers(Team.ALL) < 2:
+    if Sandbox != true and getNumberOfPlayers(Team.ALL) < 2:
         return
-    lbl_0:
     bigMessage(getAllPlayers(), "Lets begin!")
     IsEnoughPlayersToStart = true
     startRound()
@@ -37,9 +31,7 @@ rule "Player joins game":
     @Condition eventPlayer.hasMoved == false
     @Condition eventPlayer.hasSpawned() == true
     
-    if not (RoundInProgress and isGameInProgress()):
-        goto lbl_0
-    kill(eventPlayer)
-    lbl_0:
+    if RoundInProgress and isGameInProgress():
+        kill(eventPlayer)
     eventPlayer.teleport(circleCenter + vect(random.randint(-10, 10), 8, random.randint(-10, 10)))
     eventPlayer.hasMoved = true

@@ -470,17 +470,16 @@ rule ("Initialization - bounce pads") {
         Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, ==, 0)), Ring, Color(Sky Blue), Value In Array(Global.bouncePads, 1), 2, Visible To Position and Radius);
         Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, ==, 0)), Ring, Color(Sky Blue), Value In Array(Global.bouncePads, 2), 2, Visible To Position and Radius);
         Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, ==, 0)), Ring, Color(Sky Blue), Value In Array(Global.bouncePads, 3), 2, Visible To Position and Radius);
-        Skip If(Global.RedGreenColorblindMode, 5);
-        Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(White), First Of(Global.bouncePads), 2, Visible To Position and Radius);
-        Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(White), Value In Array(Global.bouncePads, 1), 2, Visible To Position and Radius);
-        Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(White), Value In Array(Global.bouncePads, 2), 2, Visible To Position and Radius);
-        Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(White), Value In Array(Global.bouncePads, 3), 2, Visible To Position and Radius);
-        Abort;
-        //lbl_0:
-        Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(Yellow), First Of(Global.bouncePads), 2, Visible To Position and Radius);
-        Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(Yellow), Value In Array(Global.bouncePads, 1), 2, Visible To Position and Radius);
-        Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(Yellow), Value In Array(Global.bouncePads, 2), 2, Visible To Position and Radius);
-        Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(Yellow), Value In Array(Global.bouncePads, 3), 2, Visible To Position and Radius);
+        If(Global.RedGreenColorblindMode);
+            Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(Yellow), First Of(Global.bouncePads), 2, Visible To Position and Radius);
+            Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(Yellow), Value In Array(Global.bouncePads, 1), 2, Visible To Position and Radius);
+            Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(Yellow), Value In Array(Global.bouncePads, 2), 2, Visible To Position and Radius);
+            Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(Yellow), Value In Array(Global.bouncePads, 3), 2, Visible To Position and Radius);
+        Else;
+            Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(White), First Of(Global.bouncePads), 2, Visible To Position and Radius);
+            Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(White), Value In Array(Global.bouncePads, 1), 2, Visible To Position and Radius);
+            Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(White), Value In Array(Global.bouncePads, 2), 2, Visible To Position and Radius);
+            Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(White), Value In Array(Global.bouncePads, 3), 2, Visible To Position and Radius);
     }
 }
 
@@ -710,10 +709,9 @@ rule ("HUD - Watermark") {
         Ongoing - Global;
     }
     actions {
-        Skip If(Not(Global.WatermarkEnabled), 1);
         "Please don't be a child and try to take credit for this game. If you actually have contributed something you are free to add here. But if not, don't touch this. You are free to disable it."
-        Create HUD Text(All Players(All Teams), Null, Custom String("원작자 u/Mazawrath. v1.0.0N"), Null, Left, -1000, Null, Color(Aqua), Null, Visible To and String, Visible Always);
-        //lbl_0:
+        If(Global.WatermarkEnabled);
+            Create HUD Text(All Players(All Teams), Null, Custom String("원작자 u/Mazawrath. v1.0.0N"), Null, Left, -1000, Null, Color(Aqua), Null, Visible To and String, Visible Always);
     }
 }
 
@@ -766,9 +764,7 @@ rule ("Check for <2 players") {
         Set Global Variable(IsEnoughPlayersToStart, False);
         Stop Chasing Global Variable(ballSpawnCountdown);
         Call Subroutine(deleteBall);
-        Skip If(Compare(Global.RoundInProgress, ==, False), 1);
         Set Global Variable(RoundInProgress, False);
-        //lbl_0:
         Big Message(All Players(All Teams), Custom String("Waiting for players"));
     }
 }
@@ -784,9 +780,7 @@ rule ("Wait for more players") {
         Current Game Mode == Game Mode(Deathmatch);
     }
     actions {
-        Skip If(Compare(Global.Sandbox, ==, True), 1);
-        Abort If(Compare(Number Of Players(All Teams), <, 2));
-        //lbl_0:
+        Abort If(And(Compare(Global.Sandbox, !=, True), Compare(Number Of Players(All Teams), <, 2)));
         Big Message(All Players(All Teams), Custom String("Lets begin!"));
         Set Global Variable(IsEnoughPlayersToStart, True);
         Call Subroutine(startRound);
@@ -804,9 +798,9 @@ rule ("Player joins game") {
         Has Spawned(Event Player) == True;
     }
     actions {
-        Skip If(Not(And(Global.RoundInProgress, Is Game In Progress)), 1);
-        Kill(Event Player, Null);
-        //lbl_0:
+        If(And(Global.RoundInProgress, Is Game In Progress));
+            Kill(Event Player, Null);
+        End;
         Teleport(Event Player, Add(Global.circleCenter, Vector(Random Integer(-10, 10), 8, Random Integer(-10, 10))));
         Set Player Variable(Event Player, hasMoved, True);
     }
@@ -2883,12 +2877,12 @@ rule ("Gb Abilities - Description") {
         Global.Abilities == True;
     }
     actions {
-        Skip If(Compare((Event Player).Abilitydesc, ==, 1), 4);
-        Wait(4, Ignore Condition);
-        Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("change ability after round: hold [{0}] current: [{1}]", Input Binding String(Button(Reload)), (Event Player).SpecialAbility), Null, Right, -132, Null, Color(White), Null, Visible To and String, Default Visibility);
-        Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Ability cooldown: [{0}]", (Event Player).Abilitycooldown), Null, Right, -134, Null, Color(White), Null, Visible To and String, Default Visibility);
-        Set Player Variable(Event Player, Abilitydesc, 1);
-        //lbl_0:
+        If(Compare((Event Player).Abilitydesc, !=, 1));
+            Wait(4, Ignore Condition);
+            Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("change ability after round: hold [{0}] current: [{1}]", Input Binding String(Button(Reload)), (Event Player).SpecialAbility), Null, Right, -132, Null, Color(White), Null, Visible To and String, Default Visibility);
+            Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Ability cooldown: [{0}]", (Event Player).Abilitycooldown), Null, Right, -134, Null, Color(White), Null, Visible To and String, Default Visibility);
+            Set Player Variable(Event Player, Abilitydesc, 1);
+        End;
         If(Compare((Event Player).SpecialAbility, ==, 1));
             Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Ability: 1. Super Jump: Press [{0}] and [{1}] to jump high", Input Binding String(Button(Crouch)), Input Binding String(Button(Jump))), Null, Right, -133, Null, Color(White), Null, Visible To and String, Default Visibility);
             Wait Until(Compare((Event Player).SpecialAbility, !=, 1), 99999);
@@ -3078,15 +3072,13 @@ rule ("Gb Abilities - 2. Target switch") {
         Wait Until(Not(Is Button Held(Event Player, Button(Ultimate))), 99999);
         Wait(0.15, Ignore Condition);
         Abort If(Is Dead(Event Player));
-        Skip If(Is Button Held(Event Player, Button(Ultimate)), 5);
         Set Global Variable(target, Event Player);
-        Set Global Variable(ballDirection, Direction Towards(Global.ballPosition, Eye Position(Event Player)));
-        Set Player Variable(Event Player, Abilitycooldown, 20);
-        Play Effect(All Players(All Teams), Moira Fade Disappear Sound, Color(White), Event Player, 200);
-        Abort;
-        //lbl_0:
-        Set Global Variable(target, Event Player);
-        Set Player Variable(Event Player, Abilitycooldown, 15);
+        If(Is Button Held(Event Player, Button(Ultimate)));
+            Set Player Variable(Event Player, Abilitycooldown, 15);
+        Else;
+            Set Global Variable(ballDirection, Direction Towards(Global.ballPosition, Eye Position(Event Player)));
+            Set Player Variable(Event Player, Abilitycooldown, 20);
+        End;
         Play Effect(All Players(All Teams), Moira Fade Disappear Sound, Color(White), Event Player, 200);
     }
 }
