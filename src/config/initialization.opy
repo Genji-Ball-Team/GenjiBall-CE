@@ -57,10 +57,10 @@ rule "Initialization - global variables":
         ballDirectionRate = ballDirectionRateInit
     tracingPoints = 1
     if ballMotion == BallMotion.MODERN:
-        ballDirectionRateInit = 1.75
+        ballDirectionRateInit = ballFeel[BallFeel.MODERN_RATE]
         ballDirectionRate = ballDirectionRateInit
     elif ballMotion == BallMotion.RAPID:
-        ballDirectionRateInit = 5
+        ballDirectionRateInit = ballFeel[BallFeel.RAPID_RATE]
         ballDirectionRate = ballDirectionRateInit
     else:
         ballDirectionRate = 6

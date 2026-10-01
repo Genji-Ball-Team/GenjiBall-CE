@@ -29,6 +29,7 @@ globalvar ballSpawnCountdown 26
 globalvar setballspawncountdown 27
 globalvar setballspawncountdownoriginal 28
 globalvar ballMotion 29
+globalvar ballFeel 30
 globalvar ballDirectionRate 31
 globalvar ballDirectionRateInit 32
 globalvar ballHitPosition 33

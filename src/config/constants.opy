@@ -27,6 +27,7 @@ enum PresetColumn:
     BALL_ACCELERATION
     BALL_MOTION
     BALL_PHYSICS
+    BALL_FEEL       #forces "15 - Ball Feel > custom ball feel" (BallFeel.CUSTOM)
     WATER
     BOUNCE_PADS
     MOBILITY
@@ -103,6 +104,23 @@ enum ExperimentalTuning:
     HOMING_HOLD     #seconds homing stays at HOMING_START
     HOMING_RAMP     #seconds to ramp back to full homing
     SURFACE_HOMING  #homing strength right after a wall or floor bounce
+
+#Fields of ballFeel, the "15 - Ball Feel" settings. CUSTOM off means today's
+#values (BALL_FEEL_DEFAULTS), whatever the sliders say.
+enum BallFeel:
+    CUSTOM              #"custom ball feel": use the sliders below
+    DEFLECT_SPEEDUP     #ballSpeed is multiplied by this on a deflect (up to ballSpeedCap)
+    HIT_RADIUS          #the ball hits its target within this distance of their eyes
+    MODERN_RATE         #ballDirectionRateInit with motion = modern
+    RAPID_RATE          #ballDirectionRateInit with motion = rapid
+    CURVE_RATE          #ballDirectionRate right after a deflect (modern motion, not Experimental)
+    CURVE_TIME          #seconds CURVE_RATE lasts
+    DEFLECT_WINDOW      #seconds a deflect lasts ("Controls - Shorten deflect length")
+    DEFLECT_LOCKOUT     #seconds dash and deflect are locked after it
+    FAST_BALL_SPEED     #above this ballSpeed, "Collision - collision check" also checks points between frames
+
+#ballFeel with "custom ball feel" off, in BallFeel order: the v1.3.2 values
+#!define BALL_FEEL_DEFAULTS [false, 1.05, 1.9, 1.75, 5, 6, 0.05, 0.3, 0.5, 150]
 
 #Fields of experimentalState, the Experimental engine's state while the ball is out
 enum ExperimentalField:

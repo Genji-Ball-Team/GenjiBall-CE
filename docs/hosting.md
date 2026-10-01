@@ -41,7 +41,7 @@ These appear in the custom game under **Settings → Workshop → Settings**, gr
 
 ### Presets decide most settings
 
-`00 - Preset` is the most important setting. **Every preset except Custom overwrites** the Ball, Arena, Player (mobility, dash and dash hit) and Match settings with fixed values. If you change "max speed" and nothing happens, that's why. Set the preset to **Custom** to use your own values.
+`00 - Preset` is the most important setting. **Every preset except Custom overwrites** the Ball, Arena, Player (mobility, dash and dash hit) and Match settings with fixed values, and turns *15 - Ball Feel* off. If you change "max speed" and nothing happens, that's why. Set the preset to **Custom** to use your own values.
 
 | Preset | What it's for | Differences from Default |
 |---|---|---|
@@ -55,7 +55,7 @@ These appear in the custom game under **Settings → Workshop → Settings**, gr
 | **Custom** | Everything manual | uses your values for every setting |
 
 What "Default" forces (all non-Custom presets start from this):
-match length 15 min, tournament off, 30 rounds, breaks on every 10 rounds for 60 s, ball spawn countdown 5 s, ball respawn delay 2 s, round win pause 2 s, ball start speed 60, max speed 400, acceleration 25, motion modern, physics original, water moderate, bounce pads off, center exclusion size 3.5, arena radius 0 (the map's), bounce pad strength 30, distance 12, range 2.75 and cooldown 3 s, mobility agile, dash cooldown 3.04 s, dash hit knockdown 1 s and knockdown cooldown 0.6 s.
+match length 15 min, tournament off, 30 rounds, breaks on every 10 rounds for 60 s, ball spawn countdown 5 s, ball respawn delay 2 s, round win pause 2 s, ball start speed 60, max speed 400, acceleration 25, motion modern, physics original, custom ball feel off, water moderate, bounce pads off, center exclusion size 3.5, arena radius 0 (the map's), bounce pad strength 30, distance 12, range 2.75 and cooldown 3 s, mobility agile, dash cooldown 3.04 s, dash hit knockdown 1 s and knockdown cooldown 0.6 s.
 
 Settings **not** touched by any preset: everything in *50 - Features*, *80 - Visual*, *90 - Debug*, double sens and double sens %, and tracing view angle. The "custom ... %" mobility sliders are never forced either, but no preset picks mobility = custom, so they only apply with Preset = Custom. Anti-ghost, AntiOrbit and the rest of *60 - Competitive* are only forced by the presets listed above. The AntiOrbit speed, timer, min timer and sleep and the three basic anti-orbit settings are forced together, to their defaults.
 
@@ -75,6 +75,23 @@ Settings **not** touched by any preset: everything in *50 - Features*, *80 - Vis
 | exp homing hold ms | 40 | 0–250 | How long homing stays at that reduced strength |
 | exp homing ramp ms | 240 | 25–1000 | How long it takes to ramp back to full homing |
 | exp surface homing % | 70 | 20–100 | Homing strength right after bouncing off a wall or floor |
+
+### 15 - Ball Feel
+
+The numbers behind how the ball flies, hits and deflects. Every default is the v1.3.2 value. The sliders only apply with **custom ball feel** on, and every preset except Custom turns it off, so Default, Tournament and Tournament+ always play like v1.3.2.
+
+| Setting | Default | Range | What it does |
+|---|---|---|---|
+| custom ball feel | off | | Use the sliders below. Off uses the defaults, whatever the sliders say. Only Preset = Custom can turn it on |
+| speed per deflect | 1.05 | 1–2 | The ball's speed is multiplied by this on each deflect, up to max speed (1.05 = +5%) |
+| hit radius | 1.9 | 0.5–5 m | How close the ball has to get to the target's eyes to hit them (deflect or kill) |
+| turn rate modern | 1.75 | 0.25–20 | How fast the ball turns towards its target with motion = modern |
+| turn rate rapid | 5 | 0.25–20 | Same, with motion = rapid |
+| deflect curve rate | 6 | 0–20 | Motion = modern (not the experimental engine): the turn rate right after a deflect, for a sharper curve |
+| deflect curve time | 0.05 | 0–1 s | How long that curve rate lasts |
+| deflect window | 0.3 | 0.05–2 s | How long a deflect lasts |
+| deflect lockout | 0.5 | 0–3 s | After a deflect, how long dash and deflect are locked |
+| fast ball speed | 150 | 0–800 | Above this speed, the game also checks points between frames so a fast ball can't skip past the target. Lower is more reliable but costs more server load |
 
 ### 20 - Arena
 

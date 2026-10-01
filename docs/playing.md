@@ -10,10 +10,10 @@ Stay alive longest to win the round. Each round won is worth 1 point.
 
 1. **Countdown.** "BALL SPAWNING IN: 5" appears above the center of the arena. The text is red if you are the first target.
 2. **Spawn.** The ball appears at the center and flies toward the target's head.
-3. **Deflect.** If the target is deflecting (or dashing) when the ball gets within about 1.9 m, the ball changes direction:
+3. **Deflect.** If the target is deflecting (or dashing) when the ball gets within about 1.9 m (by default), the ball changes direction:
    - It flies **where you are looking**.
    - The new target is the living player **closest to your crosshair**. You pick who gets it by aiming at them.
-   - The ball gets **5% faster** on each hit, up to the max speed (400 by default).
+   - The ball gets **5% faster** on each hit by default, up to the max speed (400 by default).
 4. **Miss.** If the ball reaches you and you aren't deflecting, you die. The last person who hit it gets the kill. The ball disappears, a random player (never the person who just hit it) becomes the new target, and it respawns after 2 seconds.
 5. **Final duel.** When only two players are left, both are placed on opposite sides of the arena and frozen for 1.5 seconds. Then it's a 1v1.
 6. **Round won.** The last player alive gets a point. Everyone respawns and the next round starts.
@@ -28,7 +28,7 @@ You can also hit the ball by **dashing into it**. It redirects the same way, but
 
 | Input | What it does |
 |---|---|
-| **Secondary fire** or **Ability 2** | Deflect (lasts 0.3 s, then both dash and deflect are locked for 0.5 s) |
+| **Secondary fire** or **Ability 2** | Deflect (by default it lasts 0.3 s, then both dash and deflect are locked for 0.5 s) |
 | **Primary fire** or **Ability 1** | Dash (Swift Strike). Cooldown is about 3 s by default, and it resets when you get a kill |
 | **Reload** (tap) | Switch between third person (default) and first person |
 | **Interact** (tap) | Simple HUD: hides the Discord/controls text |

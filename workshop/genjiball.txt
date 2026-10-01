@@ -99,6 +99,7 @@ variables {
         27: setballspawncountdown
         28: setballspawncountdownoriginal
         29: ballMotion
+        30: ballFeel
         31: ballDirectionRate
         32: ballDirectionRateInit
         33: ballHitPosition
@@ -204,6 +205,8 @@ rule ("Settings - Workshop settings") {
         Set Global Variable(antiGhostMode, Workshop Setting Combo(Custom String("10 - Ball"), Custom String("anti-ghost correction"), 0, Array(Custom String("off"), Custom String("track"), Custom String("steer")), 5));
         "Experimental tuning sliders. These only affect the Experimental physics engine.\nOne entry per ExperimentalTuning field (config/constants.opy), in that order."
         Set Global Variable(experimentalTuning, Array(Divide(Workshop Setting Integer(Custom String("10 - Ball"), Custom String("exp incoming min %"), 8, 0, 30, 6), 100), Divide(Workshop Setting Integer(Custom String("10 - Ball"), Custom String("exp incoming max %"), 12, 0, 40, 7), 100), Divide(Workshop Setting Integer(Custom String("10 - Ball"), Custom String("exp homing start %"), 55, 20, 100, 8), 100), Divide(Workshop Setting Integer(Custom String("10 - Ball"), Custom String("exp homing hold ms"), 40, 0, 250, 9), 1000), Divide(Workshop Setting Integer(Custom String("10 - Ball"), Custom String("exp homing ramp ms"), 240, 25, 1000, 10), 1000), Divide(Workshop Setting Integer(Custom String("10 - Ball"), Custom String("exp surface homing %"), 70, 20, 100, 11), 100)));
+        "15 - Ball Feel: v1.3.2 values by default, used only with \"custom ball feel\" on.\nPresets force it off. One entry per BallFeel field (config/constants.opy), in that order."
+        Set Global Variable(ballFeel, Array(Workshop Setting Toggle(Custom String("15 - Ball Feel"), Custom String("custom ball feel"), False, 0), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("speed per deflect"), 1.05, 1, 2, 1), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("hit radius"), 1.9, 0.5, 5, 2), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("turn rate modern"), 1.75, 0.25, 20, 3), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("turn rate rapid"), 5, 0.25, 20, 4), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("deflect curve rate"), 6, 0, 20, 5), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("deflect curve time"), 0.05, 0, 1, 6), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("deflect window"), 0.3, 0.05, 2, 7), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("deflect lockout"), 0.5, 0, 3, 8), Workshop Setting Integer(Custom String("15 - Ball Feel"), Custom String("fast ball speed"), 150, 0, 800, 9)));
         "20 - Arena: core arena/environment tuning is preset-controlled unless Preset is Custom."
         Set Global Variable(waterLevel, Workshop Setting Combo(Custom String("20 - Arena"), Custom String("water"), 0, Array(Custom String("moderate"), Custom String("none"), Custom String("minimal"), Custom String("flood")), 0));
         Set Global Variable(bouncePadToggle, Workshop Setting Toggle(Custom String("20 - Arena"), Custom String("bounce pads"), False, 1));
@@ -239,7 +242,7 @@ rule ("Settings - Workshop settings") {
         Set Global Variable(addOnSettings, Array(Workshop Setting Toggle(Custom String("30 - Player"), Custom String("double sens"), False, 7), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("x-ray"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("tracing mode"), False, 1), Workshop Setting Toggle(Custom String("90 - Debug"), Custom String("debug HUD"), False, 0), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("duels"), False, 2), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("endless mode"), False, 3), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("Sandbox mode"), False, 4), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("kill tracker"), False, 3), Workshop Setting Integer(Custom String("30 - Player"), Custom String("double sens %"), 275, 100, 500, 8), Workshop Setting Integer(Custom String("80 - Visual"), Custom String("tracing view angle"), 45, 5, 180, 2)));
         "v7: v7-style preset shell. Deeper v7 parity remains deferred.\nExperimental: curated rebound-physics test ruleset, not tournament-safe yet.\nThe bot setting stays manual so Bot + Experimental can be tested together."
         If(Compare(Global.presetMode, !=, 7));
-            Set Global Variable(presetRow, Value In Array(Array(Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, -1, -1, -1, -1, 5, 2, 2, -1, -1, -1, -1, -1, -1, -1, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 0, False, -1, -1, 5, 2, 2, 80, 7.5, 5.5, 5, 20, 80, 7.5, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 2, True, 14, 0.02, 5, 2, 2, 80, 7.5, 5.5, 5, 20, 80, 7.5, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 1, 0, 3, True, 1, -1, -1, -1, -1, 5, 2, 2, -1, -1, -1, -1, -1, -1, -1, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 1, False, 0, -1, -1, -1, -1, 5, 2, 2, -1, -1, -1, -1, -1, -1, -1, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 3, True, 2, -1, -1, -1, -1, 5, 2, 2, -1, -1, -1, -1, -1, -1, -1, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 2, 0, False, 0, 0, True, 14, 0.02, 5, 2, 2, 80, 7.5, 5.5, 5, 20, 80, 7.5, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3)), Global.presetMode));
+            Set Global Variable(presetRow, Value In Array(Array(Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, False, 0, False, 0, -1, -1, -1, -1, 5, 2, 2, -1, -1, -1, -1, -1, -1, -1, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, False, 0, False, 0, 0, False, -1, -1, 5, 2, 2, 80, 7.5, 5.5, 5, 20, 80, 7.5, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, False, 0, False, 0, 2, True, 14, 0.02, 5, 2, 2, 80, 7.5, 5.5, 5, 20, 80, 7.5, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 1, 0, False, 3, True, 1, -1, -1, -1, -1, 5, 2, 2, -1, -1, -1, -1, -1, -1, -1, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, False, 1, False, 0, -1, -1, -1, -1, 5, 2, 2, -1, -1, -1, -1, -1, -1, -1, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, False, 3, True, 2, -1, -1, -1, -1, 5, 2, 2, -1, -1, -1, -1, -1, -1, -1, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 2, False, 0, False, 0, 0, True, 14, 0.02, 5, 2, 2, 80, 7.5, 5.5, 5, 20, 80, 7.5, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3)), Global.presetMode));
             Set Global Variable(matchTime, First Of(Global.presetRow));
             Set Global Variable(tournamentMode, Value In Array(Global.presetRow, 1));
             Set Global Variable(totalRounds, Value In Array(Global.presetRow, 2));
@@ -251,28 +254,32 @@ rule ("Settings - Workshop settings") {
             Set Global Variable(ballAcceleration, Value In Array(Global.presetRow, 8));
             Set Global Variable(ballMotion, Value In Array(Global.presetRow, 9));
             Set Global Variable(ballPhysicsMode, Value In Array(Global.presetRow, 10));
-            Set Global Variable(waterLevel, Value In Array(Global.presetRow, 11));
-            Set Global Variable(bouncePadToggle, Value In Array(Global.presetRow, 12));
-            Set Global Variable(mobilityMode, Value In Array(Global.presetRow, 13));
-            Set Global Variable(setballspawncountdownoriginal, Value In Array(Global.presetRow, 18));
-            Set Global Variable(roundTimings, Array(Value In Array(Global.presetRow, 19), Value In Array(Global.presetRow, 20)));
-            If(Compare(Value In Array(Global.presetRow, 21), !=, -1));
-                Set Global Variable(competitiveSettings, Array Slice(Global.presetRow, 21, 7));
+            Set Global Variable At Index(ballFeel, 0, Value In Array(Global.presetRow, 11));
+            Set Global Variable(waterLevel, Value In Array(Global.presetRow, 12));
+            Set Global Variable(bouncePadToggle, Value In Array(Global.presetRow, 13));
+            Set Global Variable(mobilityMode, Value In Array(Global.presetRow, 14));
+            Set Global Variable(setballspawncountdownoriginal, Value In Array(Global.presetRow, 19));
+            Set Global Variable(roundTimings, Array(Value In Array(Global.presetRow, 20), Value In Array(Global.presetRow, 21)));
+            If(Compare(Value In Array(Global.presetRow, 22), !=, -1));
+                Set Global Variable(competitiveSettings, Array Slice(Global.presetRow, 22, 7));
             End;
-            Set Global Variable(playerSettings, Array Slice(Global.presetRow, 28, 3));
-            Set Global Variable(arenaSettings, Array Slice(Global.presetRow, 31, Subtract(Count Of(Global.presetRow), 31)));
-            If(Compare(Value In Array(Global.presetRow, 14), !=, -1));
-                Set Global Variable(antiGhostMode, Value In Array(Global.presetRow, 14));
-            End;
+            Set Global Variable(playerSettings, Array Slice(Global.presetRow, 29, 3));
+            Set Global Variable(arenaSettings, Array Slice(Global.presetRow, 32, Subtract(Count Of(Global.presetRow), 32)));
             If(Compare(Value In Array(Global.presetRow, 15), !=, -1));
-                Set Global Variable(antiOrbitMode, Value In Array(Global.presetRow, 15));
+                Set Global Variable(antiGhostMode, Value In Array(Global.presetRow, 15));
             End;
             If(Compare(Value In Array(Global.presetRow, 16), !=, -1));
-                Set Global Variable(antiOrbitRadius, Value In Array(Global.presetRow, 16));
+                Set Global Variable(antiOrbitMode, Value In Array(Global.presetRow, 16));
             End;
             If(Compare(Value In Array(Global.presetRow, 17), !=, -1));
-                Set Global Variable(antiOrbitPressureRate, Value In Array(Global.presetRow, 17));
+                Set Global Variable(antiOrbitRadius, Value In Array(Global.presetRow, 17));
             End;
+            If(Compare(Value In Array(Global.presetRow, 18), !=, -1));
+                Set Global Variable(antiOrbitPressureRate, Value In Array(Global.presetRow, 18));
+            End;
+        End;
+        If(Not(First Of(Global.ballFeel)));
+            Set Global Variable(ballFeel, Array(False, 1.05, 1.9, 1.75, 5, 6, 0.05, 0.3, 0.5, 150));
         End;
         "Mobility.CUSTOM keeps the \"custom ... %\" settings read above."
         If(Compare(Global.mobilityMode, ==, 0));
@@ -403,10 +410,10 @@ rule ("Initialization - global variables") {
         End;
         Set Global Variable(tracingPoints, 1);
         If(Compare(Global.ballMotion, ==, 0));
-            Set Global Variable(ballDirectionRateInit, 1.75);
+            Set Global Variable(ballDirectionRateInit, Value In Array(Global.ballFeel, 3));
             Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
         Else If(Compare(Global.ballMotion, ==, 1));
-            Set Global Variable(ballDirectionRateInit, 5);
+            Set Global Variable(ballDirectionRateInit, Value In Array(Global.ballFeel, 4));
             Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
         Else;
             Set Global Variable(ballDirectionRate, 6);
@@ -871,7 +878,7 @@ rule ("Controls - Shorten deflect length") {
         Is Using Ultimate(Event Player) == False;
     }
     actions {
-        Wait(0.3, Ignore Condition);
+        Wait(Value In Array(Global.ballFeel, 7), Ignore Condition);
         If(Is Dummy Bot(Event Player));
             If(Or(Compare(Value In Array(Global.botState, 1), ==, True), Compare(First Of(Global.botState), ==, True)));
                 Press Button(Event Player, Button(Ability 1));
@@ -883,7 +890,7 @@ rule ("Controls - Shorten deflect length") {
         Set Ability 1 Enabled(Event Player, False);
         Set Player Variable(Event Player, canDeflect, False);
         Set Player Variable(Event Player, canDash, False);
-        Wait(0.5, Ignore Condition);
+        Wait(Value In Array(Global.ballFeel, 8), Ignore Condition);
         Set Ability 2 Enabled(Event Player, True);
         Set Ability 1 Enabled(Event Player, True);
         Set Player Variable(Event Player, canDeflect, True);
@@ -1511,7 +1518,7 @@ rule ("Collision - ball reaches player") {
     }
     conditions {
         Global.ballIsOut == True;
-        Distance Between(Global.ballPosition, Eye Position(Global.target)) <= 1.9;
+        Distance Between(Global.ballPosition, Eye Position(Global.target)) <= Value In Array(Global.ballFeel, 2);
     }
     actions {
         Call Subroutine(collisionTarget);
@@ -1524,7 +1531,7 @@ rule ("Collision - collision check") {
     }
     conditions {
         Global.ballIsOut == True;
-        Global.ballSpeed > 150;
+        Global.ballSpeed > Value In Array(Global.ballFeel, 9);
     }
     actions {
         If(Compare(Global.ballHitPosition, !=, Null));
@@ -1544,13 +1551,13 @@ rule ("Collision - collision check") {
             Modify Global Variable At Index(phasePosition, 0, Divide, 2);
         End;
         "-o-----------x->"
-        If(Compare(Distance Between(Global.ballPosition, Eye Position(Global.target)), <=, 1.9));
+        If(Compare(Distance Between(Global.ballPosition, Eye Position(Global.target)), <=, Value In Array(Global.ballFeel, 2)));
             Call Subroutine(collisionTarget);
-        Else If(Compare(Distance Between(First Of(Global.phasePosition), Eye Position(Global.target)), <=, 1.9));
+        Else If(Compare(Distance Between(First Of(Global.phasePosition), Eye Position(Global.target)), <=, Value In Array(Global.ballFeel, 2)));
             Call Subroutine(collisionTarget);
-        Else If(Compare(Distance Between(Value In Array(Global.phasePosition, 1), Eye Position(Global.target)), <=, 1.9));
+        Else If(Compare(Distance Between(Value In Array(Global.phasePosition, 1), Eye Position(Global.target)), <=, Value In Array(Global.ballFeel, 2)));
             Call Subroutine(collisionTarget);
-        Else If(Compare(Distance Between(Divide(Add(First Of(Global.phasePosition), Global.ballPosition), 2), Eye Position(Global.target)), <=, 1.9));
+        Else If(Compare(Distance Between(Divide(Add(First Of(Global.phasePosition), Global.ballPosition), 2), Eye Position(Global.target)), <=, Value In Array(Global.ballFeel, 2)));
             Call Subroutine(collisionTarget);
         End;
         "Save last ballPosition for next loop"
@@ -1599,7 +1606,7 @@ rule ("Collision - collision sub") {
             Set Player Variable(Global.prevTarget, Critalert, True);
             Set Player Variable(Global.prevTarget, Critslash, False);
         Else;
-            Set Global Variable(ballSpeed, Min(Global.ballSpeedCap, Multiply(Global.ballSpeed, 1.05)));
+            Set Global Variable(ballSpeed, Min(Global.ballSpeedCap, Multiply(Global.ballSpeed, Value In Array(Global.ballFeel, 1))));
         End;
         Set Global Variable(target, First Of(Sorted Array(Filtered Array(Remove From Array(All Living Players(All Teams), Global.target), (Current Array Element).hasMoved), Angle Between Vectors(Facing Direction Of(Global.target), Direction Towards(Global.target, Position Of(Current Array Element))))));
         Play Effect(All Players(All Teams), Explosion Sound, Color(White), Evaluate Once(Position Of(Global.prevTarget)), 150);
@@ -1677,9 +1684,9 @@ rule ("Collision - ball curve sub") {
     }
     actions {
         If(Compare(Global.ballMotion, ==, 0));
-            Set Global Variable(ballDirectionRate, 6);
+            Set Global Variable(ballDirectionRate, Value In Array(Global.ballFeel, 5));
             "chaseOverTime(ballDirectionRate, ballDirectionRateInit, 0.04, ChaseTimeReeval.NONE)"
-            Wait(0.05, Ignore Condition);
+            Wait(Value In Array(Global.ballFeel, 6), Ignore Condition);
             Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
         End;
     }

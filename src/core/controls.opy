@@ -61,7 +61,7 @@ rule "Controls - Shorten deflect length":
     @Condition eventPlayer.isUsingAbility2() == true
     @Condition eventPlayer.isUsingUltimate() == false
     
-    wait(0.3)
+    wait(ballFeel[BallFeel.DEFLECT_WINDOW])
     if eventPlayer.isDummy():
         if botState[BotField.WILL_EDASH] == true or botState[BotField.WILL_GHOST_DASH] == true:
             eventPlayer.forceButtonPress(Button.ABILITY_1)
@@ -71,7 +71,7 @@ rule "Controls - Shorten deflect length":
     eventPlayer.setAbility1Enabled(false)
     eventPlayer.canDeflect = false
     eventPlayer.canDash = false
-    wait(0.5)
+    wait(ballFeel[BallFeel.DEFLECT_LOCKOUT])
     eventPlayer.setAbility2Enabled(true)
     eventPlayer.setAbility1Enabled(true)
     eventPlayer.canDeflect = true

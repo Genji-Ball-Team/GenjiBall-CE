@@ -2,14 +2,14 @@
 
 rule "Collision - ball reaches player":
     @Condition ballIsOut == true
-    @Condition distance(ballPosition, target.getEyePosition()) <= 1.9
+    @Condition distance(ballPosition, target.getEyePosition()) <= ballFeel[BallFeel.HIT_RADIUS]
     
     collisionTarget()
 
 
 rule "Collision - collision check":
     @Condition ballIsOut == true
-    @Condition ballSpeed > 150
+    @Condition ballSpeed > ballFeel[BallFeel.FAST_BALL_SPEED]
     
     if ballHitPosition != null:
         #-o--x--------o->Between last ballPosition & middlePosition
@@ -27,13 +27,13 @@ rule "Collision - collision check":
         phasePosition[PhasePoint.LAST] += ballPosition
         phasePosition[PhasePoint.LAST] /= 2
     #-o-----------x->
-    if distance(ballPosition, target.getEyePosition()) <= 1.9:
+    if distance(ballPosition, target.getEyePosition()) <= ballFeel[BallFeel.HIT_RADIUS]:
         collisionTarget()
-    elif distance(phasePosition[PhasePoint.LAST], target.getEyePosition()) <= 1.9:
+    elif distance(phasePosition[PhasePoint.LAST], target.getEyePosition()) <= ballFeel[BallFeel.HIT_RADIUS]:
         collisionTarget()
-    elif distance(phasePosition[PhasePoint.QUARTER], target.getEyePosition()) <= 1.9:
+    elif distance(phasePosition[PhasePoint.QUARTER], target.getEyePosition()) <= ballFeel[BallFeel.HIT_RADIUS]:
         collisionTarget()
-    elif distance((phasePosition[PhasePoint.LAST] + ballPosition) / 2, target.getEyePosition()) <= 1.9:
+    elif distance((phasePosition[PhasePoint.LAST] + ballPosition) / 2, target.getEyePosition()) <= ballFeel[BallFeel.HIT_RADIUS]:
         collisionTarget()
     #Save last ballPosition for next loop
     phasePosition[PhasePoint.LAST] = evalOnce(ballPosition)
@@ -80,7 +80,7 @@ def collisionTarget():
         prevTarget.Critalert = true
         prevTarget.Critslash = false
     else:
-        ballSpeed = min(ballSpeedCap, ballSpeed * 1.05)
+        ballSpeed = min(ballSpeedCap, ballSpeed * ballFeel[BallFeel.DEFLECT_SPEEDUP])
     target = sorted(getLivingPlayers(Team.ALL).exclude(target).filter(lambda x: x.hasMoved), lambda x: angleBetweenVectors(target.getFacingDirection(), directionTowards(target, x.getPosition())))[0]
     playEffect(getAllPlayers(), DynamicEffect.EXPLOSION_SOUND, Color.WHITE, evalOnce(prevTarget.getPosition()), 150)
     playEffect(getAllPlayers(), DynamicEffect.BAPTISTE_BIOTIC_LAUNCHER_EXPLOSION_SOUND, Color.WHITE, evalOnce(prevTarget.getPosition()), 20)
@@ -135,9 +135,9 @@ def ballCurve():
     @Name "Collision - ball curve sub"
     
     if ballMotion == BallMotion.MODERN:
-        ballDirectionRate = 6
+        ballDirectionRate = ballFeel[BallFeel.CURVE_RATE]
         #chaseOverTime(ballDirectionRate, ballDirectionRateInit, 0.04, ChaseTimeReeval.NONE)
-        wait(0.05)
+        wait(ballFeel[BallFeel.CURVE_TIME])
         ballDirectionRate = ballDirectionRateInit
 
 
