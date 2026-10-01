@@ -192,6 +192,8 @@ enum AddOnSetting:
     KILL_TRACKER    #"80 - Visual > kill tracker"
     SENS_MULTIPLIER #"30 - Player > double sens %", the aim speed double sens switches to
     TRACING_ANGLE   #"80 - Visual > tracing view angle", how far from the crosshair the ball may be
+    COLORBLIND      #"80 - Visual > red-green colorblind filter", blue/yellow target and bounce pad visuals
+    WATERMARK       #"80 - Visual > watermark", the original-author credit
 
 #antiGhostMode ("10 - Ball > anti-ghost correction")
 enum AntiGhost:

@@ -5,7 +5,7 @@ rule "Appearance - target effects":
     
     createEffect(getAllPlayers().exclude(target), Effect.ORB, Color.WHITE, updateEveryFrame(ballPosition), 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     createProjectileEffect(getAllPlayers(), Projectile.SIGMA_HYPERSPHERE, null, updateEveryFrame(ballPosition), ballDirection, 0.01, ProjectileEffectReeval.VISIBILITY_POSITION_DIRECTION_AND_SIZE)
-    if not RedGreenColorblindMode:
+    if not addOnSettings[AddOnSetting.COLORBLIND]:
         createEffect(target, Effect.ORB, Color.RED, updateEveryFrame(ballPosition), 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
         createEffect(getAllPlayers().exclude(target) if target.isAlive() else null, Effect.GOOD_AURA, Color.RED, target, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
         createEffect(localPlayer if localPlayer == target else null, Effect.GOOD_AURA, Color.GRAY if localPlayer.thirdPerson else Color.RED, localPlayer, 0.8)

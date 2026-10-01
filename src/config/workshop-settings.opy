@@ -105,7 +105,9 @@ rule "Settings - Workshop settings":
         createWorkshopSettingBool("50 - Features", "Sandbox mode", false, 4),
         createWorkshopSettingBool("80 - Visual", "kill tracker", false, 3),
         createWorkshopSettingInt("30 - Player", "double sens %", 275, 100, 500, 8),
-        createWorkshopSettingInt("80 - Visual", "tracing view angle", 45, 5, 180, 2)
+        createWorkshopSettingInt("80 - Visual", "tracing view angle", 45, 5, 180, 2),
+        createWorkshopSettingBool("80 - Visual", "red-green colorblind filter", false, 4),
+        createWorkshopSettingBool("80 - Visual", "watermark", false, 5)
     ]
     #Presets: one row per preset, in Preset order, one column per forced setting
     #(PresetColumn in config/constants.opy). MANUAL keeps the host's value.
@@ -183,13 +185,3 @@ rule "Settings - Workshop settings":
         waterLevel = -0.5
     if bozo_Bot:
         bozo_Bot = 1
-
-
-rule "Settings - Watermark":
-    WatermarkEnabled = false
-
-
-rule "Settings - Red-green colorblind filter":
-    @Disabled
-    
-    RedGreenColorblindMode = true

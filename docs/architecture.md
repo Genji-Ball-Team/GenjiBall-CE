@@ -138,8 +138,8 @@ Each line reads "A must stay before B". Rules are named as they appear in-game.
 | `Settings - Workshop settings` → `Initialization - global variables` | Init copies `ballSpawnSpeed` into `ballSpeed`, `setballspawncountdownoriginal` ("ball spawn countdown") into `setballspawncountdown` and `ballSpawnCountdown`, `roundsUntilBreak` into `roundsUntilBreakInit`, the "exp incoming min %" value into `experimentalState`, `arenaSettings` into `CenterOffLimitsSize` and `bouncePadConfig`, and picks `ballDirectionRateInit` from `ballMotion` and `ballFeel`. Swapped, the ball would use the pre-preset defaults (0). |
 | `Settings - Workshop settings` → `Initialization - Set map` | Set map reads the "arena radius" setting (`arenaSettings`) once. Swapped, every map would keep its own radius. |
 | `Settings - Workshop settings` → `HUD - controls text` | The HUD rule reads `addOnSettings` (Sandbox, double sens, custom abilities) once, when it starts. |
-| `Settings - Watermark` → `HUD - Watermark` | The HUD rule checks `WatermarkEnabled` once. It only matters if the watermark is ever turned on. |
-| `Settings - Red-green colorblind filter` (disabled) → `Initialization - bounce pads`, `Appearance - target effects` | Both read `RedGreenColorblindMode` once when they create their effects. Only matters when the filter rule is enabled. |
+| `Settings - Workshop settings` → `HUD - Watermark` | The HUD rule checks the "watermark" setting (`addOnSettings`) once. Swapped, the watermark would never show. |
+| `Settings - Workshop settings` → `Initialization - bounce pads`, `Appearance - target effects` | Both read the "red-green colorblind filter" setting (`addOnSettings`) once when they create their effects. Swapped, the filter would be ignored. |
 | `Initialization - Set map` → `Initialization - map sphere`, `Initialization - bounce pads` | The bounce pad positions are computed once from `circleCenter`, and the map sphere reads `isIsland` once. |
 | `Initialization - player variables` → `Initialization - global variables` | Existing quirk: players who are already in the lobby when the mode starts (usually the host) get `bouncePadCooldown` from `bouncePadConfig` (the `COOLDOWN` field) before that global is set, so they start with 0. Swapping would change that. Treat any fix as a deliberate change. |
 
@@ -242,5 +242,3 @@ How to read these:
 - **Player rank** (rank-outline placeholders) isn't on `main`. The code is kept on the `feature/player-rank` branch. Its player variable slots (19–22) are free.
 - **Tombstone** (name-based removal of specific players) isn't on `main`. The code is kept on the `feature/tombstone` branch.
 - **Teams** (Team Deathmatch support) isn't on `main`. It lives on the `v1.3.2T` variant branch. Its global variable slots (71–74, 108) and subroutine slot 18 are unused on `main`. Keep them that way, or merging `main` into `v1.3.2T` gives two variables the same slot.
-- **`HUD - Watermark`** is controlled by `WatermarkEnabled`, which `Settings - Watermark` sets to false.
-- **`Settings - Red-green colorblind filter`** is a disabled rule. Enable it to switch the target visuals to blue/yellow.

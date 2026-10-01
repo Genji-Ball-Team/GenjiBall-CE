@@ -167,6 +167,8 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 | tracing mode | off | The target must keep the ball in view to be able to deflect |
 | tracing view angle | 45 | How far from the crosshair the ball may be and still count as in view (5–180°) |
 | kill tracker | off | Host-only kill leaderboard on the left |
+| red-green colorblind filter | off | The target and ball glow blue instead of red, and used bounce pads show yellow instead of white |
+| watermark | off | Shows the original author's credit (u/Mazawrath) on the left of everyone's HUD |
 
 ### 90 - Debug
 
