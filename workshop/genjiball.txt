@@ -108,6 +108,7 @@ variables {
         40: CollisionSurfaceIndex
         41: antiGhostMode
         42: antiGhostState
+        43: antiGhostRaised
         44: circleCenter
         45: CenterOffLimitsSize
         46: SphereSize
@@ -405,9 +406,6 @@ rule ("Initialization - global variables") {
         Set Global Variable(ballHitPosition, Null);
         "One entry per PhasePoint (config/constants.opy)"
         Set Global Variable(phasePosition, Array(Down, Down));
-        If(Compare(Global.ballDirectionRate, ==, 4));
-            Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
-        End;
         Set Global Variable(tracingPoints, 1);
         If(Compare(Global.ballMotion, ==, 0));
             Set Global Variable(ballDirectionRateInit, Value In Array(Global.ballFeel, 3));
@@ -428,6 +426,7 @@ rule ("Initialization - global variables") {
         Set Global Variable(sandboxState, Array(Global.ballPosition, Add(Global.ballPosition, Up), Global.ballSpeed, 1, 1, 1));
         "One entry per AntiGhostField (config/constants.opy)"
         Set Global Variable(antiGhostState, Array(999, 0));
+        Set Global Variable(antiGhostRaised, False);
     }
 }
 
@@ -1685,6 +1684,7 @@ rule ("Collision - ball curve sub") {
     actions {
         If(Compare(Global.ballMotion, ==, 0));
             Set Global Variable(ballDirectionRate, Value In Array(Global.ballFeel, 5));
+            Set Global Variable(antiGhostRaised, False);
             "chaseOverTime(ballDirectionRate, ballDirectionRateInit, 0.04, ChaseTimeReeval.NONE)"
             Wait(Value In Array(Global.ballFeel, 6), Ignore Condition);
             Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
@@ -1706,6 +1706,7 @@ rule ("Collision - delete ball sub") {
         Set Global Variable(ballHitPosition, Null);
         Set Global Variable(phasePosition, Array(Down, Down));
         Set Global Variable(antiGhostState, Array(999, 0));
+        Set Global Variable(antiGhostRaised, False);
         Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
         Set Global Variable(experimentalState, Array(999, Global.ballDirectionRateInit, Vector(0, 0, 0), First Of(Global.experimentalTuning)));
     }
@@ -1858,7 +1859,7 @@ rule ("Ball Physics - anti ghost correction") {
         Is Alive(Global.target) == True;
     }
     actions {
-        "Mode 2 = steer. If the ball is close to the target and its current\ndirection is far off from the ideal target direction, temporarily raise\nsteering strength. Experimental leaves AntiGhost off by default;\nTournament+ uses Steer."
+        "direction is far off from the ideal target direction, temporarily raise\nsteering strength. antiGhostRaised marks a raise to undo, so a deflect\ncurve rate of 4 isn't mistaken for one. Experimental leaves AntiGhost off by default;\nTournament+ uses Steer."
         If(Compare(Distance Between(Global.ballPosition, Eye Position(Global.target)), <=, 7));
             If(Compare(Global.antiGhostMode, ==, 1));
                 If(Compare(First Of(Global.antiGhostState), ==, 999));
@@ -1873,24 +1874,29 @@ rule ("Ball Physics - anti ghost correction") {
                 If(Compare(Value In Array(Global.antiGhostState, 1), >=, 0.15));
                     If(Compare(Global.ballDirectionRate, <, 4));
                         Set Global Variable(ballDirectionRate, 4);
+                        Set Global Variable(antiGhostRaised, True);
                     End;
-                Else If(Compare(Global.ballDirectionRate, ==, 4));
+                Else If(Global.antiGhostRaised);
                     Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
+                    Set Global Variable(antiGhostRaised, False);
                 End;
             Else If(Compare(Global.antiGhostMode, ==, 2));
                 If(Compare(Angle Between Vectors(Global.ballDirection, Direction Towards(Global.ballPosition, Eye Position(Global.target))), >=, 35));
                     Set Global Variable(antiGhostState, Array(Distance Between(Global.ballPosition, Eye Position(Global.target)), 0));
                     If(Compare(Global.ballDirectionRate, <, 4));
                         Set Global Variable(ballDirectionRate, 4);
+                        Set Global Variable(antiGhostRaised, True);
                     End;
-                Else If(Compare(Global.ballDirectionRate, ==, 4));
+                Else If(Global.antiGhostRaised);
                     Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
+                    Set Global Variable(antiGhostRaised, False);
                 End;
             End;
         Else;
             Set Global Variable(antiGhostState, Array(999, 0));
-            If(Compare(Global.ballDirectionRate, ==, 4));
+            If(Global.antiGhostRaised);
                 Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
+                Set Global Variable(antiGhostRaised, False);
             End;
         End;
         Wait(0.05, Abort When False);

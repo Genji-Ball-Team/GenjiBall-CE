@@ -136,6 +136,7 @@ def ballCurve():
     
     if ballMotion == BallMotion.MODERN:
         ballDirectionRate = ballFeel[BallFeel.CURVE_RATE]
+        antiGhostRaised = false
         #chaseOverTime(ballDirectionRate, ballDirectionRateInit, 0.04, ChaseTimeReeval.NONE)
         wait(ballFeel[BallFeel.CURVE_TIME])
         ballDirectionRate = ballDirectionRateInit
@@ -152,5 +153,6 @@ def deleteBall():
     ballHitPosition = null
     phasePosition = [Vector.DOWN, Vector.DOWN]
     antiGhostState = [999, 0]
+    antiGhostRaised = false
     ballDirectionRate = ballDirectionRateInit
     experimentalState = [999, ballDirectionRateInit, vect(0, 0, 0), experimentalTuning[ExperimentalTuning.REBOUND_MIN]]

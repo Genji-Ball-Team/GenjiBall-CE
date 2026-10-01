@@ -38,6 +38,7 @@ globalvar CollisionSurfaceDistances 39
 globalvar CollisionSurfaceIndex 40
 globalvar antiGhostMode 41
 globalvar antiGhostState 42
+globalvar antiGhostRaised 43
 globalvar circleCenter 44
 globalvar CenterOffLimitsSize 45
 globalvar SphereSize 46
