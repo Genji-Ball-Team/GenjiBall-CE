@@ -714,7 +714,7 @@ rule ("Appearance - ball countdown") {
     }
     actions {
         Create In-World Text(If-Then-Else(Global.ballIsOut, Null, Remove From Array(All Players(All Teams), Global.target)), Custom String("BALL SPAWNING IN: {0}", Round To Integer(Global.ballSpawnCountdown, Up)), Vector(X Component Of(Global.circleCenter), Add(Y Component Of(Global.circleCenter), 2.5), Z Component Of(Global.circleCenter)), 2.5, Clip Against Surfaces, Visible To Position and String, Color(Sky Blue), Default Visibility);
-        Create In-World Text(If-Then-Else(Global.ballIsOut, Null, Global.target), Custom String("BALL SPAWNING IN: {0}", Round To Integer(Global.ballSpawnCountdown, Up)), Vector(X Component Of(Global.circleCenter), Add(Y Component Of(Global.circleCenter), 2.5), Z Component Of(Global.circleCenter)), 2.5, Clip Against Surfaces, Visible To Position and String, Color(Red), Default Visibility);
+        Create In-World Text(If-Then-Else(Global.ballIsOut, Null, Global.target), Custom String("BALL SPAWNING IN: {0}", Round To Integer(Global.ballSpawnCountdown, Up)), Vector(X Component Of(Global.circleCenter), Add(Y Component Of(Global.circleCenter), 2.5), Z Component Of(Global.circleCenter)), 2.5, Clip Against Surfaces, Visible To Position and String, If-Then-Else(Value In Array(Global.addOnSettings, 11), Color(Blue), Color(Red)), Default Visibility);
     }
 }
 

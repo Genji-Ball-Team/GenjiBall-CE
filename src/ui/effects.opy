@@ -22,4 +22,4 @@ rule "Appearance - target effects":
 
 rule "Appearance - ball countdown":
     createInWorldText(null if ballIsOut else getAllPlayers().exclude(target), "BALL SPAWNING IN: {0}".format(ceil(ballSpawnCountdown)), vect(circleCenter.x, circleCenter.y + 2.5, circleCenter.z), 2.5, Clip.SURFACES, WorldTextReeval.VISIBILITY_POSITION_AND_STRING, Color.SKY_BLUE)
-    createInWorldText(null if ballIsOut else target, "BALL SPAWNING IN: {0}".format(ceil(ballSpawnCountdown)), vect(circleCenter.x, circleCenter.y + 2.5, circleCenter.z), 2.5, Clip.SURFACES, WorldTextReeval.VISIBILITY_POSITION_AND_STRING, Color.RED)
+    createInWorldText(null if ballIsOut else target, "BALL SPAWNING IN: {0}".format(ceil(ballSpawnCountdown)), vect(circleCenter.x, circleCenter.y + 2.5, circleCenter.z), 2.5, Clip.SURFACES, WorldTextReeval.VISIBILITY_POSITION_AND_STRING, Color.BLUE if addOnSettings[AddOnSetting.COLORBLIND] else Color.RED)
