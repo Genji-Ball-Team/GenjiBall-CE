@@ -23,7 +23,7 @@ The lobby is set up for **Deathmatch (FFA)** with up to **10 players** and 12 sp
 
 ## Maps
 
-Workshop Island (Night) is the only map enabled by default. The code also supports the maps below. Enable them under **Settings → Modes → Deathmatch → Maps**.
+Workshop Island (Night) is the only map enabled by default. The mode supports the Workshop maps below. Enable them under **Settings → Modes → Deathmatch → Maps**. On any other map the game shows "This map isn't supported" with the list of supported maps, and no round starts.
 
 | Map | Arena radius | Notes |
 |---|---|---|
@@ -31,9 +31,8 @@ Workshop Island (Night) is the only map enabled by default. The code also suppor
 | Workshop Expanse / Expanse Night | 50 | Used by the Rapid preset |
 | Workshop Green Screen | 60 | |
 | Workshop Chamber | 29.7 | The ball bounces off the chamber walls |
-| Oasis (University) | 25 | Small |
-| King's Row / King's Row Winter | 23 | Small. **Lower the max players.** |
-| Blizzard World / Winter | 23 | Small. **Lower the max players.** |
+
+Non-Workshop maps can't be enabled: Overwatch says "The current set of workshop extensions prohibits non-workshop maps", and the mode needs its extensions for the ball and its effects ([reported in 2023](https://us.forums.blizzard.com/en/overwatch/t/deathmatch-unavailable-with-workshop-extensions-enabled/783801)). Oasis University, King's Row and Blizzard World used to have arenas. They are commented out in `src/maps/arenas.opy`, so they can come back if Overwatch lifts this.
 
 ## Workshop settings
 
