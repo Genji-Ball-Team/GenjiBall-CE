@@ -21,6 +21,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 - Removed zBozo code that never ran: `roundEndCall` was never set to true, so the behaviour-mode, aggression and orbit rules and the bot's "back off" movement never fired, in v1.3.2 or since. Frees global slot 6; the bot behaves as before. `docs/playing.md` no longer says the bot orbits.
 - Merged the six Experimental engine tuning settings ("exp incoming min/max %", "exp homing start %/hold ms/ramp ms", "exp surface homing %") into one `experimentalTuning` array (`ExperimentalTuning` in `src/config/constants.opy`). Frees global slots 103–107; the Experimental engine behaves as before.
 - Removed the global `Critalert` variable, which was set to false at start and never read. The player variable of the same name (the Crit slash alert) is unchanged. Frees global slot 96.
+- The ball speed HUD is now one text that picks its colour and string by speed band, instead of 16 texts that each re-evaluated `ballSpeed` every tick. Every threshold, colour and joke string is the same. Saves 15 HUD texts and about 200 elements.
 
 ## v1.3.2 (Community Edition import)
 

@@ -12,26 +12,15 @@ rule "HUD - target player text":
     hudSubtext(target, "{0}{1}{0}".format(iconString(Icon.WARNING), target), HudPosition.LEFT, -3, Color.RED, HudReeval.VISIBILITY_AND_STRING)
 
 
+#Ball speed band, 0 (below 40) to 15 (750+): how many thresholds the ball has passed.
+#!define BALL_SPEED_BAND len([threshold for threshold in [40, 50, 65, 69, 70, 80, 100, 150, 200, 220, 350, 400, 450, 700, 750] if ballSpeed >= threshold])
+
 rule "HUD - ball speed text":
     #Entity creation fail protection
     wait(1)
-    #ball speed text color change with speed
-    hudSubtext(getAllPlayers() if ballSpeed < 40 else [], "BALL SPEED: {0}".format(ballSpeed), HudPosition.LEFT, -4, Color.BLUE, HudReeval.VISIBILITY_AND_STRING)
-    hudSubtext(getAllPlayers() if ballSpeed >= 40 and ballSpeed < 50 else [], "BALL SPEED: {0}".format(ballSpeed), HudPosition.LEFT, -4, Color.SKY_BLUE, HudReeval.VISIBILITY_AND_STRING)
-    hudSubtext(getAllPlayers() if ballSpeed >= 50 and ballSpeed < 65 else [], "BALL SPEED: {0}".format(ballSpeed), HudPosition.LEFT, -4, Color.GREEN, HudReeval.VISIBILITY_AND_STRING)
-    hudSubtext(getAllPlayers() if ballSpeed >= 65 and ballSpeed < 69 else [], "BALL SPEED: {0}".format(ballSpeed), HudPosition.LEFT, -4, Color.YELLOW, HudReeval.VISIBILITY_AND_STRING)
-    hudSubtext(getAllPlayers() if ballSpeed >= 69 and ballSpeed < 70 else [], "BALL SPEED: ;)", HudPosition.LEFT, -4, Color.YELLOW, HudReeval.VISIBILITY_AND_STRING)
-    hudSubtext(getAllPlayers() if ballSpeed >= 70 and ballSpeed < 80 else [], "BALL SPEED: {0}".format(ballSpeed), HudPosition.LEFT, -4, Color.YELLOW, HudReeval.VISIBILITY_AND_STRING)
-    hudSubtext(getAllPlayers() if ballSpeed >= 80 and ballSpeed < 100 else [], "BALL SPEED: {0}".format(ballSpeed), HudPosition.LEFT, -4, Color.ORANGE, HudReeval.VISIBILITY_AND_STRING)
-    hudSubtext(getAllPlayers() if ballSpeed >= 100 and ballSpeed < 150 else [], "BALL SPEED: {0}".format(ballSpeed), HudPosition.LEFT, -4, Color.PURPLE, HudReeval.VISIBILITY_AND_STRING)
-    hudSubtext(getAllPlayers() if ballSpeed >= 150 and ballSpeed < 200 else [], "BALL SPEED: {0}".format(ballSpeed), HudPosition.LEFT, -4, Color.VIOLET, HudReeval.VISIBILITY_AND_STRING)
-    hudSubtext(getAllPlayers() if ballSpeed >= 200 and ballSpeed < 220 else [], "BALL SPEED: touch grass", HudPosition.LEFT, -4, Color.ROSE, HudReeval.VISIBILITY_AND_STRING)
-    hudSubtext(getAllPlayers() if ballSpeed >= 220 and ballSpeed < 350 else [], "BALL SPEED: {0}".format(ballSpeed), HudPosition.LEFT, -4, Color.ROSE, HudReeval.VISIBILITY_AND_STRING)
-    hudSubtext(getAllPlayers() if ballSpeed >= 350 and ballSpeed < 400 else [], "BALL SPEED: ???", HudPosition.LEFT, -4, Color.ROSE, HudReeval.VISIBILITY_AND_STRING)
-    hudSubtext(getAllPlayers() if ballSpeed >= 400 and ballSpeed < 450 else [], "BALL SPEED: you good??", HudPosition.LEFT, -4, Color.ROSE, HudReeval.VISIBILITY_AND_STRING)
-    hudSubtext(getAllPlayers() if ballSpeed >= 450 and ballSpeed < 700 else [], "BALL SPEED: {0}".format(ballSpeed), HudPosition.LEFT, -4, Color.ROSE, HudReeval.VISIBILITY_AND_STRING)
-    hudSubtext(getAllPlayers() if ballSpeed >= 700 and ballSpeed < 750 else [], "BALL SPEED: get a life", HudPosition.LEFT, -4, Color.BLACK, HudReeval.VISIBILITY_AND_STRING)
-    hudSubtext(getAllPlayers() if ballSpeed >= 750 else [], "BALL SPEED: {0}".format(ballSpeed), HudPosition.LEFT, -4, Color.BLACK, HudReeval.VISIBILITY_AND_STRING)
+    #One text for every speed band, so only one HUD text re-evaluates ballSpeed each tick.
+    #Bands 4, 9, 11, 12 and 14 show a joke instead of the speed.
+    hudSubtext(getAllPlayers(), "BALL SPEED: {0}".format([ballSpeed, ballSpeed, ballSpeed, ballSpeed, ";)", ballSpeed, ballSpeed, ballSpeed, ballSpeed, "touch grass", ballSpeed, "???", "you good??", ballSpeed, "get a life", ballSpeed][BALL_SPEED_BAND]), HudPosition.LEFT, -4, [Color.BLUE, Color.SKY_BLUE, Color.GREEN, Color.YELLOW, Color.YELLOW, Color.YELLOW, Color.ORANGE, Color.PURPLE, Color.VIOLET, Color.ROSE, Color.ROSE, Color.ROSE, Color.ROSE, Color.ROSE, Color.BLACK, Color.BLACK][BALL_SPEED_BAND], HudReeval.VISIBILITY_STRING_AND_COLOR)
 
 
 rule "HUD - controls text":
