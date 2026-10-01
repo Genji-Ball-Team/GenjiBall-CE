@@ -113,6 +113,7 @@ variables {
         47: waterLevel
         48: bouncePadToggle
         49: bouncePadConfig
+        50: arenaSettings
         54: bouncePads
         58: mobilityMode
         59: moveSpeed
@@ -204,6 +205,8 @@ rule ("Settings - Workshop settings") {
         "20 - Arena: core arena/environment tuning is preset-controlled unless Preset is Custom."
         Set Global Variable(waterLevel, Workshop Setting Combo(Custom String("20 - Arena"), Custom String("water"), 0, Array(Custom String("moderate"), Custom String("none"), Custom String("minimal"), Custom String("flood")), 0));
         Set Global Variable(bouncePadToggle, Workshop Setting Toggle(Custom String("20 - Arena"), Custom String("bounce pads"), False, 1));
+        "One entry per ArenaSetting field (config/constants.opy), in that order."
+        Set Global Variable(arenaSettings, Array(Workshop Setting Real(Custom String("20 - Arena"), Custom String("center exclusion size"), 3.5, 0, 10, 2), Workshop Setting Real(Custom String("20 - Arena"), Custom String("arena radius"), 0, 0, 100, 3), Workshop Setting Integer(Custom String("20 - Arena"), Custom String("bounce pad strength"), 30, 5, 60, 4), Workshop Setting Real(Custom String("20 - Arena"), Custom String("bounce pad distance"), 12, 4, 40, 5), Workshop Setting Real(Custom String("20 - Arena"), Custom String("bounce pad range"), 2.75, 0.5, 10, 6), Workshop Setting Integer(Custom String("20 - Arena"), Custom String("bounce pad cooldown"), 3, 1, 10, 7)));
         "30 - Player: mobility is preset-controlled unless Preset is Custom. Double sens is a casual add-on."
         Set Global Variable(mobilityMode, Workshop Setting Combo(Custom String("30 - Player"), Custom String("mobility"), 0, Array(Custom String("agile"), Custom String("balanced"), Custom String("sluggish")), 0));
         "40 - Match: match/tournament structure is preset-controlled unless Preset is Custom."
@@ -226,7 +229,7 @@ rule ("Settings - Workshop settings") {
         Set Global Variable(addOnSettings, Array(Workshop Setting Toggle(Custom String("30 - Player"), Custom String("double sens"), False, 1), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("x-ray"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("tracing mode"), False, 1), Workshop Setting Toggle(Custom String("90 - Debug"), Custom String("debug HUD"), False, 0), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("duels"), False, 2), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("endless mode"), False, 3), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("Sandbox mode"), False, 4), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("kill tracker"), False, 2)));
         "v7: v7-style preset shell. Deeper v7 parity remains deferred.\nExperimental: curated rebound-physics test ruleset, not tournament-safe yet.\nThe bot setting stays manual so Bot + Experimental can be tested together."
         If(Compare(Global.presetMode, !=, 7));
-            Set Global Variable(presetRow, Value In Array(Array(Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, -1, -1, -1, -1, 5, 2, 2), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 0, False, -1, -1, 5, 2, 2), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 2, True, 14, 0.02, 5, 2, 2), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 1, 0, 3, True, 1, -1, -1, -1, -1, 5, 2, 2), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 1, False, 0, -1, -1, -1, -1, 5, 2, 2), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 3, True, 2, -1, -1, -1, -1, 5, 2, 2), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 2, 0, False, 0, 0, True, 14, 0.02, 5, 2, 2)), Global.presetMode));
+            Set Global Variable(presetRow, Value In Array(Array(Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, -1, -1, -1, -1, 5, 2, 2, 3.5, 0, 30, 12, 2.75, 3), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 0, False, -1, -1, 5, 2, 2, 3.5, 0, 30, 12, 2.75, 3), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 2, True, 14, 0.02, 5, 2, 2, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 1, 0, 3, True, 1, -1, -1, -1, -1, 5, 2, 2, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 1, False, 0, -1, -1, -1, -1, 5, 2, 2, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 3, True, 2, -1, -1, -1, -1, 5, 2, 2, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 2, 0, False, 0, 0, True, 14, 0.02, 5, 2, 2, 3.5, 0, 30, 12, 2.75, 3)), Global.presetMode));
             Set Global Variable(matchTime, First Of(Global.presetRow));
             Set Global Variable(tournamentMode, Value In Array(Global.presetRow, 1));
             Set Global Variable(totalRounds, Value In Array(Global.presetRow, 2));
@@ -243,6 +246,7 @@ rule ("Settings - Workshop settings") {
             Set Global Variable(mobilityMode, Value In Array(Global.presetRow, 13));
             Set Global Variable(setballspawncountdownoriginal, Value In Array(Global.presetRow, 18));
             Set Global Variable(roundTimings, Array(Value In Array(Global.presetRow, 19), Value In Array(Global.presetRow, 20)));
+            Set Global Variable(arenaSettings, Array Slice(Global.presetRow, 21, Subtract(Count Of(Global.presetRow), 21)));
             If(Compare(Value In Array(Global.presetRow, 14), !=, -1));
                 Set Global Variable(antiGhostMode, Value In Array(Global.presetRow, 14));
             End;
@@ -310,6 +314,10 @@ rule ("Initialization - Set map") {
         Set Global Variable(mapRow, Value In Array(Array(Array(Vector(0, 1.199, 0), 60), Array(Vector(0, 1.199, 0), 60), Array(Vector(0, 1.199, 0), 29.7), Array(Vector(0, 1.199, 0), 50), Array(Vector(0, 1.199, 0), 50), Array(Vector(0, 1.199, 0), 60), Array(Vector(-192.609, 60.349, 2.252), 25), Array(Vector(-20.504, 40.538, -74.601), 23), Array(Vector(-20.504, 40.538, -74.601), 23), Array(Vector(2.554, -4.651, -71.211), 23), Array(Vector(2.554, -4.651, -71.211), 23)), Index Of Array Value(Array(Map(Workshop Island), Map(Workshop Island Night), Map(Workshop Chamber), Map(Workshop Expanse), Map(Workshop Expanse Night), Map(Workshop Green Screen), Map(Oasis University), Map(King's Row), Map(King's Row Winter), Map(Blizzard World), Map(Blizzard World Winter)), Current Map)));
         Set Global Variable(circleCenter, First Of(Global.mapRow));
         Set Global Variable(SphereSize, Value In Array(Global.mapRow, 1));
+        "Kept large enough for the final duel spawns: 15 m out on Workshop Island (in bounds needs at\nleast 10) and SphereSize / 1.5 elsewhere (must stay outside the center exclusion's push zone)."
+        If(Compare(Value In Array(Global.arenaSettings, 1), >, 0));
+            Set Global Variable(SphereSize, Max(Value In Array(Global.arenaSettings, 1), Max(10, Multiply(1.5, Add(First Of(Global.arenaSettings), 0.5)))));
+        End;
         "Workshop Island has water and a ledge instead of a wall; several rules check this."
         Set Global Variable(isIsland, Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))));
     }
@@ -366,10 +374,10 @@ rule ("Initialization - global variables") {
         Disable Built-In Game Mode Music;
         Disable Built-In Game Mode Announcer;
         Set Global Variable(ballSpeed, Global.ballSpawnSpeed);
-        Set Global Variable(CenterOffLimitsSize, 3.5);
+        Set Global Variable(CenterOffLimitsSize, First Of(Global.arenaSettings));
         Set Global Variable(IsInFinalDuel, False);
-        "One entry per BouncePadField (config/constants.opy), in that order.\nSet here, not in \"Initialization - bounce pads\", because round flow reads COOLDOWN even with pads off."
-        Set Global Variable(bouncePadConfig, Array(30, 12, 2.75, 3, 3));
+        "Set here, not in \"Initialization - bounce pads\" (round flow reads COOLDOWN even with pads off) or in the\nsettings rule (players already in the lobby must still start with a 0 cooldown, see docs/architecture.md)."
+        Set Global Variable(bouncePadConfig, Array(Value In Array(Global.arenaSettings, 2), Value In Array(Global.arenaSettings, 3), Value In Array(Global.arenaSettings, 4), 3, Value In Array(Global.arenaSettings, 5)));
         Set Global Variable(ballPosition, Down);
         Set Global Variable(roundsUntilBreakInit, Global.roundsUntilBreak);
         Set Global Variable(ballHitPosition, Null);
