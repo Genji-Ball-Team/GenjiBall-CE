@@ -74,7 +74,6 @@ globalvar antiOrbitPressureRate 77
 globalvar bozo_Bot 78
 globalvar botState 80
 globalvar sandboxState 90
-globalvar Critalert 96
 globalvar ballPhysicsMode 97
 globalvar ballRedirectAge 98
 globalvar experimentalSteeringRate 99

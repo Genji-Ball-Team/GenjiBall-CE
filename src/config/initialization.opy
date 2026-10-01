@@ -78,7 +78,6 @@ rule "Initialization - global variables":
     antiGhostPrevDistance = 999
     antiGhostStallTimer = 0
     ballRedirectAge = 999
-    Critalert = false
 
 
 rule "Initialization - map sphere":
