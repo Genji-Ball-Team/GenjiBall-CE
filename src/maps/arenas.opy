@@ -7,7 +7,10 @@
 rule "Initialization - Set map":
     #Maps: one row per supported map, one column per value (MapColumn in config/constants.opy).
     #The map list and the row list must stay in the same order.
-    #Kings Row and Blizz World are smaller than the others: lower the max players there.
+    #Oasis University, Kings Row and Blizz World are commented out: Overwatch won't enable a
+    #non-Workshop map while Workshop extensions are on, and this mode needs them. Uncomment the
+    #row and the map together if that changes, and add them to "Initialization - unsupported map".
+    #They are smaller than the others: lower the max players there.
     #Rule names can't contain "Blizzard", so the map is written "Blizz World" in rule names.
     #Any other map has no row and no arena, so no round starts there (MAP_UNSUPPORTED).
     mapRow = [
@@ -18,11 +21,11 @@ rule "Initialization - Set map":
         [vect(0, 1.199, 0),             50],   #Workshop Expanse
         [vect(0, 1.199, 0),             50],   #Workshop Expanse (Night)
         [vect(0, 1.199, 0),             60],   #Workshop Green Screen
-        [vect(-192.609, 60.349, 2.252), 25],   #Oasis University
-        [vect(-20.504, 40.538, -74.601), 23],  #King's Row
-        [vect(-20.504, 40.538, -74.601), 23],  #King's Row (Winter)
-        [vect(2.554, -4.651, -71.211),  23],   #Blizz World
-        [vect(2.554, -4.651, -71.211),  23],   #Blizz World (Winter)
+        #[vect(-192.609, 60.349, 2.252), 25],   #Oasis University
+        #[vect(-20.504, 40.538, -74.601), 23],  #King's Row
+        #[vect(-20.504, 40.538, -74.601), 23],  #King's Row (Winter)
+        #[vect(2.554, -4.651, -71.211),  23],   #Blizz World
+        #[vect(2.554, -4.651, -71.211),  23],   #Blizz World (Winter)
     ][[
         Map.WORKSHOP_ISLAND,
         Map.WORKSHOP_ISLAND_NIGHT,
@@ -30,11 +33,11 @@ rule "Initialization - Set map":
         Map.WORKSHOP_EXPANSE,
         Map.WORKSHOP_EXPANSE_NIGHT,
         Map.WORKSHOP_GREEN_SCREEN,
-        Map.OASIS_UNIVERSITY,
-        Map.KINGS_ROW,
-        Map.KINGS_ROW_WINTER,
-        Map.BLIZZ_WORLD,
-        Map.BLIZZ_WORLD_WINTER,
+        #Map.OASIS_UNIVERSITY,
+        #Map.KINGS_ROW,
+        #Map.KINGS_ROW_WINTER,
+        #Map.BLIZZ_WORLD,
+        #Map.BLIZZ_WORLD_WINTER,
     ].index(__getCurrentMap__())]
     circleCenter = mapRow[MapColumn.CENTER]
     SphereSize = mapRow[MapColumn.RADIUS]
@@ -51,4 +54,4 @@ rule "Initialization - unsupported map":
     @Condition MAP_UNSUPPORTED == true
 
     hudHeader(getAllPlayers(), "This map isn't supported, so no round will start", HudPosition.TOP, -3, Color.LIGHT_RED, HudReeval.VISIBILITY_AND_STRING)
-    hudSubheader(getAllPlayers(), "Pick Workshop Island, Expanse, Green Screen or Chamber, Oasis University, King's Row or Blizz World", HudPosition.TOP, -2, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+    hudSubheader(getAllPlayers(), "Pick Workshop Island, Expanse, Green Screen or Chamber", HudPosition.TOP, -2, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
