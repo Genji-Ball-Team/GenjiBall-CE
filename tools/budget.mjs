@@ -23,7 +23,7 @@ export function checkBudget(compiled) {
       `  ${name.padEnd(18)} ${String(count).padStart(6)} / ${String(limit).padEnd(6)} ${String(left).padStart(6)} left${warn ? `  <- within ${margin} of the limit` : ""}`,
     );
   }
-  // Extension points are all spent on purpose, and OverPy itself refuses to go over, so this is info only.
+  // Every remaining extension is used, and OverPy refuses to compile when they cost too many points, so this is info only.
   lines.push(`  ${"Extension points".padEnd(18)} ${String(compiled.spentExtensionPoints).padStart(6)} / ${compiled.availableExtensionPoints}`);
   return { lines, tooClose };
 }

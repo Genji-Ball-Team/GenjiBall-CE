@@ -214,7 +214,7 @@ To add a map, add it to the map list and a row at the same position in the row l
 | Player variables | 128 | 5 or fewer left |
 | Subroutines | 128 | 5 or fewer left |
 | Elements | 32,768 | 1,000 or fewer left |
-| Extension points | all 24 used on purpose | never (reported only; OverPy refuses to go over) |
+| Extension points | 24 (every extension enabled in `config/variables.opy` is used) | never (reported only; OverPy refuses to compile when they cost too many points) |
 
 Run `npm run check` for the current numbers. The limits and margins live in `tools/budget.mjs`.
 
