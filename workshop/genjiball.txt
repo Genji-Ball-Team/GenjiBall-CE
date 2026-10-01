@@ -2776,7 +2776,7 @@ rule ("zBozo - randomize facing near ball") {
     }
 }
 
-rule ("GENJI BALL addOnSettings[AddOnSetting.ABILITIES] :OOOOOO - selection") {
+rule ("GENJI BALL ABILITIES :OOOOOO - selection") {
     event {
         Ongoing - Each Player;
         All;
