@@ -63,7 +63,6 @@ rule "AntiOrbit - decay heat":
     @Event eachPlayer
     @Condition antiOrbitMode == true
     @Condition isGameInProgress() == true
-    @Condition breakInProgress == false
     @Condition RoundInProgress == true
     @Condition ballIsOut == true
     @Condition eventPlayer != target

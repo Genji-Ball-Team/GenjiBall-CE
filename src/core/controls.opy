@@ -142,7 +142,6 @@ rule "Control - Dash reset":
 
 rule "Controls - Switch perspective (reload)":
     @Event eachPlayer
-    @Condition breakInProgress == false
     @Condition eventPlayer.isHoldingButton(Button.RELOAD) == true
     @Condition eventPlayer.isAlive() == true
     

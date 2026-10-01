@@ -16,7 +16,6 @@ globalvar roundsUntilBreak 12
 globalvar breakLength 13
 globalvar roundsUntilBreakInit 14
 globalvar breaksEnabled 15
-globalvar breakInProgress 16
 globalvar presetMode 17
 globalvar duelMode 18
 globalvar duelQueue 19
@@ -82,7 +81,6 @@ globalvar reboundInfluence 101
 globalvar experimentalTuning 102
 globalvar killCounterEnabled 109
 globalvar debugRules 110
-globalvar killLeaderboardPlayers 111
 globalvar killLeaderboardSortedPlayers 112
 globalvar mapRow 113
 globalvar isIsland 114
