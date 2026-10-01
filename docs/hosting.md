@@ -39,9 +39,16 @@ Workshop Island (Night) is the only map enabled by default. The code also suppor
 
 These appear in the custom game under **Settings → Workshop → Settings**, grouped by category.
 
+<!-- The settings tables are generated from src/ by `npm run docs:settings`. Edit only the "What it does" column and the units after a range. See docs/development.md, "Settings docs". -->
+
 ### Presets decide most settings
 
 `00 - Preset` is the most important setting. **Every preset except Custom overwrites** the Ball, Arena, Player (mobility, dash and dash hit) and Match settings with fixed values, and turns *15 - Ball Feel* off. If you change "max speed" and nothing happens, that's why. Set the preset to **Custom** to use your own values.
+
+<!-- settings: 00 - Preset -->
+| Setting | Default | Range | What it does |
+|---|---|---|---|
+| preset | Default | Default / Tournament / Tournament+ / Rapid / v1 / v7 / Experimental / Custom | Which ruleset to play. See the table below |
 
 | Preset | What it's for | Differences from Default |
 |---|---|---|
@@ -61,6 +68,7 @@ Settings **not** touched by any preset: everything in *50 - Features*, *80 - Vis
 
 ### 10 - Ball
 
+<!-- settings: 10 - Ball -->
 | Setting | Default | Range | What it does |
 |---|---|---|---|
 | start speed | 60 | 0–200 | Speed of a freshly spawned ball |
@@ -80,6 +88,7 @@ Settings **not** touched by any preset: everything in *50 - Features*, *80 - Vis
 
 The numbers behind how the ball flies, hits and deflects. Every default is the v1.3.2 value. The sliders only apply with **custom ball feel** on, and every preset except Custom turns it off, so Default, Tournament and Tournament+ always play like v1.3.2.
 
+<!-- settings: 15 - Ball Feel -->
 | Setting | Default | Range | What it does |
 |---|---|---|---|
 | custom ball feel | off | | Use the sliders below. Off uses the defaults, whatever the sliders say. Only Preset = Custom can turn it on |
@@ -95,22 +104,24 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 
 ### 20 - Arena
 
-| Setting | Default | What it does |
-|---|---|---|
-| water | moderate | Workshop Island only. The height at which the ball skims off the water outside the island: **moderate** (y = −15), **none** (no water), **minimal** (y = −26), **flood** (y = −0.5, almost at island level) |
-| bounce pads | off | Four blue rings, 12 m from the center. Press Jump on one for a big vertical launch (3 s cooldown per player) |
-| center exclusion size | 3.5 | Radius of the black sphere at the center that pushes players out (0–10 m) |
-| arena radius | 0 | Arena radius in m. **0** uses the map's radius (see [Maps](#maps)), anything else replaces it (0–100 m; the radius is at least 10 and at least 1.5 × (center exclusion size + 0.5), so final duel spawns stay in bounds and outside the center) |
-| bounce pad strength | 30 | Upward launch of a bounce pad (5–60) |
-| bounce pad distance | 12 | Distance of each pad from the center (4–40 m) |
-| bounce pad range | 2.75 | How close to a pad you have to be to bounce (0.5–10 m) |
-| bounce pad cooldown | 3 | Seconds before a player can bounce again (1–10 s) |
+<!-- settings: 20 - Arena -->
+| Setting | Default | Range | What it does |
+|---|---|---|---|
+| water | moderate | moderate / none / minimal / flood | Workshop Island only. The height at which the ball skims off the water outside the island: **moderate** (y = −15), **none** (no water), **minimal** (y = −26), **flood** (y = −0.5, almost at island level) |
+| bounce pads | off | | Four blue rings, 12 m from the center. Press Jump on one for a big vertical launch (3 s cooldown per player) |
+| center exclusion size | 3.5 | 0–10 m | Radius of the black sphere at the center that pushes players out |
+| arena radius | 0 | 0–100 m | **0** uses the map's radius (see [Maps](#maps)), anything else replaces it. The radius is at least 10 and at least 1.5 × (center exclusion size + 0.5), so final duel spawns stay in bounds and outside the center |
+| bounce pad strength | 30 | 5–60 | Upward launch of a bounce pad |
+| bounce pad distance | 12 | 4–40 m | Distance of each pad from the center |
+| bounce pad range | 2.75 | 0.5–10 m | How close to a pad you have to be to bounce |
+| bounce pad cooldown | 3 | 1–10 s | Seconds before a player can bounce again |
 
 ### 30 - Player
 
+<!-- settings: 30 - Player -->
 | Setting | Default | Range | What it does |
 |---|---|---|---|
-| mobility | agile | | **agile**: 190% move speed, 80% gravity, 180% jump. **balanced**: 150 / 90 / 150. **sluggish**: 100 / 100 / 100 (normal Genji). **custom**: the three sliders below |
+| mobility | agile | agile / balanced / sluggish / custom | **agile**: 190% move speed, 80% gravity, 180% jump. **balanced**: 150 / 90 / 150. **sluggish**: 100 / 100 / 100 (normal Genji). **custom**: the three sliders below |
 | custom move speed % | 190 | 20–300 | Move speed with mobility = custom |
 | custom gravity % | 80 | 10–300 | Gravity with mobility = custom |
 | custom jump % | 180 | 20–300 | Jump height with mobility = custom |
@@ -122,6 +133,7 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 
 ### 40 - Match
 
+<!-- settings: 40 - Match -->
 | Setting | Default | Range | What it does |
 |---|---|---|---|
 | match length | 15 | 5–60 min | Ignored in tournament mode |
@@ -136,16 +148,18 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 
 ### 50 - Features
 
-| Setting | Default | What it does |
-|---|---|---|
-| custom abilities | off | Each player picks one extra ability. See [playing.md](playing.md#custom-abilities) |
-| bot | off | Adds the "zSh4d0Ws bozo" practice bot |
-| duels | off | 1v1 at a time, with a queue |
-| endless mode | off | The ball doesn't reset after a kill |
-| Sandbox mode | off | Practice tool for the host. See [Sandbox](#sandbox-mode) |
+<!-- settings: 50 - Features -->
+| Setting | Default | Range | What it does |
+|---|---|---|---|
+| custom abilities | off | | Each player picks one extra ability. See [playing.md](playing.md#custom-abilities) |
+| bot | off | | Adds the "zSh4d0Ws bozo" practice bot |
+| duels | off | | 1v1 at a time, with a queue |
+| endless mode | off | | The ball doesn't reset after a kill |
+| Sandbox mode | off | | Practice tool for the host. See [Sandbox](#sandbox-mode) |
 
 ### 60 - Competitive
 
+<!-- settings: 60 - Competitive -->
 | Setting | Default | Range | What it does |
 |---|---|---|---|
 | AntiOrbit | off | | Punishes stalling a slow ball around yourself. See [playing.md](playing.md#anti-orbit) |
@@ -161,20 +175,22 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 
 ### 80 - Visual
 
-| Setting | Default | What it does |
-|---|---|---|
-| x-ray | off | Shows the target where the ball is when a wall blocks their view |
-| tracing mode | off | The target must keep the ball in view to be able to deflect |
-| tracing view angle | 45 | How far from the crosshair the ball may be and still count as in view (5–180°) |
-| kill tracker | off | Host-only kill leaderboard on the left |
-| red-green colorblind filter | off | Red-green safe colours: the target, the ball and the target's "BALL SPAWNING IN" countdown are blue instead of red, the target sees a yellow circle around the ball instead of a blue one, and used bounce pads show yellow instead of white |
-| watermark | off | Shows the original author's credit (u/Mazawrath) on the left of everyone's HUD |
+<!-- settings: 80 - Visual -->
+| Setting | Default | Range | What it does |
+|---|---|---|---|
+| x-ray | off | | Shows the target where the ball is when a wall blocks their view |
+| tracing mode | off | | The target must keep the ball in view to be able to deflect |
+| tracing view angle | 45 | 5–180° | How far from the crosshair the ball may be and still count as in view |
+| kill tracker | off | | Host-only kill leaderboard on the left |
+| red-green colorblind filter | off | | Red-green safe colours: the target, the ball and the target's "BALL SPAWNING IN" countdown are blue instead of red, the target sees a yellow circle around the ball instead of a blue one, and used bounce pads show yellow instead of white |
+| watermark | off | | Shows the original author's credit (u/Mazawrath) on the left of everyone's HUD |
 
 ### 90 - Debug
 
-| Setting | Default | What it does |
-|---|---|---|
-| debug HUD | off | Host-only: server load, ball speed/engine/distance/turn rate, AntiOrbit values |
+<!-- settings: 90 - Debug -->
+| Setting | Default | Range | What it does |
+|---|---|---|---|
+| debug HUD | off | | Host-only: server load, ball speed/engine/distance/turn rate, AntiOrbit values |
 
 ## Sandbox mode
 

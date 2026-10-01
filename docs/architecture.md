@@ -197,7 +197,7 @@ With the constraints above kept, these have no order dependency: `features/duels
 When you add a setting:
 1. Add a `createWorkshopSetting*` call in the right category, with a sort-order number.
 2. Decide whether presets should force it. If they should, add a `PresetColumn`, a cell to every row of the preset table (`MANUAL` where a preset leaves it alone) and the assignment below the table.
-3. Document it in [hosting.md](hosting.md).
+3. Run `npm run docs:settings`, which adds it to the settings table in [hosting.md](hosting.md), and write its description there. See [Settings docs](development.md#settings-docs).
 
 ## Maps
 
