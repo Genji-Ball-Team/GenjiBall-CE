@@ -1,20 +1,20 @@
 #1v1 duel mode and queue
 
 rule "Duels - Global HUD":
-    @Condition duelMode == true
+    @Condition addOnSettings[AddOnSetting.DUELS] == true
     
     hudSubtext(getAllPlayers(), "current duel: {0} vs. {1}".format(getLivingPlayers(Team.ALL)[0], getLivingPlayers(Team.ALL)[1]), HudPosition.TOP, -1, Color.PURPLE, HudReeval.VISIBILITY_AND_STRING)
 
 
 rule "Duels - Queue HUD":
     @Event eachPlayer
-    @Condition duelMode == true
+    @Condition addOnSettings[AddOnSetting.DUELS] == true
     
     hudSubheader(eventPlayer if eventPlayer.isDead() else null, "You fight in {0} rounds.".format(duelQueue.index(eventPlayer) + 1), HudPosition.TOP, -1, Color.PURPLE, HudReeval.VISIBILITY_AND_STRING)
 
 
 rule "Duels - kill players when more than two alive":
-    @Condition duelMode == true
+    @Condition addOnSettings[AddOnSetting.DUELS] == true
     @Condition isGameInProgress() == false
     @Condition getNumberOfLivingPlayers(Team.ALL) > 2
     
@@ -25,7 +25,7 @@ rule "Duels - kill players when more than two alive":
 
 
 rule "Duels - start game":
-    @Condition duelMode == true
+    @Condition addOnSettings[AddOnSetting.DUELS] == true
     @Condition isGameInProgress() == true
     @Condition len(getLivingPlayers(Team.ALL).filter(lambda player: player.hasMoved)) == 2
     
@@ -36,7 +36,7 @@ rule "Duels - start game":
 
 
 rule "Duels - not enough players alive":
-    @Condition duelMode == true
+    @Condition addOnSettings[AddOnSetting.DUELS] == true
     @Condition isGameInProgress() == true
     @Condition getNumberOfLivingPlayers(Team.ALL) < 2
     @Condition len(duelQueue) > 0
@@ -55,7 +55,7 @@ rule "Duels - not enough players alive":
 
 rule "Duels - queue dead player":
     @Event playerDied
-    @Condition duelMode == true
+    @Condition addOnSettings[AddOnSetting.DUELS] == true
     
     duelQueue.append(eventPlayer)
 
@@ -63,13 +63,13 @@ rule "Duels - queue dead player":
 rule "Duels - remove living player from queue":
     @Event eachPlayer
     @Condition eventPlayer.isAlive() == true
-    @Condition duelMode == true
+    @Condition addOnSettings[AddOnSetting.DUELS] == true
     
     duelQueue.remove(eventPlayer)
 
 
 rule "Duels - remove leaving player from queue":
     @Event playerLeft
-    @Condition duelMode == true
+    @Condition addOnSettings[AddOnSetting.DUELS] == true
     
     duelQueue.remove(eventPlayer)

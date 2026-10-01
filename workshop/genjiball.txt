@@ -90,7 +90,6 @@ variables {
         14: roundsUntilBreakInit
         15: breaksEnabled
         17: presetMode
-        18: duelMode
         19: duelQueue
         20: ballPosition
         21: ballDirection
@@ -102,35 +101,26 @@ variables {
         27: setballspawncountdown
         28: setballspawncountdownoriginal
         29: ballMotion
-        30: motionMultiplier
         31: ballDirectionRate
         32: ballDirectionRateInit
         33: ballHitPosition
-        34: ballNextFramePosition
         35: phasePosition
-        36: phasePosition1
-        37: phasePosition2
-        38: BallCollisionSurfaceNormal
         39: CollisionSurfaceDistances
         40: CollisionSurfaceIndex
         41: antiGhostMode
-        42: antiGhostPrevDistance
-        43: antiGhostStallTimer
+        42: antiGhostState
         44: circleCenter
         45: CenterOffLimitsSize
         46: SphereSize
         47: waterLevel
         48: bouncePadToggle
         49: bouncePadConfig
-        50: bouncePadCooldownLength
         54: bouncePads
         58: mobilityMode
         59: moveSpeed
         60: gravity
         61: jumpVerticalSpeed
         62: addOnSettings
-        63: endlessMode
-        64: Sandbox
         67: tracingPoints
         68: RedGreenColorblindMode
         69: WatermarkEnabled
@@ -141,12 +131,8 @@ variables {
         80: botState
         90: sandboxState
         97: ballPhysicsMode
-        98: ballRedirectAge
-        99: experimentalSteeringRate
-        100: reboundIncomingDirection
-        101: reboundInfluence
+        98: experimentalState
         102: experimentalTuning
-        109: killCounterEnabled
         112: killLeaderboardSortedPlayers
         113: mapRow
         114: isIsland
@@ -229,19 +215,14 @@ rule ("Settings - Workshop settings") {
         Set Global Variable(breaksEnabled, Workshop Setting Toggle(Custom String("40 - Match"), Custom String("breaks"), True, 3));
         Set Global Variable(roundsUntilBreak, Workshop Setting Integer(Custom String("40 - Match"), Custom String("break every"), 10, 4, 25, 4));
         Set Global Variable(breakLength, Workshop Setting Integer(Custom String("40 - Match"), Custom String("break length"), 60, 1, 120, 5));
-        "50 - Features: casual/gameplay add-ons. Presets leave these manual."
+        "50 - Features: casual/gameplay add-ons. Presets leave these manual. The rest are in addOnSettings below."
         Set Global Variable(bozo_Bot, Workshop Setting Toggle(Custom String("50 - Features"), Custom String("bot"), False, 1));
-        Set Global Variable(duelMode, Workshop Setting Toggle(Custom String("50 - Features"), Custom String("duels"), False, 2));
-        Set Global Variable(endlessMode, Workshop Setting Toggle(Custom String("50 - Features"), Custom String("endless mode"), False, 3));
-        Set Global Variable(Sandbox, Workshop Setting Toggle(Custom String("50 - Features"), Custom String("Sandbox mode"), False, 4));
         "60 - Competitive: competitive test systems. Tournament controls these explicitly."
         Set Global Variable(antiOrbitMode, Workshop Setting Toggle(Custom String("60 - Competitive"), Custom String("AntiOrbit"), False, 0));
         Set Global Variable(antiOrbitRadius, Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("AntiOrbit radius"), 14, 10, 20, 1));
         Set Global Variable(antiOrbitPressureRate, Divide(Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("AntiOrbit pressure"), 2, 1, 5, 2), 100));
-        "80 - Visual: visual helpers. Presets leave these manual."
-        Set Global Variable(killCounterEnabled, Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("kill tracker"), False, 2));
-        "Add-ons no preset forces and no feel-locked rule reads, in one array.\nOne entry per AddOnSetting field (config/constants.opy), in that order.\nEach setting may only be read once, so read them here and nowhere else."
-        Set Global Variable(addOnSettings, Array(Workshop Setting Toggle(Custom String("30 - Player"), Custom String("double sens"), False, 1), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("x-ray"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("tracing mode"), False, 1), Workshop Setting Toggle(Custom String("90 - Debug"), Custom String("debug HUD"), False, 0)));
+        "Add-ons no preset forces, in one array.\nOne entry per AddOnSetting field (config/constants.opy), in that order.\nEach setting may only be read once, so read them here and nowhere else."
+        Set Global Variable(addOnSettings, Array(Workshop Setting Toggle(Custom String("30 - Player"), Custom String("double sens"), False, 1), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("x-ray"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("tracing mode"), False, 1), Workshop Setting Toggle(Custom String("90 - Debug"), Custom String("debug HUD"), False, 0), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("duels"), False, 2), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("endless mode"), False, 3), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("Sandbox mode"), False, 4), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("kill tracker"), False, 2)));
         "v7: v7-style preset shell. Deeper v7 parity remains deferred.\nExperimental: curated rebound-physics test ruleset, not tournament-safe yet.\nThe bot setting stays manual so Bot + Experimental can be tested together."
         If(Compare(Global.presetMode, !=, 7));
             Set Global Variable(presetRow, Value In Array(Array(Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, -1, -1, -1, -1), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 0, False, -1, -1), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 2, True, 14, 0.02), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 1, 0, 3, True, 1, -1, -1, -1, -1), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 1, False, 0, -1, -1, -1, -1), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 3, True, 2, -1, -1, -1, -1), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 2, 0, False, 0, 0, True, 14, 0.02)), Global.presetMode));
@@ -271,11 +252,6 @@ rule ("Settings - Workshop settings") {
             If(Compare(Value In Array(Global.presetRow, 17), !=, -1));
                 Set Global Variable(antiOrbitPressureRate, Value In Array(Global.presetRow, 17));
             End;
-        End;
-        If(Compare(Global.ballMotion, ==, 0));
-            Set Global Variable(motionMultiplier, 1);
-        Else If(Compare(Global.ballMotion, ==, 1));
-            Set Global Variable(motionMultiplier, 0.5);
         End;
         If(Compare(Global.mobilityMode, ==, 0));
             Set Global Variable(moveSpeed, 190);
@@ -353,7 +329,7 @@ rule ("Initialization - player variables") {
         Set Player Variable(Event Player, Abilitycooldown, 0);
         Set Status(Event Player, Null, Invincible, 9999);
         Disable Built-In Game Mode Respawning(Event Player);
-        Set Player Variable(Event Player, bouncePadCooldown, Global.bouncePadCooldownLength);
+        Set Player Variable(Event Player, bouncePadCooldown, Value In Array(Global.bouncePadConfig, 4));
         Set Player Variable(Event Player, stunCooldown, 0);
         Chase Player Variable At Rate(Event Player, stunCooldown, 0, 1, None);
         Enable Death Spectate All Players(Event Player);
@@ -390,13 +366,13 @@ rule ("Initialization - global variables") {
         Set Global Variable(ballSpeed, Global.ballSpawnSpeed);
         Set Global Variable(CenterOffLimitsSize, 3.5);
         Set Global Variable(IsInFinalDuel, False);
-        Set Global Variable(bouncePadCooldownLength, 3);
+        "One entry per BouncePadField (config/constants.opy), in that order.\nSet here, not in \"Initialization - bounce pads\", because round flow reads COOLDOWN even with pads off."
+        Set Global Variable(bouncePadConfig, Array(30, 12, 2.75, 3, 3));
         Set Global Variable(ballPosition, Down);
         Set Global Variable(roundsUntilBreakInit, Global.roundsUntilBreak);
         Set Global Variable(ballHitPosition, Null);
-        Set Global Variable(phasePosition, Down);
-        Set Global Variable(phasePosition1, Down);
-        Set Global Variable(phasePosition2, Down);
+        "One entry per PhasePoint (config/constants.opy)"
+        Set Global Variable(phasePosition, Array(Down, Down));
         If(Compare(Global.ballDirectionRate, ==, 4));
             Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
         End;
@@ -410,17 +386,16 @@ rule ("Initialization - global variables") {
         Else;
             Set Global Variable(ballDirectionRate, 6);
         End;
-        Set Global Variable(experimentalSteeringRate, Global.ballDirectionRate);
-        Set Global Variable(reboundInfluence, First Of(Global.experimentalTuning));
+        "One entry per ExperimentalField (config/constants.opy). The incoming direction is set when the ball spawns."
+        Set Global Variable(experimentalState, Array(999, Global.ballDirectionRate, Null, First Of(Global.experimentalTuning)));
         Set Global Variable(duelQueue, Empty Array);
         "zBozo pending moves (BotField in config/constants.opy)"
         Set Global Variable(botState, Empty Array);
         Set Global Variable(killLeaderboardSortedPlayers, Empty Array);
         "Sandbox spawn point, aim point and speed, plus the editor state (SandboxField in config/constants.opy)"
         Set Global Variable(sandboxState, Array(Global.ballPosition, Add(Global.ballPosition, Up), Global.ballSpeed, 1, 1, 1));
-        Set Global Variable(antiGhostPrevDistance, 999);
-        Set Global Variable(antiGhostStallTimer, 0);
-        Set Global Variable(ballRedirectAge, 999);
+        "One entry per AntiGhostField (config/constants.opy)"
+        Set Global Variable(antiGhostState, Array(999, 0));
     }
 }
 
@@ -446,8 +421,6 @@ rule ("Initialization - bounce pads") {
         Global.bouncePadToggle == True;
     }
     actions {
-        "One entry per BouncePadField (config/constants.opy), in that order"
-        Set Global Variable(bouncePadConfig, Array(30, 12, 2.75, 3));
         Set Global Variable(bouncePads, Array(Vector(Add(X Component Of(Global.circleCenter), Value In Array(Global.bouncePadConfig, 1)), Y Component Of(Global.circleCenter), Z Component Of(Global.circleCenter)), Vector(Add(X Component Of(Global.circleCenter), Multiply(Value In Array(Global.bouncePadConfig, 1), -1)), Y Component Of(Global.circleCenter), Z Component Of(Global.circleCenter)), Vector(X Component Of(Global.circleCenter), Y Component Of(Global.circleCenter), Add(Z Component Of(Global.circleCenter), Value In Array(Global.bouncePadConfig, 1))), Vector(X Component Of(Global.circleCenter), Y Component Of(Global.circleCenter), Add(Z Component Of(Global.circleCenter), Multiply(Value In Array(Global.bouncePadConfig, 1), -1)))));
         Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, ==, 0)), Ring, Color(Sky Blue), First Of(Global.bouncePads), 2, Visible To Position and Radius);
         Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, ==, 0)), Ring, Color(Sky Blue), Value In Array(Global.bouncePads, 1), 2, Visible To Position and Radius);
@@ -545,7 +518,7 @@ rule ("HUD - controls text") {
     }
     actions {
         Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("change perspective [{0}]", Input Binding String(Button(Reload))), Null, Left, 0, Null, Color(White), Null, Visible To and String, Default Visibility);
-        If(Compare(Global.Sandbox, ==, False));
+        If(Compare(Value In Array(Global.addOnSettings, 7), ==, False));
             Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("simple hud [{0}]", Input Binding String(Button(Interact))), Null, Left, 0, Null, Color(White), Null, Visible To and String, Default Visibility);
         End;
         If(And(First Of(Global.addOnSettings), Not(Value In Array(Global.addOnSettings, 1))));
@@ -561,7 +534,7 @@ rule ("HUD - add-ons text") {
         Is Game In Progress == True;
     }
     actions {
-        "__end__()\nif endlessMode:\nhudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == 0), \"•endless\", HudPosition.RIGHT, -2, Color.BLUE, HudReeval.VISIBILITY_AND_STRING)\n__end__()"
+        "__end__()\nif addOnSettings[AddOnSetting.ENDLESS]:\nhudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == 0), \"•endless\", HudPosition.RIGHT, -2, Color.BLUE, HudReeval.VISIBILITY_AND_STRING)\n__end__()"
         If(Value In Array(Global.addOnSettings, 3));
             Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("tracing: dont lose sight with the ball!"), Null, Top, -1, Null, Color(White), Null, Visible To and String, Default Visibility);
         End;
@@ -621,7 +594,7 @@ rule ("Kill Tracker - cache players") {
         Ongoing - Global;
     }
     conditions {
-        Global.killCounterEnabled == True;
+        Value In Array(Global.addOnSettings, 8) == True;
     }
     actions {
         "Cache once per tick instead of sorting once per HUD row. Host-only display, real players only."
@@ -636,7 +609,7 @@ rule ("Kill Tracker - header") {
         Ongoing - Global;
     }
     conditions {
-        Global.killCounterEnabled == True;
+        Value In Array(Global.addOnSettings, 8) == True;
         Count Of(Global.killLeaderboardSortedPlayers) > 0;
     }
     actions {
@@ -651,7 +624,7 @@ rule ("Kill Tracker - display") {
         All;
     }
     conditions {
-        Global.killCounterEnabled == True;
+        Value In Array(Global.addOnSettings, 8) == True;
         Has Spawned(Event Player) == True;
         Is Dummy Bot(Event Player) == False;
         Count Of(Global.killLeaderboardSortedPlayers) > 0;
@@ -757,12 +730,12 @@ rule ("Wait for more players") {
     }
     conditions {
         Is Game In Progress == True;
-        Or(Compare(Number Of Players(All Teams), >, 1), Compare(Global.Sandbox, ==, True)) == True;
+        Or(Compare(Number Of Players(All Teams), >, 1), Compare(Value In Array(Global.addOnSettings, 7), ==, True)) == True;
         Global.IsEnoughPlayersToStart == False;
         Current Game Mode == Game Mode(Deathmatch);
     }
     actions {
-        Abort If(And(Compare(Global.Sandbox, !=, True), Compare(Number Of Players(All Teams), <, 2)));
+        Abort If(And(Compare(Value In Array(Global.addOnSettings, 7), !=, True), Compare(Number Of Players(All Teams), <, 2)));
         Big Message(All Players(All Teams), Custom String("Lets begin!"));
         Set Global Variable(IsEnoughPlayersToStart, True);
         Call Subroutine(startRound);
@@ -1091,7 +1064,7 @@ rule ("Controls - Simple HUD (Interact)") {
     conditions {
         Is Button Held(Event Player, Button(Interact)) == True;
         Is Alive(Event Player) == True;
-        Global.Sandbox == False;
+        Value In Array(Global.addOnSettings, 7) == False;
     }
     actions {
         If(Compare((Event Player).simpleHUD, ==, 2));
@@ -1150,7 +1123,7 @@ rule ("Controls - Bounce when near a pad") {
         Else;
             Apply Impulse(Event Player, Up, First Of(Global.bouncePadConfig), To World, Cancel Contrary Motion);
         End;
-        Set Player Variable(Event Player, bouncePadCooldown, Global.bouncePadCooldownLength);
+        Set Player Variable(Event Player, bouncePadCooldown, Value In Array(Global.bouncePadConfig, 4));
         Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), First Of(Sorted Array(Global.bouncePads, Distance Between(Position Of(Event Player), Current Array Element))), 25);
     }
 }
@@ -1161,7 +1134,7 @@ rule ("Active game - start round") {
         startRound;
     }
     actions {
-        If(Compare(Global.Sandbox, ==, True));
+        If(Compare(Value In Array(Global.addOnSettings, 7), ==, True));
             Wait Until(And(Is Button Held(Host Player, Button(Ultimate)), Is Button Held(Host Player, Button(Reload))), 99999);
         End;
         Call Subroutine(randomTarget);
@@ -1172,7 +1145,7 @@ rule ("Active game - start round") {
         Call Subroutine(resetOrbitRoundState);
         Chase Player Variable At Rate(All Players(All Teams), bouncePadCooldown, 0, 1, Destination and Rate);
         Set Global Variable(ballSpawnCountdown, Global.setballspawncountdown);
-        Set Player Variable(All Living Players(All Teams), bouncePadCooldown, Subtract(Global.bouncePadCooldownLength, 1));
+        Set Player Variable(All Living Players(All Teams), bouncePadCooldown, Subtract(Value In Array(Global.bouncePadConfig, 4), 1));
     }
 }
 
@@ -1186,7 +1159,7 @@ rule ("Active game - spawn ball") {
         Is Alive(Global.target) == True;
     }
     actions {
-        If(Compare(Global.Sandbox, ==, True));
+        If(Compare(Value In Array(Global.addOnSettings, 7), ==, True));
             Set Global Variable(ballPosition, First Of(Global.sandboxState));
             Set Global Variable(ballDirection, Direction Towards(First Of(Global.sandboxState), Value In Array(Global.sandboxState, 1)));
             Set Global Variable(ballSpeed, Value In Array(Global.sandboxState, 2));
@@ -1210,12 +1183,12 @@ rule ("Subroutine - setup duel") {
         //lbl_0:
         Call Subroutine(randomTarget);
         Stop Chasing Global Variable(ballSpawnCountdown);
-        If(Compare(Global.Sandbox, ==, True));
+        If(Compare(Value In Array(Global.addOnSettings, 7), ==, True));
             Wait Until(And(Is Button Held(Host Player, Button(Ultimate)), Is Button Held(Host Player, Button(Reload))), 99999);
         End;
         Set Global Variable(IsInFinalDuel, True);
         Chase Global Variable At Rate(ballSpawnCountdown, 0, 1, Destination and Rate);
-        Set Player Variable(All Living Players(All Teams), bouncePadCooldown, Subtract(Global.bouncePadCooldownLength, 1));
+        Set Player Variable(All Living Players(All Teams), bouncePadCooldown, Subtract(Value In Array(Global.bouncePadConfig, 4), 1));
         If(Global.isIsland);
             Start Forcing Player Position(First Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved)), Add(Global.circleCenter, Vector(-15, 0, 0)), False);
             Start Forcing Player Position(Value In Array(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved), 1), Add(Global.circleCenter, Vector(15, 0, 0)), False);
@@ -1243,8 +1216,8 @@ rule ("Active game - final duel") {
         Count Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved)) == 2;
         Global.IsEnoughPlayersToStart == True;
         Global.IsInFinalDuel == False;
-        Global.duelMode == False;
-        Global.endlessMode == False;
+        Value In Array(Global.addOnSettings, 5) == False;
+        Value In Array(Global.addOnSettings, 6) == False;
         Current Game Mode == Game Mode(Deathmatch);
     }
     actions {
@@ -1262,7 +1235,7 @@ rule ("Active game - check for last player surviving") {
         Is Game In Progress == True;
         Number Of Living Players(All Teams) == 1;
         Global.IsEnoughPlayersToStart == True;
-        Global.duelMode == False;
+        Value In Array(Global.addOnSettings, 5) == False;
     }
     actions {
         Set Global Variable(IsInFinalDuel, False);
@@ -1287,7 +1260,7 @@ rule ("Active game - check for last player surviving") {
         Stop Chasing Player Variable(All Players(All Teams), bouncePadCooldown);
         Big Message(All Players(All Teams), Custom String("{0} has won the round", First Of(All Living Players(All Teams))));
         Wait(2, Ignore Condition);
-        Skip If(Global.duelMode, 8);
+        Skip If(Value In Array(Global.addOnSettings, 5), 8);
         If(Not(Global.TieBreakerActive));
             Resurrect(All Dead Players(All Teams));
         Else;
@@ -1311,7 +1284,7 @@ rule ("Active game - all players dead") {
         Number Of Living Players(All Teams) == 0;
         Is Game In Progress == True;
         Global.TieBreakerActive == False;
-        Global.duelMode == False;
+        Value In Array(Global.addOnSettings, 5) == False;
     }
     actions {
         Set Global Variable(IsInFinalDuel, False);
@@ -1322,7 +1295,7 @@ rule ("Active game - all players dead") {
         Stop Chasing Global Variable(ballSpawnCountdown);
         Resurrect(All Dead Players(All Teams));
         Stop Chasing Player Variable(All Players(All Teams), bouncePadCooldown);
-        Set Player Variable(All Players(All Teams), bouncePadCooldown, Global.bouncePadCooldownLength);
+        Set Player Variable(All Players(All Teams), bouncePadCooldown, Value In Array(Global.bouncePadConfig, 4));
         Set Global Variable(ballSpawnCountdown, Global.setballspawncountdown);
         Wait(1, Ignore Condition);
         Loop If Condition Is True;
@@ -1356,7 +1329,7 @@ rule ("Active game - target random player") {
         randomTarget;
     }
     actions {
-        If(Compare(Global.Sandbox, ==, True));
+        If(Compare(Value In Array(Global.addOnSettings, 7), ==, True));
             Set Global Variable(target, Host Player);
             Skip(2);
         End;
@@ -1385,7 +1358,7 @@ rule ("Duels - Global HUD") {
         Ongoing - Global;
     }
     conditions {
-        Global.duelMode == True;
+        Value In Array(Global.addOnSettings, 5) == True;
     }
     actions {
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("current duel: {0} vs. {1}", First Of(All Living Players(All Teams)), Value In Array(All Living Players(All Teams), 1)), Top, -1, Null, Null, Color(Purple), Visible To and String, Default Visibility);
@@ -1399,7 +1372,7 @@ rule ("Duels - Queue HUD") {
         All;
     }
     conditions {
-        Global.duelMode == True;
+        Value In Array(Global.addOnSettings, 5) == True;
     }
     actions {
         Create HUD Text(If-Then-Else(Is Dead(Event Player), Event Player, Null), Null, Custom String("You fight in {0} rounds.", Add(Index Of Array Value(Global.duelQueue, Event Player), 1)), Null, Top, -1, Null, Color(Purple), Null, Visible To and String, Default Visibility);
@@ -1411,7 +1384,7 @@ rule ("Duels - kill players when more than two alive") {
         Ongoing - Global;
     }
     conditions {
-        Global.duelMode == True;
+        Value In Array(Global.addOnSettings, 5) == True;
         Is Game In Progress == False;
         Number Of Living Players(All Teams) > 2;
     }
@@ -1427,7 +1400,7 @@ rule ("Duels - start game") {
         Ongoing - Global;
     }
     conditions {
-        Global.duelMode == True;
+        Value In Array(Global.addOnSettings, 5) == True;
         Is Game In Progress == True;
         Count Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved)) == 2;
     }
@@ -1443,7 +1416,7 @@ rule ("Duels - not enough players alive") {
         Ongoing - Global;
     }
     conditions {
-        Global.duelMode == True;
+        Value In Array(Global.addOnSettings, 5) == True;
         Is Game In Progress == True;
         Number Of Living Players(All Teams) < 2;
         Count Of(Global.duelQueue) > 0;
@@ -1469,7 +1442,7 @@ rule ("Duels - queue dead player") {
         All;
     }
     conditions {
-        Global.duelMode == True;
+        Value In Array(Global.addOnSettings, 5) == True;
     }
     actions {
         Modify Global Variable(duelQueue, Append To Array, Event Player);
@@ -1484,7 +1457,7 @@ rule ("Duels - remove living player from queue") {
     }
     conditions {
         Is Alive(Event Player) == True;
-        Global.duelMode == True;
+        Value In Array(Global.addOnSettings, 5) == True;
     }
     actions {
         Modify Global Variable(duelQueue, Remove From Array By Value, Event Player);
@@ -1498,7 +1471,7 @@ rule ("Duels - remove leaving player from queue") {
         All;
     }
     conditions {
-        Global.duelMode == True;
+        Value In Array(Global.addOnSettings, 5) == True;
     }
     actions {
         Modify Global Variable(duelQueue, Remove From Array By Value, Event Player);
@@ -1529,35 +1502,32 @@ rule ("Collision - collision check") {
     actions {
         If(Compare(Global.ballHitPosition, !=, Null));
             "-o--x--------o->Between last ballPosition & middlePosition"
-            Set Global Variable(phasePosition1, Add(Global.ballHitPosition, Global.phasePosition));
-            Modify Global Variable(phasePosition1, Divide, 2);
+            Set Global Variable At Index(phasePosition, 1, Add(Global.ballHitPosition, First Of(Global.phasePosition)));
+            Modify Global Variable At Index(phasePosition, 1, Divide, 2);
             "-o-----x-----o->Between last & current ballPosition"
-            Set Global Variable(phasePosition, Global.ballHitPosition);
+            Set Global Variable At Index(phasePosition, 0, Global.ballHitPosition);
             Set Global Variable(ballHitPosition, Null);
         Else;
             "-o--x--------o->Between last ballPosition & middlePosition"
-            Set Global Variable(phasePosition1, Add(Global.phasePosition, Global.ballPosition));
-            Modify Global Variable(phasePosition1, Divide, 2);
-            Modify Global Variable(phasePosition1, Add, Global.phasePosition);
-            Modify Global Variable(phasePosition1, Divide, 2);
-            Modify Global Variable(phasePosition, Add, Global.ballPosition);
-            Modify Global Variable(phasePosition, Divide, 2);
+            Set Global Variable At Index(phasePosition, 1, Add(First Of(Global.phasePosition), Global.ballPosition));
+            Modify Global Variable At Index(phasePosition, 1, Divide, 2);
+            Modify Global Variable At Index(phasePosition, 1, Add, First Of(Global.phasePosition));
+            Modify Global Variable At Index(phasePosition, 1, Divide, 2);
+            Modify Global Variable At Index(phasePosition, 0, Add, Global.ballPosition);
+            Modify Global Variable At Index(phasePosition, 0, Divide, 2);
         End;
-        "-o--------x--o->Between phasePosition & current ballPosition & phasePosition"
-        Set Global Variable(phasePosition2, Add(Global.phasePosition, Global.ballPosition));
-        Modify Global Variable(phasePosition2, Divide, 2);
         "-o-----------x->"
         If(Compare(Distance Between(Global.ballPosition, Eye Position(Global.target)), <=, 1.9));
             Call Subroutine(collisionTarget);
-        Else If(Compare(Distance Between(Global.phasePosition, Eye Position(Global.target)), <=, 1.9));
+        Else If(Compare(Distance Between(First Of(Global.phasePosition), Eye Position(Global.target)), <=, 1.9));
             Call Subroutine(collisionTarget);
-        Else If(Compare(Distance Between(Global.phasePosition1, Eye Position(Global.target)), <=, 1.9));
+        Else If(Compare(Distance Between(Value In Array(Global.phasePosition, 1), Eye Position(Global.target)), <=, 1.9));
             Call Subroutine(collisionTarget);
-        Else If(Compare(Distance Between(Global.phasePosition2, Eye Position(Global.target)), <=, 1.9));
+        Else If(Compare(Distance Between(Divide(Add(First Of(Global.phasePosition), Global.ballPosition), 2), Eye Position(Global.target)), <=, 1.9));
             Call Subroutine(collisionTarget);
         End;
         "Save last ballPosition for next loop"
-        Set Global Variable(phasePosition, Evaluate Once(Global.ballPosition));
+        Set Global Variable At Index(phasePosition, 0, Evaluate Once(Global.ballPosition));
         Wait(0, Ignore Condition);
         Loop If Condition Is True;
     }
@@ -1587,9 +1557,9 @@ rule ("Collision - collision sub") {
         //lbl_3:
         If(And(Compare(Global.ballPhysicsMode, ==, 2), Compare(Global.ballMotion, !=, 2)));
             "layered on top of original Modern movement. The deflector's 3D facing\ndirection remains dominant, while incoming ball momentum contributes\nslightly more on side-angle redirects so geometry matters."
-            Set Global Variable(reboundIncomingDirection, Direction Towards(Vector(0, 0, 0), Evaluate Once(Global.ballDirection)));
-            Set Global Variable(reboundInfluence, Add(First Of(Global.experimentalTuning), Multiply(Divide(Min(Angle Between Vectors(Global.reboundIncomingDirection, Facing Direction Of(Global.target)), Subtract(180, Angle Between Vectors(Global.reboundIncomingDirection, Facing Direction Of(Global.target)))), 90), Subtract(Value In Array(Global.experimentalTuning, 1), First Of(Global.experimentalTuning)))));
-            Set Global Variable(ballDirection, Direction Towards(Vector(0, 0, 0), Add(Multiply(Facing Direction Of(Global.target), Subtract(1, Global.reboundInfluence)), Multiply(Global.reboundIncomingDirection, Global.reboundInfluence))));
+            Set Global Variable At Index(experimentalState, 2, Direction Towards(Vector(0, 0, 0), Evaluate Once(Global.ballDirection)));
+            Set Global Variable At Index(experimentalState, 3, Add(First Of(Global.experimentalTuning), Multiply(Divide(Min(Angle Between Vectors(Value In Array(Global.experimentalState, 2), Facing Direction Of(Global.target)), Subtract(180, Angle Between Vectors(Value In Array(Global.experimentalState, 2), Facing Direction Of(Global.target)))), 90), Subtract(Value In Array(Global.experimentalTuning, 1), First Of(Global.experimentalTuning)))));
+            Set Global Variable(ballDirection, Direction Towards(Vector(0, 0, 0), Add(Multiply(Facing Direction Of(Global.target), Subtract(1, Value In Array(Global.experimentalState, 3))), Multiply(Value In Array(Global.experimentalState, 2), Value In Array(Global.experimentalState, 3)))));
         Else;
             Set Global Variable(ballDirection, Multiply(Facing Direction Of(Global.target), If-Then-Else(Compare(Global.ballMotion, ==, 2), Global.ballSpeed, 1)));
         End;
@@ -1608,10 +1578,9 @@ rule ("Collision - collision sub") {
         Play Effect(All Players(All Teams), Explosion Sound, Color(White), Evaluate Once(Position Of(Global.prevTarget)), 150);
         Play Effect(All Players(All Teams), Baptiste Biotic Launcher Explosion Sound, Color(White), Evaluate Once(Position Of(Global.prevTarget)), 20);
         "Redirect-sensitive systems should start fresh after the ball changes target."
-        Set Global Variable(ballRedirectAge, 0);
-        Set Global Variable(experimentalSteeringRate, Multiply(Global.ballDirectionRate, Value In Array(Global.experimentalTuning, 2)));
-        Set Global Variable(antiGhostPrevDistance, 999);
-        Set Global Variable(antiGhostStallTimer, 0);
+        Set Global Variable At Index(experimentalState, 0, 0);
+        Set Global Variable At Index(experimentalState, 1, Multiply(Global.ballDirectionRate, Value In Array(Global.experimentalTuning, 2)));
+        Set Global Variable(antiGhostState, Array(999, 0));
         If(And(Compare(Global.ballMotion, ==, 0), Compare(Global.ballPhysicsMode, !=, 2)));
             Start Rule(ballCurve, Restart Rule);
         End;
@@ -1624,7 +1593,7 @@ rule ("Collision - deflect fail sub") {
         deflectFail;
     }
     actions {
-        If(And(And(Compare(Global.killCounterEnabled, ==, True), Compare(Global.prevTarget, !=, Null)), Not(Is Dummy Bot(Global.prevTarget))));
+        If(And(And(Compare(Value In Array(Global.addOnSettings, 8), ==, True), Compare(Global.prevTarget, !=, Null)), Not(Is Dummy Bot(Global.prevTarget))));
             Modify Player Variable(Global.prevTarget, kills, Add, 1);
         End;
         Kill(Global.target, Global.prevTarget);
@@ -1634,7 +1603,7 @@ rule ("Collision - deflect fail sub") {
             Call Subroutine(deleteBall);
             Abort;
         End;
-        If(Global.endlessMode);
+        If(Value In Array(Global.addOnSettings, 6));
             "ballDirection *= -1"
             Set Global Variable(target, First Of(Sorted Array(Filtered Array(Remove From Array(All Living Players(All Teams), Global.target), (Current Array Element).hasMoved), Angle Between Vectors(Global.ballDirection, Direction Towards(Global.ballPosition, Position Of(Current Array Element))))));
         Else;
@@ -1651,7 +1620,7 @@ rule ("Collision - play death effect sub") {
     }
     actions {
         Play Effect(All Players(All Teams), Ashe Dynamite Explosion Sound, Color(Sky Blue), Position Of(Global.ballPosition), 80);
-        If(Global.endlessMode);
+        If(Value In Array(Global.addOnSettings, 6));
             Play Effect(All Players(All Teams), Tracer Recall Reappear Effect, Color(White), Global.ballPosition, 2);
             Abort;
         End;
@@ -1701,16 +1670,10 @@ rule ("Collision - delete ball sub") {
         Set Global Variable(ballDirection, Vector(0, 0, 0));
         Set Global Variable(ballSpawnCountdown, 2);
         Set Global Variable(ballHitPosition, Null);
-        Set Global Variable(phasePosition, Down);
-        Set Global Variable(phasePosition1, Down);
-        Set Global Variable(phasePosition2, Down);
-        Set Global Variable(antiGhostPrevDistance, 999);
-        Set Global Variable(antiGhostStallTimer, 0);
-        Set Global Variable(ballRedirectAge, 999);
+        Set Global Variable(phasePosition, Array(Down, Down));
+        Set Global Variable(antiGhostState, Array(999, 0));
         Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
-        Set Global Variable(experimentalSteeringRate, Global.ballDirectionRateInit);
-        Set Global Variable(reboundIncomingDirection, Vector(0, 0, 0));
-        Set Global Variable(reboundInfluence, First Of(Global.experimentalTuning));
+        Set Global Variable(experimentalState, Array(999, Global.ballDirectionRateInit, Vector(0, 0, 0), First Of(Global.experimentalTuning)));
     }
 }
 
@@ -1722,10 +1685,7 @@ rule ("Ball behavior - start ball") {
     actions {
         Set Global Variable(ballIsOut, True);
         "Spawned balls start already aimed at the target; redirect ramp applies after deflects."
-        Set Global Variable(ballRedirectAge, 999);
-        Set Global Variable(experimentalSteeringRate, Global.ballDirectionRate);
-        Set Global Variable(reboundIncomingDirection, Global.ballDirection);
-        Set Global Variable(reboundInfluence, First Of(Global.experimentalTuning));
+        Set Global Variable(experimentalState, Array(999, Global.ballDirectionRate, Global.ballDirection, First Of(Global.experimentalTuning)));
         If(Compare(Global.ballPhysicsMode, ==, 1));
             Start Rule(startLegacyPlusBall, Restart Rule);
         Else If(Compare(Global.ballPhysicsMode, ==, 2));
@@ -1759,7 +1719,7 @@ rule ("Ball behavior - modern motion") {
         startModernBall;
     }
     actions {
-        Chase Global Variable At Rate(ballPosition, Add(Global.ballPosition, Multiply(Multiply(Global.ballDirection, Global.ballSpeed), Global.motionMultiplier)), Global.ballSpeed, Destination and Rate);
+        Chase Global Variable At Rate(ballPosition, Add(Global.ballPosition, Multiply(Multiply(Global.ballDirection, Global.ballSpeed), If-Then-Else(Compare(Global.ballMotion, ==, 1), 0.5, 1))), Global.ballSpeed, Destination and Rate);
         Chase Global Variable At Rate(ballSpeed, Global.ballSpeedCap, Global.ballAcceleration, Destination and Rate);
         Chase Global Variable At Rate(ballDirection, Direction Towards(Global.ballPosition, Eye Position(Global.target)), Update Every Frame(Global.ballDirectionRate), Destination and Rate);
     }
@@ -1784,7 +1744,7 @@ rule ("Ball behavior - Legacy+ motion") {
             If(Compare(Global.target, !=, Null));
                 Set Global Variable(ballDirection, Direction Towards(Vector(0, 0, 0), Add(Global.ballDirection, Multiply(Multiply(Direction Towards(Global.ballPosition, Eye Position(Global.target)), Global.ballDirectionRate), 0.016))));
             End;
-            Modify Global Variable(ballPosition, Add, Multiply(Multiply(Multiply(Global.ballDirection, Global.ballSpeed), Global.motionMultiplier), 0.016));
+            Modify Global Variable(ballPosition, Add, Multiply(Multiply(Multiply(Global.ballDirection, Global.ballSpeed), If-Then-Else(Compare(Global.ballMotion, ==, 1), 0.5, 1)), 0.016));
             Wait(0.016, Ignore Condition);
         End;
     }
@@ -1804,20 +1764,20 @@ rule ("Ball behavior - experimental hybrid motion") {
             Start Rule(startRetroBall, Restart Rule);
             Abort;
         End;
-        Chase Global Variable At Rate(ballPosition, Add(Global.ballPosition, Multiply(Multiply(Global.ballDirection, Global.ballSpeed), Global.motionMultiplier)), Global.ballSpeed, Destination and Rate);
+        Chase Global Variable At Rate(ballPosition, Add(Global.ballPosition, Multiply(Multiply(Global.ballDirection, Global.ballSpeed), If-Then-Else(Compare(Global.ballMotion, ==, 1), 0.5, 1))), Global.ballSpeed, Destination and Rate);
         Chase Global Variable At Rate(ballSpeed, Global.ballSpeedCap, Global.ballAcceleration, Destination and Rate);
-        Set Global Variable(experimentalSteeringRate, Global.ballDirectionRate);
-        Chase Global Variable At Rate(ballDirection, Direction Towards(Global.ballPosition, Eye Position(Global.target)), Update Every Frame(Global.experimentalSteeringRate), Destination and Rate);
+        Set Global Variable At Index(experimentalState, 1, Global.ballDirectionRate);
+        Chase Global Variable At Rate(ballDirection, Direction Towards(Global.ballPosition, Eye Position(Global.target)), Update Every Frame(Value In Array(Global.experimentalState, 1)), Destination and Rate);
         While(Global.ballIsOut);
-            Set Global Variable(ballRedirectAge, Min(999, Add(Global.ballRedirectAge, 0.016)));
+            Set Global Variable At Index(experimentalState, 0, Min(999, Add(First Of(Global.experimentalState), 0.016)));
             If(Compare(Global.target, !=, Null));
                 "Dodgeball Hybrid homing handoff: throw/rebound identity first,\nthen a smooth return to normal Modern steering. This uses no\nclose-range magnetic tightening; AntiOrbit handles true orbit abuse."
-                If(Compare(Global.ballRedirectAge, <, Value In Array(Global.experimentalTuning, 3)));
-                    Set Global Variable(experimentalSteeringRate, Multiply(Global.ballDirectionRate, Value In Array(Global.experimentalTuning, 2)));
-                Else If(Compare(Global.ballRedirectAge, <, Add(Value In Array(Global.experimentalTuning, 3), Value In Array(Global.experimentalTuning, 4))));
-                    Set Global Variable(experimentalSteeringRate, Multiply(Global.ballDirectionRate, Add(Value In Array(Global.experimentalTuning, 2), Multiply(Divide(Subtract(Global.ballRedirectAge, Value In Array(Global.experimentalTuning, 3)), Value In Array(Global.experimentalTuning, 4)), Subtract(1, Value In Array(Global.experimentalTuning, 2))))));
+                If(Compare(First Of(Global.experimentalState), <, Value In Array(Global.experimentalTuning, 3)));
+                    Set Global Variable At Index(experimentalState, 1, Multiply(Global.ballDirectionRate, Value In Array(Global.experimentalTuning, 2)));
+                Else If(Compare(First Of(Global.experimentalState), <, Add(Value In Array(Global.experimentalTuning, 3), Value In Array(Global.experimentalTuning, 4))));
+                    Set Global Variable At Index(experimentalState, 1, Multiply(Global.ballDirectionRate, Add(Value In Array(Global.experimentalTuning, 2), Multiply(Divide(Subtract(First Of(Global.experimentalState), Value In Array(Global.experimentalTuning, 3)), Value In Array(Global.experimentalTuning, 4)), Subtract(1, Value In Array(Global.experimentalTuning, 2))))));
                 Else;
-                    Set Global Variable(experimentalSteeringRate, Global.ballDirectionRate);
+                    Set Global Variable At Index(experimentalState, 1, Global.ballDirectionRate);
                 End;
             End;
             Wait(0.016, Ignore Condition);
@@ -1867,16 +1827,16 @@ rule ("Ball Physics - anti ghost correction") {
         "Mode 2 = steer. If the ball is close to the target and its current\ndirection is far off from the ideal target direction, temporarily raise\nsteering strength. Experimental leaves AntiGhost off by default;\nTournament+ uses Steer."
         If(Compare(Distance Between(Global.ballPosition, Eye Position(Global.target)), <=, 7));
             If(Compare(Global.antiGhostMode, ==, 1));
-                If(Compare(Global.antiGhostPrevDistance, ==, 999));
-                    Set Global Variable(antiGhostPrevDistance, Distance Between(Global.ballPosition, Eye Position(Global.target)));
+                If(Compare(First Of(Global.antiGhostState), ==, 999));
+                    Set Global Variable At Index(antiGhostState, 0, Distance Between(Global.ballPosition, Eye Position(Global.target)));
                 End;
-                If(Compare(Distance Between(Global.ballPosition, Eye Position(Global.target)), >=, Subtract(Global.antiGhostPrevDistance, 0.05)));
-                    Modify Global Variable(antiGhostStallTimer, Add, 0.05);
+                If(Compare(Distance Between(Global.ballPosition, Eye Position(Global.target)), >=, Subtract(First Of(Global.antiGhostState), 0.05)));
+                    Modify Global Variable At Index(antiGhostState, 1, Add, 0.05);
                 Else;
-                    Set Global Variable(antiGhostStallTimer, 0);
+                    Set Global Variable At Index(antiGhostState, 1, 0);
                 End;
-                Set Global Variable(antiGhostPrevDistance, Distance Between(Global.ballPosition, Eye Position(Global.target)));
-                If(Compare(Global.antiGhostStallTimer, >=, 0.15));
+                Set Global Variable At Index(antiGhostState, 0, Distance Between(Global.ballPosition, Eye Position(Global.target)));
+                If(Compare(Value In Array(Global.antiGhostState, 1), >=, 0.15));
                     If(Compare(Global.ballDirectionRate, <, 4));
                         Set Global Variable(ballDirectionRate, 4);
                     End;
@@ -1885,8 +1845,7 @@ rule ("Ball Physics - anti ghost correction") {
                 End;
             Else If(Compare(Global.antiGhostMode, ==, 2));
                 If(Compare(Angle Between Vectors(Global.ballDirection, Direction Towards(Global.ballPosition, Eye Position(Global.target))), >=, 35));
-                    Set Global Variable(antiGhostStallTimer, 0);
-                    Set Global Variable(antiGhostPrevDistance, Distance Between(Global.ballPosition, Eye Position(Global.target)));
+                    Set Global Variable(antiGhostState, Array(Distance Between(Global.ballPosition, Eye Position(Global.target)), 0));
                     If(Compare(Global.ballDirectionRate, <, 4));
                         Set Global Variable(ballDirectionRate, 4);
                     End;
@@ -1895,8 +1854,7 @@ rule ("Ball Physics - anti ghost correction") {
                 End;
             End;
         Else;
-            Set Global Variable(antiGhostPrevDistance, 999);
-            Set Global Variable(antiGhostStallTimer, 0);
+            Set Global Variable(antiGhostState, Array(999, 0));
             If(Compare(Global.ballDirectionRate, ==, 4));
                 Set Global Variable(ballDirectionRate, Global.ballDirectionRateInit);
             End;
@@ -1917,22 +1875,19 @@ rule ("Ball Physics - general collision") {
         Or(Or(Or(Or(Compare(Z Component Of(Global.ballPosition), >, 20), Compare(Z Component Of(Global.ballPosition), <, -20)), Compare(X Component Of(Global.ballPosition), >, 20)), Compare(X Component Of(Global.ballPosition), <, -20)), Compare(Y Component Of(Global.ballPosition), >, 0)) == True;
     }
     actions {
-        Set Global Variable(ballNextFramePosition, Add(Global.ballPosition, Multiply(Multiply(Global.ballDirection, Global.ballSpeed), 0.066)));
         "Used for phasingprotection in Ball/Target - collision check"
-        Set Global Variable(ballHitPosition, Ray Cast Hit Position(Global.ballPosition, Global.ballNextFramePosition, Null, All Players(All Teams), False));
+        Set Global Variable(ballHitPosition, Ray Cast Hit Position(Global.ballPosition, Add(Global.ballPosition, Multiply(Multiply(Global.ballDirection, Global.ballSpeed), 0.066)), Null, All Players(All Teams), False));
         If(Or(Global.isIsland, And(Compare(Y Component Of(Global.ballHitPosition), <, -0.5), Compare(Y Component Of(Global.ballHitPosition), >, -3.5))));
             Set Global Variable(CollisionSurfaceDistances, Array(Distance Between(Global.ballHitPosition, Vector(20, Y Component Of(Global.ballHitPosition), Z Component Of(Global.ballHitPosition))), Distance Between(Global.ballHitPosition, Vector(-20, Y Component Of(Global.ballHitPosition), Z Component Of(Global.ballHitPosition))), Distance Between(Global.ballHitPosition, Vector(X Component Of(Global.ballHitPosition), Y Component Of(Global.ballHitPosition), 20)), Distance Between(Global.ballHitPosition, Vector(X Component Of(Global.ballHitPosition), Y Component Of(Global.ballHitPosition), -20))));
             Call Subroutine(simpleIslandSideCollision);
         Else;
-            Set Global Variable(BallCollisionSurfaceNormal, Ray Cast Hit Normal(Global.ballPosition, Global.ballNextFramePosition, Null, All Players(All Teams), False));
-            Modify Global Variable(ballDirection, Subtract, Multiply(Multiply(2, Dot Product(Global.ballDirection, Global.BallCollisionSurfaceNormal)), Global.BallCollisionSurfaceNormal));
+            Modify Global Variable(ballDirection, Subtract, Multiply(Multiply(2, Dot Product(Global.ballDirection, Ray Cast Hit Normal(Global.ballPosition, Add(Global.ballPosition, Multiply(Multiply(Global.ballDirection, Global.ballSpeed), 0.066)), Null, All Players(All Teams), False))), Ray Cast Hit Normal(Global.ballPosition, Add(Global.ballPosition, Multiply(Multiply(Global.ballDirection, Global.ballSpeed), 0.066)), Null, All Players(All Teams), False)));
         End;
         If(Compare(Global.ballPhysicsMode, ==, 2));
             "Surface rebounds use their own tuning slider so wall/platform bounces\ncan read physically without resetting to the full player-deflect window."
-            Set Global Variable(experimentalSteeringRate, Multiply(Global.ballDirectionRate, Value In Array(Global.experimentalTuning, 5)));
-            Set Global Variable(ballRedirectAge, Add(Value In Array(Global.experimentalTuning, 3), Multiply(Value In Array(Global.experimentalTuning, 4), Max(0, Min(1, Divide(Subtract(Value In Array(Global.experimentalTuning, 5), Value In Array(Global.experimentalTuning, 2)), Max(0.01, Subtract(1, Value In Array(Global.experimentalTuning, 2)))))))));
-            Set Global Variable(antiGhostPrevDistance, 999);
-            Set Global Variable(antiGhostStallTimer, 0);
+            Set Global Variable At Index(experimentalState, 1, Multiply(Global.ballDirectionRate, Value In Array(Global.experimentalTuning, 5)));
+            Set Global Variable At Index(experimentalState, 0, Add(Value In Array(Global.experimentalTuning, 3), Multiply(Value In Array(Global.experimentalTuning, 4), Max(0, Min(1, Divide(Subtract(Value In Array(Global.experimentalTuning, 5), Value In Array(Global.experimentalTuning, 2)), Max(0.01, Subtract(1, Value In Array(Global.experimentalTuning, 2)))))))));
+            Set Global Variable(antiGhostState, Array(999, 0));
         End;
         Play Effect(All Players(All Teams), Pharah Barrage Explosion Effect, All Teams, Global.ballHitPosition, 1);
         Play Effect(All Players(All Teams), Echo Sticky Bomb Explosion Sound, Color(White), Global.ballHitPosition, 30);
@@ -1959,10 +1914,9 @@ rule ("Ball Physics - island collision") {
         Call Subroutine(simpleIslandCollision);
         If(Compare(Global.ballPhysicsMode, ==, 2));
             "Floor/platform rebounds use the same surface tuning slider as walls."
-            Set Global Variable(experimentalSteeringRate, Multiply(Global.ballDirectionRate, Value In Array(Global.experimentalTuning, 5)));
-            Set Global Variable(ballRedirectAge, Add(Value In Array(Global.experimentalTuning, 3), Multiply(Value In Array(Global.experimentalTuning, 4), Max(0, Min(1, Divide(Subtract(Value In Array(Global.experimentalTuning, 5), Value In Array(Global.experimentalTuning, 2)), Max(0.01, Subtract(1, Value In Array(Global.experimentalTuning, 2)))))))));
-            Set Global Variable(antiGhostPrevDistance, 999);
-            Set Global Variable(antiGhostStallTimer, 0);
+            Set Global Variable At Index(experimentalState, 1, Multiply(Global.ballDirectionRate, Value In Array(Global.experimentalTuning, 5)));
+            Set Global Variable At Index(experimentalState, 0, Add(Value In Array(Global.experimentalTuning, 3), Multiply(Value In Array(Global.experimentalTuning, 4), Max(0, Min(1, Divide(Subtract(Value In Array(Global.experimentalTuning, 5), Value In Array(Global.experimentalTuning, 2)), Max(0.01, Subtract(1, Value In Array(Global.experimentalTuning, 2)))))))));
+            Set Global Variable(antiGhostState, Array(999, 0));
         End;
         Play Effect(All Players(All Teams), Pharah Barrage Explosion Effect, All Teams, Global.ballPosition, 1);
         Play Effect(All Players(All Teams), Echo Sticky Bomb Explosion Sound, Color(White), Global.ballPosition, 30);
@@ -3187,7 +3141,7 @@ rule ("Sandbox - Set Ball spawnpoint") {
         All;
     }
     conditions {
-        Global.Sandbox == True;
+        Value In Array(Global.addOnSettings, 7) == True;
         Is Dummy Bot(Event Player) == False;
         Is Game In Progress == True;
         Global.ballIsOut == False;
@@ -3245,7 +3199,7 @@ rule ("Sandbox - Set Ball direction") {
         All;
     }
     conditions {
-        Global.Sandbox == True;
+        Value In Array(Global.addOnSettings, 7) == True;
         Is Dummy Bot(Event Player) == False;
         Is Game In Progress == True;
         Global.ballIsOut == False;
@@ -3303,7 +3257,7 @@ rule ("Sandbox - Set Ball speed") {
         All;
     }
     conditions {
-        Global.Sandbox == True;
+        Value In Array(Global.addOnSettings, 7) == True;
         Is Dummy Bot(Event Player) == False;
         Is Game In Progress == True;
         Global.ballIsOut == False;
@@ -3333,7 +3287,7 @@ rule ("Sandbox - Change xyz and +/-") {
         All;
     }
     conditions {
-        Global.Sandbox == True;
+        Value In Array(Global.addOnSettings, 7) == True;
         Is Dummy Bot(Event Player) == False;
         Is Game In Progress == True;
         Global.ballIsOut == False;
@@ -3372,7 +3326,7 @@ rule ("Sandbox - Switch between pos/dir/spd") {
         Is Dummy Bot(Event Player) == False;
         Is Game In Progress == True;
         Global.ballIsOut == False;
-        Global.Sandbox == True;
+        Value In Array(Global.addOnSettings, 7) == True;
     }
     actions {
         Wait Until(Not(Is Button Held(Event Player, Button(Reload))), 0.4);
@@ -3391,7 +3345,7 @@ rule ("Sandbox - Show ball spawnpoint and direction") {
         Ongoing - Global;
     }
     conditions {
-        Global.Sandbox == True;
+        Value In Array(Global.addOnSettings, 7) == True;
         Is Game In Progress == True;
         Global.ballIsOut == False;
     }
@@ -3406,7 +3360,7 @@ rule ("Sandbox - Controls desc") {
         Ongoing - Global;
     }
     conditions {
-        Global.Sandbox == True;
+        Value In Array(Global.addOnSettings, 7) == True;
     }
     actions {
         Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Press [{0}] / [{1}] to switch the axis youre editing. press both to switch between negative and positive.", Input Binding String(Button(Jump)), Input Binding String(Button(Crouch))), Null, Left, 999, Null, Color(White), Null, Visible To and String, Default Visibility);

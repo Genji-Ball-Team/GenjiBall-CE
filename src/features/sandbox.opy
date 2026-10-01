@@ -2,7 +2,7 @@
 
 rule "Sandbox - Set Ball spawnpoint":
     @Event eachPlayer
-    @Condition Sandbox == true
+    @Condition addOnSettings[AddOnSetting.SANDBOX] == true
     @Condition eventPlayer.isDummy() == false
     @Condition isGameInProgress() == true
     @Condition ballIsOut == false
@@ -46,7 +46,7 @@ rule "Sandbox - Set Ball spawnpoint":
 
 rule "Sandbox - Set Ball direction":
     @Event eachPlayer
-    @Condition Sandbox == true
+    @Condition addOnSettings[AddOnSetting.SANDBOX] == true
     @Condition eventPlayer.isDummy() == false
     @Condition isGameInProgress() == true
     @Condition ballIsOut == false
@@ -90,7 +90,7 @@ rule "Sandbox - Set Ball direction":
 
 rule "Sandbox - Set Ball speed":
     @Event eachPlayer
-    @Condition Sandbox == true
+    @Condition addOnSettings[AddOnSetting.SANDBOX] == true
     @Condition eventPlayer.isDummy() == false
     @Condition isGameInProgress() == true
     @Condition ballIsOut == false
@@ -112,7 +112,7 @@ rule "Sandbox - Set Ball speed":
 
 rule "Sandbox - Change xyz and +/-":
     @Event eachPlayer
-    @Condition Sandbox == true
+    @Condition addOnSettings[AddOnSetting.SANDBOX] == true
     @Condition eventPlayer.isDummy() == false
     @Condition isGameInProgress() == true
     @Condition ballIsOut == false
@@ -144,7 +144,7 @@ rule "Sandbox - Switch between pos/dir/spd":
     @Condition eventPlayer.isDummy() == false
     @Condition isGameInProgress() == true
     @Condition ballIsOut == false
-    @Condition Sandbox == true
+    @Condition addOnSettings[AddOnSetting.SANDBOX] == true
     
     waitUntil(not eventPlayer.isHoldingButton(Button.RELOAD), 0.4)
     if eventPlayer.isHoldingButton(Button.RELOAD):
@@ -156,7 +156,7 @@ rule "Sandbox - Switch between pos/dir/spd":
 
 
 rule "Sandbox - Show ball spawnpoint and direction":
-    @Condition Sandbox == true
+    @Condition addOnSettings[AddOnSetting.SANDBOX] == true
     @Condition isGameInProgress() == true
     @Condition ballIsOut == false
     
@@ -165,7 +165,7 @@ rule "Sandbox - Show ball spawnpoint and direction":
 
 
 rule "Sandbox - Controls desc":
-    @Condition Sandbox == true
+    @Condition addOnSettings[AddOnSetting.SANDBOX] == true
     
     hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "Press [{0}] / [{1}] to switch the axis youre editing. press both to switch between negative and positive.".format(inputBindingString(Button.JUMP), inputBindingString(Button.CROUCH)), HudPosition.LEFT, 999, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
     hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "Hold [{0}] to switch between position/direction/speed".format(inputBindingString(Button.RELOAD)), HudPosition.LEFT, 999, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)

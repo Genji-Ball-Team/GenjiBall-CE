@@ -15,11 +15,11 @@ rule "Check for <2 players":
 
 rule "Wait for more players":
     @Condition isGameInProgress() == true
-    @Condition (getNumberOfPlayers(Team.ALL) > 1 or Sandbox == true) == true
+    @Condition (getNumberOfPlayers(Team.ALL) > 1 or addOnSettings[AddOnSetting.SANDBOX] == true) == true
     @Condition IsEnoughPlayersToStart == false
     @Condition getCurrentGamemode() == Gamemode.FFA
     
-    if Sandbox != true and getNumberOfPlayers(Team.ALL) < 2:
+    if addOnSettings[AddOnSetting.SANDBOX] != true and getNumberOfPlayers(Team.ALL) < 2:
         return
     bigMessage(getAllPlayers(), "Lets begin!")
     IsEnoughPlayersToStart = true

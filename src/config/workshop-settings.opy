@@ -34,18 +34,13 @@ rule "Settings - Workshop settings":
     breaksEnabled = createWorkshopSettingBool("40 - Match", "breaks", true, 3)
     roundsUntilBreak = createWorkshopSettingInt("40 - Match", "break every", 10, 4, 25, 4)
     breakLength = createWorkshopSettingInt("40 - Match", "break length", 60, 1, 120, 5)
-    #50 - Features: casual/gameplay add-ons. Presets leave these manual.
+    #50 - Features: casual/gameplay add-ons. Presets leave these manual. The rest are in addOnSettings below.
     bozo_Bot = createWorkshopSettingBool("50 - Features", "bot", false, 1)
-    duelMode = createWorkshopSettingBool("50 - Features", "duels", false, 2)
-    endlessMode = createWorkshopSettingBool("50 - Features", "endless mode", false, 3)
-    Sandbox = createWorkshopSettingBool("50 - Features", "Sandbox mode", false, 4)
     #60 - Competitive: competitive test systems. Tournament controls these explicitly.
     antiOrbitMode = createWorkshopSettingBool("60 - Competitive", "AntiOrbit", false)
     antiOrbitRadius = createWorkshopSettingInt("60 - Competitive", "AntiOrbit radius", 14, 10, 20, 1)
     antiOrbitPressureRate = createWorkshopSettingInt("60 - Competitive", "AntiOrbit pressure", 2, 1, 5, 2) / 100
-    #80 - Visual: visual helpers. Presets leave these manual.
-    killCounterEnabled = createWorkshopSettingBool("80 - Visual", "kill tracker", false, 2)
-    #Add-ons no preset forces and no feel-locked rule reads, in one array.
+    #Add-ons no preset forces, in one array.
     #One entry per AddOnSetting field (config/constants.opy), in that order.
     #Each setting may only be read once, so read them here and nowhere else.
     addOnSettings = [
@@ -53,7 +48,11 @@ rule "Settings - Workshop settings":
         createWorkshopSettingBool("50 - Features", "custom abilities", false),
         createWorkshopSettingBool("80 - Visual", "x-ray", false),
         createWorkshopSettingBool("80 - Visual", "tracing mode", false, 1),
-        createWorkshopSettingBool("90 - Debug", "debug HUD", false)
+        createWorkshopSettingBool("90 - Debug", "debug HUD", false),
+        createWorkshopSettingBool("50 - Features", "duels", false, 2),
+        createWorkshopSettingBool("50 - Features", "endless mode", false, 3),
+        createWorkshopSettingBool("50 - Features", "Sandbox mode", false, 4),
+        createWorkshopSettingBool("80 - Visual", "kill tracker", false, 2)
     ]
     #Presets: one row per preset, in Preset order, one column per forced setting
     #(PresetColumn in config/constants.opy). MANUAL keeps the host's value.
@@ -99,10 +98,6 @@ rule "Settings - Workshop settings":
             antiOrbitRadius = presetRow[PresetColumn.ANTI_ORBIT_RADIUS]
         if presetRow[PresetColumn.ANTI_ORBIT_PRESSURE] != MANUAL:
             antiOrbitPressureRate = presetRow[PresetColumn.ANTI_ORBIT_PRESSURE]
-    if ballMotion == BallMotion.MODERN:
-        motionMultiplier = 1
-    elif ballMotion == BallMotion.RAPID:
-        motionMultiplier = 0.5
     if mobilityMode == Mobility.AGILE:
         moveSpeed = 190
         gravity = 80

@@ -86,7 +86,7 @@ See `src/config/variables.opy` for the full list.
 The ball is a point, and it moves fast. The Workshop only evaluates conditions about once per tick (~60 Hz), so a fast ball can skip past a player between checks ("phasing"). Two rules handle this:
 
 - **`Collision - ball reaches player`** fires when `ballPosition` is within 1.9 m of the target's eyes.
-- **`Collision - collision check`** runs every tick while `ballSpeed > 150`. It also checks **interpolated points** between the previous and current positions (`phasePosition`, `phasePosition1`, `phasePosition2`), so a fast ball can't jump over the target.
+- **`Collision - collision check`** runs every tick while `ballSpeed > 150`. It also checks **interpolated points** between the previous and current positions (the halfway and quarter points in `phasePosition`, see `PhasePoint`, and the three-quarter point), so a fast ball can't jump over the target.
 
 Both call `collisionTarget()`. That checks whether the target is deflecting (`isUsingAbility2`) or dashing (`isUsingAbility1`), and with tracing mode on, whether they're still tracing. It then either redirects the ball or calls `deflectFail()`.
 
@@ -100,7 +100,7 @@ Both call `collisionTarget()`. That checks whether the target is deflecting (`is
 |---|---|---|
 | original + modern/rapid | `startModernBall` | Workshop `chaseAtRate` on position, speed and direction. The direction chases "towards target" at `ballDirectionRate` (1.75 modern, 5 rapid). Right after a deflect, `ballCurve` briefly raises the rate to 6 for a sharper curve |
 | Legacy+ | `startLegacyPlusBall` | Manual integration every tick (`wait()` loop). No chase |
-| experimental | `startExperimentalBall` | Like modern, but deflect direction = facing direction blended with the incoming direction (`reboundInfluence`), and homing strength ramps from the "exp homing start %" setting back to 100%. The six "exp …" settings live in `experimentalTuning` (fields in `ExperimentalTuning`) |
+| experimental | `startExperimentalBall` | Like modern, but deflect direction = facing direction blended with the incoming direction (`REBOUND_INFLUENCE` in `experimentalState`, fields in `ExperimentalField`), and homing strength ramps from the "exp homing start %" setting back to 100%. The six "exp …" settings live in `experimentalTuning` (fields in `ExperimentalTuning`) |
 | astro (any engine) | `startAstroBall` | `ballDirection` is a velocity vector with gravity-like pull toward the target, so it orbits |
 | retro (any engine) | `startRetroBall` | Chases position directly to the target's eyes. No curve |
 
@@ -135,12 +135,12 @@ Each line reads "A must stay before B". Rules are named as they appear in-game.
 | Keep before | Why |
 |---|---|
 | `Settings - Workshop settings` → everything else | It must be the first rule. It reads the Workshop settings and applies presets, and the startup rules below read the results. |
-| `Settings - Workshop settings` → `Initialization - global variables` | Init copies `ballSpawnSpeed` into `ballSpeed`, `roundsUntilBreak` into `roundsUntilBreakInit`, the "exp incoming min %" value into `reboundInfluence`, and picks `ballDirectionRateInit` from `ballMotion`. Swapped, the ball would use the pre-preset defaults (0). |
-| `Settings - Workshop settings` → `HUD - controls text` | The HUD rule reads `Sandbox` and `addOnSettings` (double sens, custom abilities) once, when it starts. |
+| `Settings - Workshop settings` → `Initialization - global variables` | Init copies `ballSpawnSpeed` into `ballSpeed`, `roundsUntilBreak` into `roundsUntilBreakInit`, the "exp incoming min %" value into `experimentalState`, and picks `ballDirectionRateInit` from `ballMotion`. Swapped, the ball would use the pre-preset defaults (0). |
+| `Settings - Workshop settings` → `HUD - controls text` | The HUD rule reads `addOnSettings` (Sandbox, double sens, custom abilities) once, when it starts. |
 | `Settings - Watermark` → `HUD - Watermark` | The HUD rule checks `WatermarkEnabled` once. It only matters if the watermark is ever turned on. |
 | `Settings - Red-green colorblind filter` (disabled) → `Initialization - bounce pads`, `Appearance - target effects` | Both read `RedGreenColorblindMode` once when they create their effects. Only matters when the filter rule is enabled. |
 | `Initialization - Set map` → `Initialization - map sphere`, `Initialization - bounce pads` | The bounce pad positions are computed once from `circleCenter`, and the map sphere reads `isIsland` once. |
-| `Initialization - player variables` → `Initialization - global variables` | Existing quirk: players who are already in the lobby when the mode starts (usually the host) get `bouncePadCooldown = bouncePadCooldownLength` before that global is set, so they start with 0. Swapping would change that. Treat any fix as a deliberate change. |
+| `Initialization - player variables` → `Initialization - global variables` | Existing quirk: players who are already in the lobby when the mode starts (usually the host) get `bouncePadCooldown` from `bouncePadConfig` (the `COOLDOWN` field) before that global is set, so they start with 0. Swapping would change that. Treat any fix as a deliberate change. |
 
 **Lobby and round flow**
 
@@ -157,7 +157,7 @@ Each line reads "A must stay before B". Rules are named as they appear in-game.
 | `Collision - ball reaches player` → `Collision - collision check` | Both can detect the same hit. The single-shot rule handles it first; the check loop then sees the new target and doesn't double-trigger. |
 | `Collision - collision check` → `Ball Physics - general collision` | The check reads `ballHitPosition` from the previous tick, then general collision writes this tick's hit. Swapped, the phasing interpolation would use a different point. |
 | `core/collision` rules → `core/ball-physics` bounce rules | When a deflect and a wall hit land in the same tick, the deflect sets the new direction first and the bounce reflects that. Swapped, the bounce would be applied to the old direction and then thrown away by the deflect. |
-| `Ball Physics - anti ghost correction` → `Ball Physics - general collision`, `Ball Physics - island collision` | Anti-ghost can raise `ballDirectionRate` to 4. With the experimental engine, a surface bounce computes `experimentalSteeringRate` from `ballDirectionRate`, so in a shared tick the bounce uses the raised rate. |
+| `Ball Physics - anti ghost correction` → `Ball Physics - general collision`, `Ball Physics - island collision` | Anti-ghost can raise `ballDirectionRate` to 4. With the experimental engine, a surface bounce computes the steering rate in `experimentalState` from `ballDirectionRate`, so in a shared tick the bounce uses the raised rate. |
 | `Ball Physics - general collision` → `Ball Physics - chamber x/y/z collision` | On Workshop Chamber both can bounce the ball in the same tick, and a normal-based reflect followed by an axis flip is not the same as the reverse. |
 | `Ball Physics - island collision` → `Ball Physics - water` | On Workshop Island their areas overlap in a thin band at the platform edge (|x| or |z| between 20 and 20.2). Island collision flips a downward ball up, and water then no longer triggers. Swapped, water flattens the ball first and island collision picks a side wall instead. |
 | `core/collision` → `Tracing mode - gained` / `Tracing mode - lost` | `collisionTarget()` reads `tracingPoints`, so a hit uses the previous tick's tracing state. |

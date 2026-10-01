@@ -5,10 +5,7 @@ def startBall():
     
     ballIsOut = true
     #Spawned balls start already aimed at the target; redirect ramp applies after deflects.
-    ballRedirectAge = 999
-    experimentalSteeringRate = ballDirectionRate
-    reboundIncomingDirection = ballDirection
-    reboundInfluence = experimentalTuning[ExperimentalTuning.REBOUND_MIN]
+    experimentalState = [999, ballDirectionRate, ballDirection, experimentalTuning[ExperimentalTuning.REBOUND_MIN]]
     if ballPhysicsMode == BallPhysics.LEGACY_PLUS:
         async(startLegacyPlusBall, AsyncBehavior.RESTART)
     elif ballPhysicsMode == BallPhysics.EXPERIMENTAL:
@@ -72,20 +69,20 @@ def startExperimentalBall():
         return
     chaseAtRate(ballPosition, ballPosition + ballDirection * ballSpeed * motionMultiplier, ballSpeed)
     chaseAtRate(ballSpeed, ballSpeedCap, ballAcceleration)
-    experimentalSteeringRate = ballDirectionRate
-    chaseAtRate(ballDirection, directionTowards(ballPosition, target.getEyePosition()), updateEveryFrame(experimentalSteeringRate))
+    experimentalState[ExperimentalField.STEERING_RATE] = ballDirectionRate
+    chaseAtRate(ballDirection, directionTowards(ballPosition, target.getEyePosition()), updateEveryFrame(experimentalState[ExperimentalField.STEERING_RATE]))
     while ballIsOut:
-        ballRedirectAge = min(999, ballRedirectAge + 0.016)
+        experimentalState[ExperimentalField.REDIRECT_AGE] = min(999, experimentalState[ExperimentalField.REDIRECT_AGE] + 0.016)
         if target != null:
             #Dodgeball Hybrid homing handoff: throw/rebound identity first,
             #then a smooth return to normal Modern steering. This uses no
             #close-range magnetic tightening; AntiOrbit handles true orbit abuse.
-            if ballRedirectAge < experimentalTuning[ExperimentalTuning.HOMING_HOLD]:
-                experimentalSteeringRate = ballDirectionRate * experimentalTuning[ExperimentalTuning.HOMING_START]
-            elif ballRedirectAge < experimentalTuning[ExperimentalTuning.HOMING_HOLD] + experimentalTuning[ExperimentalTuning.HOMING_RAMP]:
-                experimentalSteeringRate = ballDirectionRate * (experimentalTuning[ExperimentalTuning.HOMING_START] + (((ballRedirectAge - experimentalTuning[ExperimentalTuning.HOMING_HOLD]) / experimentalTuning[ExperimentalTuning.HOMING_RAMP]) * (1 - experimentalTuning[ExperimentalTuning.HOMING_START])))
+            if experimentalState[ExperimentalField.REDIRECT_AGE] < experimentalTuning[ExperimentalTuning.HOMING_HOLD]:
+                experimentalState[ExperimentalField.STEERING_RATE] = ballDirectionRate * experimentalTuning[ExperimentalTuning.HOMING_START]
+            elif experimentalState[ExperimentalField.REDIRECT_AGE] < experimentalTuning[ExperimentalTuning.HOMING_HOLD] + experimentalTuning[ExperimentalTuning.HOMING_RAMP]:
+                experimentalState[ExperimentalField.STEERING_RATE] = ballDirectionRate * (experimentalTuning[ExperimentalTuning.HOMING_START] + (((experimentalState[ExperimentalField.REDIRECT_AGE] - experimentalTuning[ExperimentalTuning.HOMING_HOLD]) / experimentalTuning[ExperimentalTuning.HOMING_RAMP]) * (1 - experimentalTuning[ExperimentalTuning.HOMING_START])))
             else:
-                experimentalSteeringRate = ballDirectionRate
+                experimentalState[ExperimentalField.STEERING_RATE] = ballDirectionRate
         wait()
 
 
@@ -122,29 +119,27 @@ rule "Ball Physics - anti ghost correction":
     #Tournament+ uses Steer.
     if distance(ballPosition, target.getEyePosition()) <= 7:
         if antiGhostMode == AntiGhost.TRACK:
-            if antiGhostPrevDistance == 999:
-                antiGhostPrevDistance = distance(ballPosition, target.getEyePosition())
-            if distance(ballPosition, target.getEyePosition()) >= antiGhostPrevDistance - 0.05:
-                antiGhostStallTimer += 0.05
+            if antiGhostState[AntiGhostField.PREV_DISTANCE] == 999:
+                antiGhostState[AntiGhostField.PREV_DISTANCE] = distance(ballPosition, target.getEyePosition())
+            if distance(ballPosition, target.getEyePosition()) >= antiGhostState[AntiGhostField.PREV_DISTANCE] - 0.05:
+                antiGhostState[AntiGhostField.STALL_TIMER] += 0.05
             else:
-                antiGhostStallTimer = 0
-            antiGhostPrevDistance = distance(ballPosition, target.getEyePosition())
-            if antiGhostStallTimer >= 0.15:
+                antiGhostState[AntiGhostField.STALL_TIMER] = 0
+            antiGhostState[AntiGhostField.PREV_DISTANCE] = distance(ballPosition, target.getEyePosition())
+            if antiGhostState[AntiGhostField.STALL_TIMER] >= 0.15:
                 if ballDirectionRate < 4:
                     ballDirectionRate = 4
             elif ballDirectionRate == 4:
                 ballDirectionRate = ballDirectionRateInit
         elif antiGhostMode == AntiGhost.STEER:
             if angleBetweenVectors(ballDirection, directionTowards(ballPosition, target.getEyePosition())) >= 35:
-                antiGhostStallTimer = 0
-                antiGhostPrevDistance = distance(ballPosition, target.getEyePosition())
+                antiGhostState = [distance(ballPosition, target.getEyePosition()), 0]
                 if ballDirectionRate < 4:
                     ballDirectionRate = 4
             elif ballDirectionRate == 4:
                 ballDirectionRate = ballDirectionRateInit
     else:
-        antiGhostPrevDistance = 999
-        antiGhostStallTimer = 0
+        antiGhostState = [999, 0]
         if ballDirectionRate == 4:
             ballDirectionRate = ballDirectionRateInit
     wait(0.05, Wait.ABORT_WHEN_FALSE)
@@ -158,22 +153,20 @@ rule "Ball Physics - general collision":
     @Condition ballPosition.y > 7.5
     @Condition (ballPosition.z > 20 or ballPosition.z < -20 or ballPosition.x > 20 or ballPosition.x < -20 or ballPosition.y > 0) == true
     
-    ballNextFramePosition = ballPosition + ballDirection * ballSpeed * 0.066
     #Used for phasingprotection in Ball/Target - collision check
-    ballHitPosition = raycastHitPosition(ballPosition, ballNextFramePosition, null, getAllPlayers(), false)
+    ballHitPosition = raycastHitPosition(ballPosition, ballPosition + ballDirection * ballSpeed * 0.066, null, getAllPlayers(), false)
     if isIsland or ballHitPosition.y < -0.5 and ballHitPosition.y > -3.5:
         CollisionSurfaceDistances = [distance(ballHitPosition, vect(20, ballHitPosition.y, ballHitPosition.z)), distance(ballHitPosition, vect(-20, ballHitPosition.y, ballHitPosition.z)), distance(ballHitPosition, vect(ballHitPosition.x, ballHitPosition.y, 20)), distance(ballHitPosition, vect(ballHitPosition.x, ballHitPosition.y, -20))]
         simpleIslandSideCollision()
     else:
-        BallCollisionSurfaceNormal = raycastHitNormal(ballPosition, ballNextFramePosition, null, getAllPlayers(), false)
-        ballDirection -= 2 * dotProduct(ballDirection, BallCollisionSurfaceNormal) * BallCollisionSurfaceNormal
+        #Reflect around the normal of the surface hit above
+        ballDirection -= 2 * dotProduct(ballDirection, raycastHitNormal(ballPosition, ballPosition + ballDirection * ballSpeed * 0.066, null, getAllPlayers(), false)) * raycastHitNormal(ballPosition, ballPosition + ballDirection * ballSpeed * 0.066, null, getAllPlayers(), false)
     if ballPhysicsMode == BallPhysics.EXPERIMENTAL:
         #Surface rebounds use their own tuning slider so wall/platform bounces
         #can read physically without resetting to the full player-deflect window.
-        experimentalSteeringRate = ballDirectionRate * experimentalTuning[ExperimentalTuning.SURFACE_HOMING]
-        ballRedirectAge = experimentalTuning[ExperimentalTuning.HOMING_HOLD] + (experimentalTuning[ExperimentalTuning.HOMING_RAMP] * (max(0, min(1, (experimentalTuning[ExperimentalTuning.SURFACE_HOMING] - experimentalTuning[ExperimentalTuning.HOMING_START]) / (max(0.01, 1 - experimentalTuning[ExperimentalTuning.HOMING_START]))))))
-        antiGhostPrevDistance = 999
-        antiGhostStallTimer = 0
+        experimentalState[ExperimentalField.STEERING_RATE] = ballDirectionRate * experimentalTuning[ExperimentalTuning.SURFACE_HOMING]
+        experimentalState[ExperimentalField.REDIRECT_AGE] = experimentalTuning[ExperimentalTuning.HOMING_HOLD] + (experimentalTuning[ExperimentalTuning.HOMING_RAMP] * (max(0, min(1, (experimentalTuning[ExperimentalTuning.SURFACE_HOMING] - experimentalTuning[ExperimentalTuning.HOMING_START]) / (max(0.01, 1 - experimentalTuning[ExperimentalTuning.HOMING_START]))))))
+        antiGhostState = [999, 0]
     playEffect(getAllPlayers(), DynamicEffect.PHARAH_BARRAGE_EXPLOSION, Team.ALL, ballHitPosition, 1)
     playEffect(getAllPlayers(), DynamicEffect.ECHO_STICKY_BOMB_EXPLOSION_SOUND, Color.WHITE, ballHitPosition, 30)
     wait(0.02, Wait.ABORT_WHEN_FALSE)
@@ -194,10 +187,9 @@ rule "Ball Physics - island collision":
     simpleIslandCollision()
     if ballPhysicsMode == BallPhysics.EXPERIMENTAL:
         #Floor/platform rebounds use the same surface tuning slider as walls.
-        experimentalSteeringRate = ballDirectionRate * experimentalTuning[ExperimentalTuning.SURFACE_HOMING]
-        ballRedirectAge = experimentalTuning[ExperimentalTuning.HOMING_HOLD] + (experimentalTuning[ExperimentalTuning.HOMING_RAMP] * (max(0, min(1, (experimentalTuning[ExperimentalTuning.SURFACE_HOMING] - experimentalTuning[ExperimentalTuning.HOMING_START]) / (max(0.01, 1 - experimentalTuning[ExperimentalTuning.HOMING_START]))))))
-        antiGhostPrevDistance = 999
-        antiGhostStallTimer = 0
+        experimentalState[ExperimentalField.STEERING_RATE] = ballDirectionRate * experimentalTuning[ExperimentalTuning.SURFACE_HOMING]
+        experimentalState[ExperimentalField.REDIRECT_AGE] = experimentalTuning[ExperimentalTuning.HOMING_HOLD] + (experimentalTuning[ExperimentalTuning.HOMING_RAMP] * (max(0, min(1, (experimentalTuning[ExperimentalTuning.SURFACE_HOMING] - experimentalTuning[ExperimentalTuning.HOMING_START]) / (max(0.01, 1 - experimentalTuning[ExperimentalTuning.HOMING_START]))))))
+        antiGhostState = [999, 0]
     playEffect(getAllPlayers(), DynamicEffect.PHARAH_BARRAGE_EXPLOSION, Team.ALL, ballPosition, 1)
     playEffect(getAllPlayers(), DynamicEffect.ECHO_STICKY_BOMB_EXPLOSION_SOUND, Color.WHITE, ballPosition, 30)
     wait(0.02, Wait.ABORT_WHEN_FALSE)

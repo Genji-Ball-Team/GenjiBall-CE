@@ -209,7 +209,7 @@ rule "Controls - Simple HUD (Interact)":
     @Event eachPlayer
     @Condition eventPlayer.isHoldingButton(Button.INTERACT) == true
     @Condition eventPlayer.isAlive() == true
-    @Condition Sandbox == false
+    @Condition addOnSettings[AddOnSetting.SANDBOX] == false
     
     if eventPlayer.simpleHUD == SimpleHud.ZEN:
         eventPlayer.simpleHUD = SimpleHud.OFF
@@ -255,5 +255,5 @@ rule "Controls - Bounce when near a pad":
         eventPlayer.applyImpulse(Vector.UP, bouncePadConfig[BouncePadField.STRENGTH] - bouncePadConfig[BouncePadField.SUPERJUMP_NERF], Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
     else:
         eventPlayer.applyImpulse(Vector.UP, bouncePadConfig[BouncePadField.STRENGTH], Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
-    eventPlayer.bouncePadCooldown = bouncePadCooldownLength
+    eventPlayer.bouncePadCooldown = bouncePadConfig[BouncePadField.COOLDOWN]
     playEffect(getAllPlayers(), DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, sorted(bouncePads, lambda pad: distance(eventPlayer.getPosition(), pad))[0], 25)

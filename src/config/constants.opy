@@ -65,6 +65,11 @@ enum BallMotion:
     ASTRO
     RETRO
 
+#How far the modern, Legacy+ and Experimental engines move the ball per unit of
+#ballSpeed. Only modern and rapid motion reach those engines (astro and retro
+#have their own), and rapid moves at half the distance.
+#!define motionMultiplier (0.5 if ballMotion == BallMotion.RAPID else 1)
+
 #ballPhysicsMode ("10 - Ball > physics engine")
 enum BallPhysics:
     ORIGINAL
@@ -80,12 +85,31 @@ enum ExperimentalTuning:
     HOMING_RAMP     #seconds to ramp back to full homing
     SURFACE_HOMING  #homing strength right after a wall or floor bounce
 
-#Fields of bouncePadConfig ("Initialization - bounce pads")
+#Fields of experimentalState, the Experimental engine's state while the ball is out
+enum ExperimentalField:
+    REDIRECT_AGE        #seconds since the last deflect, for the homing handoff
+    STEERING_RATE       #the rate ballDirection chases the target at
+    INCOMING_DIRECTION  #the ball's direction just before a deflect
+    REBOUND_INFLUENCE   #share of INCOMING_DIRECTION kept in the deflect
+
+#Fields of antiGhostState ("Ball Physics - anti ghost correction")
+enum AntiGhostField:
+    PREV_DISTANCE   #distance to the target at the last check, 999 when not tracking
+    STALL_TIMER     #seconds the ball hasn't got closer to the target
+
+#Fields of phasePosition, points between the ball's last and current position
+#that "Collision - collision check" also checks, so a fast ball can't skip the target
+enum PhasePoint:
+    LAST     #the ball's position at the last check, moved halfway to the current one during the check
+    QUARTER  #halfway between LAST before and after that move
+
+#Fields of bouncePadConfig ("Initialization - global variables")
 enum BouncePadField:
     STRENGTH        #upward impulse of a bounce
     DISTANCE        #distance of each pad from circleCenter
     RANGE           #how close a player has to be to a pad to bounce
     SUPERJUMP_NERF  #taken off STRENGTH while the player has dashNerf
+    COOLDOWN        #seconds before a player can bounce again
 
 #Fields of addOnSettings, the add-on settings no preset forces
 enum AddOnSetting:
@@ -94,6 +118,10 @@ enum AddOnSetting:
     XRAY            #"80 - Visual > x-ray"
     TRACING_MODE    #"80 - Visual > tracing mode"
     DEBUG_HUD       #"90 - Debug > debug HUD"
+    DUELS           #"50 - Features > duels"
+    ENDLESS         #"50 - Features > endless mode"
+    SANDBOX         #"50 - Features > Sandbox mode"
+    KILL_TRACKER    #"80 - Visual > kill tracker"
 
 #antiGhostMode ("10 - Ball > anti-ghost correction")
 enum AntiGhost:
