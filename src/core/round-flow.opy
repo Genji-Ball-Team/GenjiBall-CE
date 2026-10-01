@@ -3,11 +3,13 @@
 def startRound():
     @Name "Active game - start round"
     
+    RoundSetupPending = true
     if addOnSettings[AddOnSetting.SANDBOX] == true:
         waitUntil(hostPlayer.isHoldingButton(Button.ULTIMATE) and hostPlayer.isHoldingButton(Button.RELOAD), 99999)
     randomTarget()
     chaseAtRate(ballSpawnCountdown, 0, 1)
     RoundInProgress = true
+    RoundSetupPending = false
     #New rounds should start with dash available again.
     #This only resets the custom dash cooldown flag; it does not alter dash/deflect timing mid-round.
     getAllPlayers().dashOnCooldown = false
@@ -36,6 +38,7 @@ rule "Active game - spawn ball":
 def setupFinal():
     @Name "Subroutine - setup duel"
     
+    RoundSetupPending = true
     if ballIsOut == false:
         goto lbl_0
     deleteBall()
@@ -45,6 +48,7 @@ def setupFinal():
     if addOnSettings[AddOnSetting.SANDBOX] == true:
         waitUntil(hostPlayer.isHoldingButton(Button.ULTIMATE) and hostPlayer.isHoldingButton(Button.RELOAD), 99999)
     IsInFinalDuel = true
+    RoundSetupPending = false
     chaseAtRate(ballSpawnCountdown, 0, 1)
     getLivingPlayers(Team.ALL).bouncePadCooldown = bouncePadConfig[BouncePadField.COOLDOWN] - 1
     if isIsland:
@@ -85,6 +89,8 @@ rule "Active game - check for last player surviving":
     @Condition addOnSettings[AddOnSetting.DUELS] == false
     
     IsInFinalDuel = false
+    #Cleared by startRound once the next round is under way.
+    RoundSetupPending = true
     getLivingPlayers(Team.ALL).addToScore(1)
     wait(0.25)
     if (getMatchTime() == 0 or TieBreakerActive) and not tournamentMode:
@@ -142,7 +148,9 @@ rule "Active game - all players dead":
     if ruleCondition:
         loop()
     wait(2)
-    if IsEnoughPlayersToStart:
+    #Skip if the round has already restarted, or is about to: by the lobby (not enough players), the final duel (two players)
+    #or a round win (including its win pause and the host wait in Sandbox).
+    if not IsEnoughPlayersToStart or IsInFinalDuel or RoundInProgress or RoundSetupPending:
         return
     stopChasing(ballSpawnCountdown)
     startRound()
