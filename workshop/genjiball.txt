@@ -697,9 +697,11 @@ rule ("Appearance - target effects") {
             Create Effect(If-Then-Else(Compare(Local Player, ==, Global.target), Local Player, Null), Good Aura, If-Then-Else((Local Player).thirdPerson, Color(Gray), Color(Red)), Local Player, 0.8, Visible To Position Radius and Color);
             Create Effect(Global.target, Good Aura, Color(Blue), Global.ballPosition, 1, Visible To Position and Radius);
         Else;
-            Create Effect(Global.target, Orb, Color(Blue), Update Every Frame(Global.ballPosition), 0.4, Visible To Position and Radius);
-            Create Effect(All Players(All Teams), Good Aura, Color(Blue), Global.target, 1, Visible To Position and Radius);
-            Create Effect(Global.target, Good Aura, Color(Blue), Global.target, 1, Visible To Position and Radius);
+            "Same effects as above, red-green safe: red becomes blue, and the ball's blue aura becomes yellow."
+            Create Effect(Global.target, Orb, Color(Blue), Update Every Frame(Global.ballPosition), 1, Visible To Position and Radius);
+            Create Effect(If-Then-Else(Is Alive(Global.target), Remove From Array(All Players(All Teams), Global.target), Null), Good Aura, Color(Blue), Global.target, 1, Visible To Position and Radius);
+            Create Effect(If-Then-Else(Compare(Local Player, ==, Global.target), Local Player, Null), Good Aura, If-Then-Else((Local Player).thirdPerson, Color(Gray), Color(Blue)), Local Player, 0.8, Visible To Position Radius and Color);
+            Create Effect(Global.target, Good Aura, Color(Yellow), Global.ballPosition, 1, Visible To Position and Radius);
         End;
         If(Value In Array(Global.addOnSettings, 2));
             Create Icon(If-Then-Else(And(Global.ballIsOut, Not(Is In Line of Sight(Eye Position(Global.target), Global.ballPosition, All Barriers Block LOS))), Global.target, Null), Update Every Frame(Global.ballPosition), Heart, Visible To and Position, Color(Red), True);

@@ -11,9 +11,11 @@ rule "Appearance - target effects":
         createEffect(localPlayer if localPlayer == target else null, Effect.GOOD_AURA, Color.GRAY if localPlayer.thirdPerson else Color.RED, localPlayer, 0.8)
         createEffect(target, Effect.GOOD_AURA, Color.BLUE, ballPosition, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     else:
-        createEffect(target, Effect.ORB, Color.BLUE, updateEveryFrame(ballPosition), 0.4, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        createEffect(getAllPlayers(), Effect.GOOD_AURA, Color.BLUE, target, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-        createEffect(target, Effect.GOOD_AURA, Color.BLUE, target, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+        #Same effects as above, red-green safe: red becomes blue, and the ball's blue aura becomes yellow.
+        createEffect(target, Effect.ORB, Color.BLUE, updateEveryFrame(ballPosition), 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+        createEffect(getAllPlayers().exclude(target) if target.isAlive() else null, Effect.GOOD_AURA, Color.BLUE, target, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+        createEffect(localPlayer if localPlayer == target else null, Effect.GOOD_AURA, Color.GRAY if localPlayer.thirdPerson else Color.BLUE, localPlayer, 0.8)
+        createEffect(target, Effect.GOOD_AURA, Color.YELLOW, ballPosition, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     if addOnSettings[AddOnSetting.XRAY]:
         createIcon(target if ballIsOut and not isInLoS(target.getEyePosition(), ballPosition, BarrierLos.BLOCKED_BY_ALL_BARRIERS) else null, updateEveryFrame(ballPosition), Icon.HEART, IconReeval.VISIBILITY_AND_POSITION, Color.RED)
 
