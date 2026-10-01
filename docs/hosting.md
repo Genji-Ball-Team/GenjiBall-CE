@@ -23,7 +23,7 @@ The lobby is set up for **Deathmatch (FFA)** with up to **10 players** and 12 sp
 
 ## Maps
 
-Workshop Island (Night) is the only map enabled by default. The code also supports the maps below. Enable them under **Settings → Modes → Deathmatch → Maps**.
+Workshop Island (Night) is the only map enabled by default. The code also supports the maps below. Enable them under **Settings → Modes → Deathmatch → Maps**. On any other map the game shows "This map isn't supported" with the list of supported maps, and no round starts.
 
 | Map | Arena radius | Notes |
 |---|---|---|

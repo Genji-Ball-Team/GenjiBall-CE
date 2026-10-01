@@ -1,11 +1,15 @@
 #Arena center and size per map
 
+#True on a map with no row in the map table: the lookup gives no row, so the radius reads 0.
+#Every supported row has a radius above 0.
+#!define MAP_UNSUPPORTED (mapRow[MapColumn.RADIUS] == 0)
+
 rule "Initialization - Set map":
     #Maps: one row per supported map, one column per value (MapColumn in config/constants.opy).
     #The map list and the row list must stay in the same order.
     #Kings Row and Blizz World are smaller than the others: lower the max players there.
     #Rule names can't contain "Blizzard", so the map is written "Blizz World" in rule names.
-    #Any other map has no row and no arena.
+    #Any other map has no row and no arena, so no round starts there (MAP_UNSUPPORTED).
     mapRow = [
         #center,                        radius
         [vect(0, 1.199, 0),             60],   #Workshop Island
@@ -41,3 +45,10 @@ rule "Initialization - Set map":
         SphereSize = max(arenaSettings[ArenaSetting.ARENA_RADIUS], max(10, 1.5 * (arenaSettings[ArenaSetting.CENTER_SIZE] + 0.5)))
     #Workshop Island has water and a ledge instead of a wall; several rules check this.
     isIsland = __getCurrentMap__() == Map.WORKSHOP_ISLAND or __getCurrentMap__() == Map.WORKSHOP_ISLAND_NIGHT
+
+
+rule "Initialization - unsupported map":
+    @Condition MAP_UNSUPPORTED == true
+
+    hudHeader(getAllPlayers(), "This map isn't supported, so no round will start", HudPosition.TOP, -3, Color.LIGHT_RED, HudReeval.VISIBILITY_AND_STRING)
+    hudSubheader(getAllPlayers(), "Pick Workshop Island, Expanse, Green Screen or Chamber, Oasis University, King's Row or Blizz World", HudPosition.TOP, -2, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)

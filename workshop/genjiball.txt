@@ -314,7 +314,7 @@ rule ("Initialization - Set map") {
         Ongoing - Global;
     }
     actions {
-        "Kings Row and Blizz World are smaller than the others: lower the max players there.\nRule names can't contain \"Blizzard\", so the map is written \"Blizz World\" in rule names.\nAny other map has no row and no arena."
+        "Kings Row and Blizz World are smaller than the others: lower the max players there.\nRule names can't contain \"Blizzard\", so the map is written \"Blizz World\" in rule names.\nAny other map has no row and no arena, so no round starts there (MAP_UNSUPPORTED)."
         Set Global Variable(mapRow, Value In Array(Array(Array(Vector(0, 1.199, 0), 60), Array(Vector(0, 1.199, 0), 60), Array(Vector(0, 1.199, 0), 29.7), Array(Vector(0, 1.199, 0), 50), Array(Vector(0, 1.199, 0), 50), Array(Vector(0, 1.199, 0), 60), Array(Vector(-192.609, 60.349, 2.252), 25), Array(Vector(-20.504, 40.538, -74.601), 23), Array(Vector(-20.504, 40.538, -74.601), 23), Array(Vector(2.554, -4.651, -71.211), 23), Array(Vector(2.554, -4.651, -71.211), 23)), Index Of Array Value(Array(Map(Workshop Island), Map(Workshop Island Night), Map(Workshop Chamber), Map(Workshop Expanse), Map(Workshop Expanse Night), Map(Workshop Green Screen), Map(Oasis University), Map(King's Row), Map(King's Row Winter), Map(Blizzard World), Map(Blizzard World Winter)), Current Map)));
         Set Global Variable(circleCenter, First Of(Global.mapRow));
         Set Global Variable(SphereSize, Value In Array(Global.mapRow, 1));
@@ -324,6 +324,19 @@ rule ("Initialization - Set map") {
         End;
         "Workshop Island has water and a ledge instead of a wall; several rules check this."
         Set Global Variable(isIsland, Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))));
+    }
+}
+
+rule ("Initialization - unsupported map") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Value In Array(Global.mapRow, 1) == 0;
+    }
+    actions {
+        Create HUD Text(All Players(All Teams), Custom String("This map isn't supported, so no round will start"), Null, Null, Top, -3, Custom Color(255, 112, 122, 255), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Custom String("Pick Workshop Island, Expanse, Green Screen or Chamber, Oasis University, King's Row or Blizz World"), Null, Top, -2, Null, Color(White), Null, Visible To and String, Default Visibility);
     }
 }
 
@@ -750,6 +763,8 @@ rule ("Wait for more players") {
         Or(Compare(Number Of Players(All Teams), >, 1), Compare(Value In Array(Global.addOnSettings, 7), ==, True)) == True;
         Global.IsEnoughPlayersToStart == False;
         Current Game Mode == Game Mode(Deathmatch);
+        "No arena on an unsupported map (maps/arenas.opy)"
+        Value In Array(Global.mapRow, 1) != 0;
     }
     actions {
         Abort If(And(Compare(Value In Array(Global.addOnSettings, 7), !=, True), Compare(Number Of Players(All Teams), <, 2)));

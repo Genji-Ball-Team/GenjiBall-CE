@@ -19,6 +19,8 @@ rule "Wait for more players":
     @Condition (getNumberOfPlayers(Team.ALL) > 1 or addOnSettings[AddOnSetting.SANDBOX] == true) == true
     @Condition IsEnoughPlayersToStart == false
     @Condition getCurrentGamemode() == Gamemode.FFA
+    #No arena on an unsupported map (maps/arenas.opy)
+    @Condition MAP_UNSUPPORTED == false
     
     if addOnSettings[AddOnSetting.SANDBOX] != true and getNumberOfPlayers(Team.ALL) < 2:
         return
