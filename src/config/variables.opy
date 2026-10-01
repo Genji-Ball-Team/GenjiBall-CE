@@ -55,8 +55,6 @@ globalvar gravity 60
 globalvar jumpVerticalSpeed 61
 globalvar addOnSettings 62
 globalvar tracingPoints 67
-globalvar RedGreenColorblindMode 68
-globalvar WatermarkEnabled 69
 globalvar antiOrbitMode 75
 globalvar antiOrbitRadius 76
 globalvar antiOrbitPressureRate 77

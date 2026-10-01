@@ -116,5 +116,5 @@ rule "HUD - zen mode cooldown":
 
 rule "HUD - Watermark":
     #Please don't be a child and try to take credit for this game. If you actually have contributed something you are free to add here. But if not, don't touch this. You are free to disable it.
-    if WatermarkEnabled:
+    if addOnSettings[AddOnSetting.WATERMARK]:
         hudSubheader(getAllPlayers(), "원작자 u/Mazawrath. v1.0.0N", HudPosition.LEFT, -1000, Color.AQUA, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)

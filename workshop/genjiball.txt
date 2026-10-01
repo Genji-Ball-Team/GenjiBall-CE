@@ -125,8 +125,6 @@ variables {
         61: jumpVerticalSpeed
         62: addOnSettings
         67: tracingPoints
-        68: RedGreenColorblindMode
-        69: WatermarkEnabled
         75: antiOrbitMode
         76: antiOrbitRadius
         77: antiOrbitPressureRate
@@ -240,7 +238,7 @@ rule ("Settings - Workshop settings") {
         "One entry per CompetitiveSetting field (config/constants.opy), in that order."
         Set Global Variable(competitiveSettings, Array(Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("AntiOrbit speed"), 80, 10, 400, 3), Workshop Setting Real(Custom String("60 - Competitive"), Custom String("AntiOrbit timer"), 7.5, 1, 30, 4), Workshop Setting Real(Custom String("60 - Competitive"), Custom String("AntiOrbit min timer"), 5.5, 1, 30, 5), Workshop Setting Real(Custom String("60 - Competitive"), Custom String("AntiOrbit sleep"), 5, 0, 10, 6), Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("basic anti-orbit radius"), 20, 5, 40, 7), Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("basic anti-orbit speed"), 80, 10, 400, 8), Workshop Setting Real(Custom String("60 - Competitive"), Custom String("basic anti-orbit timer"), 7.5, 1, 30, 9)));
         "Add-ons no preset forces, in one array.\nOne entry per AddOnSetting field (config/constants.opy), in that order.\nEach setting may only be read once, so read them here and nowhere else."
-        Set Global Variable(addOnSettings, Array(Workshop Setting Toggle(Custom String("30 - Player"), Custom String("double sens"), False, 7), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("x-ray"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("tracing mode"), False, 1), Workshop Setting Toggle(Custom String("90 - Debug"), Custom String("debug HUD"), False, 0), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("duels"), False, 2), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("endless mode"), False, 3), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("Sandbox mode"), False, 4), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("kill tracker"), False, 3), Workshop Setting Integer(Custom String("30 - Player"), Custom String("double sens %"), 275, 100, 500, 8), Workshop Setting Integer(Custom String("80 - Visual"), Custom String("tracing view angle"), 45, 5, 180, 2)));
+        Set Global Variable(addOnSettings, Array(Workshop Setting Toggle(Custom String("30 - Player"), Custom String("double sens"), False, 7), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("x-ray"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("tracing mode"), False, 1), Workshop Setting Toggle(Custom String("90 - Debug"), Custom String("debug HUD"), False, 0), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("duels"), False, 2), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("endless mode"), False, 3), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("Sandbox mode"), False, 4), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("kill tracker"), False, 3), Workshop Setting Integer(Custom String("30 - Player"), Custom String("double sens %"), 275, 100, 500, 8), Workshop Setting Integer(Custom String("80 - Visual"), Custom String("tracing view angle"), 45, 5, 180, 2), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("red-green colorblind filter"), False, 4), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("watermark"), False, 5)));
         "v7: v7-style preset shell. Deeper v7 parity remains deferred.\nExperimental: curated rebound-physics test ruleset, not tournament-safe yet.\nThe bot setting stays manual so Bot + Experimental can be tested together."
         If(Compare(Global.presetMode, !=, 7));
             Set Global Variable(presetRow, Value In Array(Array(Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, False, 0, False, 0, -1, -1, -1, -1, 5, 2, 2, -1, -1, -1, -1, -1, -1, -1, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, False, 0, False, 0, 0, False, -1, -1, 5, 2, 2, 80, 7.5, 5.5, 5, 20, 80, 7.5, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, False, 0, False, 0, 2, True, 14, 0.02, 5, 2, 2, 80, 7.5, 5.5, 5, 20, 80, 7.5, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 1, 0, False, 3, True, 1, -1, -1, -1, -1, 5, 2, 2, -1, -1, -1, -1, -1, -1, -1, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, False, 1, False, 0, -1, -1, -1, -1, 5, 2, 2, -1, -1, -1, -1, -1, -1, -1, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, False, 3, True, 2, -1, -1, -1, -1, 5, 2, 2, -1, -1, -1, -1, -1, -1, -1, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 2, False, 0, False, 0, 0, True, 14, 0.02, 5, 2, 2, 80, 7.5, 5.5, 5, 20, 80, 7.5, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3)), Global.presetMode));
@@ -307,24 +305,6 @@ rule ("Settings - Workshop settings") {
         End;
         If(Global.bozo_Bot);
             Set Global Variable(bozo_Bot, 1);
-    }
-}
-
-rule ("Settings - Watermark") {
-    event {
-        Ongoing - Global;
-    }
-    actions {
-        Set Global Variable(WatermarkEnabled, False);
-    }
-}
-
-disabled rule ("Settings - Red-green colorblind filter") {
-    event {
-        Ongoing - Global;
-    }
-    actions {
-        Set Global Variable(RedGreenColorblindMode, True);
     }
 }
 
@@ -457,7 +437,7 @@ rule ("Initialization - bounce pads") {
         Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, ==, 0)), Ring, Color(Sky Blue), Value In Array(Global.bouncePads, 1), 2, Visible To Position and Radius);
         Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, ==, 0)), Ring, Color(Sky Blue), Value In Array(Global.bouncePads, 2), 2, Visible To Position and Radius);
         Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, ==, 0)), Ring, Color(Sky Blue), Value In Array(Global.bouncePads, 3), 2, Visible To Position and Radius);
-        If(Global.RedGreenColorblindMode);
+        If(Value In Array(Global.addOnSettings, 11));
             Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(Yellow), First Of(Global.bouncePads), 2, Visible To Position and Radius);
             Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(Yellow), Value In Array(Global.bouncePads, 1), 2, Visible To Position and Radius);
             Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, >, 0)), Ring, Color(Yellow), Value In Array(Global.bouncePads, 2), 2, Visible To Position and Radius);
@@ -696,7 +676,7 @@ rule ("HUD - Watermark") {
     }
     actions {
         "Please don't be a child and try to take credit for this game. If you actually have contributed something you are free to add here. But if not, don't touch this. You are free to disable it."
-        If(Global.WatermarkEnabled);
+        If(Value In Array(Global.addOnSettings, 12));
             Create HUD Text(All Players(All Teams), Null, Custom String("원작자 u/Mazawrath. v1.0.0N"), Null, Left, -1000, Null, Color(Aqua), Null, Visible To and String, Visible Always);
     }
 }
@@ -711,15 +691,17 @@ rule ("Appearance - target effects") {
     actions {
         Create Effect(Remove From Array(All Players(All Teams), Global.target), Orb, Color(White), Update Every Frame(Global.ballPosition), 1, Visible To Position and Radius);
         Create Projectile Effect(All Players(All Teams), Sigma Hypersphere, Null, Update Every Frame(Global.ballPosition), Global.ballDirection, 0.01, Visible To Position Direction and Size);
-        If(Not(Global.RedGreenColorblindMode));
+        If(Not(Value In Array(Global.addOnSettings, 11)));
             Create Effect(Global.target, Orb, Color(Red), Update Every Frame(Global.ballPosition), 1, Visible To Position and Radius);
             Create Effect(If-Then-Else(Is Alive(Global.target), Remove From Array(All Players(All Teams), Global.target), Null), Good Aura, Color(Red), Global.target, 1, Visible To Position and Radius);
             Create Effect(If-Then-Else(Compare(Local Player, ==, Global.target), Local Player, Null), Good Aura, If-Then-Else((Local Player).thirdPerson, Color(Gray), Color(Red)), Local Player, 0.8, Visible To Position Radius and Color);
             Create Effect(Global.target, Good Aura, Color(Blue), Global.ballPosition, 1, Visible To Position and Radius);
         Else;
-            Create Effect(Global.target, Orb, Color(Blue), Update Every Frame(Global.ballPosition), 0.4, Visible To Position and Radius);
-            Create Effect(All Players(All Teams), Good Aura, Color(Blue), Global.target, 1, Visible To Position and Radius);
-            Create Effect(Global.target, Good Aura, Color(Blue), Global.target, 1, Visible To Position and Radius);
+            "Same effects as above, red-green safe: red becomes blue, and the ball's blue aura becomes yellow."
+            Create Effect(Global.target, Orb, Color(Blue), Update Every Frame(Global.ballPosition), 1, Visible To Position and Radius);
+            Create Effect(If-Then-Else(Is Alive(Global.target), Remove From Array(All Players(All Teams), Global.target), Null), Good Aura, Color(Blue), Global.target, 1, Visible To Position and Radius);
+            Create Effect(If-Then-Else(Compare(Local Player, ==, Global.target), Local Player, Null), Good Aura, If-Then-Else((Local Player).thirdPerson, Color(Gray), Color(Blue)), Local Player, 0.8, Visible To Position Radius and Color);
+            Create Effect(Global.target, Good Aura, Color(Yellow), Global.ballPosition, 1, Visible To Position and Radius);
         End;
         If(Value In Array(Global.addOnSettings, 2));
             Create Icon(If-Then-Else(And(Global.ballIsOut, Not(Is In Line of Sight(Eye Position(Global.target), Global.ballPosition, All Barriers Block LOS))), Global.target, Null), Update Every Frame(Global.ballPosition), Heart, Visible To and Position, Color(Red), True);
@@ -732,7 +714,7 @@ rule ("Appearance - ball countdown") {
     }
     actions {
         Create In-World Text(If-Then-Else(Global.ballIsOut, Null, Remove From Array(All Players(All Teams), Global.target)), Custom String("BALL SPAWNING IN: {0}", Round To Integer(Global.ballSpawnCountdown, Up)), Vector(X Component Of(Global.circleCenter), Add(Y Component Of(Global.circleCenter), 2.5), Z Component Of(Global.circleCenter)), 2.5, Clip Against Surfaces, Visible To Position and String, Color(Sky Blue), Default Visibility);
-        Create In-World Text(If-Then-Else(Global.ballIsOut, Null, Global.target), Custom String("BALL SPAWNING IN: {0}", Round To Integer(Global.ballSpawnCountdown, Up)), Vector(X Component Of(Global.circleCenter), Add(Y Component Of(Global.circleCenter), 2.5), Z Component Of(Global.circleCenter)), 2.5, Clip Against Surfaces, Visible To Position and String, Color(Red), Default Visibility);
+        Create In-World Text(If-Then-Else(Global.ballIsOut, Null, Global.target), Custom String("BALL SPAWNING IN: {0}", Round To Integer(Global.ballSpawnCountdown, Up)), Vector(X Component Of(Global.circleCenter), Add(Y Component Of(Global.circleCenter), 2.5), Z Component Of(Global.circleCenter)), 2.5, Clip Against Surfaces, Visible To Position and String, If-Then-Else(Value In Array(Global.addOnSettings, 11), Color(Blue), Color(Red)), Default Visibility);
     }
 }
 

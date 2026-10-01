@@ -97,7 +97,7 @@ rule "Initialization - bounce pads":
     createEffect(getAllPlayers().filter(lambda player: player.bouncePadCooldown == 0), Effect.RING, Color.SKY_BLUE, bouncePads[1], 2, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     createEffect(getAllPlayers().filter(lambda player: player.bouncePadCooldown == 0), Effect.RING, Color.SKY_BLUE, bouncePads[2], 2, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     createEffect(getAllPlayers().filter(lambda player: player.bouncePadCooldown == 0), Effect.RING, Color.SKY_BLUE, bouncePads[3], 2, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-    if RedGreenColorblindMode:
+    if addOnSettings[AddOnSetting.COLORBLIND]:
         createEffect(getAllPlayers().filter(lambda player: player.bouncePadCooldown > 0), Effect.RING, Color.YELLOW, bouncePads[0], 2, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
         createEffect(getAllPlayers().filter(lambda player: player.bouncePadCooldown > 0), Effect.RING, Color.YELLOW, bouncePads[1], 2, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
         createEffect(getAllPlayers().filter(lambda player: player.bouncePadCooldown > 0), Effect.RING, Color.YELLOW, bouncePads[2], 2, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
