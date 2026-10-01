@@ -16,17 +16,17 @@ rule "AntiOrbit - no orbit abusing":
         if ruleCondition:
             loop()
         return
-    if ballSpeed >= 80:
+    if ballSpeed >= competitiveSettings[CompetitiveSetting.ORBIT_SPEED]:
         wait(0.1)
         if ruleCondition:
             loop()
         return
-    wait(max(5.5, 7.5 - ((eventPlayer.orbitPenalty + eventPlayer.orbitHeat) * 5)), Wait.ABORT_WHEN_FALSE)
+    wait(max(competitiveSettings[CompetitiveSetting.ORBIT_MIN_TIMER], competitiveSettings[CompetitiveSetting.ORBIT_TIMER] - ((eventPlayer.orbitPenalty + eventPlayer.orbitHeat) * 5)), Wait.ABORT_WHEN_FALSE)
     if not ruleCondition:
         return
-    if not (distance(eventPlayer.getEyePosition(), ballPosition) < antiOrbitRadius and ballSpeed < 80):
+    if not (distance(eventPlayer.getEyePosition(), ballPosition) < antiOrbitRadius and ballSpeed < competitiveSettings[CompetitiveSetting.ORBIT_SPEED]):
         return
-    eventPlayer.setStatusEffect(null, Status.ASLEEP, 5)
+    eventPlayer.setStatusEffect(null, Status.ASLEEP, competitiveSettings[CompetitiveSetting.ORBIT_SLEEP])
     eventPlayer.applyImpulse(ballDirection + Vector.UP, 10, Relativity.TO_WORLD)
 
 

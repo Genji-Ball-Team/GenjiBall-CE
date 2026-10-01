@@ -192,7 +192,7 @@ With the constraints above kept, these have no order dependency: `features/duels
 
 ## Settings and presets
 
-`Settings - Workshop settings` is the first rule. It reads every `createWorkshopSetting*`, then, unless the preset is Custom, **overwrites** the core values with the preset's row of the preset table. The table has one row per preset (in `Preset` order) and one column per forced setting (`PresetColumn` in `config/constants.opy`). A `MANUAL` cell leaves the host's value, which is how anti-ghost and AntiOrbit stay manual in most presets. It also turns enum settings into concrete numbers (mobility → move/gravity/jump percentages, water → a height, and so on). Mobility = custom keeps the "custom ... %" sliders, which are read straight into `moveSpeed`, `gravity` and `jumpVerticalSpeed`.
+`Settings - Workshop settings` is the first rule. It reads every `createWorkshopSetting*`, then, unless the preset is Custom, **overwrites** the core values with the preset's row of the preset table. The table has one row per preset (in `Preset` order) and one column per forced setting (`PresetColumn` in `config/constants.opy`). A `MANUAL` cell leaves the host's value, which is how anti-ghost and AntiOrbit stay manual in most presets. The anti-orbit tuning columns (`ORBIT_SPEED` to `BASIC_ORBIT_TIMER`) are forced as a group: a `MANUAL` in `ORBIT_SPEED` leaves all of `competitiveSettings` manual. It also turns enum settings into concrete numbers (mobility → move/gravity/jump percentages, water → a height, and so on). Mobility = custom keeps the "custom ... %" sliders, which are read straight into `moveSpeed`, `gravity` and `jumpVerticalSpeed`.
 
 When you add a setting:
 1. Add a `createWorkshopSetting*` call in the right category, with a sort-order number.

@@ -83,7 +83,7 @@ When someone dies, the ball keeps flying and goes after the player it's heading 
 
 ### Tracing mode
 
-If you're the target, you have to **keep the ball in view** (within about 45° of your crosshair). Look away for more than about 0.3 s and you can't deflect.
+If you're the target, you have to **keep the ball in view** (by default within 45° of your crosshair). Look away for more than about 0.3 s and you can't deflect.
 
 ### X-ray
 
@@ -95,4 +95,4 @@ Adds one practice bot, **"zSh4d0Ws bozo"**. It deflects, dashes and jumps. It's 
 
 ### Anti-orbit
 
-"Orbiting" means keeping a slow ball circling you instead of deflecting it, to stall. With anti-orbit on, if you're the target, the ball stays within 14 m of you, and it's slower than 80 for about 5.5–7.5 seconds, you're put to sleep for 5 s and knocked away. The longer you keep orbiting, the shorter the timer gets.
+"Orbiting" means keeping a slow ball circling you instead of deflecting it, to stall. With anti-orbit on, if you're the target, the ball stays within 14 m of you, and it's slower than 80 for about 5.5–7.5 seconds, you're put to sleep for 5 s and knocked away (these are the defaults; the host can change them). The longer you keep orbiting, the shorter the timer gets.

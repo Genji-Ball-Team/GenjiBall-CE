@@ -42,11 +42,11 @@ rule "Tournament - no orbit abusing":
     @Condition eventPlayer == target
     #@Condition (angleBetweenVectors(ballDirection, directionTowards(ballPosition, eventPlayer.getEyePosition())) < 100 and angleBetweenVectors(ballDirection, directionTowards(ballPosition, eventPlayer.getEyePosition())) > -100) == true
     @Condition ballIsOut == true
-    @Condition distance(eventPlayer.getEyePosition(), ballPosition) < 20
-    @Condition ballSpeed < 80
+    @Condition distance(eventPlayer.getEyePosition(), ballPosition) < competitiveSettings[CompetitiveSetting.BASIC_ORBIT_RADIUS]
+    @Condition ballSpeed < competitiveSettings[CompetitiveSetting.BASIC_ORBIT_SPEED]
     
     #smallMessage(getAllPlayers(), "Orbit start")
-    wait(7.5, Wait.ABORT_WHEN_FALSE)
+    wait(competitiveSettings[CompetitiveSetting.BASIC_ORBIT_TIMER], Wait.ABORT_WHEN_FALSE)
     if not ruleCondition:
         return
     #smallMessage(getAllPlayers(), "...still orbiting...")

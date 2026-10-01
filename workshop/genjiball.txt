@@ -115,6 +115,7 @@ variables {
         49: bouncePadConfig
         50: arenaSettings
         51: playerSettings
+        52: competitiveSettings
         54: bouncePads
         58: mobilityMode
         59: moveSpeed
@@ -228,15 +229,17 @@ rule ("Settings - Workshop settings") {
         Set Global Variable(roundTimings, Array(Workshop Setting Integer(Custom String("40 - Match"), Custom String("ball respawn delay"), 2, 1, 10, 7), Workshop Setting Integer(Custom String("40 - Match"), Custom String("round win pause"), 2, 0, 10, 8)));
         "50 - Features: casual/gameplay add-ons. Presets leave these manual. The rest are in addOnSettings below."
         Set Global Variable(bozo_Bot, Workshop Setting Toggle(Custom String("50 - Features"), Custom String("bot"), False, 1));
-        "60 - Competitive: competitive test systems. Tournament controls these explicitly."
+        "60 - Competitive: competitive test systems. Tournament, Tournament+ and Experimental force them."
         Set Global Variable(antiOrbitMode, Workshop Setting Toggle(Custom String("60 - Competitive"), Custom String("AntiOrbit"), False, 0));
         Set Global Variable(antiOrbitRadius, Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("AntiOrbit radius"), 14, 10, 20, 1));
         Set Global Variable(antiOrbitPressureRate, Divide(Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("AntiOrbit pressure"), 2, 1, 5, 2), 100));
+        "One entry per CompetitiveSetting field (config/constants.opy), in that order."
+        Set Global Variable(competitiveSettings, Array(Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("AntiOrbit speed"), 80, 10, 400, 3), Workshop Setting Real(Custom String("60 - Competitive"), Custom String("AntiOrbit timer"), 7.5, 1, 30, 4), Workshop Setting Real(Custom String("60 - Competitive"), Custom String("AntiOrbit min timer"), 5.5, 1, 30, 5), Workshop Setting Real(Custom String("60 - Competitive"), Custom String("AntiOrbit sleep"), 5, 0, 10, 6), Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("basic anti-orbit radius"), 20, 5, 40, 7), Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("basic anti-orbit speed"), 80, 10, 400, 8), Workshop Setting Real(Custom String("60 - Competitive"), Custom String("basic anti-orbit timer"), 7.5, 1, 30, 9)));
         "Add-ons no preset forces, in one array.\nOne entry per AddOnSetting field (config/constants.opy), in that order.\nEach setting may only be read once, so read them here and nowhere else."
-        Set Global Variable(addOnSettings, Array(Workshop Setting Toggle(Custom String("30 - Player"), Custom String("double sens"), False, 7), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("x-ray"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("tracing mode"), False, 1), Workshop Setting Toggle(Custom String("90 - Debug"), Custom String("debug HUD"), False, 0), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("duels"), False, 2), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("endless mode"), False, 3), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("Sandbox mode"), False, 4), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("kill tracker"), False, 2), Workshop Setting Integer(Custom String("30 - Player"), Custom String("double sens %"), 275, 100, 500, 8)));
+        Set Global Variable(addOnSettings, Array(Workshop Setting Toggle(Custom String("30 - Player"), Custom String("double sens"), False, 7), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("x-ray"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("tracing mode"), False, 1), Workshop Setting Toggle(Custom String("90 - Debug"), Custom String("debug HUD"), False, 0), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("duels"), False, 2), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("endless mode"), False, 3), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("Sandbox mode"), False, 4), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("kill tracker"), False, 3), Workshop Setting Integer(Custom String("30 - Player"), Custom String("double sens %"), 275, 100, 500, 8), Workshop Setting Integer(Custom String("80 - Visual"), Custom String("tracing view angle"), 45, 5, 180, 2)));
         "v7: v7-style preset shell. Deeper v7 parity remains deferred.\nExperimental: curated rebound-physics test ruleset, not tournament-safe yet.\nThe bot setting stays manual so Bot + Experimental can be tested together."
         If(Compare(Global.presetMode, !=, 7));
-            Set Global Variable(presetRow, Value In Array(Array(Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, -1, -1, -1, -1, 5, 2, 2, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 0, False, -1, -1, 5, 2, 2, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 2, True, 14, 0.02, 5, 2, 2, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 1, 0, 3, True, 1, -1, -1, -1, -1, 5, 2, 2, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 1, False, 0, -1, -1, -1, -1, 5, 2, 2, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 3, True, 2, -1, -1, -1, -1, 5, 2, 2, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 2, 0, False, 0, 0, True, 14, 0.02, 5, 2, 2, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3)), Global.presetMode));
+            Set Global Variable(presetRow, Value In Array(Array(Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, -1, -1, -1, -1, 5, 2, 2, -1, -1, -1, -1, -1, -1, -1, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 0, False, -1, -1, 5, 2, 2, 80, 7.5, 5.5, 5, 20, 80, 7.5, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 2, True, 14, 0.02, 5, 2, 2, 80, 7.5, 5.5, 5, 20, 80, 7.5, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 1, 0, 3, True, 1, -1, -1, -1, -1, 5, 2, 2, -1, -1, -1, -1, -1, -1, -1, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 1, False, 0, -1, -1, -1, -1, 5, 2, 2, -1, -1, -1, -1, -1, -1, -1, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 3, True, 2, -1, -1, -1, -1, 5, 2, 2, -1, -1, -1, -1, -1, -1, -1, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 2, 0, False, 0, 0, True, 14, 0.02, 5, 2, 2, 80, 7.5, 5.5, 5, 20, 80, 7.5, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3)), Global.presetMode));
             Set Global Variable(matchTime, First Of(Global.presetRow));
             Set Global Variable(tournamentMode, Value In Array(Global.presetRow, 1));
             Set Global Variable(totalRounds, Value In Array(Global.presetRow, 2));
@@ -253,8 +256,11 @@ rule ("Settings - Workshop settings") {
             Set Global Variable(mobilityMode, Value In Array(Global.presetRow, 13));
             Set Global Variable(setballspawncountdownoriginal, Value In Array(Global.presetRow, 18));
             Set Global Variable(roundTimings, Array(Value In Array(Global.presetRow, 19), Value In Array(Global.presetRow, 20)));
-            Set Global Variable(playerSettings, Array Slice(Global.presetRow, 21, 3));
-            Set Global Variable(arenaSettings, Array Slice(Global.presetRow, 24, Subtract(Count Of(Global.presetRow), 24)));
+            If(Compare(Value In Array(Global.presetRow, 21), !=, -1));
+                Set Global Variable(competitiveSettings, Array Slice(Global.presetRow, 21, 7));
+            End;
+            Set Global Variable(playerSettings, Array Slice(Global.presetRow, 28, 3));
+            Set Global Variable(arenaSettings, Array Slice(Global.presetRow, 31, Subtract(Count Of(Global.presetRow), 31)));
             If(Compare(Value In Array(Global.presetRow, 14), !=, -1));
                 Set Global Variable(antiGhostMode, Value In Array(Global.presetRow, 14));
             End;
@@ -2386,12 +2392,12 @@ rule ("Tournament - no orbit abusing") {
         Event Player == Global.target;
         "@Condition (angleBetweenVectors(ballDirection, directionTowards(ballPosition, eventPlayer.getEyePosition())) < 100 and angleBetweenVectors(ballDirection, directionTowards(ballPosition, eventPlayer.getEyePosition())) > -100) == true"
         Global.ballIsOut == True;
-        Distance Between(Eye Position(Event Player), Global.ballPosition) < 20;
-        Global.ballSpeed < 80;
+        Distance Between(Eye Position(Event Player), Global.ballPosition) < Value In Array(Global.competitiveSettings, 4);
+        Global.ballSpeed < Value In Array(Global.competitiveSettings, 5);
     }
     actions {
         "smallMessage(getAllPlayers(), \"Orbit start\")"
-        Wait(7.5, Abort When False);
+        Wait(Value In Array(Global.competitiveSettings, 6), Abort When False);
         Abort If Condition Is False;
         "smallMessage(getAllPlayers(), \"...still orbiting...\")"
         Set Status(Event Player, Null, Asleep, 5);
@@ -2418,15 +2424,15 @@ rule ("AntiOrbit - no orbit abusing") {
             Loop If Condition Is True;
             Abort;
         End;
-        If(Compare(Global.ballSpeed, >=, 80));
+        If(Compare(Global.ballSpeed, >=, First Of(Global.competitiveSettings)));
             Wait(0.1, Ignore Condition);
             Loop If Condition Is True;
             Abort;
         End;
-        Wait(Max(5.5, Subtract(7.5, Multiply(Add((Event Player).orbitPenalty, (Event Player).orbitHeat), 5))), Abort When False);
+        Wait(Max(Value In Array(Global.competitiveSettings, 2), Subtract(Value In Array(Global.competitiveSettings, 1), Multiply(Add((Event Player).orbitPenalty, (Event Player).orbitHeat), 5))), Abort When False);
         Abort If Condition Is False;
-        Abort If(Not(And(Compare(Distance Between(Eye Position(Event Player), Global.ballPosition), <, Global.antiOrbitRadius), Compare(Global.ballSpeed, <, 80))));
-        Set Status(Event Player, Null, Asleep, 5);
+        Abort If(Not(And(Compare(Distance Between(Eye Position(Event Player), Global.ballPosition), <, Global.antiOrbitRadius), Compare(Global.ballSpeed, <, First Of(Global.competitiveSettings)))));
+        Set Status(Event Player, Null, Asleep, Value In Array(Global.competitiveSettings, 3));
         Apply Impulse(Event Player, Add(Global.ballDirection, Up), 10, To World, Cancel Contrary Motion XYZ);
     }
 }
@@ -2520,7 +2526,7 @@ rule ("Tracing mode - gained") {
     conditions {
         Value In Array(Global.addOnSettings, 3) == True;
         Event Player == Global.target;
-        Angle Between Vectors(Facing Direction Of(Event Player), Direction Towards(Eye Position(Event Player), Global.ballPosition)) <= 45;
+        Angle Between Vectors(Facing Direction Of(Event Player), Direction Towards(Eye Position(Event Player), Global.ballPosition)) <= Value In Array(Global.addOnSettings, 10);
     }
     actions {
         "@Condition eventPlayer.isInViewAngle(ballPosition, 70) == true"
@@ -2539,7 +2545,7 @@ rule ("Tracing mode - lost") {
     conditions {
         Value In Array(Global.addOnSettings, 3) == True;
         Event Player == Global.target;
-        Angle Between Vectors(Facing Direction Of(Event Player), Direction Towards(Eye Position(Event Player), Global.ballPosition)) > 45;
+        Angle Between Vectors(Facing Direction Of(Event Player), Direction Towards(Eye Position(Event Player), Global.ballPosition)) > Value In Array(Global.addOnSettings, 10);
     }
     actions {
         "@Condition eventPlayer.isInViewAngle(ballPosition, 70) == false"

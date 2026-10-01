@@ -46,18 +46,18 @@ These appear in the custom game under **Settings → Workshop → Settings**, gr
 | Preset | What it's for | Differences from Default |
 |---|---|---|
 | **Default** | Standard casual play | none |
-| **Tournament** | The current tournament ruleset | Tournament mode on, anti-ghost off, AntiOrbit off |
-| **Tournament+** | Candidate for future tournaments | Tournament mode on, anti-ghost = steer, AntiOrbit on (radius 14, pressure 2) |
+| **Tournament** | The current tournament ruleset | Tournament mode on, anti-ghost off, AntiOrbit off, AntiOrbit and basic anti-orbit tuning at their defaults |
+| **Tournament+** | Candidate for future tournaments | Tournament mode on, anti-ghost = steer, AntiOrbit on (radius 14, pressure 2), AntiOrbit and basic anti-orbit tuning at their defaults |
 | **Rapid** | Workshop Expanse-style: fast and bouncy | water = flood, motion = rapid, bounce pads on, mobility = balanced |
 | **v1** | Dry Workshop Island, as in the early versions | water = none |
 | **v7** | v7-style (partial) | water = flood, bounce pads on, mobility = sluggish |
-| **Experimental** | Playtesting new rebound physics. Not tournament-safe | physics = experimental, anti-ghost off, AntiOrbit on (radius 14, pressure 2) |
+| **Experimental** | Playtesting new rebound physics. Not tournament-safe | physics = experimental, anti-ghost off, AntiOrbit on (radius 14, pressure 2), AntiOrbit and basic anti-orbit tuning at their defaults |
 | **Custom** | Everything manual | uses your values for every setting |
 
 What "Default" forces (all non-Custom presets start from this):
 match length 15 min, tournament off, 30 rounds, breaks on every 10 rounds for 60 s, ball spawn countdown 5 s, ball respawn delay 2 s, round win pause 2 s, ball start speed 60, max speed 400, acceleration 25, motion modern, physics original, water moderate, bounce pads off, center exclusion size 3.5, arena radius 0 (the map's), bounce pad strength 30, distance 12, range 2.75 and cooldown 3 s, mobility agile, dash cooldown 3.04 s, dash hit knockdown 1 s and knockdown cooldown 0.6 s.
 
-Settings **not** touched by any preset: everything in *50 - Features*, *80 - Visual*, *90 - Debug*, and double sens and double sens %. The "custom ... %" mobility sliders are never forced either, but no preset picks mobility = custom, so they only apply with Preset = Custom. Anti-ghost and AntiOrbit are only forced by the presets listed above.
+Settings **not** touched by any preset: everything in *50 - Features*, *80 - Visual*, *90 - Debug*, double sens and double sens %, and tracing view angle. The "custom ... %" mobility sliders are never forced either, but no preset picks mobility = custom, so they only apply with Preset = Custom. Anti-ghost, AntiOrbit and the rest of *60 - Competitive* are only forced by the presets listed above. The AntiOrbit speed, timer, min timer and sleep and the three basic anti-orbit settings are forced together, to their defaults.
 
 ### 10 - Ball
 
@@ -108,7 +108,7 @@ Settings **not** touched by any preset: everything in *50 - Features*, *80 - Vis
 | Setting | Default | Range | What it does |
 |---|---|---|---|
 | match length | 15 | 5–60 min | Ignored in tournament mode |
-| tournament mode | off | | Plays a fixed number of rounds instead of using a timer. Also: non-targets can't dash into the water, and a basic anti-orbit rule applies (if AntiOrbit is off, stalling a ball slower than 80 within 20 m for 7.5 s puts you to sleep) |
+| tournament mode | off | | Plays a fixed number of rounds instead of using a timer. Also: non-targets can't dash into the water, and a basic anti-orbit rule applies (if AntiOrbit is off, stalling a ball slower than 80 within 20 m for 7.5 s puts you to sleep; tuned in [60 - Competitive](#60---competitive)) |
 | tournament rounds | 30 | 1–50 | Rounds until the match ends |
 | breaks | on | | Take a break every N rounds |
 | break every | 10 | 4–25 | Rounds between breaks |
@@ -134,6 +134,13 @@ Settings **not** touched by any preset: everything in *50 - Features*, *80 - Vis
 | AntiOrbit | off | | Punishes stalling a slow ball around yourself. See [playing.md](playing.md#anti-orbit) |
 | AntiOrbit radius | 14 | 10–20 m | How close the ball has to be to count as orbiting |
 | AntiOrbit pressure | 2 | 1–5 | How fast repeated orbiting shortens the punishment timer |
+| AntiOrbit speed | 80 | 10–400 | The ball only counts as orbiting while it's slower than this |
+| AntiOrbit timer | 7.5 | 1–30 s | Seconds of orbiting before you're put to sleep, before pressure shortens it |
+| AntiOrbit min timer | 5.5 | 1–30 s | Pressure never shortens the timer below this |
+| AntiOrbit sleep | 5 | 0–10 s | How long an orbiting player sleeps |
+| basic anti-orbit radius | 20 | 5–40 m | Tournament mode with AntiOrbit off: how close the ball has to be to count as orbiting |
+| basic anti-orbit speed | 80 | 10–400 | Same, the ball only counts while it's slower than this |
+| basic anti-orbit timer | 7.5 | 1–30 s | Same, seconds of orbiting before you're put to sleep (for 5 s) |
 
 ### 80 - Visual
 
@@ -141,6 +148,7 @@ Settings **not** touched by any preset: everything in *50 - Features*, *80 - Vis
 |---|---|---|
 | x-ray | off | Shows the target where the ball is when a wall blocks their view |
 | tracing mode | off | The target must keep the ball in view to be able to deflect |
+| tracing view angle | 45 | How far from the crosshair the ball may be and still count as in view (5–180°) |
 | kill tracker | off | Host-only kill leaderboard on the left |
 
 ### 90 - Debug
