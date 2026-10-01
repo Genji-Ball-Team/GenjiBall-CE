@@ -206,7 +206,7 @@ rule ("Settings - Workshop settings") {
         "Experimental tuning sliders. These only affect the Experimental physics engine.\nOne entry per ExperimentalTuning field (config/constants.opy), in that order."
         Set Global Variable(experimentalTuning, Array(Divide(Workshop Setting Integer(Custom String("10 - Ball"), Custom String("exp incoming min %"), 8, 0, 30, 6), 100), Divide(Workshop Setting Integer(Custom String("10 - Ball"), Custom String("exp incoming max %"), 12, 0, 40, 7), 100), Divide(Workshop Setting Integer(Custom String("10 - Ball"), Custom String("exp homing start %"), 55, 20, 100, 8), 100), Divide(Workshop Setting Integer(Custom String("10 - Ball"), Custom String("exp homing hold ms"), 40, 0, 250, 9), 1000), Divide(Workshop Setting Integer(Custom String("10 - Ball"), Custom String("exp homing ramp ms"), 240, 25, 1000, 10), 1000), Divide(Workshop Setting Integer(Custom String("10 - Ball"), Custom String("exp surface homing %"), 70, 20, 100, 11), 100)));
         "15 - Ball Feel: v1.3.2 values by default, used only with \"custom ball feel\" on.\nPresets force it off. One entry per BallFeel field (config/constants.opy), in that order."
-        Set Global Variable(ballFeel, Array(Workshop Setting Toggle(Custom String("15 - Ball Feel"), Custom String("custom ball feel"), False, 0), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("speed per deflect"), 1.05, 1, 2, 1), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("hit radius"), 1.9, 0.5, 5, 2), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("turn rate modern"), 1.75, 0.25, 20, 3), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("turn rate rapid"), 5, 0.25, 20, 4), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("deflect curve rate"), 6, 0, 20, 5), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("deflect curve time"), 0.05, 0, 1, 6), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("deflect window"), 0.3, 0.05, 2, 7), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("deflect lockout"), 0.5, 0, 3, 8), Workshop Setting Integer(Custom String("15 - Ball Feel"), Custom String("fast ball speed"), 150, 0, 800, 9), Workshop Setting Toggle(Custom String("15 - Ball Feel"), Custom String("chamber floor bounce"), False, 10), Workshop Setting Toggle(Custom String("15 - Ball Feel"), Custom String("reliable hit detection"), False, 11)));
+        Set Global Variable(ballFeel, Array(Workshop Setting Toggle(Custom String("15 - Ball Feel"), Custom String("custom ball feel"), False, 0), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("speed per deflect"), 1.05, 1, 2, 1), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("hit radius"), 1.9, 0.5, 5, 2), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("turn rate modern"), 1.75, 0.25, 20, 3), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("turn rate rapid"), 5, 0.25, 20, 4), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("deflect curve rate"), 6, 0, 20, 5), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("deflect curve time"), 0.05, 0, 1, 6), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("deflect window"), 0.3, 0.05, 2, 7), Workshop Setting Real(Custom String("15 - Ball Feel"), Custom String("deflect lockout"), 0.5, 0, 3, 8), Workshop Setting Integer(Custom String("15 - Ball Feel"), Custom String("fast ball speed"), 150, 0, 800, 9), Workshop Setting Toggle(Custom String("15 - Ball Feel"), Custom String("reliable hit detection"), False, 10)));
         "20 - Arena: core arena/environment tuning is preset-controlled unless Preset is Custom."
         Set Global Variable(waterLevel, Workshop Setting Combo(Custom String("20 - Arena"), Custom String("water"), 0, Array(Custom String("moderate"), Custom String("none"), Custom String("minimal"), Custom String("flood")), 0));
         Set Global Variable(bouncePadToggle, Workshop Setting Toggle(Custom String("20 - Arena"), Custom String("bounce pads"), False, 1));
@@ -279,7 +279,7 @@ rule ("Settings - Workshop settings") {
             End;
         End;
         If(Not(First Of(Global.ballFeel)));
-            Set Global Variable(ballFeel, Array(False, 1.05, 1.9, 1.75, 5, 6, 0.05, 0.3, 0.5, 150, False, False));
+            Set Global Variable(ballFeel, Array(False, 1.05, 1.9, 1.75, 5, 6, 0.05, 0.3, 0.5, 150, False));
         End;
         "Mobility.CUSTOM keeps the \"custom ... %\" settings read above."
         If(Compare(Global.mobilityMode, ==, 0));
@@ -1524,7 +1524,7 @@ rule ("Collision - collision check") {
     conditions {
         Global.ballIsOut == True;
         "\"reliable hit detection\" (off by default, ball feel) runs this every tick at any speed, as a backup for\n\"Collision - ball reaches player\", whose condition reads the chased ballPosition."
-        Or(Compare(Global.ballSpeed, >, Value In Array(Global.ballFeel, 9)), Value In Array(Global.ballFeel, 11)) == True;
+        Or(Compare(Global.ballSpeed, >, Value In Array(Global.ballFeel, 9)), Value In Array(Global.ballFeel, 10)) == True;
     }
     actions {
         If(Compare(Global.ballHitPosition, !=, Null));
@@ -2048,8 +2048,8 @@ rule ("Ball Physics - chamber y collision") {
     conditions {
         Current Map == Map(Workshop Chamber);
         Global.ballIsOut == True;
-        "v1.3.2 subtracted the two checks, \"(y > 40) - (y < 0) == true\", which is -1 below the floor, so only\nthe ceiling bounced. \"chamber floor bounce\" (off by default, ball feel) adds the floor."
-        Or(Compare(Add(Y Component Of(Global.ballPosition), 0), >, 40), And(Compare(Y Component Of(Global.ballPosition), <, 0), Value In Array(Global.ballFeel, 10))) == True;
+        "v1.3.2 subtracted the two checks, \"(y > 40) - (y < 0) == true\", which is -1 below the floor, so only\nthe ceiling bounced. Fixed without a toggle: an obvious bug on a map nobody played."
+        Or(Compare(Add(Y Component Of(Global.ballPosition), 0), >, 40), Compare(Y Component Of(Global.ballPosition), <, 0)) == True;
     }
     actions {
         If(Or(And(Compare(Add(Y Component Of(Global.ballPosition), 0), >, 40), Compare(Y Component Of(Global.ballDirection), >, 0)), And(Compare(Y Component Of(Global.ballPosition), <, 0), Compare(Y Component Of(Global.ballDirection), <, 0))));
