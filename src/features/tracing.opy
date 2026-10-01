@@ -2,7 +2,7 @@
 
 rule "Tracing mode - gained":
     @Event eachPlayer
-    @Condition tracingMode == true
+    @Condition TRACING_MODE == true
     @Condition eventPlayer == target
     @Condition angleBetweenVectors(eventPlayer.getFacingDirection(), directionTowards(eventPlayer.getEyePosition(), ballPosition)) <= 45
     
@@ -14,7 +14,7 @@ rule "Tracing mode - gained":
 
 rule "Tracing mode - lost":
     @Event eachPlayer
-    @Condition tracingMode == true
+    @Condition TRACING_MODE == true
     @Condition eventPlayer == target
     @Condition angleBetweenVectors(eventPlayer.getFacingDirection(), directionTowards(eventPlayer.getEyePosition(), ballPosition)) > 45
     

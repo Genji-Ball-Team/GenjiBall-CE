@@ -3,7 +3,7 @@
 rule "Gb Abilities - stack crit slashes":
     @Event eachPlayer
     @Condition eventPlayer.Critalert == true
-    @Condition Abilities == true
+    @Condition ABILITIES == true
     @Condition eventPlayer.isDummy() == false
     @Disabled
     

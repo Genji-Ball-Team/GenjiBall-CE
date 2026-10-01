@@ -178,8 +178,8 @@ rule "Controls - toggle anti rubberbanding (melee)":
 
 rule "Controls - double sens toggle":
     @Event eachPlayer
-    @Condition doubleSensEnabled == true
-    @Condition Abilities == false
+    @Condition DOUBLE_SENS == true
+    @Condition ABILITIES == false
     @Condition eventPlayer.isDummy() == false
     @Condition eventPlayer.isAlive() == true
     @Condition eventPlayer.isHoldingButton(Button.ULTIMATE) == true
@@ -199,7 +199,7 @@ rule "Controls - double sens toggle":
 rule "Controls - double sens reset when disabled":
     @Event eachPlayer
     @Condition eventPlayer.sensHigh == true
-    @Condition (doubleSensEnabled == false or Abilities == true) == true
+    @Condition (DOUBLE_SENS == false or ABILITIES == true) == true
     
     eventPlayer.sensHigh = false
     eventPlayer.setAimSpeed(100)

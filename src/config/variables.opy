@@ -58,15 +58,11 @@ globalvar mobilityMode 58
 globalvar moveSpeed 59
 globalvar gravity 60
 globalvar jumpVerticalSpeed 61
-globalvar Abilities 62
 globalvar endlessMode 63
 globalvar Sandbox 64
-globalvar xray 65
-globalvar tracingMode 66
 globalvar tracingPoints 67
 globalvar RedGreenColorblindMode 68
 globalvar WatermarkEnabled 69
-globalvar doubleSensEnabled 70
 globalvar antiOrbitMode 75
 globalvar antiOrbitRadius 76
 globalvar antiOrbitPressureRate 77
@@ -80,7 +76,6 @@ globalvar reboundIncomingDirection 100
 globalvar reboundInfluence 101
 globalvar experimentalTuning 102
 globalvar killCounterEnabled 109
-globalvar debugRules 110
 globalvar killLeaderboardSortedPlayers 112
 globalvar mapRow 113
 globalvar isIsland 114

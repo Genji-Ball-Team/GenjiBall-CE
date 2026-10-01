@@ -6,7 +6,7 @@ rule "GENJI BALL ABILITIES :OOOOOO - selection":
     @Condition eventPlayer.isDummy() == false
     @Condition isGameInProgress() == true
     @Condition ballIsOut == false
-    @Condition Abilities == true
+    @Condition ABILITIES == true
     
     waitUntil(not eventPlayer.isHoldingButton(Button.RELOAD), 0.4)
     if eventPlayer.isHoldingButton(Button.RELOAD):
@@ -19,7 +19,7 @@ rule "GENJI BALL ABILITIES :OOOOOO - selection":
 
 rule "Gb Abilities - Description":
     @Event eachPlayer
-    @Condition Abilities == true
+    @Condition ABILITIES == true
     
     if eventPlayer.Abilitydesc != 1:
         wait(4)
@@ -66,7 +66,7 @@ rule "Gb Abilities - Description":
 rule "Gb Abilities - Cd":
     @Event eachPlayer
     @Condition eventPlayer.Abilitycooldown > 0
-    @Condition Abilities == true
+    @Condition ABILITIES == true
     
     chaseAtRate(eventPlayer.Abilitycooldown, 0, 1)
     waitUntil(eventPlayer.Abilitycooldown <= 0, 99999)
@@ -78,7 +78,7 @@ rule "Gb Abilities - Reset cd on round end":
     @Event eachPlayer
     @Condition eventPlayer.Abilitycooldown <= 0
     @Condition getAllPlayers().isAlive() == true
-    @Condition Abilities == true
+    @Condition ABILITIES == true
     
     eventPlayer.Abilitycooldown = 0
     waitUntil(getAllPlayers().isDead(), 99999)
@@ -93,7 +93,7 @@ rule "Gb Abilities - 1. High jump ready":
     @Condition isGameInProgress() == true
     @Condition eventPlayer.Abilityready == false
     @Condition eventPlayer.SpecialAbility == AbilityId.SUPER_JUMP
-    @Condition Abilities == true
+    @Condition ABILITIES == true
     
     eventPlayer.Abilityready = true
     wait()
@@ -106,7 +106,7 @@ rule "Gb Abilities - 1. Cancel high jump ready":
     @Condition eventPlayer.Abilityready == true
     @Condition (not (eventPlayer.isOnGround() and eventPlayer.isCrouching()) or false or eventPlayer.isDead() or eventPlayer.Abilitycooldown > 0) == true
     @Condition eventPlayer.SpecialAbility == AbilityId.SUPER_JUMP
-    @Condition Abilities == true
+    @Condition ABILITIES == true
     
     wait()
     eventPlayer.Abilityready = false
@@ -120,7 +120,7 @@ rule "Gb Abilities - 1. High jump":
     @Condition eventPlayer.isHoldingButton(Button.JUMP) == true
     @Condition eventPlayer.Abilityready == true
     @Condition eventPlayer.SpecialAbility == AbilityId.SUPER_JUMP
-    @Condition Abilities == true
+    @Condition ABILITIES == true
     
     eventPlayer.applyImpulse(Vector.UP, 25, Relativity.TO_PLAYER, Impulse.CANCEL_CONTRARY_MOTION)
     eventPlayer.Abilitycooldown = 10
@@ -134,7 +134,7 @@ rule "Gb Abilities - 2. Target switch ready":
     @Condition ballIsOut == true
     @Condition eventPlayer.isAlive() == true
     @Condition eventPlayer.SpecialAbility == AbilityId.TARGET_SWITCH
-    @Condition Abilities == true
+    @Condition ABILITIES == true
     
     eventPlayer.Abilityready = true
     wait()
@@ -146,7 +146,7 @@ rule "Gb Abilities - 2. Cancel Target switch ready":
     @Event eachPlayer
     @Condition eventPlayer.SpecialAbility == AbilityId.TARGET_SWITCH
     @Condition (eventPlayer.isDead() or eventPlayer.Abilitycooldown > 0 or ballIsOut != true or target == eventPlayer) == true
-    @Condition Abilities == true
+    @Condition ABILITIES == true
     
     eventPlayer.Abilityready = false
     wait()
@@ -159,7 +159,7 @@ rule "Gb Abilities - 2. Target switch":
     @Condition eventPlayer.SpecialAbility == AbilityId.TARGET_SWITCH
     @Condition eventPlayer.isHoldingButton(Button.ULTIMATE) == true
     @Condition eventPlayer.Abilityready == true
-    @Condition Abilities == true
+    @Condition ABILITIES == true
     
     waitUntil(not eventPlayer.isHoldingButton(Button.ULTIMATE), 99999)
     wait(0.15)
@@ -180,7 +180,7 @@ rule "Gb Abilities - 3. Blink ready":
     @Condition eventPlayer.isUsingAbility1() == false
     @Condition eventPlayer.Abilitycooldown <= 0
     @Condition eventPlayer.isAlive() == true
-    @Condition Abilities == true
+    @Condition ABILITIES == true
     
     eventPlayer.Abilityready = true
     wait()
@@ -192,7 +192,7 @@ rule "Gb Abilities - 3. Cancel Blink ready":
     @Event eachPlayer
     @Condition eventPlayer.SpecialAbility == AbilityId.BLINK
     @Condition (eventPlayer.isDead() or eventPlayer.Abilitycooldown > 0 or eventPlayer.isUsingAbility1()) == true
-    @Condition Abilities == true
+    @Condition ABILITIES == true
     
     eventPlayer.Abilityready = false
     wait()
@@ -205,7 +205,7 @@ rule "Gb Abilities - 3. Blink":
     @Condition eventPlayer.SpecialAbility == AbilityId.BLINK
     @Condition eventPlayer.Abilityready == true
     @Condition eventPlayer.isHoldingButton(Button.ULTIMATE) == true
-    @Condition Abilities == true
+    @Condition ABILITIES == true
     
     eventPlayer.teleport(raycastHitPosition(eventPlayer.getEyePosition(), eventPlayer.getEyePosition() + eventPlayer.getFacingDirection() * 20, null, eventPlayer, true))
     eventPlayer.Abilitycooldown = 10
@@ -218,7 +218,7 @@ rule "Gb Abilities - 4. Critslash ready":
     @Condition eventPlayer.Abilitycooldown <= 0
     @Condition eventPlayer.isAlive() == true
     @Condition ballIsOut == true
-    @Condition Abilities == true
+    @Condition ABILITIES == true
     
     eventPlayer.Abilityready = true
     wait()
@@ -230,7 +230,7 @@ rule "Gb Abilities - 4. Cancel critslash ready":
     @Event eachPlayer
     @Condition eventPlayer.SpecialAbility == AbilityId.CRIT_SLASH
     @Condition (eventPlayer.Abilitycooldown > 0 or eventPlayer.isDead() or ballIsOut == false) == true
-    @Condition Abilities == true
+    @Condition ABILITIES == true
     
     eventPlayer.Abilityready = false
     eventPlayer.Critslash = false
@@ -244,7 +244,7 @@ rule "Gb Abilities - 4. Critical slash":
     @Condition eventPlayer.SpecialAbility == AbilityId.CRIT_SLASH
     @Condition eventPlayer.Abilityready == true
     @Condition eventPlayer.isHoldingButton(Button.ULTIMATE) == true
-    @Condition Abilities == true
+    @Condition ABILITIES == true
     
     eventPlayer.Critslash = true
     eventPlayer.startForcingOutlineFor(getAllPlayers(), true, rgb(200, 40, 0))
