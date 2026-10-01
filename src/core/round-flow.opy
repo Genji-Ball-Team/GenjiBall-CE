@@ -142,7 +142,8 @@ rule "Active game - all players dead":
     if ruleCondition:
         loop()
     wait(2)
-    if IsEnoughPlayersToStart:
+    #The lobby starts the round when there aren't enough players, and with two players the final duel already has.
+    if not IsEnoughPlayersToStart or IsInFinalDuel:
         return
     stopChasing(ballSpawnCountdown)
     startRound()

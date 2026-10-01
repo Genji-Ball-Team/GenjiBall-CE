@@ -1315,7 +1315,8 @@ rule ("Active game - all players dead") {
         Wait(1, Ignore Condition);
         Loop If Condition Is True;
         Wait(2, Ignore Condition);
-        Abort If(Global.IsEnoughPlayersToStart);
+        "The lobby starts the round when there aren't enough players, and with two players the final duel already has."
+        Abort If(Or(Not(Global.IsEnoughPlayersToStart), Global.IsInFinalDuel));
         Stop Chasing Global Variable(ballSpawnCountdown);
         Call Subroutine(startRound);
     }
