@@ -76,8 +76,7 @@ rule "Kill Tracker - cache players":
     @Condition killCounterEnabled == true
     
     #Cache once per tick instead of sorting once per HUD row. Host-only display, real players only.
-    killLeaderboardPlayers = getAllPlayers().filter(lambda player: not player.isDummy())
-    killLeaderboardSortedPlayers = sorted(killLeaderboardPlayers, lambda x: x.kills)
+    killLeaderboardSortedPlayers = sorted(getAllPlayers().filter(lambda player: not player.isDummy()), lambda x: x.kills)
     wait(0.25)
     if ruleCondition:
         loop()

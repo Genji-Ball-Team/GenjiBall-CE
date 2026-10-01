@@ -71,7 +71,6 @@ rule "Initialization - global variables":
     duelQueue = []
     #zBozo pending moves (BotField in config/constants.opy)
     botState = []
-    killLeaderboardPlayers = []
     killLeaderboardSortedPlayers = []
     #Sandbox spawn point, aim point and speed, plus the editor state (SandboxField in config/constants.opy)
     sandboxState = [ballPosition, ballPosition + Vector.UP, ballSpeed, 1, 1, 1]

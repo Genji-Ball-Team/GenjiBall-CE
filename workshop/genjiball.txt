@@ -89,7 +89,6 @@ variables {
         13: breakLength
         14: roundsUntilBreakInit
         15: breaksEnabled
-        16: breakInProgress
         17: presetMode
         18: duelMode
         19: duelQueue
@@ -155,7 +154,6 @@ variables {
         102: experimentalTuning
         109: killCounterEnabled
         110: debugRules
-        111: killLeaderboardPlayers
         112: killLeaderboardSortedPlayers
         113: mapRow
         114: isIsland
@@ -431,7 +429,6 @@ rule ("Initialization - global variables") {
         Set Global Variable(duelQueue, Empty Array);
         "zBozo pending moves (BotField in config/constants.opy)"
         Set Global Variable(botState, Empty Array);
-        Set Global Variable(killLeaderboardPlayers, Empty Array);
         Set Global Variable(killLeaderboardSortedPlayers, Empty Array);
         "Sandbox spawn point, aim point and speed, plus the editor state (SandboxField in config/constants.opy)"
         Set Global Variable(sandboxState, Array(Global.ballPosition, Add(Global.ballPosition, Up), Global.ballSpeed, 1, 1, 1));
@@ -642,8 +639,7 @@ rule ("Kill Tracker - cache players") {
     }
     actions {
         "Cache once per tick instead of sorting once per HUD row. Host-only display, real players only."
-        Set Global Variable(killLeaderboardPlayers, Filtered Array(All Players(All Teams), Not(Is Dummy Bot(Current Array Element))));
-        Set Global Variable(killLeaderboardSortedPlayers, Sorted Array(Global.killLeaderboardPlayers, (Current Array Element).kills));
+        Set Global Variable(killLeaderboardSortedPlayers, Sorted Array(Filtered Array(All Players(All Teams), Not(Is Dummy Bot(Current Array Element))), (Current Array Element).kills));
         Wait(0.25, Ignore Condition);
         Loop If Condition Is True;
     }
@@ -1011,7 +1007,6 @@ rule ("Controls - Switch perspective (reload)") {
         All;
     }
     conditions {
-        Global.breakInProgress == False;
         Is Button Held(Event Player, Button(Reload)) == True;
         Is Alive(Event Player) == True;
     }
@@ -2528,7 +2523,6 @@ rule ("AntiOrbit - decay heat") {
     conditions {
         Global.antiOrbitMode == True;
         Is Game In Progress == True;
-        Global.breakInProgress == False;
         Global.RoundInProgress == True;
         Global.ballIsOut == True;
         Event Player != Global.target;
