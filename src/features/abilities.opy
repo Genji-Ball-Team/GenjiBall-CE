@@ -1,6 +1,6 @@
 #Optional special abilities
 
-rule "GENJI BALL addOnSettings[AddOnSetting.ABILITIES] :OOOOOO - selection":
+rule "GENJI BALL ABILITIES :OOOOOO - selection":
     @Event eachPlayer
     @Condition eventPlayer.isHoldingButton(Button.RELOAD) == true
     @Condition eventPlayer.isDummy() == false
