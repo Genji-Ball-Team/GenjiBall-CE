@@ -265,7 +265,9 @@ rule "Ball Physics - chamber x collision":
 rule "Ball Physics - chamber y collision":
     @Condition __getCurrentMap__() == Map.WORKSHOP_CHAMBER
     @Condition ballIsOut == true
-    @Condition (ballPosition.y + 0 > 40) - (ballPosition.y < 0) == true
+    #v1.3.2 subtracted the two checks, "(y > 40) - (y < 0) == true", which is -1 below the floor, so only
+    #the ceiling bounced. Fixed without a toggle: an obvious bug on a map nobody played.
+    @Condition (ballPosition.y + 0 > 40 or ballPosition.y < 0) == true
     
     if ballPosition.y + 0 > 40 and ballDirection.y > 0 or ballPosition.y < 0 and ballDirection.y < 0:
         ballDirection = vect(ballDirection.x, ballDirection.y * -1, ballDirection.z)
