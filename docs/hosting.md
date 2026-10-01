@@ -115,7 +115,7 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 | bounce pad distance | 12 | 4–40 m | Distance of each pad from the center |
 | bounce pad range | 2.75 | 0.5–10 m | How close to a pad you have to be to bounce |
 | bounce pad cooldown | 3 | 1–10 s | Seconds before a player can bounce again |
-| water ledge fix | off | | Workshop Island only. Below y = −1.5, players are pushed up and toward the center so they can't get under the island ledge. **off** (v1.3.2): the push applies everywhere in the water. **on**: only within 35 m of the center; farther out, only the outer water push applies. No preset turns it on |
+| water ledge fix | off | | Workshop Island only. What happens below y = −1.5 within 35 m of the center (and so near the island). **off** (v1.3.2): players are pushed up and toward the center, everywhere in the water, which can drag a player who dashes in next to the island under the ledge and pin them there. **on**: under the island, players are pushed straight out, and once clear of the edge, up. Beyond 35 m, only the outer water push applies. No preset turns it on |
 
 ### 30 - Player
 

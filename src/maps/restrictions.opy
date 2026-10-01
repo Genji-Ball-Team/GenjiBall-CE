@@ -120,9 +120,16 @@ rule "Map restrictions - water":
     #Workshop Island Fix
     @Condition isIsland == true
     
-    #v1.3.2 used "or" here, which is always true, so the under-ledge push applied everywhere below -1.5.
-    #"water ledge fix" (off by default, player feel) limits it to within 35 m of the center on both axes.
-    if not addOnSettings[AddOnSetting.WATER_LEDGE_FIX] or (eventPlayer.getPosition().x < 35 and eventPlayer.getPosition().x > -35 and eventPlayer.getPosition().z < 35 and eventPlayer.getPosition().z > -35):
+    #"water ledge fix" (off by default, player feel): within 35 m, push out from under the ledge, then up.
+    if addOnSettings[AddOnSetting.WATER_LEDGE_FIX]:
+        if abs(eventPlayer.getPosition().x) < 35 and abs(eventPlayer.getPosition().z) < 35:
+            #Under the island: 20.25 m edge plus a margin for the player's width, so they rise clear of the lip
+            if abs(eventPlayer.getPosition().x) < 21 and abs(eventPlayer.getPosition().z) < 21:
+                eventPlayer.applyImpulse(directionTowards(circleCenter, eventPlayer) * vect(1, 0, 1), 2, Relativity.TO_WORLD, Impulse.INCORPORATE_CONTRARY_MOTION)
+            else:
+                eventPlayer.applyImpulse(Vector.UP, 2, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
+    else:
+        #v1.3.2 (its "x < 35 or x > -35 or ..." check was always true). Toward the center can pin players under the ledge.
         #Prevents people from going under the ledge on Workshop Island, which caused ball to go into floor.  Used to be an annoying stunkill
         eventPlayer.applyImpulse(Vector.UP, 2, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
         eventPlayer.applyImpulse(directionTowards(eventPlayer, circleCenter), 2, Relativity.TO_WORLD, Impulse.INCORPORATE_CONTRARY_MOTION)
