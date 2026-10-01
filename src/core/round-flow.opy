@@ -89,6 +89,8 @@ rule "Active game - check for last player surviving":
     @Condition addOnSettings[AddOnSetting.DUELS] == false
     
     IsInFinalDuel = false
+    #Cleared by startRound once the next round is under way.
+    RoundSetupPending = true
     getLivingPlayers(Team.ALL).addToScore(1)
     wait(0.25)
     if (getMatchTime() == 0 or TieBreakerActive) and not tournamentMode:
@@ -146,8 +148,8 @@ rule "Active game - all players dead":
     if ruleCondition:
         loop()
     wait(2)
-    #Skip if the round has already restarted: by the lobby (not enough players), the final duel (two players) or a round win in progress,
-    #including one still waiting for the host in Sandbox.
+    #Skip if the round has already restarted, or is about to: by the lobby (not enough players), the final duel (two players)
+    #or a round win (including its win pause and the host wait in Sandbox).
     if not IsEnoughPlayersToStart or IsInFinalDuel or RoundInProgress or RoundSetupPending:
         return
     stopChasing(ballSpawnCountdown)

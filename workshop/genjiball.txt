@@ -1260,6 +1260,8 @@ rule ("Active game - check for last player surviving") {
     }
     actions {
         Set Global Variable(IsInFinalDuel, False);
+        "Cleared by startRound once the next round is under way."
+        Set Global Variable(RoundSetupPending, True);
         Modify Player Score(All Living Players(All Teams), 1);
         Wait(0.25, Ignore Condition);
         If(And(Or(Compare(Match Time, ==, 0), Global.TieBreakerActive), Not(Global.tournamentMode)));
@@ -1321,7 +1323,7 @@ rule ("Active game - all players dead") {
         Wait(1, Ignore Condition);
         Loop If Condition Is True;
         Wait(2, Ignore Condition);
-        "Skip if the round has already restarted: by the lobby (not enough players), the final duel (two players) or a round win in progress,\nincluding one still waiting for the host in Sandbox."
+        "Skip if the round has already restarted, or is about to: by the lobby (not enough players), the final duel (two players)\nor a round win (including its win pause and the host wait in Sandbox)."
         Abort If(Or(Or(Or(Not(Global.IsEnoughPlayersToStart), Global.IsInFinalDuel), Global.RoundInProgress), Global.RoundSetupPending));
         Stop Chasing Global Variable(ballSpawnCountdown);
         Call Subroutine(startRound);
