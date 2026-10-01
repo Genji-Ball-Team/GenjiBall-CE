@@ -128,7 +128,7 @@ enum RoundTiming:
 #Fields of arenaSettings ("20 - Arena" size and bounce pad settings)
 enum ArenaSetting:
     CENTER_SIZE     #radius of the black sphere players are pushed out of
-    ARENA_RADIUS    #0 = use the map's radius from the map table; otherwise at least 10
+    ARENA_RADIUS    #0 = use the map's radius from the map table; otherwise at least 10 (more with a big center exclusion)
     PAD_STRENGTH    #copied into bouncePadConfig by "Initialization - global variables"
     PAD_DISTANCE
     PAD_RANGE

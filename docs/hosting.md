@@ -83,7 +83,7 @@ Settings **not** touched by any preset: everything in *50 - Features*, *80 - Vis
 | water | moderate | Workshop Island only. The height at which the ball skims off the water outside the island: **moderate** (y = −15), **none** (no water), **minimal** (y = −26), **flood** (y = −0.5, almost at island level) |
 | bounce pads | off | Four blue rings, 12 m from the center. Press Jump on one for a big vertical launch (3 s cooldown per player) |
 | center exclusion size | 3.5 | Radius of the black sphere at the center that pushes players out (0–10 m) |
-| arena radius | 0 | Arena radius in m. **0** uses the map's radius (see [Maps](#maps)), anything else replaces it (0–100 m; values under 10 count as 10, so final duel spawns stay in bounds) |
+| arena radius | 0 | Arena radius in m. **0** uses the map's radius (see [Maps](#maps)), anything else replaces it (0–100 m; the radius is at least 10 and at least 1.5 × (center exclusion size + 0.5), so final duel spawns stay in bounds and outside the center) |
 | bounce pad strength | 30 | Upward launch of a bounce pad (5–60) |
 | bounce pad distance | 12 | Distance of each pad from the center (4–40 m) |
 | bounce pad range | 2.75 | How close to a pad you have to be to bounce (0.5–10 m) |

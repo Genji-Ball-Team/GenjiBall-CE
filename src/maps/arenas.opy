@@ -35,9 +35,9 @@ rule "Initialization - Set map":
     circleCenter = mapRow[MapColumn.CENTER]
     SphereSize = mapRow[MapColumn.RADIUS]
     #"20 - Arena > arena radius" overrides the map's radius when it isn't 0.
-    #At least 10 m: the final duel spawns players 15 m out on Workshop Island (and SphereSize / 1.5
-    #elsewhere), so a smaller arena puts them out of bounds or inside the center exclusion.
+    #Kept large enough for the final duel spawns: 15 m out on Workshop Island (in bounds needs at
+    #least 10) and SphereSize / 1.5 elsewhere (must stay outside the center exclusion's push zone).
     if arenaSettings[ArenaSetting.ARENA_RADIUS] > 0:
-        SphereSize = max(arenaSettings[ArenaSetting.ARENA_RADIUS], 10)
+        SphereSize = max(arenaSettings[ArenaSetting.ARENA_RADIUS], max(10, 1.5 * (arenaSettings[ArenaSetting.CENTER_SIZE] + 0.5)))
     #Workshop Island has water and a ledge instead of a wall; several rules check this.
     isIsland = __getCurrentMap__() == Map.WORKSHOP_ISLAND or __getCurrentMap__() == Map.WORKSHOP_ISLAND_NIGHT
