@@ -22,6 +22,20 @@ rule "Settings - Workshop settings":
         createWorkshopSettingInt("10 - Ball", "exp homing ramp ms", 240, 25, 1000, 10) / 1000,
         createWorkshopSettingInt("10 - Ball", "exp surface homing %", 70, 20, 100, 11) / 100
     ]
+    #15 - Ball Feel: v1.3.2 values by default, used only with "custom ball feel" on.
+    #Presets force it off. One entry per BallFeel field (config/constants.opy), in that order.
+    ballFeel = [
+        createWorkshopSettingBool("15 - Ball Feel", "custom ball feel", false, 0),
+        createWorkshopSettingFloat("15 - Ball Feel", "speed per deflect", 1.05, 1, 2, 1),
+        createWorkshopSettingFloat("15 - Ball Feel", "hit radius", 1.9, 0.5, 5, 2),
+        createWorkshopSettingFloat("15 - Ball Feel", "turn rate modern", 1.75, 0.25, 20, 3),
+        createWorkshopSettingFloat("15 - Ball Feel", "turn rate rapid", 5, 0.25, 20, 4),
+        createWorkshopSettingFloat("15 - Ball Feel", "deflect curve rate", 6, 0, 20, 5),
+        createWorkshopSettingFloat("15 - Ball Feel", "deflect curve time", 0.05, 0, 1, 6),
+        createWorkshopSettingFloat("15 - Ball Feel", "deflect window", 0.3, 0.05, 2, 7),
+        createWorkshopSettingFloat("15 - Ball Feel", "deflect lockout", 0.5, 0, 3, 8),
+        createWorkshopSettingInt("15 - Ball Feel", "fast ball speed", 150, 0, 800, 9)
+    ]
     #20 - Arena: core arena/environment tuning is preset-controlled unless Preset is Custom.
     waterLevel = createWorkshopSettingEnum("20 - Arena", "water", 0, ["moderate", "none", "minimal", "flood"])
     bouncePadToggle = createWorkshopSettingBool("20 - Arena", "bounce pads", false, 1)
@@ -106,14 +120,14 @@ rule "Settings - Workshop settings":
     #  The bot setting stays manual so Bot + Experimental can be tested together.
     if presetMode != Preset.CUSTOM:
         presetRow = [
-            #match, tourn, rounds, breaks, every, length, start, max, accel, motion,               physics,                  water,          pads,  mobility,          anti-ghost,      AntiOrbit, radius, pressure, countdown, respawn, win pause, orbit spd, orbit t, min t,  sleep,  basic r, basic spd, basic t, dash cd, knockdown, knock cd, center, radius, pad str, pad dist, pad range, pad cd
-            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     Water.MODERATE, false, Mobility.AGILE,    MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         MANUAL,    MANUAL,  MANUAL, MANUAL, MANUAL, MANUAL,    MANUAL,  3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Default
-            [900,   true,  30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     Water.MODERATE, false, Mobility.AGILE,    AntiGhost.OFF,   false,     MANUAL, MANUAL,   5,         2,       2,         80,        7.5,     5.5,   5,      20,      80,        7.5,     3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Tournament
-            [900,   true,  30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     Water.MODERATE, false, Mobility.AGILE,    AntiGhost.STEER, true,      14,     0.02,   5,         2,       2,         80,        7.5,     5.5,   5,      20,      80,        7.5,     3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Tournament+
-            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.RAPID,     BallPhysics.ORIGINAL,     Water.FLOOD,    true,  Mobility.BALANCED, MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         MANUAL,    MANUAL,  MANUAL, MANUAL, MANUAL, MANUAL,    MANUAL,  3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Rapid
-            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     Water.NONE,     false, Mobility.AGILE,    MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         MANUAL,    MANUAL,  MANUAL, MANUAL, MANUAL, MANUAL,    MANUAL,  3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #v1
-            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     Water.FLOOD,    true,  Mobility.SLUGGISH, MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         MANUAL,    MANUAL,  MANUAL, MANUAL, MANUAL, MANUAL,    MANUAL,  3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #v7
-            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.EXPERIMENTAL, Water.MODERATE, false, Mobility.AGILE,    AntiGhost.OFF,   true,      14,     0.02,   5,         2,       2,         80,        7.5,     5.5,   5,      20,      80,        7.5,     3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Experimental
+            #match, tourn, rounds, breaks, every, length, start, max, accel, motion,               physics,                  feel,  water,          pads,  mobility,          anti-ghost,      AntiOrbit, radius, pressure, countdown, respawn, win pause, orbit spd, orbit t, min t,  sleep,  basic r, basic spd, basic t, dash cd, knockdown, knock cd, center, radius, pad str, pad dist, pad range, pad cd
+            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     false, Water.MODERATE, false, Mobility.AGILE,    MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         MANUAL,    MANUAL,  MANUAL, MANUAL, MANUAL, MANUAL,    MANUAL,  3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Default
+            [900,   true,  30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     false, Water.MODERATE, false, Mobility.AGILE,    AntiGhost.OFF,   false,     MANUAL, MANUAL,   5,         2,       2,         80,        7.5,     5.5,   5,      20,      80,        7.5,     3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Tournament
+            [900,   true,  30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     false, Water.MODERATE, false, Mobility.AGILE,    AntiGhost.STEER, true,      14,     0.02,   5,         2,       2,         80,        7.5,     5.5,   5,      20,      80,        7.5,     3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Tournament+
+            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.RAPID,     BallPhysics.ORIGINAL,     false, Water.FLOOD,    true,  Mobility.BALANCED, MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         MANUAL,    MANUAL,  MANUAL, MANUAL, MANUAL, MANUAL,    MANUAL,  3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Rapid
+            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     false, Water.NONE,     false, Mobility.AGILE,    MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         MANUAL,    MANUAL,  MANUAL, MANUAL, MANUAL, MANUAL,    MANUAL,  3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #v1
+            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     false, Water.FLOOD,    true,  Mobility.SLUGGISH, MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         MANUAL,    MANUAL,  MANUAL, MANUAL, MANUAL, MANUAL,    MANUAL,  3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #v7
+            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.EXPERIMENTAL, false, Water.MODERATE, false, Mobility.AGILE,    AntiGhost.OFF,   true,      14,     0.02,   5,         2,       2,         80,        7.5,     5.5,   5,      20,      80,        7.5,     3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Experimental
         ][presetMode]
         matchTime = presetRow[PresetColumn.MATCH_TIME]
         tournamentMode = presetRow[PresetColumn.TOURNAMENT_MODE]
@@ -126,6 +140,7 @@ rule "Settings - Workshop settings":
         ballAcceleration = presetRow[PresetColumn.BALL_ACCELERATION]
         ballMotion = presetRow[PresetColumn.BALL_MOTION]
         ballPhysicsMode = presetRow[PresetColumn.BALL_PHYSICS]
+        ballFeel[BallFeel.CUSTOM] = presetRow[PresetColumn.BALL_FEEL]
         waterLevel = presetRow[PresetColumn.WATER]
         bouncePadToggle = presetRow[PresetColumn.BOUNCE_PADS]
         mobilityMode = presetRow[PresetColumn.MOBILITY]
@@ -143,6 +158,8 @@ rule "Settings - Workshop settings":
             antiOrbitRadius = presetRow[PresetColumn.ANTI_ORBIT_RADIUS]
         if presetRow[PresetColumn.ANTI_ORBIT_PRESSURE] != MANUAL:
             antiOrbitPressureRate = presetRow[PresetColumn.ANTI_ORBIT_PRESSURE]
+    if not ballFeel[BallFeel.CUSTOM]:
+        ballFeel = BALL_FEEL_DEFAULTS
     #Mobility.CUSTOM keeps the "custom ... %" settings read above.
     if mobilityMode == Mobility.AGILE:
         moveSpeed = 190

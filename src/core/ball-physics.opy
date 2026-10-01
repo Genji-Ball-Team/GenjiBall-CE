@@ -115,7 +115,8 @@ rule "Ball Physics - anti ghost correction":
     
     #Mode 2 = steer. If the ball is close to the target and its current
     #direction is far off from the ideal target direction, temporarily raise
-    #steering strength. Experimental leaves AntiGhost off by default;
+    #steering strength. antiGhostRaised marks a raise to undo, so a deflect
+    #curve rate of 4 isn't mistaken for one. Experimental leaves AntiGhost off by default;
     #Tournament+ uses Steer.
     if distance(ballPosition, target.getEyePosition()) <= 7:
         if antiGhostMode == AntiGhost.TRACK:
@@ -129,19 +130,24 @@ rule "Ball Physics - anti ghost correction":
             if antiGhostState[AntiGhostField.STALL_TIMER] >= 0.15:
                 if ballDirectionRate < 4:
                     ballDirectionRate = 4
-            elif ballDirectionRate == 4:
+                    antiGhostRaised = true
+            elif antiGhostRaised:
                 ballDirectionRate = ballDirectionRateInit
+                antiGhostRaised = false
         elif antiGhostMode == AntiGhost.STEER:
             if angleBetweenVectors(ballDirection, directionTowards(ballPosition, target.getEyePosition())) >= 35:
                 antiGhostState = [distance(ballPosition, target.getEyePosition()), 0]
                 if ballDirectionRate < 4:
                     ballDirectionRate = 4
-            elif ballDirectionRate == 4:
+                    antiGhostRaised = true
+            elif antiGhostRaised:
                 ballDirectionRate = ballDirectionRateInit
+                antiGhostRaised = false
     else:
         antiGhostState = [999, 0]
-        if ballDirectionRate == 4:
+        if antiGhostRaised:
             ballDirectionRate = ballDirectionRateInit
+            antiGhostRaised = false
     wait(0.05, Wait.ABORT_WHEN_FALSE)
     if ruleCondition:
         loop()

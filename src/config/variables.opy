@@ -29,6 +29,7 @@ globalvar ballSpawnCountdown 26
 globalvar setballspawncountdown 27
 globalvar setballspawncountdownoriginal 28
 globalvar ballMotion 29
+globalvar ballFeel 30
 globalvar ballDirectionRate 31
 globalvar ballDirectionRateInit 32
 globalvar ballHitPosition 33
@@ -37,6 +38,7 @@ globalvar CollisionSurfaceDistances 39
 globalvar CollisionSurfaceIndex 40
 globalvar antiGhostMode 41
 globalvar antiGhostState 42
+globalvar antiGhostRaised 43
 globalvar circleCenter 44
 globalvar CenterOffLimitsSize 45
 globalvar SphereSize 46

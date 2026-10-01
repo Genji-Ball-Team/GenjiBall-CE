@@ -85,8 +85,8 @@ See `src/config/variables.opy` for the full list.
 
 The ball is a point, and it moves fast. The Workshop only evaluates conditions about once per tick (~60 Hz), so a fast ball can skip past a player between checks ("phasing"). Two rules handle this:
 
-- **`Collision - ball reaches player`** fires when `ballPosition` is within 1.9 m of the target's eyes.
-- **`Collision - collision check`** runs every tick while `ballSpeed > 150`. It also checks **interpolated points** between the previous and current positions (the halfway and quarter points in `phasePosition`, see `PhasePoint`, and the three-quarter point), so a fast ball can't jump over the target.
+- **`Collision - ball reaches player`** fires when `ballPosition` is within "hit radius" (1.9 m by default, `ballFeel`) of the target's eyes.
+- **`Collision - collision check`** runs every tick while `ballSpeed` is above "fast ball speed" (150 by default). It also checks **interpolated points** between the previous and current positions (the halfway and quarter points in `phasePosition`, see `PhasePoint`, and the three-quarter point), so a fast ball can't jump over the target.
 
 Both call `collisionTarget()`. That checks whether the target is deflecting (`isUsingAbility2`) or dashing (`isUsingAbility1`), and with tracing mode on, whether they're still tracing. It then either redirects the ball or calls `deflectFail()`.
 
@@ -98,7 +98,7 @@ Both call `collisionTarget()`. That checks whether the target is deflecting (`is
 
 | Engine / motion | Subroutine | How it moves |
 |---|---|---|
-| original + modern/rapid | `startModernBall` | Workshop `chaseAtRate` on position, speed and direction. The direction chases "towards target" at `ballDirectionRate` (1.75 modern, 5 rapid). Right after a deflect, `ballCurve` briefly raises the rate to 6 for a sharper curve |
+| original + modern/rapid | `startModernBall` | Workshop `chaseAtRate` on position, speed and direction. The direction chases "towards target" at `ballDirectionRate` (1.75 modern, 5 rapid by default). Right after a deflect, `ballCurve` raises the rate to 6 for 0.05 s for a sharper curve. These numbers, the hit radius, the +5% per deflect and the deflect window and lockout are the *15 - Ball Feel* settings, in `ballFeel` (fields in `BallFeel`) |
 | Legacy+ | `startLegacyPlusBall` | Manual integration every tick (`wait()` loop). No chase |
 | experimental | `startExperimentalBall` | Like modern, but deflect direction = facing direction blended with the incoming direction (`REBOUND_INFLUENCE` in `experimentalState`, fields in `ExperimentalField`), and homing strength ramps from the "exp homing start %" setting back to 100%. The six "exp …" settings live in `experimentalTuning` (fields in `ExperimentalTuning`) |
 | astro (any engine) | `startAstroBall` | `ballDirection` is a velocity vector with gravity-like pull toward the target, so it orbits |
@@ -135,7 +135,7 @@ Each line reads "A must stay before B". Rules are named as they appear in-game.
 | Keep before | Why |
 |---|---|
 | `Settings - Workshop settings` → everything else | It must be the first rule. It reads the Workshop settings and applies presets, and the startup rules below read the results. |
-| `Settings - Workshop settings` → `Initialization - global variables` | Init copies `ballSpawnSpeed` into `ballSpeed`, `setballspawncountdownoriginal` ("ball spawn countdown") into `setballspawncountdown` and `ballSpawnCountdown`, `roundsUntilBreak` into `roundsUntilBreakInit`, the "exp incoming min %" value into `experimentalState`, `arenaSettings` into `CenterOffLimitsSize` and `bouncePadConfig`, and picks `ballDirectionRateInit` from `ballMotion`. Swapped, the ball would use the pre-preset defaults (0). |
+| `Settings - Workshop settings` → `Initialization - global variables` | Init copies `ballSpawnSpeed` into `ballSpeed`, `setballspawncountdownoriginal` ("ball spawn countdown") into `setballspawncountdown` and `ballSpawnCountdown`, `roundsUntilBreak` into `roundsUntilBreakInit`, the "exp incoming min %" value into `experimentalState`, `arenaSettings` into `CenterOffLimitsSize` and `bouncePadConfig`, and picks `ballDirectionRateInit` from `ballMotion` and `ballFeel`. Swapped, the ball would use the pre-preset defaults (0). |
 | `Settings - Workshop settings` → `Initialization - Set map` | Set map reads the "arena radius" setting (`arenaSettings`) once. Swapped, every map would keep its own radius. |
 | `Settings - Workshop settings` → `HUD - controls text` | The HUD rule reads `addOnSettings` (Sandbox, double sens, custom abilities) once, when it starts. |
 | `Settings - Watermark` → `HUD - Watermark` | The HUD rule checks `WatermarkEnabled` once. It only matters if the watermark is ever turned on. |
@@ -192,7 +192,7 @@ With the constraints above kept, these have no order dependency: `features/duels
 
 ## Settings and presets
 
-`Settings - Workshop settings` is the first rule. It reads every `createWorkshopSetting*`, then, unless the preset is Custom, **overwrites** the core values with the preset's row of the preset table. The table has one row per preset (in `Preset` order) and one column per forced setting (`PresetColumn` in `config/constants.opy`). A `MANUAL` cell leaves the host's value, which is how anti-ghost and AntiOrbit stay manual in most presets. The anti-orbit tuning columns (`ORBIT_SPEED` to `BASIC_ORBIT_TIMER`) are forced as a group: a `MANUAL` in `ORBIT_SPEED` leaves all of `competitiveSettings` manual. It also turns enum settings into concrete numbers (mobility → move/gravity/jump percentages, water → a height, and so on). Mobility = custom keeps the "custom ... %" sliders, which are read straight into `moveSpeed`, `gravity` and `jumpVerticalSpeed`.
+`Settings - Workshop settings` is the first rule. It reads every `createWorkshopSetting*`, then, unless the preset is Custom, **overwrites** the core values with the preset's row of the preset table. The table has one row per preset (in `Preset` order) and one column per forced setting (`PresetColumn` in `config/constants.opy`). A `MANUAL` cell leaves the host's value, which is how anti-ghost and AntiOrbit stay manual in most presets. The anti-orbit tuning columns (`ORBIT_SPEED` to `BASIC_ORBIT_TIMER`) are forced as a group: a `MANUAL` in `ORBIT_SPEED` leaves all of `competitiveSettings` manual. Every preset forces "custom ball feel" off (`BALL_FEEL`); with it off, `ballFeel` is replaced by `BALL_FEEL_DEFAULTS`, the v1.3.2 values. It also turns enum settings into concrete numbers (mobility → move/gravity/jump percentages, water → a height, and so on). Mobility = custom keeps the "custom ... %" sliders, which are read straight into `moveSpeed`, `gravity` and `jumpVerticalSpeed`.
 
 When you add a setting:
 1. Add a `createWorkshopSetting*` call in the right category, with a sort-order number.
