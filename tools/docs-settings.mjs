@@ -45,12 +45,38 @@ function callArgs(source, start) {
   throw new Error("unterminated createWorkshopSetting call");
 }
 
+// Blanks out /* */ comments and whole-line # comments, keeping offsets and
+// newlines, so commented-out calls don't count. Skips over strings.
+function stripComments(source) {
+  source = source.replace(/^\s*#.*$/gm, (line) => " ".repeat(line.length));
+  let out = "";
+  let inString = false;
+  for (let i = 0; i < source.length; i++) {
+    const c = source[i];
+    if (inString) {
+      if (c === "\\") out += c + (source[++i] ?? "");
+      else {
+        if (c === '"') inString = false;
+        out += c;
+      }
+    } else if (c === '"') {
+      inString = true;
+      out += c;
+    } else if (c === "/" && source[i + 1] === "*") {
+      const close = source.indexOf("*/", i + 2);
+      const end = close < 0 ? source.length : close + 2;
+      out += source.slice(i, end).replace(/[^\n]/g, " ");
+      i = end - 1;
+    } else out += c;
+  }
+  return out;
+}
+
 // Every createWorkshopSetting* call in src/, as {category, name, type, default, min, max, options, sort}.
 export async function readSettings() {
   const settings = [];
   for (const file of await opyFiles(resolve(root, "src"))) {
-    // Blank out comment lines, keeping offsets, so commented-out calls don't count.
-    const source = (await readFile(file, "utf8")).replace(/^\s*#.*$/gm, (line) => " ".repeat(line.length));
+    const source = stripComments(await readFile(file, "utf8"));
     for (const match of source.matchAll(CALL)) {
       const type = match[1];
       const where = `${relative(root, file)}: createWorkshopSetting${type}`;
@@ -96,7 +122,7 @@ function rangeCell(setting, unit) {
 
 // A table row; an empty cell is written as "| |", like the hand-written tables.
 const row = (cells) => `|${cells.map((cell) => (cell === "" ? " " : ` ${cell} `)).join("|")}|`;
-const splitRow = (line) => line.trim().replace(/^\||\|$/g, "").split("|").map((cell) => cell.trim());
+const splitRow = (line) => line.trim().replace(/^\||\|$/g, "").split(/(?<!\\)\|/).map((cell) => cell.trim());
 
 // Hand-written parts of an existing table, by setting name: description and range unit.
 function readTable(lines) {
