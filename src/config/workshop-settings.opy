@@ -1,18 +1,5 @@
 #Workshop settings (host-configurable options)
 
-#Settings no preset forces and no feel-locked rule reads. Each one is read where
-#it is used, so it needs no global variable. Keep category, name, default and
-#sort order as they are, or the lobby settings change.
-#30 - Player: casual add-on.
-#!define DOUBLE_SENS createWorkshopSettingBool("30 - Player", "double sens", false, 1)
-#50 - Features: casual/gameplay add-on.
-#!define ABILITIES createWorkshopSettingBool("50 - Features", "custom abilities", false)
-#80 - Visual: visual helpers.
-#!define XRAY createWorkshopSettingBool("80 - Visual", "x-ray", false)
-#!define TRACING_MODE createWorkshopSettingBool("80 - Visual", "tracing mode", false, 1)
-#90 - Debug: developer/test HUD helpers.
-#!define DEBUG_HUD createWorkshopSettingBool("90 - Debug", "debug HUD", false)
-
 rule "Settings - Workshop settings":
     #- Experimental is a curated playtest ruleset for rebound physics and
     #competitive fixes, while still allowing manual bot/feature testing.
@@ -58,6 +45,16 @@ rule "Settings - Workshop settings":
     antiOrbitPressureRate = createWorkshopSettingInt("60 - Competitive", "AntiOrbit pressure", 2, 1, 5, 2) / 100
     #80 - Visual: visual helpers. Presets leave these manual.
     killCounterEnabled = createWorkshopSettingBool("80 - Visual", "kill tracker", false, 2)
+    #Add-ons no preset forces and no feel-locked rule reads, in one array.
+    #One entry per AddOnSetting field (config/constants.opy), in that order.
+    #Each setting may only be read once, so read them here and nowhere else.
+    addOnSettings = [
+        createWorkshopSettingBool("30 - Player", "double sens", false, 1),
+        createWorkshopSettingBool("50 - Features", "custom abilities", false),
+        createWorkshopSettingBool("80 - Visual", "x-ray", false),
+        createWorkshopSettingBool("80 - Visual", "tracing mode", false, 1),
+        createWorkshopSettingBool("90 - Debug", "debug HUD", false)
+    ]
     #Presets: one row per preset, in Preset order, one column per forced setting
     #(PresetColumn in config/constants.opy). MANUAL keeps the host's value.
     #Custom has no row, so every visible setting stays manual.

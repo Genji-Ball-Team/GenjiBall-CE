@@ -131,6 +131,7 @@ variables {
         59: moveSpeed
         60: gravity
         61: jumpVerticalSpeed
+        62: addOnSettings
         63: endlessMode
         64: Sandbox
         67: tracingPoints
@@ -242,6 +243,8 @@ rule ("Settings - Workshop settings") {
         Set Global Variable(antiOrbitPressureRate, Divide(Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("AntiOrbit pressure"), 2, 1, 5, 2), 100));
         "80 - Visual: visual helpers. Presets leave these manual."
         Set Global Variable(killCounterEnabled, Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("kill tracker"), False, 2));
+        "Add-ons no preset forces and no feel-locked rule reads, in one array.\nOne entry per AddOnSetting field (config/constants.opy), in that order.\nEach setting may only be read once, so read them here and nowhere else."
+        Set Global Variable(addOnSettings, Array(Workshop Setting Toggle(Custom String("30 - Player"), Custom String("double sens"), False, 1), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("x-ray"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("tracing mode"), False, 1), Workshop Setting Toggle(Custom String("90 - Debug"), Custom String("debug HUD"), False, 0)));
         "v7: v7-style preset shell. Deeper v7 parity remains deferred.\nExperimental: curated rebound-physics test ruleset, not tournament-safe yet.\nThe bot setting stays manual so Bot + Experimental can be tested together."
         If(Compare(Global.presetMode, !=, 7));
             Set Global Variable(presetRow, Value In Array(Array(Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, -1, -1, -1, -1), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 0, False, -1, -1), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 2, True, 14, 0.02), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 1, 0, 3, True, 1, -1, -1, -1, -1), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 1, False, 0, -1, -1, -1, -1), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 3, True, 2, -1, -1, -1, -1), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 2, 0, False, 0, 0, True, 14, 0.02)), Global.presetMode));
@@ -551,7 +554,7 @@ rule ("HUD - controls text") {
         If(Compare(Global.Sandbox, ==, False));
             Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("simple hud [{0}]", Input Binding String(Button(Interact))), Null, Left, 0, Null, Color(White), Null, Visible To and String, Default Visibility);
         End;
-        If(And(Workshop Setting Toggle(Custom String("30 - Player"), Custom String("double sens"), False, 1), Not(Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0))));
+        If(And(First Of(Global.addOnSettings), Not(Value In Array(Global.addOnSettings, 1))));
             Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("double sens [{0}]", Input Binding String(Button(Ultimate))), Null, Left, 0, Null, Color(White), Null, Visible To and String, Default Visibility);
     }
 }
@@ -565,7 +568,7 @@ rule ("HUD - add-ons text") {
     }
     actions {
         "__end__()\nif endlessMode:\nhudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == 0), \"•endless\", HudPosition.RIGHT, -2, Color.BLUE, HudReeval.VISIBILITY_AND_STRING)\n__end__()"
-        If(Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("tracing mode"), False, 1));
+        If(Value In Array(Global.addOnSettings, 3));
             Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("tracing: dont lose sight with the ball!"), Null, Top, -1, Null, Color(White), Null, Visible To and String, Default Visibility);
         End;
         If(Global.tournamentMode);
@@ -580,7 +583,7 @@ rule ("Debug - server load HUD") {
         Ongoing - Global;
     }
     conditions {
-        Workshop Setting Toggle(Custom String("90 - Debug"), Custom String("debug HUD"), False, 0) == True;
+        Value In Array(Global.addOnSettings, 4) == True;
     }
     actions {
         "Host-only server-load diagnostics for test builds. Presets never force this on/off."
@@ -595,7 +598,7 @@ rule ("Debug - ball state HUD") {
         Ongoing - Global;
     }
     conditions {
-        Workshop Setting Toggle(Custom String("90 - Debug"), Custom String("debug HUD"), False, 0) == True;
+        Value In Array(Global.addOnSettings, 4) == True;
         Global.ballIsOut == True;
         Global.target != Null;
     }
@@ -610,7 +613,7 @@ rule ("Debug - anti-orbit values") {
         Ongoing - Global;
     }
     conditions {
-        Workshop Setting Toggle(Custom String("90 - Debug"), Custom String("debug HUD"), False, 0) == True;
+        Value In Array(Global.addOnSettings, 4) == True;
         Global.target != Null;
     }
     actions {
@@ -720,7 +723,7 @@ rule ("Appearance - target effects") {
             Create Effect(All Players(All Teams), Good Aura, Color(Blue), Global.target, 1, Visible To Position and Radius);
             Create Effect(Global.target, Good Aura, Color(Blue), Global.target, 1, Visible To Position and Radius);
         End;
-        If(Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("x-ray"), False, 0));
+        If(Value In Array(Global.addOnSettings, 2));
             Create Icon(If-Then-Else(And(Global.ballIsOut, Not(Is In Line of Sight(Eye Position(Global.target), Global.ballPosition, All Barriers Block LOS))), Global.target, Null), Update Every Frame(Global.ballPosition), Heart, Visible To and Position, Color(Red), True);
     }
 }
@@ -1048,8 +1051,8 @@ rule ("Controls - double sens toggle") {
         All;
     }
     conditions {
-        Workshop Setting Toggle(Custom String("30 - Player"), Custom String("double sens"), False, 1) == True;
-        Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0) == False;
+        First Of(Global.addOnSettings) == True;
+        Value In Array(Global.addOnSettings, 1) == False;
         Is Dummy Bot(Event Player) == False;
         Is Alive(Event Player) == True;
         Is Button Held(Event Player, Button(Ultimate)) == True;
@@ -1077,7 +1080,7 @@ rule ("Controls - double sens reset when disabled") {
     }
     conditions {
         (Event Player).sensHigh == True;
-        Or(Not(Workshop Setting Toggle(Custom String("30 - Player"), Custom String("double sens"), False, 1)), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0)) == True;
+        Or(Compare(First Of(Global.addOnSettings), ==, False), Compare(Value In Array(Global.addOnSettings, 1), ==, True)) == True;
     }
     actions {
         Set Player Variable(Event Player, sensHigh, False);
@@ -2546,7 +2549,7 @@ rule ("Tracing mode - gained") {
         All;
     }
     conditions {
-        Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("tracing mode"), False, 1) == True;
+        Value In Array(Global.addOnSettings, 3) == True;
         Event Player == Global.target;
         Angle Between Vectors(Facing Direction Of(Event Player), Direction Towards(Eye Position(Event Player), Global.ballPosition)) <= 45;
     }
@@ -2565,7 +2568,7 @@ rule ("Tracing mode - lost") {
         All;
     }
     conditions {
-        Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("tracing mode"), False, 1) == True;
+        Value In Array(Global.addOnSettings, 3) == True;
         Event Player == Global.target;
         Angle Between Vectors(Facing Direction Of(Event Player), Direction Towards(Eye Position(Event Player), Global.ballPosition)) > 45;
     }
@@ -2825,7 +2828,7 @@ rule ("zBozo - randomize facing near ball") {
     }
 }
 
-rule ("GENJI BALL ABILITIES :OOOOOO - selection") {
+rule ("GENJI BALL addOnSettings[AddOnSetting.ABILITIES] :OOOOOO - selection") {
     event {
         Ongoing - Each Player;
         All;
@@ -2836,7 +2839,7 @@ rule ("GENJI BALL ABILITIES :OOOOOO - selection") {
         Is Dummy Bot(Event Player) == False;
         Is Game In Progress == True;
         Global.ballIsOut == False;
-        Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0) == True;
+        Value In Array(Global.addOnSettings, 1) == True;
     }
     actions {
         Wait Until(Not(Is Button Held(Event Player, Button(Reload))), 0.4);
@@ -2857,7 +2860,7 @@ rule ("Gb Abilities - Description") {
         All;
     }
     conditions {
-        Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0) == True;
+        Value In Array(Global.addOnSettings, 1) == True;
     }
     actions {
         If(Compare((Event Player).Abilitydesc, !=, 1));
@@ -2912,7 +2915,7 @@ rule ("Gb Abilities - Cd") {
     }
     conditions {
         (Event Player).Abilitycooldown > 0;
-        Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0) == True;
+        Value In Array(Global.addOnSettings, 1) == True;
     }
     actions {
         Chase Player Variable At Rate(Event Player, Abilitycooldown, 0, 1, Destination and Rate);
@@ -2930,7 +2933,7 @@ rule ("Gb Abilities - Reset cd on round end") {
     conditions {
         (Event Player).Abilitycooldown <= 0;
         Is Alive(All Players(All Teams)) == True;
-        Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0) == True;
+        Value In Array(Global.addOnSettings, 1) == True;
     }
     actions {
         Set Player Variable(Event Player, Abilitycooldown, 0);
@@ -2952,7 +2955,7 @@ rule ("Gb Abilities - 1. High jump ready") {
         Is Game In Progress == True;
         (Event Player).Abilityready == False;
         (Event Player).SpecialAbility == 1;
-        Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0) == True;
+        Value In Array(Global.addOnSettings, 1) == True;
     }
     actions {
         Set Player Variable(Event Player, Abilityready, True);
@@ -2971,7 +2974,7 @@ rule ("Gb Abilities - 1. Cancel high jump ready") {
         (Event Player).Abilityready == True;
         Or(Or(Or(Not(And(Is On Ground(Event Player), Is Crouching(Event Player))), False), Is Dead(Event Player)), Compare((Event Player).Abilitycooldown, >, 0)) == True;
         (Event Player).SpecialAbility == 1;
-        Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0) == True;
+        Value In Array(Global.addOnSettings, 1) == True;
     }
     actions {
         Wait(0.016, Ignore Condition);
@@ -2991,7 +2994,7 @@ rule ("Gb Abilities - 1. High jump") {
         Is Button Held(Event Player, Button(Jump)) == True;
         (Event Player).Abilityready == True;
         (Event Player).SpecialAbility == 1;
-        Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0) == True;
+        Value In Array(Global.addOnSettings, 1) == True;
     }
     actions {
         Apply Impulse(Event Player, Up, 25, To Player, Cancel Contrary Motion);
@@ -3012,7 +3015,7 @@ rule ("Gb Abilities - 2. Target switch ready") {
         Global.ballIsOut == True;
         Is Alive(Event Player) == True;
         (Event Player).SpecialAbility == 2;
-        Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0) == True;
+        Value In Array(Global.addOnSettings, 1) == True;
     }
     actions {
         Set Player Variable(Event Player, Abilityready, True);
@@ -3030,7 +3033,7 @@ rule ("Gb Abilities - 2. Cancel Target switch ready") {
     conditions {
         (Event Player).SpecialAbility == 2;
         Or(Or(Or(Is Dead(Event Player), Compare((Event Player).Abilitycooldown, >, 0)), Compare(Global.ballIsOut, !=, True)), Compare(Global.target, ==, Event Player)) == True;
-        Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0) == True;
+        Value In Array(Global.addOnSettings, 1) == True;
     }
     actions {
         Set Player Variable(Event Player, Abilityready, False);
@@ -3049,7 +3052,7 @@ rule ("Gb Abilities - 2. Target switch") {
         (Event Player).SpecialAbility == 2;
         Is Button Held(Event Player, Button(Ultimate)) == True;
         (Event Player).Abilityready == True;
-        Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0) == True;
+        Value In Array(Global.addOnSettings, 1) == True;
     }
     actions {
         Wait Until(Not(Is Button Held(Event Player, Button(Ultimate))), 99999);
@@ -3077,7 +3080,7 @@ rule ("Gb Abilities - 3. Blink ready") {
         Is Using Ability 1(Event Player) == False;
         (Event Player).Abilitycooldown <= 0;
         Is Alive(Event Player) == True;
-        Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0) == True;
+        Value In Array(Global.addOnSettings, 1) == True;
     }
     actions {
         Set Player Variable(Event Player, Abilityready, True);
@@ -3095,7 +3098,7 @@ rule ("Gb Abilities - 3. Cancel Blink ready") {
     conditions {
         (Event Player).SpecialAbility == 3;
         Or(Or(Is Dead(Event Player), Compare((Event Player).Abilitycooldown, >, 0)), Is Using Ability 1(Event Player)) == True;
-        Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0) == True;
+        Value In Array(Global.addOnSettings, 1) == True;
     }
     actions {
         Set Player Variable(Event Player, Abilityready, False);
@@ -3114,7 +3117,7 @@ rule ("Gb Abilities - 3. Blink") {
         (Event Player).SpecialAbility == 3;
         (Event Player).Abilityready == True;
         Is Button Held(Event Player, Button(Ultimate)) == True;
-        Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0) == True;
+        Value In Array(Global.addOnSettings, 1) == True;
     }
     actions {
         Teleport(Event Player, Ray Cast Hit Position(Eye Position(Event Player), Add(Eye Position(Event Player), Multiply(Facing Direction Of(Event Player), 20)), Null, Event Player, True));
@@ -3134,7 +3137,7 @@ rule ("Gb Abilities - 4. Critslash ready") {
         (Event Player).Abilitycooldown <= 0;
         Is Alive(Event Player) == True;
         Global.ballIsOut == True;
-        Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0) == True;
+        Value In Array(Global.addOnSettings, 1) == True;
     }
     actions {
         Set Player Variable(Event Player, Abilityready, True);
@@ -3152,7 +3155,7 @@ rule ("Gb Abilities - 4. Cancel critslash ready") {
     conditions {
         (Event Player).SpecialAbility == 4;
         Or(Or(Compare((Event Player).Abilitycooldown, >, 0), Is Dead(Event Player)), Compare(Global.ballIsOut, ==, False)) == True;
-        Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0) == True;
+        Value In Array(Global.addOnSettings, 1) == True;
     }
     actions {
         Set Player Variable(Event Player, Abilityready, False);
@@ -3172,7 +3175,7 @@ rule ("Gb Abilities - 4. Critical slash") {
         (Event Player).SpecialAbility == 4;
         (Event Player).Abilityready == True;
         Is Button Held(Event Player, Button(Ultimate)) == True;
-        Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0) == True;
+        Value In Array(Global.addOnSettings, 1) == True;
     }
     actions {
         Set Player Variable(Event Player, Critslash, True);
@@ -3428,7 +3431,7 @@ disabled rule ("Gb Abilities - stack crit slashes") {
     }
     conditions {
         (Event Player).Critalert == True;
-        Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0) == True;
+        Value In Array(Global.addOnSettings, 1) == True;
         Is Dummy Bot(Event Player) == False;
     }
     actions {

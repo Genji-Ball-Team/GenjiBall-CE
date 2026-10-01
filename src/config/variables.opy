@@ -58,6 +58,7 @@ globalvar mobilityMode 58
 globalvar moveSpeed 59
 globalvar gravity 60
 globalvar jumpVerticalSpeed 61
+globalvar addOnSettings 62
 globalvar endlessMode 63
 globalvar Sandbox 64
 globalvar tracingPoints 67

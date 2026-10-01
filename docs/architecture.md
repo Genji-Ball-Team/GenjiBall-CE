@@ -136,7 +136,7 @@ Each line reads "A must stay before B". Rules are named as they appear in-game.
 |---|---|
 | `Settings - Workshop settings` → everything else | It must be the first rule. It reads the Workshop settings and applies presets, and the startup rules below read the results. |
 | `Settings - Workshop settings` → `Initialization - global variables` | Init copies `ballSpawnSpeed` into `ballSpeed`, `roundsUntilBreak` into `roundsUntilBreakInit`, the "exp incoming min %" value into `reboundInfluence`, and picks `ballDirectionRateInit` from `ballMotion`. Swapped, the ball would use the pre-preset defaults (0). |
-| `Settings - Workshop settings` → `HUD - controls text` | The HUD rule reads `Sandbox` once, when it starts. (It reads the double sens and custom abilities settings directly.) |
+| `Settings - Workshop settings` → `HUD - controls text` | The HUD rule reads `Sandbox` and `addOnSettings` (double sens, custom abilities) once, when it starts. |
 | `Settings - Watermark` → `HUD - Watermark` | The HUD rule checks `WatermarkEnabled` once. It only matters if the watermark is ever turned on. |
 | `Settings - Red-green colorblind filter` (disabled) → `Initialization - bounce pads`, `Appearance - target effects` | Both read `RedGreenColorblindMode` once when they create their effects. Only matters when the filter rule is enabled. |
 | `Initialization - Set map` → `Initialization - map sphere`, `Initialization - bounce pads` | The bounce pad positions are computed once from `circleCenter`, and the map sphere reads `isIsland` once. |
