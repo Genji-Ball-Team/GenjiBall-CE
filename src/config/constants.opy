@@ -194,6 +194,7 @@ enum AddOnSetting:
     TRACING_ANGLE   #"80 - Visual > tracing view angle", how far from the crosshair the ball may be
     COLORBLIND      #"80 - Visual > red-green colorblind filter", blue/yellow target and bounce pad visuals
     WATERMARK       #"80 - Visual > watermark", the original-author credit
+    WATER_LEDGE_FIX #"20 - Arena > water ledge fix", limits the under-ledge push to near the island
 
 #antiGhostMode ("10 - Ball > anti-ghost correction")
 enum AntiGhost:
