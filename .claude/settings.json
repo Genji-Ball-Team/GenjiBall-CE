@@ -6,6 +6,7 @@
       "Bash(npm run build)",
       "Bash(npm run check)",
       "Bash(npm run docs:settings)",
+      "Bash(npm run decompile)",
       "Bash(npm run decompile:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",

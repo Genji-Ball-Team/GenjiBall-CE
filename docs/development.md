@@ -94,7 +94,7 @@ The full language reference is in the [OverPy README](https://github.com/Zezomby
 - `wait(0.05, Wait.ABORT_WHEN_FALSE)` stops the rule if its conditions turn false during the wait. `Wait.RESTART_WHEN_TRUE` restarts it from the top when they turn true again.
 - `waitUntil(condition, timeout)` waits until the condition is true or the timeout runs out, whichever comes first.
 - `if ruleCondition: loop()` repeats the rule from the top while its conditions still hold. A loop **must** wait at least one tick per pass; a loop without a wait overloads the server, and the Workshop can shut the game down.
-- Calling a `def` (`startRound()`) is `Call Subroutine`: the caller waits for it to finish. `async(startBall, AsyncBehavior.RESTART)` is `Start Rule`: it runs alongside the caller, and `RESTART` restarts it if it's already running (`AsyncBehavior.NOOP` leaves it running instead).
+- Calling a `def` (`startRound()`) is `Call Subroutine`: the caller waits for it to finish. `async(startBall, AsyncBehavior.RESTART)` is `Start Rule`: it runs alongside the caller, and `RESTART` restarts it if it's already running (`AsyncBehavior.NOOP` leaves it running instead). Restarting a subroutine that has a `wait` over and over can eventually crash the server, which is what the `w_start_rule_crash` build warning is about. The ball engines already do this (they did in v1.3.2), but don't add `RESTART` calls to a subroutine with waits on a trigger that fires repeatedly.
 
 ### Macros and enums
 
