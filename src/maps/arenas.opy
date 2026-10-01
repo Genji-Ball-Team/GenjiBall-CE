@@ -34,5 +34,8 @@ rule "Initialization - Set map":
     ].index(__getCurrentMap__())]
     circleCenter = mapRow[MapColumn.CENTER]
     SphereSize = mapRow[MapColumn.RADIUS]
+    #"20 - Arena > arena radius" overrides the map's radius when it isn't 0.
+    if arenaSettings[ArenaSetting.ARENA_RADIUS] > 0:
+        SphereSize = arenaSettings[ArenaSetting.ARENA_RADIUS]
     #Workshop Island has water and a ledge instead of a wall; several rules check this.
     isIsland = __getCurrentMap__() == Map.WORKSHOP_ISLAND or __getCurrentMap__() == Map.WORKSHOP_ISLAND_NIGHT

@@ -73,7 +73,7 @@ The file table is in include order. When you add a file, include it in `main.opy
 | `ballPosition`, `ballDirection`, `ballSpeed` | The ball. There's no entity. The ball is just these variables plus effects drawn at `ballPosition` |
 | `ballSpawnCountdown` | Counts down to the next spawn (chased to 0) |
 | `RoundInProgress`, `IsEnoughPlayersToStart`, `IsInFinalDuel`, `TieBreakerActive` | Round state flags |
-| `circleCenter`, `SphereSize` | Arena center and radius, looked up per map from the map table in `maps/arenas.opy` |
+| `circleCenter`, `SphereSize` | Arena center and radius, looked up per map from the map table in `maps/arenas.opy`. A non-zero "arena radius" setting replaces the radius |
 | `isIsland` | True on Workshop Island (day or night). Set once in `maps/arenas.opy`. Use it instead of comparing `__getCurrentMap__()` |
 | `presetMode`, `ballMotion`, `ballPhysicsMode`, … | Settings from `config/workshop-settings.opy`. Most are named after their Workshop setting. Compare enum settings against `config/constants.opy` (`ballMotion == BallMotion.ASTRO`), not raw numbers |
 
@@ -135,7 +135,8 @@ Each line reads "A must stay before B". Rules are named as they appear in-game.
 | Keep before | Why |
 |---|---|
 | `Settings - Workshop settings` → everything else | It must be the first rule. It reads the Workshop settings and applies presets, and the startup rules below read the results. |
-| `Settings - Workshop settings` → `Initialization - global variables` | Init copies `ballSpawnSpeed` into `ballSpeed`, `setballspawncountdownoriginal` ("ball spawn countdown") into `setballspawncountdown` and `ballSpawnCountdown`, `roundsUntilBreak` into `roundsUntilBreakInit`, the "exp incoming min %" value into `experimentalState`, and picks `ballDirectionRateInit` from `ballMotion`. Swapped, the ball would use the pre-preset defaults (0). |
+| `Settings - Workshop settings` → `Initialization - global variables` | Init copies `ballSpawnSpeed` into `ballSpeed`, `setballspawncountdownoriginal` ("ball spawn countdown") into `setballspawncountdown` and `ballSpawnCountdown`, `roundsUntilBreak` into `roundsUntilBreakInit`, the "exp incoming min %" value into `experimentalState`, `arenaSettings` into `CenterOffLimitsSize` and `bouncePadConfig`, and picks `ballDirectionRateInit` from `ballMotion`. Swapped, the ball would use the pre-preset defaults (0). |
+| `Settings - Workshop settings` → `Initialization - Set map` | Set map reads the "arena radius" setting (`arenaSettings`) once. Swapped, every map would keep its own radius. |
 | `Settings - Workshop settings` → `HUD - controls text` | The HUD rule reads `addOnSettings` (Sandbox, double sens, custom abilities) once, when it starts. |
 | `Settings - Watermark` → `HUD - Watermark` | The HUD rule checks `WatermarkEnabled` once. It only matters if the watermark is ever turned on. |
 | `Settings - Red-green colorblind filter` (disabled) → `Initialization - bounce pads`, `Appearance - target effects` | Both read `RedGreenColorblindMode` once when they create their effects. Only matters when the filter rule is enabled. |

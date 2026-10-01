@@ -37,6 +37,12 @@ enum PresetColumn:
     SPAWN_COUNTDOWN
     RESPAWN_DELAY
     WIN_PAUSE
+    CENTER_SIZE     #CENTER_SIZE to PAD_COOLDOWN must stay last and in ArenaSetting order
+    ARENA_RADIUS
+    PAD_STRENGTH
+    PAD_DISTANCE
+    PAD_RANGE
+    PAD_COOLDOWN
 
 #A preset table cell that leaves the host's setting as is
 #!define MANUAL -1
@@ -118,6 +124,15 @@ enum BouncePadField:
 enum RoundTiming:
     RESPAWN_DELAY   #seconds before the ball respawns after a kill
     WIN_PAUSE       #seconds between a round win and the next round
+
+#Fields of arenaSettings ("20 - Arena" size and bounce pad settings)
+enum ArenaSetting:
+    CENTER_SIZE     #radius of the black sphere players are pushed out of
+    ARENA_RADIUS    #0 = use the map's radius from the map table
+    PAD_STRENGTH    #copied into bouncePadConfig by "Initialization - global variables"
+    PAD_DISTANCE
+    PAD_RANGE
+    PAD_COOLDOWN
 
 #Fields of addOnSettings, the add-on settings no preset forces
 enum AddOnSetting:

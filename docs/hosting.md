@@ -55,7 +55,7 @@ These appear in the custom game under **Settings → Workshop → Settings**, gr
 | **Custom** | Everything manual | uses your values for every setting |
 
 What "Default" forces (all non-Custom presets start from this):
-match length 15 min, tournament off, 30 rounds, breaks on every 10 rounds for 60 s, ball spawn countdown 5 s, ball respawn delay 2 s, round win pause 2 s, ball start speed 60, max speed 400, acceleration 25, motion modern, physics original, water moderate, bounce pads off, mobility agile.
+match length 15 min, tournament off, 30 rounds, breaks on every 10 rounds for 60 s, ball spawn countdown 5 s, ball respawn delay 2 s, round win pause 2 s, ball start speed 60, max speed 400, acceleration 25, motion modern, physics original, water moderate, bounce pads off, center exclusion size 3.5, arena radius 0 (the map's), bounce pad strength 30, distance 12, range 2.75 and cooldown 3 s, mobility agile.
 
 Settings **not** touched by any preset: everything in *50 - Features*, *80 - Visual*, *90 - Debug*, and double sens. Anti-ghost and AntiOrbit are only forced by the presets listed above.
 
@@ -82,6 +82,12 @@ Settings **not** touched by any preset: everything in *50 - Features*, *80 - Vis
 |---|---|---|
 | water | moderate | Workshop Island only. The height at which the ball skims off the water outside the island: **moderate** (y = −15), **none** (no water), **minimal** (y = −26), **flood** (y = −0.5, almost at island level) |
 | bounce pads | off | Four blue rings, 12 m from the center. Press Jump on one for a big vertical launch (3 s cooldown per player) |
+| center exclusion size | 3.5 | Radius of the black sphere at the center that pushes players out (0–10 m) |
+| arena radius | 0 | Arena radius in m. **0** uses the map's radius (see [Maps](#maps)), anything else replaces it (0–100 m) |
+| bounce pad strength | 30 | Upward launch of a bounce pad (5–60) |
+| bounce pad distance | 12 | Distance of each pad from the center (4–40 m) |
+| bounce pad range | 2.75 | How close to a pad you have to be to bounce (0.5–10 m) |
+| bounce pad cooldown | 3 | Seconds before a player can bounce again (1–10 s) |
 
 ### 30 - Player
 

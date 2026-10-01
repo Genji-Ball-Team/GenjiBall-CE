@@ -42,11 +42,12 @@ rule "Initialization - global variables":
     disableMusic()
     disableAnnouncer()
     ballSpeed = ballSpawnSpeed
-    CenterOffLimitsSize = 3.5
+    CenterOffLimitsSize = arenaSettings[ArenaSetting.CENTER_SIZE]
     IsInFinalDuel = false
     #One entry per BouncePadField (config/constants.opy), in that order.
-    #Set here, not in "Initialization - bounce pads", because round flow reads COOLDOWN even with pads off.
-    bouncePadConfig = [30, 12, 2.75, 3, 3]
+    #Set here, not in "Initialization - bounce pads" (round flow reads COOLDOWN even with pads off) or in the
+    #settings rule (players already in the lobby must still start with a 0 cooldown, see docs/architecture.md).
+    bouncePadConfig = [arenaSettings[ArenaSetting.PAD_STRENGTH], arenaSettings[ArenaSetting.PAD_DISTANCE], arenaSettings[ArenaSetting.PAD_RANGE], 3, arenaSettings[ArenaSetting.PAD_COOLDOWN]]
     ballPosition = Vector.DOWN
     roundsUntilBreakInit = roundsUntilBreak
     ballHitPosition = null
