@@ -2122,6 +2122,8 @@ rule ("Map restrictions - put out center") {
         All;
     }
     conditions {
+        "No arena on an unsupported map (circleCenter and SphereSize are unset)"
+        Value In Array(Global.mapRow, 1) != 0;
         Distance Between(Position Of(Event Player), Global.circleCenter) < Add(Global.CenterOffLimitsSize, 0.5);
     }
     actions {

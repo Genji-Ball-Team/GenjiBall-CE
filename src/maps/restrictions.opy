@@ -2,6 +2,8 @@
 
 rule "Map restrictions - put out center":
     @Event eachPlayer
+    #No arena on an unsupported map (circleCenter and SphereSize are unset)
+    @Condition MAP_UNSUPPORTED == false
     @Condition distance(eventPlayer.getPosition(), circleCenter) < CenterOffLimitsSize + 0.5
     
     eventPlayer.applyImpulse(directionTowards(circleCenter, eventPlayer), 10, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
