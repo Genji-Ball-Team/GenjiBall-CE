@@ -114,17 +114,21 @@ subroutine simpleIslandSideCollision 20
 subroutine startLegacyPlusBall 21
 subroutine startExperimentalBall 22
 
-#Activated extensions
+#Activated extensions. Every one is used; OverPy refuses to compile when they cost more points than the Workshop has.
 
-#!extension beamSounds
-#!extension buffStatusEffects
-#!extension debuffStatusEffects
+#Sombra translocating sound (abilities)
 #!extension buffAndDebuffSounds
+#D.Va self-destruct and Tracer recall effects (collision)
 #!extension energyExplosionEffects
+#Ashe dynamite and Doomfist meteor (collision), Pharah barrage (ball physics)
 #!extension kineticExplosionEffects
+#Ashe, Baptiste (collision), Echo (ball physics), Brigitte armor (controls), Moira and Winston (abilities) explosion sounds
 #!extension explosionSounds
+#Raises how many effects can play per tick. A compile can't check this; only remove after testing in a full lobby
 #!extension playMoreEffects
+#Raises how many dummy bots can spawn (zBozo). A compile can't check this; only remove after testing in a full lobby
 #!extension spawnMoreDummyBots
+#The ball's createProjectileEffect (ui/effects.opy)
 #!extension projectiles
 
 
