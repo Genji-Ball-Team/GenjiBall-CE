@@ -77,10 +77,40 @@ startRound()                               # Call Subroutine
 async(startBall, AsyncBehavior.RESTART)    # Start Rule(startBall, Restart Rule)
 ```
 
-- `@Disabled` disables a rule without deleting it.
-- `if ruleCondition: loop()` is the usual "repeat while conditions hold" pattern.
-- `goto lbl_0` / `lbl_0:` come from the decompiler (Workshop `Skip`). Rewriting them as normal `if` blocks is welcome, as long as the behavior stays the same.
-- The full language reference is in the [OverPy README](https://github.com/Zezombye/overpy#readme).
+The full language reference is in the [OverPy README](https://github.com/Zezombye/overpy#readme). The sections below cover what people new to OverPy tend to trip over in this repo.
+
+### Blocks and annotations
+
+- Blocks work like Python: a line ending in `:` opens a block, and indentation (4 spaces) closes it. A wrong indent silently moves an action into or out of an `if`, so check it in the diff.
+- `@Event`, `@Condition`, `@Name` and `@Disabled` go at the top of a rule or `def`, before any action.
+- `@Event eachPlayer` runs the rule once per player, with `eventPlayer` set. Without `@Event`, it's a global rule that runs once.
+- Every `@Condition` must be true for the rule to fire (they're joined with "and"). A rule with no condition fires once at the start (an `eachPlayer` rule, once for each player).
+- `@Name` sets the name a `def` shows in the Workshop editor. Rules and subroutines are named `<Area> - <what it does>` (`Controls - Dash cooldown`); the docs and the [feel-lock](#feel-lock) refer to them by those names.
+- `@Disabled` keeps a rule in the code but turns it off, the same as unticking it in the Workshop editor.
+
+### Waits, loops and subroutines
+
+- `wait(0.05)` pauses the rule. The Workshop's shortest wait is about one tick (0.016 s), so `wait(0)` waits one tick.
+- `wait(0.05, Wait.ABORT_WHEN_FALSE)` stops the rule if its conditions turn false during the wait. `Wait.RESTART_WHEN_TRUE` restarts it from the top when they turn true again.
+- `waitUntil(condition, timeout)` waits until the condition is true or the timeout runs out, whichever comes first.
+- `if ruleCondition: loop()` repeats the rule from the top while its conditions still hold. A loop **must** wait at least one tick per pass; a loop without a wait overloads the server, and the Workshop can shut the game down.
+- Calling a `def` (`startRound()`) is `Call Subroutine`: the caller waits for it to finish. `async(startBall, AsyncBehavior.RESTART)` is `Start Rule`: it runs alongside the caller, and `RESTART` restarts it if it's already running (`AsyncBehavior.NOOP` leaves it running instead). Restarting a subroutine that has a `wait` over and over can eventually crash the server, which is what the `w_start_rule_crash` build warning is about. The ball engines already do this (they did in v1.3.2), but don't add `RESTART` calls to a subroutine with waits on a trigger that fires repeatedly.
+
+### Macros and enums
+
+- `#!define NAME value` is a macro: OverPy pastes `value` wherever `NAME` appears, before compiling. It costs nothing at runtime, but each use compiles to its own copy of the code. `MANUAL` and `BALL_FEEL_DEFAULTS` in `src/config/constants.opy` are examples.
+- `enum` gives names to numbers: the first entry is 0, the next 1, and so on. `Preset.CUSTOM` compiles to the same number as before, so swapping a magic number for an enum doesn't change the compiled code. Enums index the packed arrays: `ballFeel[BallFeel.HIT_RADIUS]`.
+- **A macro is the wrong tool when the copies matter.** A Workshop setting is the classic case: every copy of `createWorkshopSetting*` is a separate reference, and each setting may only be referenced once (see [When you add a setting](architecture.md#settings-and-presets)). A long macro used in many places also costs elements each time.
+
+### Chased variables
+
+`chaseAtRate(...)` and `chaseOverTime(...)` make the Workshop move a variable toward a value every tick on its own, without any rule setting it. The ball's position, speed and direction are chased this way. Because of a Workshop bug, a rule **condition** that reads a chased variable may not fire when you'd expect, which is what the many `w_ow2_rule_condition_chase` build warnings say.
+
+The existing rules are tuned around this behaviour (it was already in v1.3.2), so don't "fix" those conditions in the core rules: the timing change is a feel change. In new rules, avoid conditions on chased variables. Check the value in a looping rule instead. Use `evalOnce(...)` when you need a variable's value right now rather than its live, chased value, for example `phasePosition[PhasePoint.LAST] = evalOnce(ballPosition)`.
+
+### `goto` and labels
+
+Some rules contain `goto lbl_0` and `lbl_0:`. They come from the decompiler: v1.3.2 used the Workshop's `Skip` and `Skip If` actions, which jump forward a number of actions, and when the decompiler can't turn a skip into an `if` block, it writes a `goto`. Rewriting them as `if` blocks is welcome, as long as the behaviour stays the same. The rewrite changes the compiled code, though, so inside [feel-locked](#feel-lock) rules it fails the check and isn't worth it.
 
 ## Adding variables
 
