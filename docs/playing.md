@@ -22,14 +22,14 @@ Players who join mid-round sit out (dead, spectating) until the next round.
 
 ### Dash-hitting
 
-You can also hit the ball by **dashing into it**. It redirects the same way, but you're knocked down for 1 second. Use it when you can't deflect in time.
+You can also hit the ball by **dashing into it**. It redirects the same way, but you're knocked down for 1 second (by default; the host can change it). Use it when you can't deflect in time.
 
 ## Controls
 
 | Input | What it does |
 |---|---|
 | **Secondary fire** or **Ability 2** | Deflect (lasts 0.3 s, then both dash and deflect are locked for 0.5 s) |
-| **Primary fire** or **Ability 1** | Dash (Swift Strike). Cooldown is about 3 s, and it resets when you get a kill |
+| **Primary fire** or **Ability 1** | Dash (Swift Strike). Cooldown is about 3 s by default, and it resets when you get a kill |
 | **Reload** (tap) | Switch between third person (default) and first person |
 | **Interact** (tap) | Simple HUD: hides the Discord/controls text |
 | **Interact** (hold) | Zen mode: hides the hero HUD and shows big Dash/Deflect ready indicators |

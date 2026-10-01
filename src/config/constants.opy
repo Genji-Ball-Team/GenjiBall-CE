@@ -37,6 +37,9 @@ enum PresetColumn:
     SPAWN_COUNTDOWN
     RESPAWN_DELAY
     WIN_PAUSE
+    DASH_COOLDOWN   #DASH_COOLDOWN to STUN_COOLDOWN in PlayerSetting order
+    STUN_DURATION
+    STUN_COOLDOWN
     CENTER_SIZE     #CENTER_SIZE to PAD_COOLDOWN must stay last and in ArenaSetting order
     ARENA_RADIUS
     PAD_STRENGTH
@@ -134,6 +137,12 @@ enum ArenaSetting:
     PAD_RANGE
     PAD_COOLDOWN
 
+#Fields of playerSettings ("30 - Player" dash and dash-hit stun settings)
+enum PlayerSetting:
+    DASH_COOLDOWN   #seconds after a dash ends before the next one ("Controls - Dash cooldown")
+    STUN_DURATION   #seconds a dash-hit knocks the dasher down ("Collision - dash sub")
+    STUN_COOLDOWN   #seconds before another dash-hit can knock them down again
+
 #Fields of addOnSettings, the add-on settings no preset forces
 enum AddOnSetting:
     DOUBLE_SENS     #"30 - Player > double sens"
@@ -145,6 +154,7 @@ enum AddOnSetting:
     ENDLESS         #"50 - Features > endless mode"
     SANDBOX         #"50 - Features > Sandbox mode"
     KILL_TRACKER    #"80 - Visual > kill tracker"
+    SENS_MULTIPLIER #"30 - Player > double sens %", the aim speed double sens switches to
 
 #antiGhostMode ("10 - Ball > anti-ghost correction")
 enum AntiGhost:
@@ -164,6 +174,7 @@ enum Mobility:
     AGILE
     BALANCED
     SLUGGISH
+    CUSTOM      #uses the "custom move speed %", "custom gravity %" and "custom jump %" settings
 
 #eventPlayer.simpleHUD, toggled with Interact
 enum SimpleHud:

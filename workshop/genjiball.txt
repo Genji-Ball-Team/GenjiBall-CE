@@ -114,6 +114,7 @@ variables {
         48: bouncePadToggle
         49: bouncePadConfig
         50: arenaSettings
+        51: playerSettings
         54: bouncePads
         58: mobilityMode
         59: moveSpeed
@@ -207,8 +208,14 @@ rule ("Settings - Workshop settings") {
         Set Global Variable(bouncePadToggle, Workshop Setting Toggle(Custom String("20 - Arena"), Custom String("bounce pads"), False, 1));
         "One entry per ArenaSetting field (config/constants.opy), in that order."
         Set Global Variable(arenaSettings, Array(Workshop Setting Real(Custom String("20 - Arena"), Custom String("center exclusion size"), 3.5, 0, 10, 2), Workshop Setting Real(Custom String("20 - Arena"), Custom String("arena radius"), 0, 0, 100, 3), Workshop Setting Integer(Custom String("20 - Arena"), Custom String("bounce pad strength"), 30, 5, 60, 4), Workshop Setting Real(Custom String("20 - Arena"), Custom String("bounce pad distance"), 12, 4, 40, 5), Workshop Setting Real(Custom String("20 - Arena"), Custom String("bounce pad range"), 2.75, 0.5, 10, 6), Workshop Setting Integer(Custom String("20 - Arena"), Custom String("bounce pad cooldown"), 3, 1, 10, 7)));
-        "30 - Player: mobility is preset-controlled unless Preset is Custom. Double sens is a casual add-on."
-        Set Global Variable(mobilityMode, Workshop Setting Combo(Custom String("30 - Player"), Custom String("mobility"), 0, Array(Custom String("agile"), Custom String("balanced"), Custom String("sluggish")), 0));
+        "30 - Player: mobility, dash and dash hit settings are preset-controlled unless Preset is Custom.\nDouble sens is a casual add-on."
+        Set Global Variable(mobilityMode, Workshop Setting Combo(Custom String("30 - Player"), Custom String("mobility"), 0, Array(Custom String("agile"), Custom String("balanced"), Custom String("sluggish"), Custom String("custom")), 0));
+        "Only used with mobility = custom. Every other mobility overwrites them below.\nGravity stays above 0: currentGravity == 0 means \"in the water\" (maps/restrictions.opy)."
+        Set Global Variable(moveSpeed, Workshop Setting Integer(Custom String("30 - Player"), Custom String("custom move speed %"), 190, 20, 300, 1));
+        Set Global Variable(gravity, Workshop Setting Integer(Custom String("30 - Player"), Custom String("custom gravity %"), 80, 10, 300, 2));
+        Set Global Variable(jumpVerticalSpeed, Workshop Setting Integer(Custom String("30 - Player"), Custom String("custom jump %"), 180, 20, 300, 3));
+        "One entry per PlayerSetting field (config/constants.opy), in that order."
+        Set Global Variable(playerSettings, Array(Workshop Setting Real(Custom String("30 - Player"), Custom String("dash cooldown"), 3.04, 0, 10, 4), Workshop Setting Real(Custom String("30 - Player"), Custom String("dash hit knockdown"), 1, 0, 3, 5), Workshop Setting Real(Custom String("30 - Player"), Custom String("dash hit knockdown cooldown"), 0.6, 0, 5, 6)));
         "40 - Match: match/tournament structure is preset-controlled unless Preset is Custom."
         Set Global Variable(matchTime, Multiply(Workshop Setting Integer(Custom String("40 - Match"), Custom String("match length"), 15, 5, 60, 0), 60));
         Set Global Variable(tournamentMode, Workshop Setting Toggle(Custom String("40 - Match"), Custom String("tournament mode"), False, 1));
@@ -226,10 +233,10 @@ rule ("Settings - Workshop settings") {
         Set Global Variable(antiOrbitRadius, Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("AntiOrbit radius"), 14, 10, 20, 1));
         Set Global Variable(antiOrbitPressureRate, Divide(Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("AntiOrbit pressure"), 2, 1, 5, 2), 100));
         "Add-ons no preset forces, in one array.\nOne entry per AddOnSetting field (config/constants.opy), in that order.\nEach setting may only be read once, so read them here and nowhere else."
-        Set Global Variable(addOnSettings, Array(Workshop Setting Toggle(Custom String("30 - Player"), Custom String("double sens"), False, 1), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("x-ray"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("tracing mode"), False, 1), Workshop Setting Toggle(Custom String("90 - Debug"), Custom String("debug HUD"), False, 0), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("duels"), False, 2), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("endless mode"), False, 3), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("Sandbox mode"), False, 4), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("kill tracker"), False, 2)));
+        Set Global Variable(addOnSettings, Array(Workshop Setting Toggle(Custom String("30 - Player"), Custom String("double sens"), False, 7), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("x-ray"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("tracing mode"), False, 1), Workshop Setting Toggle(Custom String("90 - Debug"), Custom String("debug HUD"), False, 0), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("duels"), False, 2), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("endless mode"), False, 3), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("Sandbox mode"), False, 4), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("kill tracker"), False, 2), Workshop Setting Integer(Custom String("30 - Player"), Custom String("double sens %"), 275, 100, 500, 8)));
         "v7: v7-style preset shell. Deeper v7 parity remains deferred.\nExperimental: curated rebound-physics test ruleset, not tournament-safe yet.\nThe bot setting stays manual so Bot + Experimental can be tested together."
         If(Compare(Global.presetMode, !=, 7));
-            Set Global Variable(presetRow, Value In Array(Array(Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, -1, -1, -1, -1, 5, 2, 2, 3.5, 0, 30, 12, 2.75, 3), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 0, False, -1, -1, 5, 2, 2, 3.5, 0, 30, 12, 2.75, 3), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 2, True, 14, 0.02, 5, 2, 2, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 1, 0, 3, True, 1, -1, -1, -1, -1, 5, 2, 2, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 1, False, 0, -1, -1, -1, -1, 5, 2, 2, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 3, True, 2, -1, -1, -1, -1, 5, 2, 2, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 2, 0, False, 0, 0, True, 14, 0.02, 5, 2, 2, 3.5, 0, 30, 12, 2.75, 3)), Global.presetMode));
+            Set Global Variable(presetRow, Value In Array(Array(Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, -1, -1, -1, -1, 5, 2, 2, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 0, False, -1, -1, 5, 2, 2, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 2, True, 14, 0.02, 5, 2, 2, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 1, 0, 3, True, 1, -1, -1, -1, -1, 5, 2, 2, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 1, False, 0, -1, -1, -1, -1, 5, 2, 2, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 3, True, 2, -1, -1, -1, -1, 5, 2, 2, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 2, 0, False, 0, 0, True, 14, 0.02, 5, 2, 2, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3)), Global.presetMode));
             Set Global Variable(matchTime, First Of(Global.presetRow));
             Set Global Variable(tournamentMode, Value In Array(Global.presetRow, 1));
             Set Global Variable(totalRounds, Value In Array(Global.presetRow, 2));
@@ -246,7 +253,8 @@ rule ("Settings - Workshop settings") {
             Set Global Variable(mobilityMode, Value In Array(Global.presetRow, 13));
             Set Global Variable(setballspawncountdownoriginal, Value In Array(Global.presetRow, 18));
             Set Global Variable(roundTimings, Array(Value In Array(Global.presetRow, 19), Value In Array(Global.presetRow, 20)));
-            Set Global Variable(arenaSettings, Array Slice(Global.presetRow, 21, Subtract(Count Of(Global.presetRow), 21)));
+            Set Global Variable(playerSettings, Array Slice(Global.presetRow, 21, 3));
+            Set Global Variable(arenaSettings, Array Slice(Global.presetRow, 24, Subtract(Count Of(Global.presetRow), 24)));
             If(Compare(Value In Array(Global.presetRow, 14), !=, -1));
                 Set Global Variable(antiGhostMode, Value In Array(Global.presetRow, 14));
             End;
@@ -260,6 +268,7 @@ rule ("Settings - Workshop settings") {
                 Set Global Variable(antiOrbitPressureRate, Value In Array(Global.presetRow, 17));
             End;
         End;
+        "Mobility.CUSTOM keeps the \"custom ... %\" settings read above."
         If(Compare(Global.mobilityMode, ==, 0));
             Set Global Variable(moveSpeed, 190);
             Set Global Variable(gravity, 80);
@@ -953,7 +962,7 @@ rule ("Controls - Dash cooldown") {
     actions {
         Set Player Variable(Event Player, dashOnCooldown, True);
         Wait Until(Not(Is Using Ability 1(Event Player)), 0.5);
-        Wait Until(Compare((Event Player).dashOnCooldown, ==, False), 3.04);
+        Wait Until(Compare((Event Player).dashOnCooldown, ==, False), First Of(Global.playerSettings));
         Set Player Variable(Event Player, dashOnCooldown, False);
     }
 }
@@ -1041,7 +1050,7 @@ rule ("Controls - double sens toggle") {
             Small Message(Event Player, Custom String("double sens: normal"));
         Else;
             Set Player Variable(Event Player, sensHigh, True);
-            Set Aim Speed(Event Player, 275);
+            Set Aim Speed(Event Player, Value In Array(Global.addOnSettings, 9));
             Small Message(Event Player, Custom String("double sens: high"));
         End;
         Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Color(White), Event Player, 10);
@@ -1647,8 +1656,8 @@ rule ("Collision - dash sub") {
     }
     actions {
         If(Compare((Global.prevTarget).stunCooldown, <=, 0));
-            Set Status(Global.prevTarget, Null, Knocked Down, 1);
-            Set Player Variable(Global.prevTarget, stunCooldown, 0.6);
+            Set Status(Global.prevTarget, Null, Knocked Down, Value In Array(Global.playerSettings, 1));
+            Set Player Variable(Global.prevTarget, stunCooldown, Value In Array(Global.playerSettings, 2));
         End;
     }
 }

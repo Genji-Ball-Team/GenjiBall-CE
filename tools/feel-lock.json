@@ -214,7 +214,7 @@
         "    actions {",
         "        Set Player Variable(Event Player, dashOnCooldown, True);",
         "        Wait Until(Not(Is Using Ability 1(Event Player)), 0.5);",
-        "        Wait Until(Compare((Event Player).dashOnCooldown, ==, False), 3.04);",
+        "        Wait Until(Compare((Event Player).dashOnCooldown, ==, False), First Of(Global.playerSettings));",
         "        Set Player Variable(Event Player, dashOnCooldown, False);",
         "    }",
         "}"
@@ -678,8 +678,8 @@
         "    }",
         "    actions {",
         "        If(Compare((Global.prevTarget).stunCooldown, <=, 0));",
-        "            Set Status(Global.prevTarget, Null, Knocked Down, 1);",
-        "            Set Player Variable(Global.prevTarget, stunCooldown, 0.6);",
+        "            Set Status(Global.prevTarget, Null, Knocked Down, Value In Array(Global.playerSettings, 1));",
+        "            Set Player Variable(Global.prevTarget, stunCooldown, Value In Array(Global.playerSettings, 2));",
         "        End;",
         "    }",
         "}"
