@@ -118,9 +118,11 @@ enum BallFeel:
     DEFLECT_WINDOW      #seconds a deflect lasts ("Controls - Shorten deflect length")
     DEFLECT_LOCKOUT     #seconds dash and deflect are locked after it
     FAST_BALL_SPEED     #above this ballSpeed, "Collision - collision check" also checks points between frames
+    CHAMBER_FLOOR       #"chamber floor bounce": the ball bounces off the Workshop Chamber floor (y < 0)
+    RELIABLE_HITS       #"reliable hit detection": "Collision - collision check" runs at every ballSpeed
 
 #ballFeel with "custom ball feel" off, in BallFeel order: the v1.3.2 values
-#!define BALL_FEEL_DEFAULTS [false, 1.05, 1.9, 1.75, 5, 6, 0.05, 0.3, 0.5, 150]
+#!define BALL_FEEL_DEFAULTS [false, 1.05, 1.9, 1.75, 5, 6, 0.05, 0.3, 0.5, 150, false, false]
 
 #Fields of experimentalState, the Experimental engine's state while the ball is out
 enum ExperimentalField:

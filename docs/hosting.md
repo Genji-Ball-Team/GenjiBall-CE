@@ -101,6 +101,8 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 | deflect window | 0.3 | 0.05–2 s | How long a deflect lasts |
 | deflect lockout | 0.5 | 0–3 s | After a deflect, how long dash and deflect are locked |
 | fast ball speed | 150 | 0–800 | Above this speed, the game also checks points between frames so a fast ball can't skip past the target. Lower is more reliable but costs more server load |
+| chamber floor bounce | off | | Workshop Chamber only. In v1.3.2 the ball bounces off the chamber ceiling and walls but not its floor. **on**: it bounces off the floor too |
+| reliable hit detection | off | | **on**: the between-frames check from "fast ball speed" runs at every speed, every tick, so a hit isn't missed at low speed. Costs more server load |
 
 ### 20 - Arena
 

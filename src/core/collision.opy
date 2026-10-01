@@ -9,7 +9,9 @@ rule "Collision - ball reaches player":
 
 rule "Collision - collision check":
     @Condition ballIsOut == true
-    @Condition ballSpeed > ballFeel[BallFeel.FAST_BALL_SPEED]
+    #"reliable hit detection" (off by default, ball feel) runs this every tick at any speed, as a backup for
+    #"Collision - ball reaches player", whose condition reads the chased ballPosition.
+    @Condition (ballSpeed > ballFeel[BallFeel.FAST_BALL_SPEED] or ballFeel[BallFeel.RELIABLE_HITS]) == true
     
     if ballHitPosition != null:
         #-o--x--------o->Between last ballPosition & middlePosition

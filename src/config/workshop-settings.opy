@@ -34,7 +34,9 @@ rule "Settings - Workshop settings":
         createWorkshopSettingFloat("15 - Ball Feel", "deflect curve time", 0.05, 0, 1, 6),
         createWorkshopSettingFloat("15 - Ball Feel", "deflect window", 0.3, 0.05, 2, 7),
         createWorkshopSettingFloat("15 - Ball Feel", "deflect lockout", 0.5, 0, 3, 8),
-        createWorkshopSettingInt("15 - Ball Feel", "fast ball speed", 150, 0, 800, 9)
+        createWorkshopSettingInt("15 - Ball Feel", "fast ball speed", 150, 0, 800, 9),
+        createWorkshopSettingBool("15 - Ball Feel", "chamber floor bounce", false, 10),
+        createWorkshopSettingBool("15 - Ball Feel", "reliable hit detection", false, 11)
     ]
     #20 - Arena: core arena/environment tuning is preset-controlled unless Preset is Custom.
     waterLevel = createWorkshopSettingEnum("20 - Arena", "water", 0, ["moderate", "none", "minimal", "flood"])
