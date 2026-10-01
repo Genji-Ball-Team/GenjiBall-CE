@@ -80,6 +80,14 @@ enum ExperimentalTuning:
     HOMING_RAMP     #seconds to ramp back to full homing
     SURFACE_HOMING  #homing strength right after a wall or floor bounce
 
+#Fields of addOnSettings, the add-on settings no preset forces
+enum AddOnSetting:
+    DOUBLE_SENS     #"30 - Player > double sens"
+    ABILITIES       #"50 - Features > custom abilities"
+    XRAY            #"80 - Visual > x-ray"
+    TRACING_MODE    #"80 - Visual > tracing mode"
+    DEBUG_HUD       #"90 - Debug > debug HUD"
+
 #antiGhostMode ("10 - Ball > anti-ghost correction")
 enum AntiGhost:
     OFF

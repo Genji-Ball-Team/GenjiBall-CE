@@ -27,7 +27,7 @@ rule "HUD - controls text":
     hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "change perspective [{0}]".format(inputBindingString(Button.RELOAD)), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
     if Sandbox == false:
         hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "simple hud [{0}]".format(inputBindingString(Button.INTERACT)), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
-    if doubleSensEnabled and not Abilities:
+    if addOnSettings[AddOnSetting.DOUBLE_SENS] and not addOnSettings[AddOnSetting.ABILITIES]:
         hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "double sens [{0}]".format(inputBindingString(Button.ULTIMATE)), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
 
 
@@ -38,7 +38,7 @@ rule "HUD - add-ons text":
     #if endlessMode:
     #hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == 0), "•endless", HudPosition.RIGHT, -2, Color.BLUE, HudReeval.VISIBILITY_AND_STRING)
     #__end__()
-    if tracingMode:
+    if addOnSettings[AddOnSetting.TRACING_MODE]:
         hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "tracing: dont lose sight with the ball!", HudPosition.TOP, -1, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
     if tournamentMode:
         hudHeader(getAllPlayers(), "Tournament", HudPosition.RIGHT, 8, Color.BLACK, HudReeval.VISIBILITY_AND_STRING)
@@ -47,7 +47,7 @@ rule "HUD - add-ons text":
 
 
 rule "Debug - server load HUD":
-    @Condition debugRules == true
+    @Condition addOnSettings[AddOnSetting.DEBUG_HUD] == true
     
     #Host-only server-load diagnostics for test builds. Presets never force this on/off.
     hudText(hostPlayer, null, "Server Load", getServerLoad(), HudPosition.RIGHT, 0, Color.WHITE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
@@ -56,7 +56,7 @@ rule "Debug - server load HUD":
 
 
 rule "Debug - ball state HUD":
-    @Condition debugRules == true
+    @Condition addOnSettings[AddOnSetting.DEBUG_HUD] == true
     @Condition ballIsOut == true
     @Condition target != null
     
@@ -65,7 +65,7 @@ rule "Debug - ball state HUD":
 
 
 rule "Debug - anti-orbit values":
-    @Condition debugRules == true
+    @Condition addOnSettings[AddOnSetting.DEBUG_HUD] == true
     @Condition target != null
     
     #Host-only AntiOrbit diagnostics. Useful even when AntiOrbit is disabled, because it confirms state reset/decay.

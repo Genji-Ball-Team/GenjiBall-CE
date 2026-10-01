@@ -14,7 +14,7 @@ rule "Appearance - target effects":
         createEffect(target, Effect.ORB, Color.BLUE, updateEveryFrame(ballPosition), 0.4, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
         createEffect(getAllPlayers(), Effect.GOOD_AURA, Color.BLUE, target, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
         createEffect(target, Effect.GOOD_AURA, Color.BLUE, target, 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
-    if xray:
+    if addOnSettings[AddOnSetting.XRAY]:
         createIcon(target if ballIsOut and not isInLoS(target.getEyePosition(), ballPosition, BarrierLos.BLOCKED_BY_ALL_BARRIERS) else null, updateEveryFrame(ballPosition), Icon.HEART, IconReeval.VISIBILITY_AND_POSITION, Color.RED)
 
 

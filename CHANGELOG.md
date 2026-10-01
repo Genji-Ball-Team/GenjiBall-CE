@@ -25,6 +25,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 - `Map restrictions - water` now loops every tick with `wait()` instead of `wait(0.008)`. The Workshop already clamped 0.008 s up to one tick (0.016 s), so the water push runs exactly as often as before.
 - Replaced the decompiler's `goto` jumps with `if`/`else` in the bounce pad effects, the Watermark HUD, the lobby rules (`Check for <2 players`, `Wait for more players`, `Player joins game`) and the abilities description and Target switch. Behaviour is unchanged. The ten gotos left are in feel-locked rules (dash slow, round flow, collision), where an `if` would change the compiled code.
 - Removed the global `breakInProgress`, which was never set (so always false), and its two `breakInProgress == false` conditions (`Controls - Switch perspective (reload)`, `AntiOrbit - decay heat`). `Kill Tracker - cache players` now filters and sorts the players in one step instead of through `killLeaderboardPlayers`. Frees global slots 16 and 111; behaviour is unchanged.
+- The "double sens", "custom abilities", "x-ray", "tracing mode" and "debug HUD" settings are now read into one `addOnSettings` array (`AddOnSetting` in `src/config/constants.opy`) instead of the globals `doubleSensEnabled`, `Abilities`, `xray`, `tracingMode` and `debugRules`. Their category, name, default and sort order are unchanged, so the lobby settings look the same. Frees global slots 65, 66, 70 and 110; behaviour is unchanged.
 
 ## v1.3.2 (Community Edition import)
 

@@ -27,7 +27,6 @@ rule "Settings - Workshop settings":
     bouncePadToggle = createWorkshopSettingBool("20 - Arena", "bounce pads", false, 1)
     #30 - Player: mobility is preset-controlled unless Preset is Custom. Double sens is a casual add-on.
     mobilityMode = createWorkshopSettingEnum("30 - Player", "mobility", 0, ["agile", "balanced", "sluggish"])
-    doubleSensEnabled = createWorkshopSettingBool("30 - Player", "double sens", false, 1)
     #40 - Match: match/tournament structure is preset-controlled unless Preset is Custom.
     matchTime = createWorkshopSettingInt("40 - Match", "match length", 15, 5, 60) * 60
     tournamentMode = createWorkshopSettingBool("40 - Match", "tournament mode", false, 1)
@@ -36,7 +35,6 @@ rule "Settings - Workshop settings":
     roundsUntilBreak = createWorkshopSettingInt("40 - Match", "break every", 10, 4, 25, 4)
     breakLength = createWorkshopSettingInt("40 - Match", "break length", 60, 1, 120, 5)
     #50 - Features: casual/gameplay add-ons. Presets leave these manual.
-    Abilities = createWorkshopSettingBool("50 - Features", "custom abilities", false)
     bozo_Bot = createWorkshopSettingBool("50 - Features", "bot", false, 1)
     duelMode = createWorkshopSettingBool("50 - Features", "duels", false, 2)
     endlessMode = createWorkshopSettingBool("50 - Features", "endless mode", false, 3)
@@ -46,11 +44,17 @@ rule "Settings - Workshop settings":
     antiOrbitRadius = createWorkshopSettingInt("60 - Competitive", "AntiOrbit radius", 14, 10, 20, 1)
     antiOrbitPressureRate = createWorkshopSettingInt("60 - Competitive", "AntiOrbit pressure", 2, 1, 5, 2) / 100
     #80 - Visual: visual helpers. Presets leave these manual.
-    xray = createWorkshopSettingBool("80 - Visual", "x-ray", false)
-    tracingMode = createWorkshopSettingBool("80 - Visual", "tracing mode", false, 1)
     killCounterEnabled = createWorkshopSettingBool("80 - Visual", "kill tracker", false, 2)
-    #90 - Debug: developer/test HUD helpers. Presets leave these manual.
-    debugRules = createWorkshopSettingBool("90 - Debug", "debug HUD", false)
+    #Add-ons no preset forces and no feel-locked rule reads, in one array.
+    #One entry per AddOnSetting field (config/constants.opy), in that order.
+    #Each setting may only be read once, so read them here and nowhere else.
+    addOnSettings = [
+        createWorkshopSettingBool("30 - Player", "double sens", false, 1),
+        createWorkshopSettingBool("50 - Features", "custom abilities", false),
+        createWorkshopSettingBool("80 - Visual", "x-ray", false),
+        createWorkshopSettingBool("80 - Visual", "tracing mode", false, 1),
+        createWorkshopSettingBool("90 - Debug", "debug HUD", false)
+    ]
     #Presets: one row per preset, in Preset order, one column per forced setting
     #(PresetColumn in config/constants.opy). MANUAL keeps the host's value.
     #Custom has no row, so every visible setting stays manual.
