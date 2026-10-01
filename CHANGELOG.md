@@ -22,6 +22,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 - Merged the six Experimental engine tuning settings ("exp incoming min/max %", "exp homing start %/hold ms/ramp ms", "exp surface homing %") into one `experimentalTuning` array (`ExperimentalTuning` in `src/config/constants.opy`). Frees global slots 103–107; the Experimental engine behaves as before.
 - Removed the global `Critalert` variable, which was set to false at start and never read. The player variable of the same name (the Crit slash alert) is unchanged. Frees global slot 96.
 - The ball speed HUD is now one text that picks its colour and string by speed band, instead of 16 texts that each re-evaluated `ballSpeed` every tick. Every threshold, colour and joke string is the same. Saves 15 HUD texts and about 200 elements.
+- `Map restrictions - water` now loops every tick with `wait()` instead of `wait(0.008)`. The Workshop already clamped 0.008 s up to one tick (0.016 s), so the water push runs exactly as often as before.
 
 ## v1.3.2 (Community Edition import)
 
