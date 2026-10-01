@@ -37,6 +37,13 @@ enum PresetColumn:
     SPAWN_COUNTDOWN
     RESPAWN_DELAY
     WIN_PAUSE
+    ORBIT_SPEED     #ORBIT_SPEED to BASIC_ORBIT_TIMER in CompetitiveSetting order
+    ORBIT_TIMER
+    ORBIT_MIN_TIMER
+    ORBIT_SLEEP
+    BASIC_ORBIT_RADIUS
+    BASIC_ORBIT_SPEED
+    BASIC_ORBIT_TIMER
     DASH_COOLDOWN   #DASH_COOLDOWN to STUN_COOLDOWN in PlayerSetting order
     STUN_DURATION
     STUN_COOLDOWN
@@ -143,6 +150,17 @@ enum PlayerSetting:
     STUN_DURATION   #seconds a dash-hit knocks the dasher down ("Collision - dash sub")
     STUN_COOLDOWN   #seconds before another dash-hit can knock them down again
 
+#Fields of competitiveSettings ("60 - Competitive" anti-orbit tuning).
+#A preset forces all of them or none (MANUAL in the ORBIT_SPEED column).
+enum CompetitiveSetting:
+    ORBIT_SPEED         #AntiOrbit: the ball counts as orbiting below this speed
+    ORBIT_TIMER         #AntiOrbit: seconds of orbiting before the sleep, with no pressure or heat
+    ORBIT_MIN_TIMER     #AntiOrbit: pressure and heat never shorten the timer below this
+    ORBIT_SLEEP         #AntiOrbit: seconds the orbiting player sleeps
+    BASIC_ORBIT_RADIUS  #"Tournament - no orbit abusing" (tournament mode with AntiOrbit off)
+    BASIC_ORBIT_SPEED
+    BASIC_ORBIT_TIMER
+
 #Fields of addOnSettings, the add-on settings no preset forces
 enum AddOnSetting:
     DOUBLE_SENS     #"30 - Player > double sens"
@@ -155,6 +173,7 @@ enum AddOnSetting:
     SANDBOX         #"50 - Features > Sandbox mode"
     KILL_TRACKER    #"80 - Visual > kill tracker"
     SENS_MULTIPLIER #"30 - Player > double sens %", the aim speed double sens switches to
+    TRACING_ANGLE   #"80 - Visual > tracing view angle", how far from the crosshair the ball may be
 
 #antiGhostMode ("10 - Ball > anti-ghost correction")
 enum AntiGhost:
