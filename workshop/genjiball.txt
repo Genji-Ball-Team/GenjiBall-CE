@@ -2267,18 +2267,11 @@ rule ("Map restrictions - water") {
         Global.isIsland == True;
     }
     actions {
-        "\"water ledge fix\" (off by default, player feel): within 35 m, push out from under the ledge, then up."
-        If(Value In Array(Global.addOnSettings, 13));
-            If(And(Compare(Absolute Value(X Component Of(Position Of(Event Player))), <, 35), Compare(Absolute Value(Z Component Of(Position Of(Event Player))), <, 35)));
-                "Under the island: 20.25 m edge plus a margin for the player's width, so they rise clear of the lip"
-                If(And(Compare(Absolute Value(X Component Of(Position Of(Event Player))), <, 21), Compare(Absolute Value(Z Component Of(Position Of(Event Player))), <, 21)));
-                    Apply Impulse(Event Player, Multiply(Direction Towards(Global.circleCenter, Event Player), Vector(1, 0, 1)), 2, To World, Incorporate Contrary Motion);
-                Else;
-                    Apply Impulse(Event Player, Up, 2, To World, Cancel Contrary Motion);
-                End;
-            End;
+        "\"water ledge fix\" (off by default, player feel): under the island, push straight out instead, so the push below\ncan't pin players under the ledge. 21 is the 20.25 m edge plus a margin for the player's width."
+        If(And(And(Value In Array(Global.addOnSettings, 13), Compare(Absolute Value(X Component Of(Position Of(Event Player))), <, 21)), Compare(Absolute Value(Z Component Of(Position Of(Event Player))), <, 21)));
+            Apply Impulse(Event Player, Multiply(Direction Towards(Global.circleCenter, Event Player), Vector(1, 0, 1)), 2, To World, Incorporate Contrary Motion);
         Else;
-            "v1.3.2 (its \"x < 35 or x > -35 or ...\" check was always true). Toward the center can pin players under the ledge.\nPrevents people from going under the ledge on Workshop Island, which caused ball to go into floor.  Used to be an annoying stunkill"
+            "v1.3.2 checked \"x < 35 or x > -35 or ...\" here, which is always true, so this runs everywhere below -1.5.\nPrevents people from going under the ledge on Workshop Island, which caused ball to go into floor.  Used to be an annoying stunkill"
             Apply Impulse(Event Player, Up, 2, To World, Cancel Contrary Motion);
             Apply Impulse(Event Player, Direction Towards(Event Player, Global.circleCenter), 2, To World, Incorporate Contrary Motion);
         End;
