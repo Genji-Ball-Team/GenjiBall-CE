@@ -132,6 +132,8 @@ rule "Controls - Dash cooldown":
     waitUntil(not eventPlayer.isUsingAbility1(), 0.5)
     waitUntil(eventPlayer.dashOnCooldown == false, playerSettings[PlayerSetting.DASH_COOLDOWN])
     eventPlayer.dashOnCooldown = false
+    #Swift Strike's native cooldown (38% = 3.04s) would still block a shorter custom dash cooldown.
+    eventPlayer.setAbilityCooldown(Button.ABILITY_1, 0)
 
 
 rule "Control - Dash reset":

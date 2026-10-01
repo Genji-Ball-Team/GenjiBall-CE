@@ -216,6 +216,8 @@
         "        Wait Until(Not(Is Using Ability 1(Event Player)), 0.5);",
         "        Wait Until(Compare((Event Player).dashOnCooldown, ==, False), First Of(Global.playerSettings));",
         "        Set Player Variable(Event Player, dashOnCooldown, False);",
+        "        \"Swift Strike's native cooldown (38% = 3.04s) would still block a shorter custom dash cooldown.\"",
+        "        Set Ability Cooldown(Event Player, Button(Ability 1), 0);",
         "    }",
         "}"
       ]
