@@ -7,6 +7,8 @@ globalvar ballIsOut 2
 globalvar RoundInProgress 3
 globalvar IsEnoughPlayersToStart 4
 globalvar IsInFinalDuel 5
+#True while startRound or setupFinal is setting up (in Sandbox it waits for the host), so the all-dead rule doesn't start a second one.
+globalvar RoundSetupPending 6
 globalvar HighestScore 7
 globalvar TieBreakerActive 8
 globalvar matchTime 9

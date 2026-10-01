@@ -3,11 +3,13 @@
 def startRound():
     @Name "Active game - start round"
     
+    RoundSetupPending = true
     if addOnSettings[AddOnSetting.SANDBOX] == true:
         waitUntil(hostPlayer.isHoldingButton(Button.ULTIMATE) and hostPlayer.isHoldingButton(Button.RELOAD), 99999)
     randomTarget()
     chaseAtRate(ballSpawnCountdown, 0, 1)
     RoundInProgress = true
+    RoundSetupPending = false
     #New rounds should start with dash available again.
     #This only resets the custom dash cooldown flag; it does not alter dash/deflect timing mid-round.
     getAllPlayers().dashOnCooldown = false
@@ -36,6 +38,7 @@ rule "Active game - spawn ball":
 def setupFinal():
     @Name "Subroutine - setup duel"
     
+    RoundSetupPending = true
     if ballIsOut == false:
         goto lbl_0
     deleteBall()
@@ -45,6 +48,7 @@ def setupFinal():
     if addOnSettings[AddOnSetting.SANDBOX] == true:
         waitUntil(hostPlayer.isHoldingButton(Button.ULTIMATE) and hostPlayer.isHoldingButton(Button.RELOAD), 99999)
     IsInFinalDuel = true
+    RoundSetupPending = false
     chaseAtRate(ballSpawnCountdown, 0, 1)
     getLivingPlayers(Team.ALL).bouncePadCooldown = bouncePadConfig[BouncePadField.COOLDOWN] - 1
     if isIsland:
@@ -142,8 +146,9 @@ rule "Active game - all players dead":
     if ruleCondition:
         loop()
     wait(2)
-    #Skip if the round has already restarted: by the lobby (not enough players), the final duel (two players) or a round win in progress.
-    if not IsEnoughPlayersToStart or IsInFinalDuel or RoundInProgress:
+    #Skip if the round has already restarted: by the lobby (not enough players), the final duel (two players) or a round win in progress,
+    #including one still waiting for the host in Sandbox.
+    if not IsEnoughPlayersToStart or IsInFinalDuel or RoundInProgress or RoundSetupPending:
         return
     stopChasing(ballSpawnCountdown)
     startRound()

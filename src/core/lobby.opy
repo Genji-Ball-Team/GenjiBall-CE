@@ -10,6 +10,7 @@ rule "Check for <2 players":
     stopChasing(ballSpawnCountdown)
     deleteBall()
     RoundInProgress = false
+    RoundSetupPending = false
     bigMessage(getAllPlayers(), "Waiting for players")
 
 

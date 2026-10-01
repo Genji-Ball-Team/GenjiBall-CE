@@ -77,6 +77,7 @@ variables {
         3: RoundInProgress
         4: IsEnoughPlayersToStart
         5: IsInFinalDuel
+        6: RoundSetupPending
         7: HighestScore
         8: TieBreakerActive
         9: matchTime
@@ -733,6 +734,7 @@ rule ("Check for <2 players") {
         Stop Chasing Global Variable(ballSpawnCountdown);
         Call Subroutine(deleteBall);
         Set Global Variable(RoundInProgress, False);
+        Set Global Variable(RoundSetupPending, False);
         Big Message(All Players(All Teams), Custom String("Waiting for players"));
     }
 }
@@ -1149,12 +1151,14 @@ rule ("Active game - start round") {
         startRound;
     }
     actions {
+        Set Global Variable(RoundSetupPending, True);
         If(Compare(Value In Array(Global.addOnSettings, 7), ==, True));
             Wait Until(And(Is Button Held(Host Player, Button(Ultimate)), Is Button Held(Host Player, Button(Reload))), 99999);
         End;
         Call Subroutine(randomTarget);
         Chase Global Variable At Rate(ballSpawnCountdown, 0, 1, Destination and Rate);
         Set Global Variable(RoundInProgress, True);
+        Set Global Variable(RoundSetupPending, False);
         "New rounds should start with dash available again.\nThis only resets the custom dash cooldown flag; it does not alter dash/deflect timing mid-round."
         Set Player Variable(All Players(All Teams), dashOnCooldown, False);
         Call Subroutine(resetOrbitRoundState);
@@ -1193,6 +1197,7 @@ rule ("Subroutine - setup duel") {
         setupFinal;
     }
     actions {
+        Set Global Variable(RoundSetupPending, True);
         Skip If(Compare(Global.ballIsOut, ==, False), 1);
         Call Subroutine(deleteBall);
         //lbl_0:
@@ -1202,6 +1207,7 @@ rule ("Subroutine - setup duel") {
             Wait Until(And(Is Button Held(Host Player, Button(Ultimate)), Is Button Held(Host Player, Button(Reload))), 99999);
         End;
         Set Global Variable(IsInFinalDuel, True);
+        Set Global Variable(RoundSetupPending, False);
         Chase Global Variable At Rate(ballSpawnCountdown, 0, 1, Destination and Rate);
         Set Player Variable(All Living Players(All Teams), bouncePadCooldown, Subtract(Value In Array(Global.bouncePadConfig, 4), 1));
         If(Global.isIsland);
@@ -1315,8 +1321,8 @@ rule ("Active game - all players dead") {
         Wait(1, Ignore Condition);
         Loop If Condition Is True;
         Wait(2, Ignore Condition);
-        "Skip if the round has already restarted: by the lobby (not enough players), the final duel (two players) or a round win in progress."
-        Abort If(Or(Or(Not(Global.IsEnoughPlayersToStart), Global.IsInFinalDuel), Global.RoundInProgress));
+        "Skip if the round has already restarted: by the lobby (not enough players), the final duel (two players) or a round win in progress,\nincluding one still waiting for the host in Sandbox."
+        Abort If(Or(Or(Or(Not(Global.IsEnoughPlayersToStart), Global.IsInFinalDuel), Global.RoundInProgress), Global.RoundSetupPending));
         Stop Chasing Global Variable(ballSpawnCountdown);
         Call Subroutine(startRound);
     }
