@@ -34,8 +34,20 @@ rule "Settings - Workshop settings":
         createWorkshopSettingFloat("20 - Arena", "bounce pad range", 2.75, 0.5, 10, 6),
         createWorkshopSettingInt("20 - Arena", "bounce pad cooldown", 3, 1, 10, 7)
     ]
-    #30 - Player: mobility is preset-controlled unless Preset is Custom. Double sens is a casual add-on.
-    mobilityMode = createWorkshopSettingEnum("30 - Player", "mobility", 0, ["agile", "balanced", "sluggish"])
+    #30 - Player: mobility, dash and dash hit settings are preset-controlled unless Preset is Custom.
+    #Double sens is a casual add-on.
+    mobilityMode = createWorkshopSettingEnum("30 - Player", "mobility", 0, ["agile", "balanced", "sluggish", "custom"])
+    #Only used with mobility = custom. Every other mobility overwrites them below.
+    #Gravity stays above 0: currentGravity == 0 means "in the water" (maps/restrictions.opy).
+    moveSpeed = createWorkshopSettingInt("30 - Player", "custom move speed %", 190, 20, 300, 1)
+    gravity = createWorkshopSettingInt("30 - Player", "custom gravity %", 80, 10, 300, 2)
+    jumpVerticalSpeed = createWorkshopSettingInt("30 - Player", "custom jump %", 180, 20, 300, 3)
+    #One entry per PlayerSetting field (config/constants.opy), in that order.
+    playerSettings = [
+        createWorkshopSettingFloat("30 - Player", "dash cooldown", 3.04, 0, 10, 4),
+        createWorkshopSettingFloat("30 - Player", "dash hit knockdown", 1, 0, 3, 5),
+        createWorkshopSettingFloat("30 - Player", "dash hit knockdown cooldown", 0.6, 0, 5, 6)
+    ]
     #40 - Match: match/tournament structure is preset-controlled unless Preset is Custom.
     matchTime = createWorkshopSettingInt("40 - Match", "match length", 15, 5, 60) * 60
     tournamentMode = createWorkshopSettingBool("40 - Match", "tournament mode", false, 1)
@@ -59,7 +71,7 @@ rule "Settings - Workshop settings":
     #One entry per AddOnSetting field (config/constants.opy), in that order.
     #Each setting may only be read once, so read them here and nowhere else.
     addOnSettings = [
-        createWorkshopSettingBool("30 - Player", "double sens", false, 1),
+        createWorkshopSettingBool("30 - Player", "double sens", false, 7),
         createWorkshopSettingBool("50 - Features", "custom abilities", false),
         createWorkshopSettingBool("80 - Visual", "x-ray", false),
         createWorkshopSettingBool("80 - Visual", "tracing mode", false, 1),
@@ -67,7 +79,8 @@ rule "Settings - Workshop settings":
         createWorkshopSettingBool("50 - Features", "duels", false, 2),
         createWorkshopSettingBool("50 - Features", "endless mode", false, 3),
         createWorkshopSettingBool("50 - Features", "Sandbox mode", false, 4),
-        createWorkshopSettingBool("80 - Visual", "kill tracker", false, 2)
+        createWorkshopSettingBool("80 - Visual", "kill tracker", false, 2),
+        createWorkshopSettingInt("30 - Player", "double sens %", 275, 100, 500, 8)
     ]
     #Presets: one row per preset, in Preset order, one column per forced setting
     #(PresetColumn in config/constants.opy). MANUAL keeps the host's value.
@@ -82,14 +95,14 @@ rule "Settings - Workshop settings":
     #  The bot setting stays manual so Bot + Experimental can be tested together.
     if presetMode != Preset.CUSTOM:
         presetRow = [
-            #match, tourn, rounds, breaks, every, length, start, max, accel, motion,               physics,                  water,          pads,  mobility,          anti-ghost,      AntiOrbit, radius, pressure, countdown, respawn, win pause, center, radius, pad str, pad dist, pad range, pad cd
-            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     Water.MODERATE, false, Mobility.AGILE,    MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         3.5,    0,      30,      12,       2.75,      3],    #Default
-            [900,   true,  30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     Water.MODERATE, false, Mobility.AGILE,    AntiGhost.OFF,   false,     MANUAL, MANUAL,   5,         2,       2,         3.5,    0,      30,      12,       2.75,      3],    #Tournament
-            [900,   true,  30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     Water.MODERATE, false, Mobility.AGILE,    AntiGhost.STEER, true,      14,     0.02,   5,         2,       2,         3.5,    0,      30,      12,       2.75,      3],    #Tournament+
-            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.RAPID,     BallPhysics.ORIGINAL,     Water.FLOOD,    true,  Mobility.BALANCED, MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         3.5,    0,      30,      12,       2.75,      3],    #Rapid
-            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     Water.NONE,     false, Mobility.AGILE,    MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         3.5,    0,      30,      12,       2.75,      3],    #v1
-            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     Water.FLOOD,    true,  Mobility.SLUGGISH, MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         3.5,    0,      30,      12,       2.75,      3],    #v7
-            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.EXPERIMENTAL, Water.MODERATE, false, Mobility.AGILE,    AntiGhost.OFF,   true,      14,     0.02,   5,         2,       2,         3.5,    0,      30,      12,       2.75,      3],    #Experimental
+            #match, tourn, rounds, breaks, every, length, start, max, accel, motion,               physics,                  water,          pads,  mobility,          anti-ghost,      AntiOrbit, radius, pressure, countdown, respawn, win pause, dash cd, knockdown, knock cd, center, radius, pad str, pad dist, pad range, pad cd
+            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     Water.MODERATE, false, Mobility.AGILE,    MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Default
+            [900,   true,  30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     Water.MODERATE, false, Mobility.AGILE,    AntiGhost.OFF,   false,     MANUAL, MANUAL,   5,         2,       2,         3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Tournament
+            [900,   true,  30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     Water.MODERATE, false, Mobility.AGILE,    AntiGhost.STEER, true,      14,     0.02,   5,         2,       2,         3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Tournament+
+            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.RAPID,     BallPhysics.ORIGINAL,     Water.FLOOD,    true,  Mobility.BALANCED, MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Rapid
+            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     Water.NONE,     false, Mobility.AGILE,    MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #v1
+            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     Water.FLOOD,    true,  Mobility.SLUGGISH, MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #v7
+            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.EXPERIMENTAL, Water.MODERATE, false, Mobility.AGILE,    AntiGhost.OFF,   true,      14,     0.02,   5,         2,       2,         3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Experimental
         ][presetMode]
         matchTime = presetRow[PresetColumn.MATCH_TIME]
         tournamentMode = presetRow[PresetColumn.TOURNAMENT_MODE]
@@ -107,6 +120,7 @@ rule "Settings - Workshop settings":
         mobilityMode = presetRow[PresetColumn.MOBILITY]
         setballspawncountdownoriginal = presetRow[PresetColumn.SPAWN_COUNTDOWN]
         roundTimings = [presetRow[PresetColumn.RESPAWN_DELAY], presetRow[PresetColumn.WIN_PAUSE]]
+        playerSettings = presetRow.slice(PresetColumn.DASH_COOLDOWN, PresetColumn.CENTER_SIZE - PresetColumn.DASH_COOLDOWN)
         arenaSettings = presetRow.slice(PresetColumn.CENTER_SIZE, len(presetRow) - PresetColumn.CENTER_SIZE)
         if presetRow[PresetColumn.ANTI_GHOST] != MANUAL:
             antiGhostMode = presetRow[PresetColumn.ANTI_GHOST]
@@ -116,6 +130,7 @@ rule "Settings - Workshop settings":
             antiOrbitRadius = presetRow[PresetColumn.ANTI_ORBIT_RADIUS]
         if presetRow[PresetColumn.ANTI_ORBIT_PRESSURE] != MANUAL:
             antiOrbitPressureRate = presetRow[PresetColumn.ANTI_ORBIT_PRESSURE]
+    #Mobility.CUSTOM keeps the "custom ... %" settings read above.
     if mobilityMode == Mobility.AGILE:
         moveSpeed = 190
         gravity = 80

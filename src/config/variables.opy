@@ -44,6 +44,7 @@ globalvar waterLevel 47
 globalvar bouncePadToggle 48
 globalvar bouncePadConfig 49
 globalvar arenaSettings 50
+globalvar playerSettings 51
 globalvar bouncePads 54
 globalvar mobilityMode 58
 globalvar moveSpeed 59

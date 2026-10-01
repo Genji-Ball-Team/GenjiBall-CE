@@ -127,8 +127,8 @@ def dashBall():
     @Name "Collision - dash sub"
     
     if prevTarget.stunCooldown <= 0:
-        prevTarget.setStatusEffect(null, Status.KNOCKED_DOWN, 1)
-        prevTarget.stunCooldown = 0.6
+        prevTarget.setStatusEffect(null, Status.KNOCKED_DOWN, playerSettings[PlayerSetting.STUN_DURATION])
+        prevTarget.stunCooldown = playerSettings[PlayerSetting.STUN_COOLDOWN]
 
 
 def ballCurve():

@@ -130,8 +130,10 @@ rule "Controls - Dash cooldown":
     
     eventPlayer.dashOnCooldown = true
     waitUntil(not eventPlayer.isUsingAbility1(), 0.5)
-    waitUntil(eventPlayer.dashOnCooldown == false, 3.04)
+    waitUntil(eventPlayer.dashOnCooldown == false, playerSettings[PlayerSetting.DASH_COOLDOWN])
     eventPlayer.dashOnCooldown = false
+    #Swift Strike's native cooldown (38% = 3.04s) would still block a shorter custom dash cooldown.
+    eventPlayer.setAbilityCooldown(Button.ABILITY_1, 0)
 
 
 rule "Control - Dash reset":
@@ -190,7 +192,7 @@ rule "Controls - double sens toggle":
         smallMessage(eventPlayer, "double sens: normal")
     else:
         eventPlayer.sensHigh = true
-        eventPlayer.setAimSpeed(275)
+        eventPlayer.setAimSpeed(addOnSettings[AddOnSetting.SENS_MULTIPLIER])
         smallMessage(eventPlayer, "double sens: high")
     playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
     waitUntil(not eventPlayer.isHoldingButton(Button.ULTIMATE), 99999)

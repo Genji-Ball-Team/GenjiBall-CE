@@ -41,7 +41,7 @@ These appear in the custom game under **Settings → Workshop → Settings**, gr
 
 ### Presets decide most settings
 
-`00 - Preset` is the most important setting. **Every preset except Custom overwrites** the Ball, Arena, Player mobility and Match settings with fixed values. If you change "max speed" and nothing happens, that's why. Set the preset to **Custom** to use your own values.
+`00 - Preset` is the most important setting. **Every preset except Custom overwrites** the Ball, Arena, Player (mobility, dash and dash hit) and Match settings with fixed values. If you change "max speed" and nothing happens, that's why. Set the preset to **Custom** to use your own values.
 
 | Preset | What it's for | Differences from Default |
 |---|---|---|
@@ -55,9 +55,9 @@ These appear in the custom game under **Settings → Workshop → Settings**, gr
 | **Custom** | Everything manual | uses your values for every setting |
 
 What "Default" forces (all non-Custom presets start from this):
-match length 15 min, tournament off, 30 rounds, breaks on every 10 rounds for 60 s, ball spawn countdown 5 s, ball respawn delay 2 s, round win pause 2 s, ball start speed 60, max speed 400, acceleration 25, motion modern, physics original, water moderate, bounce pads off, center exclusion size 3.5, arena radius 0 (the map's), bounce pad strength 30, distance 12, range 2.75 and cooldown 3 s, mobility agile.
+match length 15 min, tournament off, 30 rounds, breaks on every 10 rounds for 60 s, ball spawn countdown 5 s, ball respawn delay 2 s, round win pause 2 s, ball start speed 60, max speed 400, acceleration 25, motion modern, physics original, water moderate, bounce pads off, center exclusion size 3.5, arena radius 0 (the map's), bounce pad strength 30, distance 12, range 2.75 and cooldown 3 s, mobility agile, dash cooldown 3.04 s, dash hit knockdown 1 s and knockdown cooldown 0.6 s.
 
-Settings **not** touched by any preset: everything in *50 - Features*, *80 - Visual*, *90 - Debug*, and double sens. Anti-ghost and AntiOrbit are only forced by the presets listed above.
+Settings **not** touched by any preset: everything in *50 - Features*, *80 - Visual*, *90 - Debug*, and double sens and double sens %. The "custom ... %" mobility sliders are never forced either, but no preset picks mobility = custom, so they only apply with Preset = Custom. Anti-ghost and AntiOrbit are only forced by the presets listed above.
 
 ### 10 - Ball
 
@@ -91,10 +91,17 @@ Settings **not** touched by any preset: everything in *50 - Features*, *80 - Vis
 
 ### 30 - Player
 
-| Setting | Default | What it does |
-|---|---|---|
-| mobility | agile | **agile**: 190% move speed, 80% gravity, 180% jump. **balanced**: 150 / 90 / 150. **sluggish**: 100 / 100 / 100 (normal Genji) |
-| double sens | off | Players can press Ultimate to switch between 100% and 275% aim sensitivity. Disabled while custom abilities are on, because they use Ultimate |
+| Setting | Default | Range | What it does |
+|---|---|---|---|
+| mobility | agile | | **agile**: 190% move speed, 80% gravity, 180% jump. **balanced**: 150 / 90 / 150. **sluggish**: 100 / 100 / 100 (normal Genji). **custom**: the three sliders below |
+| custom move speed % | 190 | 20–300 | Move speed with mobility = custom |
+| custom gravity % | 80 | 10–300 | Gravity with mobility = custom |
+| custom jump % | 180 | 20–300 | Jump height with mobility = custom |
+| dash cooldown | 3.04 | 0–10 s | Seconds after a dash ends before you can dash again |
+| dash hit knockdown | 1 | 0–3 s | How long hitting the ball with a dash knocks you down |
+| dash hit knockdown cooldown | 0.6 | 0–5 s | After a dash hit knockdown, how long before another dash hit can knock you down |
+| double sens | off | | Players can press Ultimate to switch between 100% aim sensitivity and "double sens %". Disabled while custom abilities are on, because they use Ultimate |
+| double sens % | 275 | 100–500 | The high aim sensitivity double sens switches to |
 
 ### 40 - Match
 
