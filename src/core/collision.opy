@@ -13,33 +13,30 @@ rule "Collision - collision check":
     
     if ballHitPosition != null:
         #-o--x--------o->Between last ballPosition & middlePosition
-        phasePosition1 = ballHitPosition + phasePosition
-        phasePosition1 /= 2
+        phasePosition[PhasePoint.QUARTER] = ballHitPosition + phasePosition[PhasePoint.LAST]
+        phasePosition[PhasePoint.QUARTER] /= 2
         #-o-----x-----o->Between last & current ballPosition
-        phasePosition = ballHitPosition
+        phasePosition[PhasePoint.LAST] = ballHitPosition
         ballHitPosition = null
     else:
         #-o--x--------o->Between last ballPosition & middlePosition
-        phasePosition1 = phasePosition + ballPosition
-        phasePosition1 /= 2
-        phasePosition1 += phasePosition
-        phasePosition1 /= 2
-        phasePosition += ballPosition
-        phasePosition /= 2
-    #-o--------x--o->Between phasePosition & current ballPosition & phasePosition
-    phasePosition2 = phasePosition + ballPosition
-    phasePosition2 /= 2
+        phasePosition[PhasePoint.QUARTER] = phasePosition[PhasePoint.LAST] + ballPosition
+        phasePosition[PhasePoint.QUARTER] /= 2
+        phasePosition[PhasePoint.QUARTER] += phasePosition[PhasePoint.LAST]
+        phasePosition[PhasePoint.QUARTER] /= 2
+        phasePosition[PhasePoint.LAST] += ballPosition
+        phasePosition[PhasePoint.LAST] /= 2
     #-o-----------x->
     if distance(ballPosition, target.getEyePosition()) <= 1.9:
         collisionTarget()
-    elif distance(phasePosition, target.getEyePosition()) <= 1.9:
+    elif distance(phasePosition[PhasePoint.LAST], target.getEyePosition()) <= 1.9:
         collisionTarget()
-    elif distance(phasePosition1, target.getEyePosition()) <= 1.9:
+    elif distance(phasePosition[PhasePoint.QUARTER], target.getEyePosition()) <= 1.9:
         collisionTarget()
-    elif distance(phasePosition2, target.getEyePosition()) <= 1.9:
+    elif distance((phasePosition[PhasePoint.LAST] + ballPosition) / 2, target.getEyePosition()) <= 1.9:
         collisionTarget()
     #Save last ballPosition for next loop
-    phasePosition = evalOnce(ballPosition)
+    phasePosition[PhasePoint.LAST] = evalOnce(ballPosition)
     wait(0)
     if ruleCondition:
         loop()
@@ -70,9 +67,9 @@ def collisionTarget():
         #layered on top of original Modern movement. The deflector's 3D facing
         #direction remains dominant, while incoming ball momentum contributes
         #slightly more on side-angle redirects so geometry matters.
-        reboundIncomingDirection = directionTowards(vect(0, 0, 0), evalOnce(ballDirection))
-        reboundInfluence = experimentalTuning[ExperimentalTuning.REBOUND_MIN] + (((min(angleBetweenVectors(reboundIncomingDirection, target.getFacingDirection()), 180 - angleBetweenVectors(reboundIncomingDirection, target.getFacingDirection()))) / 90) * (experimentalTuning[ExperimentalTuning.REBOUND_MAX] - experimentalTuning[ExperimentalTuning.REBOUND_MIN]))
-        ballDirection = directionTowards(vect(0, 0, 0), target.getFacingDirection() * (1 - reboundInfluence) + reboundIncomingDirection * reboundInfluence)
+        experimentalState[ExperimentalField.INCOMING_DIRECTION] = directionTowards(vect(0, 0, 0), evalOnce(ballDirection))
+        experimentalState[ExperimentalField.REBOUND_INFLUENCE] = experimentalTuning[ExperimentalTuning.REBOUND_MIN] + (((min(angleBetweenVectors(experimentalState[ExperimentalField.INCOMING_DIRECTION], target.getFacingDirection()), 180 - angleBetweenVectors(experimentalState[ExperimentalField.INCOMING_DIRECTION], target.getFacingDirection()))) / 90) * (experimentalTuning[ExperimentalTuning.REBOUND_MAX] - experimentalTuning[ExperimentalTuning.REBOUND_MIN]))
+        ballDirection = directionTowards(vect(0, 0, 0), target.getFacingDirection() * (1 - experimentalState[ExperimentalField.REBOUND_INFLUENCE]) + experimentalState[ExperimentalField.INCOMING_DIRECTION] * experimentalState[ExperimentalField.REBOUND_INFLUENCE])
     else:
         ballDirection = target.getFacingDirection() * (ballSpeed if ballMotion == BallMotion.ASTRO else 1)
     prevTarget = target
@@ -88,10 +85,9 @@ def collisionTarget():
     playEffect(getAllPlayers(), DynamicEffect.EXPLOSION_SOUND, Color.WHITE, evalOnce(prevTarget.getPosition()), 150)
     playEffect(getAllPlayers(), DynamicEffect.BAPTISTE_BIOTIC_LAUNCHER_EXPLOSION_SOUND, Color.WHITE, evalOnce(prevTarget.getPosition()), 20)
     #Redirect-sensitive systems should start fresh after the ball changes target.
-    ballRedirectAge = 0
-    experimentalSteeringRate = ballDirectionRate * experimentalTuning[ExperimentalTuning.HOMING_START]
-    antiGhostPrevDistance = 999
-    antiGhostStallTimer = 0
+    experimentalState[ExperimentalField.REDIRECT_AGE] = 0
+    experimentalState[ExperimentalField.STEERING_RATE] = ballDirectionRate * experimentalTuning[ExperimentalTuning.HOMING_START]
+    antiGhostState = [999, 0]
     if ballMotion == BallMotion.MODERN and ballPhysicsMode != BallPhysics.EXPERIMENTAL:
         async(ballCurve, AsyncBehavior.RESTART)
 
@@ -99,7 +95,7 @@ def collisionTarget():
 def deflectFail():
     @Name "Collision - deflect fail sub"
     
-    if killCounterEnabled == true and prevTarget != null and not prevTarget.isDummy():
+    if addOnSettings[AddOnSetting.KILL_TRACKER] == true and prevTarget != null and not prevTarget.isDummy():
         prevTarget.kills++
     kill(target, prevTarget)
     playDeathEffect()
@@ -107,7 +103,7 @@ def deflectFail():
         alert()
         deleteBall()
         return
-    if endlessMode:
+    if addOnSettings[AddOnSetting.ENDLESS]:
         #ballDirection *= -1
         target = sorted(getLivingPlayers(Team.ALL).exclude(target).filter(lambda x: x.hasMoved), lambda x: angleBetweenVectors(ballDirection, directionTowards(ballPosition, x.getPosition())))[0]
     else:
@@ -119,7 +115,7 @@ def playDeathEffect():
     @Name "Collision - play death effect sub"
     
     playEffect(getAllPlayers(), DynamicEffect.ASHE_DYNAMITE_EXPLOSION_SOUND, Color.SKY_BLUE, ballPosition.getPosition(), 80)
-    if endlessMode:
+    if addOnSettings[AddOnSetting.ENDLESS]:
         playEffect(getAllPlayers(), DynamicEffect.TRACER_RECALL_REAPPEAR, Color.WHITE, ballPosition, 2)
         return
     playEffect(getAllPlayers(), DynamicEffect.ASHE_DYNAMITE_EXPLOSION, Team.1, ballPosition.getPosition(), 40)
@@ -154,13 +150,7 @@ def deleteBall():
     ballDirection = vect(0, 0, 0)
     ballSpawnCountdown = 2
     ballHitPosition = null
-    phasePosition = Vector.DOWN
-    phasePosition1 = Vector.DOWN
-    phasePosition2 = Vector.DOWN
-    antiGhostPrevDistance = 999
-    antiGhostStallTimer = 0
-    ballRedirectAge = 999
+    phasePosition = [Vector.DOWN, Vector.DOWN]
+    antiGhostState = [999, 0]
     ballDirectionRate = ballDirectionRateInit
-    experimentalSteeringRate = ballDirectionRateInit
-    reboundIncomingDirection = vect(0, 0, 0)
-    reboundInfluence = experimentalTuning[ExperimentalTuning.REBOUND_MIN]
+    experimentalState = [999, ballDirectionRateInit, vect(0, 0, 0), experimentalTuning[ExperimentalTuning.REBOUND_MIN]]

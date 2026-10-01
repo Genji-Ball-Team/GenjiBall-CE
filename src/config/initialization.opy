@@ -13,7 +13,7 @@ rule "Initialization - player variables":
     eventPlayer.Abilitycooldown = 0
     eventPlayer.setStatusEffect(null, Status.INVINCIBLE, 9999)
     eventPlayer.disableRespawn()
-    eventPlayer.bouncePadCooldown = bouncePadCooldownLength
+    eventPlayer.bouncePadCooldown = bouncePadConfig[BouncePadField.COOLDOWN]
     eventPlayer.stunCooldown = 0
     chaseAtRate(eventPlayer.stunCooldown, 0, 1, ChaseRateReeval.NONE)
     eventPlayer.enableDeathSpectateAllPlayers()
@@ -45,13 +45,14 @@ rule "Initialization - global variables":
     ballSpeed = ballSpawnSpeed
     CenterOffLimitsSize = 3.5
     IsInFinalDuel = false
-    bouncePadCooldownLength = 3
+    #One entry per BouncePadField (config/constants.opy), in that order.
+    #Set here, not in "Initialization - bounce pads", because round flow reads COOLDOWN even with pads off.
+    bouncePadConfig = [30, 12, 2.75, 3, 3]
     ballPosition = Vector.DOWN
     roundsUntilBreakInit = roundsUntilBreak
     ballHitPosition = null
-    phasePosition = Vector.DOWN
-    phasePosition1 = Vector.DOWN
-    phasePosition2 = Vector.DOWN
+    #One entry per PhasePoint (config/constants.opy)
+    phasePosition = [Vector.DOWN, Vector.DOWN]
     if ballDirectionRate == 4:
         ballDirectionRate = ballDirectionRateInit
     tracingPoints = 1
@@ -63,17 +64,16 @@ rule "Initialization - global variables":
         ballDirectionRate = ballDirectionRateInit
     else:
         ballDirectionRate = 6
-    experimentalSteeringRate = ballDirectionRate
-    reboundInfluence = experimentalTuning[ExperimentalTuning.REBOUND_MIN]
+    #One entry per ExperimentalField (config/constants.opy). The incoming direction is set when the ball spawns.
+    experimentalState = [999, ballDirectionRate, null, experimentalTuning[ExperimentalTuning.REBOUND_MIN]]
     duelQueue = []
     #zBozo pending moves (BotField in config/constants.opy)
     botState = []
     killLeaderboardSortedPlayers = []
     #Sandbox spawn point, aim point and speed, plus the editor state (SandboxField in config/constants.opy)
     sandboxState = [ballPosition, ballPosition + Vector.UP, ballSpeed, 1, 1, 1]
-    antiGhostPrevDistance = 999
-    antiGhostStallTimer = 0
-    ballRedirectAge = 999
+    #One entry per AntiGhostField (config/constants.opy)
+    antiGhostState = [999, 0]
 
 
 rule "Initialization - map sphere":
@@ -88,8 +88,6 @@ rule "Initialization - map sphere":
 rule "Initialization - bounce pads":
     @Condition bouncePadToggle == true
     
-    #One entry per BouncePadField (config/constants.opy), in that order
-    bouncePadConfig = [30, 12, 2.75, 3]
     bouncePads = [
         vect(circleCenter.x + bouncePadConfig[BouncePadField.DISTANCE], circleCenter.y, circleCenter.z),
         vect(circleCenter.x + bouncePadConfig[BouncePadField.DISTANCE] * -1, circleCenter.y, circleCenter.z),

@@ -25,7 +25,7 @@ rule "HUD - ball speed text":
 
 rule "HUD - controls text":
     hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "change perspective [{0}]".format(inputBindingString(Button.RELOAD)), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
-    if Sandbox == false:
+    if addOnSettings[AddOnSetting.SANDBOX] == false:
         hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "simple hud [{0}]".format(inputBindingString(Button.INTERACT)), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
     if addOnSettings[AddOnSetting.DOUBLE_SENS] and not addOnSettings[AddOnSetting.ABILITIES]:
         hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "double sens [{0}]".format(inputBindingString(Button.ULTIMATE)), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
@@ -35,7 +35,7 @@ rule "HUD - add-ons text":
     @Condition isGameInProgress() == true
     
     #__end__()
-    #if endlessMode:
+    #if addOnSettings[AddOnSetting.ENDLESS]:
     #hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == 0), "•endless", HudPosition.RIGHT, -2, Color.BLUE, HudReeval.VISIBILITY_AND_STRING)
     #__end__()
     if addOnSettings[AddOnSetting.TRACING_MODE]:
@@ -73,7 +73,7 @@ rule "Debug - anti-orbit values":
 
 
 rule "Kill Tracker - cache players":
-    @Condition killCounterEnabled == true
+    @Condition addOnSettings[AddOnSetting.KILL_TRACKER] == true
     
     #Cache once per tick instead of sorting once per HUD row. Host-only display, real players only.
     killLeaderboardSortedPlayers = sorted(getAllPlayers().filter(lambda player: not player.isDummy()), lambda x: x.kills)
@@ -83,7 +83,7 @@ rule "Kill Tracker - cache players":
 
 
 rule "Kill Tracker - header":
-    @Condition killCounterEnabled == true
+    @Condition addOnSettings[AddOnSetting.KILL_TRACKER] == true
     @Condition len(killLeaderboardSortedPlayers) > 0
     
     hudHeader(hostPlayer, "KILLS", HudPosition.LEFT, 8, Color.ORANGE, HudReeval.VISIBILITY_AND_STRING)
@@ -91,7 +91,7 @@ rule "Kill Tracker - header":
 
 rule "Kill Tracker - display":
     @Event eachPlayer
-    @Condition killCounterEnabled == true
+    @Condition addOnSettings[AddOnSetting.KILL_TRACKER] == true
     @Condition eventPlayer.hasSpawned() == true
     @Condition eventPlayer.isDummy() == false
     @Condition len(killLeaderboardSortedPlayers) > 0
