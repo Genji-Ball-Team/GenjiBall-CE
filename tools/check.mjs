@@ -1,10 +1,12 @@
 // Compiles src/main.opy and fails if workshop/genjiball.txt is out of date,
 // if a feel-locked core rule changed (see tools/feel-lock.mjs), or if the mode
-// is close to a Workshop resource limit (see tools/budget.mjs).
+// is close to a Workshop resource limit (see tools/budget.mjs), or if the settings
+// tables in docs/hosting.md don't match the source (see tools/docs-settings.mjs).
 // CI runs this on every push and pull request.
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { checkBudget } from "./budget.mjs";
+import { generate as generateSettingsDocs } from "./docs-settings.mjs";
 import { compareSnapshot, compile, lockedRules, readSnapshot } from "./feel-lock.mjs";
 
 const root = resolve(import.meta.dirname, "..");
@@ -42,7 +44,16 @@ if (budget.tooClose.length > 0) {
   failed = true;
 }
 
+const settingsDocs = await generateSettingsDocs();
+if (settingsDocs.generated !== settingsDocs.docs || settingsDocs.problems.length > 0) {
+  console.error("Settings docs: the tables in docs/hosting.md don't match the createWorkshopSetting* calls in src/.");
+  for (const problem of settingsDocs.problems) console.error(`  - ${problem}`);
+  console.error("Run `npm run docs:settings` and commit docs/hosting.md. See docs/development.md.");
+  failed = true;
+}
+
 if (failed) process.exit(1);
 console.log("OK: src/ compiles and matches workshop/genjiball.txt");
 console.log("OK: feel-locked core rules match tools/feel-lock.json");
 console.log("OK: every resource is within budget");
+console.log("OK: the settings tables in docs/hosting.md match src/");

@@ -71,7 +71,7 @@ Two things back this up:
 - **Rule order matters.** Rules run top to bottom, and `main.opy` includes files in order. Put new rules next to the ones they relate to. A new feature goes in its own file under `src/features/`, included in `main.opy` where [Rule order](docs/architecture.md#rule-order) allows (usually near the end).
 - **Keep one topic per PR.** A small PR gets reviewed and merged much faster than a big one.
 - **Explain the "why"** in comments for anything non-obvious, especially physics tuning numbers.
-- **Update the docs** if you change a setting, control, or rule of the game.
+- **Update the docs** if you change a setting, control, or rule of the game. For a setting, `npm run docs:settings` updates its row in `docs/hosting.md`; you write the description.
 - **Add a CHANGELOG line** under "Unreleased".
 
 ## Code of conduct

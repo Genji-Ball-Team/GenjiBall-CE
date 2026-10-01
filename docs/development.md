@@ -17,8 +17,9 @@ The OverPy version is pinned in `package.json`, so everyone builds identical out
 |---|---|
 | `npm ci` | Install the pinned OverPy version |
 | `npm run build` | Compile `src/main.opy` → `workshop/genjiball.txt` |
-| `npm run check` | Compile and fail if `workshop/genjiball.txt` is stale, a [feel-locked](#feel-lock) rule changed, or a Workshop limit is nearly used up (this is what CI runs). Also prints the [resource budget](architecture.md#limits-to-keep-in-mind) |
+| `npm run check` | Compile and fail if `workshop/genjiball.txt` is stale, a [feel-locked](#feel-lock) rule changed, a Workshop limit is nearly used up, or the [settings tables](#settings-docs) in `docs/hosting.md` are out of date (this is what CI runs). Also prints the [resource budget](architecture.md#limits-to-keep-in-mind) |
 | `npm run feel-lock:update` | Rewrite `tools/feel-lock.json` after a deliberate ball feel change |
+| `npm run docs:settings` | Regenerate the [settings tables](#settings-docs) in `docs/hosting.md` from `src/` |
 | `npm run decompile -- in.txt out.opy` | Turn Workshop code copied from the game into OverPy |
 
 The build prints many **warnings** (chased variables in conditions, dark colors, legacy impulse flags). They were all present in v1.3.2 and are not errors. It's still welcome to fix them, one topic per PR.
@@ -38,6 +39,16 @@ What it doesn't lock: rules outside that list, and a locked rule's absolute posi
 
 - If you didn't mean to change ball feel (a cleanup, a rename, moving code around), your change isn't behaviour-neutral. Fix it until the check passes.
 - If you did mean to, run `npm run feel-lock:update` and commit `tools/feel-lock.json` with your change. Its diff shows reviewers exactly which compiled rules changed. The PR needs the **`ball feel`** label (CI fails without it) and an in-game playtest. New feel changes should be a default-off toggle, per the label's description.
+
+## Settings docs
+
+The settings tables in [hosting.md](hosting.md#workshop-settings) are generated from the `createWorkshopSetting*` calls in `src/`. Each table follows a `<!-- settings: <category> -->` comment. `npm run docs:settings` (`tools/docs-settings.mjs`) rewrites them:
+
+- **Setting**, **Default** and **Range** come from the source, in the in-game sort order. Enums list their options, and on/off settings have no range.
+- **What it does** is hand-written. Edit it in `hosting.md` as usual, and the script keeps it, matched by setting name.
+- A unit after a range (`1–10 s`, `0–10 m`, `5–180°`) is hand-written too, and kept the same way.
+
+`npm run check` fails when the tables don't match the source, when a setting has no description, or when a category has no table. After adding, renaming or changing a setting, run `npm run docs:settings`, write the description of any new row, and commit `docs/hosting.md`. A renamed setting gets a new, empty row: the script names the row it removed, so you can copy the description over. A new category needs its own `### <category>` section with the comment and a table header, which the script then fills.
 
 ## Testing in-game
 
