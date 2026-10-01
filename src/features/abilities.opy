@@ -46,19 +46,9 @@ rule "Gb Abilities - Description":
         waitUntil(eventPlayer.SpecialAbility != AbilityId.CRIT_SLASH, 99999)
         destroyHudText(getLastCreatedText())
         loop()
-    elif eventPlayer.SpecialAbility == AbilityId.UNUSED_5:
-        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "Ability: 3.", HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
-        waitUntil(eventPlayer.SpecialAbility != AbilityId.UNUSED_5, 99999)
-        destroyHudText(getLastCreatedText())
-        loop()
-    elif eventPlayer.SpecialAbility == AbilityId.UNUSED_6:
-        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "Ability: 3.", HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
-        waitUntil(eventPlayer.SpecialAbility != AbilityId.UNUSED_6, 99999)
-        destroyHudText(getLastCreatedText())
-        loop()
     else:
         hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "Ability: Invalid Ability", HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
-        waitUntil(eventPlayer.SpecialAbility <= AbilityId.UNUSED_6, 99999)
+        waitUntil(eventPlayer.SpecialAbility <= AbilityId.CRIT_SLASH, 99999)
         destroyHudText(getLastCreatedText())
         loop()
 
@@ -76,12 +66,12 @@ rule "Gb Abilities - Cd":
 
 rule "Gb Abilities - Reset cd on round end":
     @Event eachPlayer
-    @Condition eventPlayer.Abilitycooldown <= 0
-    @Condition getAllPlayers().isAlive() == true
+    #RoundSetupPending turns on when a round is won, everyone died or the final duel is set up, and stays on until it starts.
+    #Reset only on that edge, so abilities used during the countdown keep their cooldown.
+    @Condition RoundSetupPending == true
     @Condition addOnSettings[AddOnSetting.ABILITIES] == true
     
     eventPlayer.Abilitycooldown = 0
-    waitUntil(getAllPlayers().isDead(), 99999)
 
 
 rule "Gb Abilities - 1. High jump ready":

@@ -2870,19 +2870,9 @@ rule ("Gb Abilities - Description") {
             Wait Until(Compare((Event Player).SpecialAbility, !=, 4), 99999);
             Destroy HUD Text(Last Text ID);
             Loop;
-        Else If(Compare((Event Player).SpecialAbility, ==, 5));
-            Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Ability: 3."), Null, Right, -133, Null, Color(White), Null, Visible To and String, Default Visibility);
-            Wait Until(Compare((Event Player).SpecialAbility, !=, 5), 99999);
-            Destroy HUD Text(Last Text ID);
-            Loop;
-        Else If(Compare((Event Player).SpecialAbility, ==, 6));
-            Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Ability: 3."), Null, Right, -133, Null, Color(White), Null, Visible To and String, Default Visibility);
-            Wait Until(Compare((Event Player).SpecialAbility, !=, 6), 99999);
-            Destroy HUD Text(Last Text ID);
-            Loop;
         Else;
             Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Ability: Invalid Ability"), Null, Right, -133, Null, Color(White), Null, Visible To and String, Default Visibility);
-            Wait Until(Compare((Event Player).SpecialAbility, <=, 6), 99999);
+            Wait Until(Compare((Event Player).SpecialAbility, <=, 4), 99999);
             Destroy HUD Text(Last Text ID);
             Loop;
     }
@@ -2912,13 +2902,12 @@ rule ("Gb Abilities - Reset cd on round end") {
         All;
     }
     conditions {
-        (Event Player).Abilitycooldown <= 0;
-        Is Alive(All Players(All Teams)) == True;
+        "RoundSetupPending turns on when a round is won, everyone died or the final duel is set up, and stays on until it starts.\nReset only on that edge, so abilities used during the countdown keep their cooldown."
+        Global.RoundSetupPending == True;
         Value In Array(Global.addOnSettings, 1) == True;
     }
     actions {
         Set Player Variable(Event Player, Abilitycooldown, 0);
-        Wait Until(Is Dead(All Players(All Teams)), 99999);
     }
 }
 

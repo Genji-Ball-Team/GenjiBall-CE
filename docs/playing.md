@@ -71,6 +71,8 @@ Each player gets one extra ability. **Hold Reload** between rounds, while the ba
 | 3 | **Blink**: teleport up to 20 m where you're looking, passing through the ball | Ultimate | 10 s |
 | 4 | **Critical slash**: your next hit is a crit | Ultimate | 17 s after the crit hit |
 
+Cooldowns reset when a round ends and when the final duel starts.
+
 > Known issue in v1.3.2: the rule that gives Critical slash its speed boost (`Gb Abilities - stack crit slashes`) is disabled. A crit hit currently also skips the normal 5% speed-up, so it effectively does *less*. See `src/features/abilities-experimental.opy`.
 
 ### Duels
