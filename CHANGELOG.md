@@ -23,7 +23,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 - Removed the global `Critalert` variable, which was set to false at start and never read. The player variable of the same name (the Crit slash alert) is unchanged. Frees global slot 96.
 - The ball speed HUD is now one text that picks its colour and string by speed band, instead of 16 texts that each re-evaluated `ballSpeed` every tick. Every threshold, colour and joke string is the same. Saves 15 HUD texts and about 200 elements.
 - `Map restrictions - water` now loops every tick with `wait()` instead of `wait(0.008)`. The Workshop already clamped 0.008 s up to one tick (0.016 s), so the water push runs exactly as often as before.
-- Replaced the decompiler's `goto` jumps with `if`/`else` in the bounce pad effects, the Watermark HUD, the lobby rules (`Check for <2 players`, `Wait for more players`, `Player joins game`) and the abilities description and Target switch. Behaviour is unchanged. The six gotos left are in feel-locked rules (dash slow, round flow, collision), where an `if` would change the compiled code.
+- Replaced the decompiler's `goto` jumps with `if`/`else` in the bounce pad effects, the Watermark HUD, the lobby rules (`Check for <2 players`, `Wait for more players`, `Player joins game`) and the abilities description and Target switch. Behaviour is unchanged. The ten gotos left are in feel-locked rules (dash slow, round flow, collision), where an `if` would change the compiled code.
 
 ## v1.3.2 (Community Edition import)
 
