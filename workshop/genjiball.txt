@@ -86,6 +86,7 @@ variables {
         13: breakLength
         14: roundsUntilBreakInit
         15: breaksEnabled
+        16: roundTimings
         17: presetMode
         19: duelQueue
         20: ballPosition
@@ -212,6 +213,9 @@ rule ("Settings - Workshop settings") {
         Set Global Variable(breaksEnabled, Workshop Setting Toggle(Custom String("40 - Match"), Custom String("breaks"), True, 3));
         Set Global Variable(roundsUntilBreak, Workshop Setting Integer(Custom String("40 - Match"), Custom String("break every"), 10, 4, 25, 4));
         Set Global Variable(breakLength, Workshop Setting Integer(Custom String("40 - Match"), Custom String("break length"), 60, 1, 120, 5));
+        Set Global Variable(setballspawncountdownoriginal, Workshop Setting Integer(Custom String("40 - Match"), Custom String("ball spawn countdown"), 5, 1, 30, 6));
+        "One entry per RoundTiming field (config/constants.opy), in that order."
+        Set Global Variable(roundTimings, Array(Workshop Setting Integer(Custom String("40 - Match"), Custom String("ball respawn delay"), 2, 1, 10, 7), Workshop Setting Integer(Custom String("40 - Match"), Custom String("round win pause"), 2, 0, 10, 8)));
         "50 - Features: casual/gameplay add-ons. Presets leave these manual. The rest are in addOnSettings below."
         Set Global Variable(bozo_Bot, Workshop Setting Toggle(Custom String("50 - Features"), Custom String("bot"), False, 1));
         "60 - Competitive: competitive test systems. Tournament controls these explicitly."
@@ -222,7 +226,7 @@ rule ("Settings - Workshop settings") {
         Set Global Variable(addOnSettings, Array(Workshop Setting Toggle(Custom String("30 - Player"), Custom String("double sens"), False, 1), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("x-ray"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("tracing mode"), False, 1), Workshop Setting Toggle(Custom String("90 - Debug"), Custom String("debug HUD"), False, 0), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("duels"), False, 2), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("endless mode"), False, 3), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("Sandbox mode"), False, 4), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("kill tracker"), False, 2)));
         "v7: v7-style preset shell. Deeper v7 parity remains deferred.\nExperimental: curated rebound-physics test ruleset, not tournament-safe yet.\nThe bot setting stays manual so Bot + Experimental can be tested together."
         If(Compare(Global.presetMode, !=, 7));
-            Set Global Variable(presetRow, Value In Array(Array(Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, -1, -1, -1, -1), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 0, False, -1, -1), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 2, True, 14, 0.02), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 1, 0, 3, True, 1, -1, -1, -1, -1), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 1, False, 0, -1, -1, -1, -1), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 3, True, 2, -1, -1, -1, -1), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 2, 0, False, 0, 0, True, 14, 0.02)), Global.presetMode));
+            Set Global Variable(presetRow, Value In Array(Array(Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, -1, -1, -1, -1, 5, 2, 2), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 0, False, -1, -1, 5, 2, 2), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 0, False, 0, 2, True, 14, 0.02, 5, 2, 2), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 1, 0, 3, True, 1, -1, -1, -1, -1, 5, 2, 2), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 1, False, 0, -1, -1, -1, -1, 5, 2, 2), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, 3, True, 2, -1, -1, -1, -1, 5, 2, 2), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 2, 0, False, 0, 0, True, 14, 0.02, 5, 2, 2)), Global.presetMode));
             Set Global Variable(matchTime, First Of(Global.presetRow));
             Set Global Variable(tournamentMode, Value In Array(Global.presetRow, 1));
             Set Global Variable(totalRounds, Value In Array(Global.presetRow, 2));
@@ -237,6 +241,8 @@ rule ("Settings - Workshop settings") {
             Set Global Variable(waterLevel, Value In Array(Global.presetRow, 11));
             Set Global Variable(bouncePadToggle, Value In Array(Global.presetRow, 12));
             Set Global Variable(mobilityMode, Value In Array(Global.presetRow, 13));
+            Set Global Variable(setballspawncountdownoriginal, Value In Array(Global.presetRow, 18));
+            Set Global Variable(roundTimings, Array(Value In Array(Global.presetRow, 19), Value In Array(Global.presetRow, 20)));
             If(Compare(Value In Array(Global.presetRow, 14), !=, -1));
                 Set Global Variable(antiGhostMode, Value In Array(Global.presetRow, 14));
             End;
@@ -353,7 +359,6 @@ rule ("Initialization - global variables") {
         Ongoing - Global;
     }
     actions {
-        Set Global Variable(setballspawncountdownoriginal, 5);
         Set Global Variable(setballspawncountdown, Global.setballspawncountdownoriginal);
         Set Global Variable(ballSpawnCountdown, Global.setballspawncountdownoriginal);
         Disable Built-In Game Mode Scoring;
@@ -1256,7 +1261,7 @@ rule ("Active game - check for last player surviving") {
         Stop Chasing Global Variable(ballSpawnCountdown);
         Stop Chasing Player Variable(All Players(All Teams), bouncePadCooldown);
         Big Message(All Players(All Teams), Custom String("{0} has won the round", First Of(All Living Players(All Teams))));
-        Wait(2, Ignore Condition);
+        Wait(Value In Array(Global.roundTimings, 1), Ignore Condition);
         Skip If(Value In Array(Global.addOnSettings, 5), 8);
         If(Not(Global.TieBreakerActive));
             Resurrect(All Dead Players(All Teams));
@@ -1424,7 +1429,7 @@ rule ("Duels - not enough players alive") {
         If(Is Alive(First Of(All Living Players(All Teams))));
             Modify Player Score(All Living Players(All Teams), 1);
             Big Message(All Players(All Teams), Custom String("{0} wins, congrats!", First Of(All Living Players(All Teams))));
-            Wait(2, Ignore Condition);
+            Wait(Value In Array(Global.roundTimings, 1), Ignore Condition);
         End;
         Resurrect(First Of(Global.duelQueue));
         Wait(0.5, Ignore Condition);
@@ -1665,7 +1670,7 @@ rule ("Collision - delete ball sub") {
         Set Global Variable(prevTarget, Null);
         Set Global Variable(ballPosition, Down);
         Set Global Variable(ballDirection, Vector(0, 0, 0));
-        Set Global Variable(ballSpawnCountdown, 2);
+        Set Global Variable(ballSpawnCountdown, First Of(Global.roundTimings));
         Set Global Variable(ballHitPosition, Null);
         Set Global Variable(phasePosition, Array(Down, Down));
         Set Global Variable(antiGhostState, Array(999, 0));

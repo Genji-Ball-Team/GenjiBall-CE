@@ -46,7 +46,7 @@ rule "Duels - not enough players alive":
     if getLivingPlayers(Team.ALL)[0].isAlive():
         getLivingPlayers(Team.ALL).addToScore(1)
         bigMessage(getAllPlayers(), "{0} wins, congrats!".format(getLivingPlayers(Team.ALL)[0]))
-        wait(2)
+        wait(roundTimings[RoundTiming.WIN_PAUSE])
     duelQueue[0].resurrect()
     wait(0.5)
     if ruleCondition:

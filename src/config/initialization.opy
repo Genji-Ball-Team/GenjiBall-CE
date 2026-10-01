@@ -35,7 +35,6 @@ rule "Initialization - player variables":
 
 
 rule "Initialization - global variables":
-    setballspawncountdownoriginal = 5
     setballspawncountdown = setballspawncountdownoriginal
     ballSpawnCountdown = setballspawncountdownoriginal
     disableScoring()

@@ -105,7 +105,7 @@ rule "Active game - check for last player surviving":
     stopChasing(ballSpawnCountdown)
     stopChasing(getAllPlayers().bouncePadCooldown)
     bigMessage(getAllPlayers(), "{0} has won the round".format(getLivingPlayers(Team.ALL)[0]))
-    wait(2)
+    wait(roundTimings[RoundTiming.WIN_PAUSE])
     if addOnSettings[AddOnSetting.DUELS]:
         goto lbl_0
     if not TieBreakerActive:
