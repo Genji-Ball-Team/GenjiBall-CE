@@ -120,7 +120,12 @@ rule "Map restrictions - water":
     #Workshop Island Fix
     @Condition isIsland == true
     
-    if eventPlayer.getPosition().x < 35 or eventPlayer.getPosition().x > -35 or eventPlayer.getPosition().z < 35 or eventPlayer.getPosition().z > -35:
+    #"water ledge fix" (off by default, player feel): under the island, push straight out instead, so the push below
+    #can't pin players under the ledge. 21 is the 20.25 m edge plus a margin for the player's width.
+    if addOnSettings[AddOnSetting.WATER_LEDGE_FIX] and abs(eventPlayer.getPosition().x) < 21 and abs(eventPlayer.getPosition().z) < 21:
+        eventPlayer.applyImpulse(directionTowards(circleCenter, eventPlayer) * vect(1, 0, 1), 2, Relativity.TO_WORLD, Impulse.INCORPORATE_CONTRARY_MOTION)
+    else:
+        #v1.3.2 checked "x < 35 or x > -35 or ..." here, which is always true, so this runs everywhere below -1.5.
         #Prevents people from going under the ledge on Workshop Island, which caused ball to go into floor.  Used to be an annoying stunkill
         eventPlayer.applyImpulse(Vector.UP, 2, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
         eventPlayer.applyImpulse(directionTowards(eventPlayer, circleCenter), 2, Relativity.TO_WORLD, Impulse.INCORPORATE_CONTRARY_MOTION)
