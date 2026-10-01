@@ -1443,6 +1443,8 @@ rule ("Duels - start game") {
     conditions {
         Value In Array(Global.addOnSettings, 5) == True;
         Is Game In Progress == True;
+        "No duel on an unsupported map, like no round (Wait for more players)"
+        Value In Array(Global.mapRow, 1) != 0;
         Count Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved)) == 2;
     }
     actions {
@@ -2137,6 +2139,8 @@ rule ("Map restrictions - player dashes too far out of bounds") {
         All;
     }
     conditions {
+        "No arena on an unsupported map (circleCenter and SphereSize are unset)"
+        Value In Array(Global.mapRow, 1) != 0;
         Distance Between(Position Of(Event Player), Vector(X Component Of(Global.circleCenter), Y Component Of(Position Of(Event Player)), Z Component Of(Global.circleCenter))) > Add(Global.SphereSize, 5);
     }
     actions {
@@ -2155,6 +2159,8 @@ rule ("Map restrictions - push to circle") {
         All;
     }
     conditions {
+        "No arena on an unsupported map (circleCenter and SphereSize are unset)"
+        Value In Array(Global.mapRow, 1) != 0;
         Distance Between(Position Of(Event Player), Vector(X Component Of(Global.circleCenter), Y Component Of(Position Of(Event Player)), Z Component Of(Global.circleCenter))) > Subtract(Global.SphereSize, 1.5);
         "Workshop Island Fix"
         Global.isIsland == False;

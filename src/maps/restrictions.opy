@@ -13,6 +13,8 @@ rule "Map restrictions - put out center":
 
 rule "Map restrictions - player dashes too far out of bounds":
     @Event eachPlayer
+    #No arena on an unsupported map (circleCenter and SphereSize are unset)
+    @Condition MAP_UNSUPPORTED == false
     @Condition distance(eventPlayer.getPosition(), vect(circleCenter.x, eventPlayer.getPosition().y, circleCenter.z)) > SphereSize + 5
     
     #Workshop Island Fix
@@ -25,6 +27,8 @@ rule "Map restrictions - player dashes too far out of bounds":
 
 rule "Map restrictions - push to circle":
     @Event eachPlayer
+    #No arena on an unsupported map (circleCenter and SphereSize are unset)
+    @Condition MAP_UNSUPPORTED == false
     @Condition distance(eventPlayer.getPosition(), vect(circleCenter.x, eventPlayer.getPosition().y, circleCenter.z)) > SphereSize - 1.5
     #Workshop Island Fix
     @Condition isIsland == false

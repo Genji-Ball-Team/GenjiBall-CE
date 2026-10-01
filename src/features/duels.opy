@@ -27,6 +27,8 @@ rule "Duels - kill players when more than two alive":
 rule "Duels - start game":
     @Condition addOnSettings[AddOnSetting.DUELS] == true
     @Condition isGameInProgress() == true
+    #No duel on an unsupported map, like no round (Wait for more players)
+    @Condition MAP_UNSUPPORTED == false
     @Condition len(getLivingPlayers(Team.ALL).filter(lambda player: player.hasMoved)) == 2
     
     wait(0.016, Wait.ABORT_WHEN_FALSE)
