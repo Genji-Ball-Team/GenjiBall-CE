@@ -223,11 +223,8 @@ enum SimpleHud:
 
 #eventPlayer.SpecialAbility ("50 - Features > custom abilities").
 #Selection cycles SUPER_JUMP to CRIT_SLASH ("> BLINK" wraps back to 1).
-#5 and 6 only have placeholder text.
 enum AbilityId:
     SUPER_JUMP = 1
     TARGET_SWITCH
     BLINK
     CRIT_SLASH
-    UNUSED_5
-    UNUSED_6
