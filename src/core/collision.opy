@@ -148,7 +148,7 @@ def deleteBall():
     prevTarget = null
     ballPosition = Vector.DOWN
     ballDirection = vect(0, 0, 0)
-    ballSpawnCountdown = 2
+    ballSpawnCountdown = roundTimings[RoundTiming.RESPAWN_DELAY]
     ballHitPosition = null
     phasePosition = [Vector.DOWN, Vector.DOWN]
     antiGhostState = [999, 0]

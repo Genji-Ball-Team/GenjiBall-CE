@@ -34,6 +34,9 @@ enum PresetColumn:
     ANTI_ORBIT
     ANTI_ORBIT_RADIUS
     ANTI_ORBIT_PRESSURE
+    SPAWN_COUNTDOWN
+    RESPAWN_DELAY
+    WIN_PAUSE
 
 #A preset table cell that leaves the host's setting as is
 #!define MANUAL -1
@@ -110,6 +113,11 @@ enum BouncePadField:
     RANGE           #how close a player has to be to a pad to bounce
     SUPERJUMP_NERF  #taken off STRENGTH while the player has dashNerf
     COOLDOWN        #seconds before a player can bounce again
+
+#Fields of roundTimings ("40 - Match" settings that time the round flow)
+enum RoundTiming:
+    RESPAWN_DELAY   #seconds before the ball respawns after a kill
+    WIN_PAUSE       #seconds between a round win and the next round
 
 #Fields of addOnSettings, the add-on settings no preset forces
 enum AddOnSetting:

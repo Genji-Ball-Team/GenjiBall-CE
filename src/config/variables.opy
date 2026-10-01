@@ -16,6 +16,7 @@ globalvar roundsUntilBreak 12
 globalvar breakLength 13
 globalvar roundsUntilBreakInit 14
 globalvar breaksEnabled 15
+globalvar roundTimings 16
 globalvar presetMode 17
 globalvar duelQueue 19
 globalvar ballPosition 20

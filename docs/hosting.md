@@ -55,7 +55,7 @@ These appear in the custom game under **Settings → Workshop → Settings**, gr
 | **Custom** | Everything manual | uses your values for every setting |
 
 What "Default" forces (all non-Custom presets start from this):
-match length 15 min, tournament off, 30 rounds, breaks on every 10 rounds for 60 s, ball start speed 60, max speed 400, acceleration 25, motion modern, physics original, water moderate, bounce pads off, mobility agile.
+match length 15 min, tournament off, 30 rounds, breaks on every 10 rounds for 60 s, ball spawn countdown 5 s, ball respawn delay 2 s, round win pause 2 s, ball start speed 60, max speed 400, acceleration 25, motion modern, physics original, water moderate, bounce pads off, mobility agile.
 
 Settings **not** touched by any preset: everything in *50 - Features*, *80 - Visual*, *90 - Debug*, and double sens. Anti-ghost and AntiOrbit are only forced by the presets listed above.
 
@@ -100,6 +100,9 @@ Settings **not** touched by any preset: everything in *50 - Features*, *80 - Vis
 | breaks | on | | Take a break every N rounds |
 | break every | 10 | 4–25 | Rounds between breaks |
 | break length | 60 | 1–120 s | Length of the break (the ball spawn countdown is extended) |
+| ball spawn countdown | 5 | 1–30 s | Countdown before the ball spawns at the start of a round |
+| ball respawn delay | 2 | 1–10 s | Countdown before the ball respawns after a kill, while the round goes on |
+| round win pause | 2 | 0–10 s | Pause after "… has won the round" (or a duel win) before the next round starts |
 
 ### 50 - Features
 
