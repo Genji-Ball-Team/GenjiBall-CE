@@ -127,7 +127,7 @@ rule "Map restrictions - water":
     if eventPlayer.getPosition().x > 35 or eventPlayer.getPosition().x < -35 or eventPlayer.getPosition().z > 35 or eventPlayer.getPosition().z < -35:
         eventPlayer.applyImpulse(directionTowards(eventPlayer, circleCenter), 3, Relativity.TO_WORLD, Impulse.INCORPORATE_CONTRARY_MOTION)
         eventPlayer.applyImpulse(Vector.UP, 0.3, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
-    wait(0.008)
+    wait()
     if ruleCondition:
         loop()
 

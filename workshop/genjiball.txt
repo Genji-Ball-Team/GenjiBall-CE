@@ -2314,7 +2314,7 @@ rule ("Map restrictions - water") {
             Apply Impulse(Event Player, Direction Towards(Event Player, Global.circleCenter), 3, To World, Incorporate Contrary Motion);
             Apply Impulse(Event Player, Up, 0.3, To World, Cancel Contrary Motion);
         End;
-        Wait(0.008, Ignore Condition);
+        Wait(0.016, Ignore Condition);
         Loop If Condition Is True;
     }
 }
