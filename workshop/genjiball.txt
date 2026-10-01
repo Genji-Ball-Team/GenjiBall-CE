@@ -147,7 +147,6 @@ variables {
         78: bozo_Bot
         80: botState
         90: sandboxState
-        96: Critalert
         97: ballPhysicsMode
         98: ballRedirectAge
         99: experimentalSteeringRate
@@ -439,7 +438,6 @@ rule ("Initialization - global variables") {
         Set Global Variable(antiGhostPrevDistance, 999);
         Set Global Variable(antiGhostStallTimer, 0);
         Set Global Variable(ballRedirectAge, 999);
-        Set Global Variable(Critalert, False);
     }
 }
 

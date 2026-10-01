@@ -20,6 +20,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 - Merged the zBozo bot state (behaviour mode, aggression, orbit / ghost dash / edash flags) into one `botState` array (`BotField` in `src/config/constants.opy`) and removed four bot variables that were set but never read (`BozoTracing`, `bozoHasJumped`, `OrbitTolerance`, `IsOrbiting`) and `botJumping`. Frees global slots 79 and 81–89; the bot behaves as before.
 - Removed zBozo code that never ran: `roundEndCall` was never set to true, so the behaviour-mode, aggression and orbit rules and the bot's "back off" movement never fired, in v1.3.2 or since. Frees global slot 6; the bot behaves as before. `docs/playing.md` no longer says the bot orbits.
 - Merged the six Experimental engine tuning settings ("exp incoming min/max %", "exp homing start %/hold ms/ramp ms", "exp surface homing %") into one `experimentalTuning` array (`ExperimentalTuning` in `src/config/constants.opy`). Frees global slots 103–107; the Experimental engine behaves as before.
+- Removed the global `Critalert` variable, which was set to false at start and never read. The player variable of the same name (the Crit slash alert) is unchanged. Frees global slot 96.
 
 ## v1.3.2 (Community Edition import)
 
