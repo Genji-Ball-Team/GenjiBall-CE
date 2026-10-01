@@ -26,6 +26,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 - Replaced the decompiler's `goto` jumps with `if`/`else` in the bounce pad effects, the Watermark HUD, the lobby rules (`Check for <2 players`, `Wait for more players`, `Player joins game`) and the abilities description and Target switch. Behaviour is unchanged. The ten gotos left are in feel-locked rules (dash slow, round flow, collision), where an `if` would change the compiled code.
 - Removed the global `breakInProgress`, which was never set (so always false), and its two `breakInProgress == false` conditions (`Controls - Switch perspective (reload)`, `AntiOrbit - decay heat`). `Kill Tracker - cache players` now filters and sorts the players in one step instead of through `killLeaderboardPlayers`. Frees global slots 16 and 111; behaviour is unchanged.
 - The "double sens", "custom abilities", "x-ray", "tracing mode" and "debug HUD" settings are now read into one `addOnSettings` array (`AddOnSetting` in `src/config/constants.opy`) instead of the globals `doubleSensEnabled`, `Abilities`, `xray`, `tracingMode` and `debugRules`. Their category, name, default and sort order are unchanged, so the lobby settings look the same. Frees global slots 65, 66, 70 and 110; behaviour is unchanged.
+- Merged the bounce pad strength, distance, range and superjump nerf into one `bouncePadConfig` array, set once in `Initialization - bounce pads`. Frees global slots 51–53; bounce pads work as before.
 
 ## v1.3.2 (Community Edition import)
 

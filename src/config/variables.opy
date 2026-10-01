@@ -48,11 +48,8 @@ globalvar CenterOffLimitsSize 45
 globalvar SphereSize 46
 globalvar waterLevel 47
 globalvar bouncePadToggle 48
-globalvar bouncePadRange 49
+globalvar bouncePadConfig 49
 globalvar bouncePadCooldownLength 50
-globalvar bouncePadDistance 51
-globalvar bouncePadStrength 52
-globalvar bouncePadSuperjumpNerf 53
 globalvar bouncePads 54
 globalvar mobilityMode 58
 globalvar moveSpeed 59

@@ -245,15 +245,15 @@ rule "Controls - Simple HUD (Interact)":
 rule "Controls - Bounce when near a pad":
     @Event eachPlayer
     @Condition len(bouncePads) > 0
-    @Condition any([distance(eventPlayer.getPosition(), pad) <= bouncePadRange for pad in bouncePads])
+    @Condition any([distance(eventPlayer.getPosition(), pad) <= bouncePadConfig[BouncePadField.RANGE] for pad in bouncePads])
     @Condition eventPlayer.bouncePadCooldown == 0
     @Condition eventPlayer.isAlive() == true
     @Condition eventPlayer.isHoldingButton(Button.JUMP) == true
     @Condition bouncePadToggle == true
     
     if eventPlayer.dashNerf:
-        eventPlayer.applyImpulse(Vector.UP, bouncePadStrength - bouncePadSuperjumpNerf, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
+        eventPlayer.applyImpulse(Vector.UP, bouncePadConfig[BouncePadField.STRENGTH] - bouncePadConfig[BouncePadField.SUPERJUMP_NERF], Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
     else:
-        eventPlayer.applyImpulse(Vector.UP, bouncePadStrength, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
+        eventPlayer.applyImpulse(Vector.UP, bouncePadConfig[BouncePadField.STRENGTH], Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
     eventPlayer.bouncePadCooldown = bouncePadCooldownLength
     playEffect(getAllPlayers(), DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, sorted(bouncePads, lambda pad: distance(eventPlayer.getPosition(), pad))[0], 25)

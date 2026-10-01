@@ -121,11 +121,8 @@ variables {
         46: SphereSize
         47: waterLevel
         48: bouncePadToggle
-        49: bouncePadRange
+        49: bouncePadConfig
         50: bouncePadCooldownLength
-        51: bouncePadDistance
-        52: bouncePadStrength
-        53: bouncePadSuperjumpNerf
         54: bouncePads
         58: mobilityMode
         59: moveSpeed
@@ -390,9 +387,6 @@ rule ("Initialization - global variables") {
         Disable Built-In Game Mode Completion;
         Disable Built-In Game Mode Music;
         Disable Built-In Game Mode Announcer;
-        Set Global Variable(bouncePadStrength, 30);
-        Set Global Variable(bouncePadDistance, 12);
-        Set Global Variable(bouncePadSuperjumpNerf, 3);
         Set Global Variable(ballSpeed, Global.ballSpawnSpeed);
         Set Global Variable(CenterOffLimitsSize, 3.5);
         Set Global Variable(IsInFinalDuel, False);
@@ -452,9 +446,9 @@ rule ("Initialization - bounce pads") {
         Global.bouncePadToggle == True;
     }
     actions {
-        Set Global Variable(bouncePadDistance, 12);
-        Set Global Variable(bouncePadRange, 2.75);
-        Set Global Variable(bouncePads, Array(Vector(Add(X Component Of(Global.circleCenter), Global.bouncePadDistance), Y Component Of(Global.circleCenter), Z Component Of(Global.circleCenter)), Vector(Add(X Component Of(Global.circleCenter), Multiply(Global.bouncePadDistance, -1)), Y Component Of(Global.circleCenter), Z Component Of(Global.circleCenter)), Vector(X Component Of(Global.circleCenter), Y Component Of(Global.circleCenter), Add(Z Component Of(Global.circleCenter), Global.bouncePadDistance)), Vector(X Component Of(Global.circleCenter), Y Component Of(Global.circleCenter), Add(Z Component Of(Global.circleCenter), Multiply(Global.bouncePadDistance, -1)))));
+        "One entry per BouncePadField (config/constants.opy), in that order"
+        Set Global Variable(bouncePadConfig, Array(30, 12, 2.75, 3));
+        Set Global Variable(bouncePads, Array(Vector(Add(X Component Of(Global.circleCenter), Value In Array(Global.bouncePadConfig, 1)), Y Component Of(Global.circleCenter), Z Component Of(Global.circleCenter)), Vector(Add(X Component Of(Global.circleCenter), Multiply(Value In Array(Global.bouncePadConfig, 1), -1)), Y Component Of(Global.circleCenter), Z Component Of(Global.circleCenter)), Vector(X Component Of(Global.circleCenter), Y Component Of(Global.circleCenter), Add(Z Component Of(Global.circleCenter), Value In Array(Global.bouncePadConfig, 1))), Vector(X Component Of(Global.circleCenter), Y Component Of(Global.circleCenter), Add(Z Component Of(Global.circleCenter), Multiply(Value In Array(Global.bouncePadConfig, 1), -1)))));
         Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, ==, 0)), Ring, Color(Sky Blue), First Of(Global.bouncePads), 2, Visible To Position and Radius);
         Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, ==, 0)), Ring, Color(Sky Blue), Value In Array(Global.bouncePads, 1), 2, Visible To Position and Radius);
         Create Effect(Filtered Array(All Players(All Teams), Compare((Current Array Element).bouncePadCooldown, ==, 0)), Ring, Color(Sky Blue), Value In Array(Global.bouncePads, 2), 2, Visible To Position and Radius);
@@ -1144,7 +1138,7 @@ rule ("Controls - Bounce when near a pad") {
     }
     conditions {
         Count Of(Global.bouncePads) > 0;
-        Is True For Any(Global.bouncePads, Compare(Distance Between(Position Of(Event Player), Current Array Element), <=, Global.bouncePadRange)) == True;
+        Is True For Any(Global.bouncePads, Compare(Distance Between(Position Of(Event Player), Current Array Element), <=, Value In Array(Global.bouncePadConfig, 2))) == True;
         (Event Player).bouncePadCooldown == 0;
         Is Alive(Event Player) == True;
         Is Button Held(Event Player, Button(Jump)) == True;
@@ -1152,9 +1146,9 @@ rule ("Controls - Bounce when near a pad") {
     }
     actions {
         If((Event Player).dashNerf);
-            Apply Impulse(Event Player, Up, Subtract(Global.bouncePadStrength, Global.bouncePadSuperjumpNerf), To World, Cancel Contrary Motion);
+            Apply Impulse(Event Player, Up, Subtract(First Of(Global.bouncePadConfig), Value In Array(Global.bouncePadConfig, 3)), To World, Cancel Contrary Motion);
         Else;
-            Apply Impulse(Event Player, Up, Global.bouncePadStrength, To World, Cancel Contrary Motion);
+            Apply Impulse(Event Player, Up, First Of(Global.bouncePadConfig), To World, Cancel Contrary Motion);
         End;
         Set Player Variable(Event Player, bouncePadCooldown, Global.bouncePadCooldownLength);
         Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), First Of(Sorted Array(Global.bouncePads, Distance Between(Position Of(Event Player), Current Array Element))), 25);
