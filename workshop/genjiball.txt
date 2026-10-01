@@ -314,9 +314,9 @@ rule ("Initialization - Set map") {
         Set Global Variable(mapRow, Value In Array(Array(Array(Vector(0, 1.199, 0), 60), Array(Vector(0, 1.199, 0), 60), Array(Vector(0, 1.199, 0), 29.7), Array(Vector(0, 1.199, 0), 50), Array(Vector(0, 1.199, 0), 50), Array(Vector(0, 1.199, 0), 60), Array(Vector(-192.609, 60.349, 2.252), 25), Array(Vector(-20.504, 40.538, -74.601), 23), Array(Vector(-20.504, 40.538, -74.601), 23), Array(Vector(2.554, -4.651, -71.211), 23), Array(Vector(2.554, -4.651, -71.211), 23)), Index Of Array Value(Array(Map(Workshop Island), Map(Workshop Island Night), Map(Workshop Chamber), Map(Workshop Expanse), Map(Workshop Expanse Night), Map(Workshop Green Screen), Map(Oasis University), Map(King's Row), Map(King's Row Winter), Map(Blizzard World), Map(Blizzard World Winter)), Current Map)));
         Set Global Variable(circleCenter, First Of(Global.mapRow));
         Set Global Variable(SphereSize, Value In Array(Global.mapRow, 1));
-        "\"20 - Arena > arena radius\" overrides the map's radius when it isn't 0."
+        "\"20 - Arena > arena radius\" overrides the map's radius when it isn't 0.\nAt least 10 m: the final duel spawns players 15 m out on Workshop Island (and SphereSize / 1.5\nelsewhere), so a smaller arena puts them out of bounds or inside the center exclusion."
         If(Compare(Value In Array(Global.arenaSettings, 1), >, 0));
-            Set Global Variable(SphereSize, Value In Array(Global.arenaSettings, 1));
+            Set Global Variable(SphereSize, Max(Value In Array(Global.arenaSettings, 1), 10));
         End;
         "Workshop Island has water and a ledge instead of a wall; several rules check this."
         Set Global Variable(isIsland, Or(Compare(Current Map, ==, Map(Workshop Island)), Compare(Current Map, ==, Map(Workshop Island Night))));
