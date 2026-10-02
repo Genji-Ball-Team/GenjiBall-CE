@@ -105,8 +105,12 @@ export async function readSettings() {
         throw new Error(`Setting "${key}": the ${what} must not be blank or contain {, } or :.`);
       }
     }
-    if (seen.has(key)) throw new Error(`Setting "${key}" is created twice. Read each setting once.`);
-    seen.add(key);
+    // The Workshop compares names ignoring case and spacing.
+    const normalized = key.toLowerCase().replace(/\s+/g, "");
+    if (seen.has(normalized)) {
+      throw new Error(`Setting "${key}" is created twice (names are compared ignoring case and spacing). Read each setting once.`);
+    }
+    seen.add(normalized);
   }
   return settings;
 }
