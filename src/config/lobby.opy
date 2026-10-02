@@ -2,8 +2,8 @@
 
 settings {
     "main": {
-        "description": "Welcome to Genji Ball v1.3.3!\nDeflect the ball when targeted. Last player\nstanding wins the round. Join tournaments,\nevents, and community discussion at\ndiscord.gg/genjiball. More info:\nworkshop.codes/GenjiBall-CE\nReport bugs as an issue on GitHub:\ngithub.com/Genji-Ball-Team/GenjiBall-CE\n\nv1.3.2 rebuild and continued development\nby Frozonovic. Originally developed by\nMazawrath, with major updates by zSh4d0W,\nØøØøØzZØøØøØ, and the official Genji\nDodgeball community.",
-        "modeName": "Genji Ball v1.3.3"
+        "description": "Welcome to Genji Ball v1.3.3 RANKED!\nDeflect the ball when targeted. Last player\nstanding wins the round. This lobby is\nlogged for the ranked leaderboard at\ngenjiball.us. Tournaments, events and\ncommunity: discord.gg/genjiball\nReport bugs as an issue on GitHub:\ngithub.com/Genji-Ball-Team/GenjiBall-CE\n\nv1.3.2 rebuild and continued development\nby Frozonovic. Originally developed by\nMazawrath, with major updates by zSh4d0W,\nØøØøØzZØøØøØ, and the official Genji\nDodgeball community.",
+        "modeName": "Genji Ball v1.3.3 RANKED"
     },
     "lobby": {
         "allowPlayersInQueue": true,

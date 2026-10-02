@@ -4,6 +4,13 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## Unreleased
 
+- Started the Ranked variant `v1.3.3R` from the `1.3.3` release: the mode name and lobby description say RANKED and point to genjiball.us, and the HUD says "version 1.3.3R". Added the v1.3.2 RANKED export as `original/genjiball-v1.3.2-ranked.txt`, the reference for the ranked rules.
+- The README and `docs/branching.md` list existing version branches (`v1.3.2`, `v1.3.3`) as examples instead of `v1.3.1`, which has no branch.
+- The README and `docs/hosting.md` link the Teams version (v1.3.3T, import code `11M60`, workshop.codes/GenjiBall-CE-Teams). The retired `v1.3.2T` branch is deleted.
+- The Release workflow doesn't mark variant releases (tags ending in a letter, like `1.3.3T`) as the latest GitHub release, so the free-for-all release stays "Latest".
+- Added the v1.3.3 import code `926FG` to the README, `docs/hosting.md` and the v1.3.3 release notes.
+- Retired `v1.3.2T` (an unplayed Teams copy) in the docs. Teams continues as `v1.3.3T`, based on zSh4d0W's 1.3T, which is archived on the `v1.3T` branch. Global slots 71–74 and 108 and subroutine slot 18 now belong to `v1.3.3T`. "Adding an older version" takes its tooling from the `1.3.2` tag.
+
 ## v1.3.3
 
 - `npm run check` fails when a Workshop setting's category or name is blank or contains `{`, `}` or `:`, which the Workshop rejects.
