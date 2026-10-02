@@ -153,6 +153,19 @@ enum RoundTiming:
     RESPAWN_DELAY   #seconds before the ball respawns after a kill
     WIN_PAUSE       #seconds between a round win and the next round
 
+#Fields of teamSettings ("70 - Teams" settings, Team Deathmatch only)
+enum TeamSetting:
+    SCORE_TO_WIN    #"70 - Teams > score to win", 0 plays until the match time runs out
+    PASSING         #"70 - Teams > passing", hold secondary fire and deflect to pass to a teammate
+    DASH_PASSING    #"70 - Teams > dash passing", with passing on, hold secondary fire and dash to pass
+
+#Teams passing (features/teams.opy), as in 1.3T
+#!define PASS_HEALTH_COST 100
+#A pass fails when the passer is left with less health than this
+#!define PASS_MIN_HEALTH 99
+#Above this ball speed, a last-alive self pass targets an opponent for one tick before coming back
+#!define SELF_PASS_FAST_SPEED 140
+
 #Fields of arenaSettings ("20 - Arena" size and bounce pad settings)
 enum ArenaSetting:
     CENTER_SIZE     #radius of the black sphere players are pushed out of

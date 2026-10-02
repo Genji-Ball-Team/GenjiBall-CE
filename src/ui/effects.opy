@@ -3,7 +3,12 @@
 rule "Appearance - target effects":
     @Condition isGameInProgress() == true
     
-    createEffect(getAllPlayers().exclude(target), Effect.ORB, Color.WHITE, updateEveryFrame(ballPosition), 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    if getCurrentGamemode() == Gamemode.TDM:
+        #Teams: during a pass the passer's teammates see the ball in aqua instead of white.
+        createEffect(updateEveryFrame(getAllPlayers().exclude(getPlayers(target.getTeam())) if passingPlayer == prevTarget and target.getTeam() == prevTarget.getTeam() else getAllPlayers().exclude(target)), Effect.ORB, Color.WHITE, updateEveryFrame(ballPosition), 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+        createEffect(updateEveryFrame(getPlayers(target.getTeam()).exclude(target) if passingPlayer == prevTarget and target.getTeam() == prevTarget.getTeam() else null), Effect.ORB, Color.AQUA, updateEveryFrame(ballPosition), 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    else:
+        createEffect(getAllPlayers().exclude(target), Effect.ORB, Color.WHITE, updateEveryFrame(ballPosition), 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     createProjectileEffect(getAllPlayers(), Projectile.SIGMA_HYPERSPHERE, null, updateEveryFrame(ballPosition), ballDirection, 0.01, ProjectileEffectReeval.VISIBILITY_POSITION_DIRECTION_AND_SIZE)
     if not addOnSettings[AddOnSetting.COLORBLIND]:
         createEffect(target, Effect.ORB, Color.RED, updateEveryFrame(ballPosition), 1, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)

@@ -2,11 +2,13 @@
 
 Genji Ball is an Overwatch Workshop game mode. Everyone plays Genji, a homing ball chases one player at a time, and the only way to survive is to **deflect it** at someone else. The last player standing wins the round.
 
+> **This is the `v1.3.3T` branch: Team Deathmatch (Teams).** Two teams of up to 5, and a team scores when no one on the other team is left alive. The rules follow zSh4d0W's 1.3T (archived on the [`v1.3T`](../../tree/v1.3T) branch). See [docs/playing.md](docs/playing.md#teams). Free-for-all is on [`main`](../../tree/main).
+
 This repository is the community-maintained home of the mode's source code. It is open for anyone to read, learn from, and improve with pull requests.
 
 - **Discord:** [discord.gg/genjiball](https://discord.gg/genjiball)
 - **Workshop page:** [workshop.codes/GenjiBall-CE](https://workshop.codes/GenjiBall-CE)
-- **Current version:** v1.3.3
+- **Current version:** v1.3.3T
 
 ## Play it
 

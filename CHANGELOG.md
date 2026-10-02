@@ -4,6 +4,12 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## Unreleased
 
+- Started `v1.3.3T` from the 1.3.3 release: Team Deathmatch, 5v5, Workshop Island Night, free-for-all off. Version text `1.3.3T`.
+- Ported the eight `Teams - ...` rules from zSh4d0W's 1.3T into `src/features/teams.opy`, enabled, with `TDMcollision` hooked into `collisionTarget()` and the TDM ball effects. Uses global slots 71–73 and subroutine slot 18.
+- New *70 - Teams* settings, packed into `teamSettings`: score to win (15; 0 plays on match time), passing (off) and dash passing (off). Passing works as in 1.3T: hold secondary fire and deflect, a pass costs 100 health and fails with too little.
+- Gated `Active game - check for last player surviving` and `Active game - all players dead` to free-for-all. "Controls - secondary fire triggers deflect" is off in TDM with passing on, as in 1.3T. The feel-lock is updated for these on this branch only.
+- Fixes on top of 1.3T: a tie when time runs out goes to extra rounds instead of a win for team 2 (and a team 2 lead no longer gives a draw); the game waits for players when either team is empty (1.3T only checked both) and resumes the match timer when it starts again; tournament mode counts TDM rounds.
+
 ## v1.3.3
 
 - `npm run check` fails when a Workshop setting's category or name is blank or contains `{`, `}` or `:`, which the Workshop rejects.

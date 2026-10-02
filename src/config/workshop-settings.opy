@@ -111,6 +111,12 @@ rule "Settings - Workshop settings":
         createWorkshopSettingBool("80 - Visual", "watermark", false, 5),
         createWorkshopSettingBool("20 - Arena", "water ledge fix", false, 8)
     ]
+    #70 - Teams: Team Deathmatch only. One entry per TeamSetting field (config/constants.opy), in that order.
+    teamSettings = [
+        createWorkshopSettingInt("70 - Teams", "score to win", 15, 0, 30),
+        createWorkshopSettingBool("70 - Teams", "passing", false, 1),
+        createWorkshopSettingBool("70 - Teams", "dash passing", false, 2)
+    ]
     #Presets: one row per preset, in Preset order, one column per forced setting
     #(PresetColumn in config/constants.opy). MANUAL keeps the host's value.
     #Custom has no row, so every visible setting stays manual.

@@ -27,6 +27,8 @@ rule "Controls - secondary fire triggers deflect":
     @Condition eventPlayer.isUsingAbility1() == false
     @Condition eventPlayer.isHoldingButton(Button.ABILITY_2) == false
     @Condition eventPlayer.canDeflect == true
+    #Teams passing: secondary fire is held to pass, so deflect with ability 2 (features/teams.opy).
+    @Condition (teamSettings[TeamSetting.PASSING] and getCurrentGamemode() == Gamemode.TDM) == false
     
     if eventPlayer.antiRubberbanding == true:
         eventPlayer.allowButton(Button.ABILITY_2)
