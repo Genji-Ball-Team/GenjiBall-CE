@@ -1,5 +1,7 @@
 # Genji Ball: Community Edition
 
+> **Retired.** `v1.3.2T` is v1.3.2 with a reworked but disabled Teams copy that was never played. It isn't developed further. The Teams version people played is zSh4d0W's 1.3T, archived on the [`v1.3T`](../../tree/v1.3T) branch, and Teams continues as `v1.3.3T`. See [docs/branching.md on `main`](../../blob/main/docs/branching.md#variants).
+
 Genji Ball is an Overwatch Workshop game mode. Everyone plays Genji, a homing ball chases one player at a time, and the only way to survive is to **deflect it** at someone else. The last player standing wins the round.
 
 This repository is the community-maintained home of the mode's source code. It is open for anyone to read, learn from, and improve with pull requests.
