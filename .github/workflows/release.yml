@@ -32,8 +32,15 @@ jobs:
           if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
             gh release upload "$GITHUB_REF_NAME" "genjiball-v${GITHUB_REF_NAME}.txt" --clobber
           else
+            # Player-facing notes from docs/releases/ if this version has them.
+            notes="docs/releases/v${GITHUB_REF_NAME}.md"
+            if [ -f "$notes" ]; then
+              notes_args=(--notes-file "$notes")
+            else
+              notes_args=(--generate-notes)
+            fi
             gh release create "$GITHUB_REF_NAME" "genjiball-v${GITHUB_REF_NAME}.txt" \
               --title "Genji Ball CE v$GITHUB_REF_NAME" \
-              --generate-notes \
+              "${notes_args[@]}" \
               --verify-tag
           fi

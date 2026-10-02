@@ -32,6 +32,7 @@ When `main` is ready to ship as, say, 1.3.3:
    - `src/ui/hud.opy`: the `"version 1.3.3"` HUD text
    - `package.json`: `version`
    - `CHANGELOG.md`: move "Unreleased" under a `## v1.3.3` heading
+   - `docs/releases/v1.3.3.md`: the player-facing release notes, and `docs/releases/v1.3.3-discord.md` for the Discord announcement (under 2,000 characters). `CHANGELOG.md` is for contributors; these say what's new for hosts and players, what's fixed, and where to report bugs. Write them in their own PR before the bump.
 2. After it's merged, tag the commit and create the version branch:
    ```sh
    git switch main && git pull
@@ -39,8 +40,8 @@ When `main` is ready to ship as, say, 1.3.3:
    git branch v1.3.3
    git push origin 1.3.3 v1.3.3
    ```
-3. The **Release** workflow builds the Workshop code and publishes a GitHub release with `genjiball-v1.3.3.txt` attached. If the tag is ever re-pushed, the workflow replaces the attached file and keeps the release notes.
-4. Paste the release's Workshop code in-game and create an **import code**. Add it to the release notes, the table in [hosting.md](hosting.md#with-an-import-code), and the "Play it" section of the README.
+3. The **Release** workflow builds the Workshop code and publishes a GitHub release with `genjiball-v1.3.3.txt` attached. Its notes are `docs/releases/v1.3.3.md`, or GitHub's generated list of PRs if that file doesn't exist. If the tag is ever re-pushed, the workflow replaces the attached file and keeps the release notes.
+4. Paste the release's Workshop code in-game and create an **import code**. Put it in both `docs/releases/` files, the table in [hosting.md](hosting.md#with-an-import-code) and the "Play it" section of the README, in one PR. Then update the release with `gh release edit 1.3.3 --notes-file docs/releases/v1.3.3.md` and post the Discord announcement.
 
 **Tags have no `v`** (`1.3.3`, `1.3.2T`) because the branches already use `v1.3.3`-style names. A tag and a branch with the same name make Git commands ambiguous.
 

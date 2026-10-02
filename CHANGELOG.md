@@ -52,6 +52,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 - Commented out the Oasis University, King's Row and Blizzard World arenas (and their Winter versions). Overwatch won't enable a non-Workshop map while Workshop extensions are on ("The current set of workshop extensions prohibits non-workshop maps"), so they couldn't be played. The six Workshop maps are unchanged.
 - With the red-green colorblind filter on, the x-ray heart icon is now blue instead of red, like the other target effects. With the filter off it is red as before.
 - Fixed typos in player-facing text ("Let's begin!", "you're", "subtract", "Don't") and made the toggle messages say "simple HUD" and "anti-rubberbanding" everywhere. The Switch Target description now says what it does: press once to become the target and turn the ball straight at you (20 s cooldown), press twice quickly to become the target without turning the ball (15 s cooldown). Text only; gameplay is unchanged.
+- Added player-facing release notes for v1.3.3 (`docs/releases/v1.3.3.md`) and a short Discord announcement (`docs/releases/v1.3.3-discord.md`). The import code is filled in at release. The Release workflow now uses `docs/releases/v<tag>.md` as the release notes when it exists, instead of GitHub's generated list of PRs.
 
 ## v1.3.2 (Community Edition import)
 
