@@ -22,7 +22,8 @@ rule "Ranked log - MATCH_START":
 
     #Ids start at 1: index 0 is never a player.
     rankedPlayers = [-1]
-    logToInspector("GBR|{0}|1|1.3.3R".format(getTotalTimeElapsed()))
+    #matchKey: 12 random digits, so the server can tell repeated copies of this match apart from other matches
+    logToInspector("GBR|{0}|1|1.3.3R|{1}{2}".format(getTotalTimeElapsed(), random.randint(100000, 999999), random.randint(100000, 999999)))
     #feel: any setting that changes how the ball or a player moves, controls or deflects (docs/ranked-log.md)
     #addOns: the gameplay add-ons that are on, comma-separated
     logToInspector("MATCH_START|{0}|{1}|{2}|{3}|{4}".format(
