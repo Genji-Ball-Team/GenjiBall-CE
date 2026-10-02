@@ -3566,6 +3566,35 @@ rule ("Ranked log - ELIM") {
     }
 }
 
+rule ("Ranked log - KILL") {
+    event {
+        Player Died;
+        All;
+        All;
+    }
+    conditions {
+        Value In Array(Global.rankedState, 1) == True;
+    }
+    actions {
+        Log To Inspector(Custom String("KILL|{0}|{1}|{2}", Total Time Elapsed, If-Then-Else(And(Compare(Attacker, !=, Event Player), Compare(Attacker, !=, Null)), Attacker, Custom String("")), Custom String("{0}|{1}|{2}", Event Player, If-Then-Else(And(Compare(Attacker, !=, Event Player), Array Contains(Global.rankedPlayers, Attacker)), Index Of Array Value(Global.rankedPlayers, Attacker), Custom String("")), If-Then-Else(Array Contains(Global.rankedPlayers, Event Player), Index Of Array Value(Global.rankedPlayers, Event Player), Custom String("")))));
+    }
+}
+
+rule ("Ranked log - DEFLECT") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Value In Array(Global.rankedState, 1) == True;
+        Global.prevTarget != Value In Array(Global.rankedState, 6);
+    }
+    actions {
+        Set Global Variable At Index(rankedState, 6, Global.prevTarget);
+        If(And(Value In Array(Global.rankedState, 3), Compare(Global.prevTarget, !=, Null)));
+            Log To Inspector(Custom String("DEFLECT|{0}|{1}|{2}", Total Time Elapsed, Value In Array(Global.rankedState, 2), Custom String("{0}|{1}|{2}", If-Then-Else(Array Contains(Global.rankedPlayers, Global.prevTarget), Index Of Array Value(Global.rankedPlayers, Global.prevTarget), Custom String("")), Round To Integer(Global.ballSpeed, To Nearest), If-Then-Else(Array Contains(Global.rankedPlayers, Global.target), Index Of Array Value(Global.rankedPlayers, Global.target), Custom String("")))));
+    }
+}
+
 rule ("Ranked log - ROUND_END ABORT") {
     event {
         Ongoing - Global;

@@ -191,7 +191,7 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 <!-- settings: 70 - Ranked -->
 | Setting | Default | Range | What it does |
 |---|---|---|---|
-| ranked logging | on | | Writes the match to the Workshop inspector log for the ranked leaderboard: match start and end, players joining and leaving, and each round with its elimination order and winner. Turn on **Enable Workshop Inspector Log File** in the Overwatch options so it reaches a file the host tool can upload. Keeps the Workshop inspector on, which v1.3.3 turns off to save server load. **off**: nothing is logged, the match can't count, and the inspector is turned off as in v1.3.3. Format: [ranked-log.md](ranked-log.md) |
+| ranked logging | on | | Writes the match to the Workshop inspector log for the ranked leaderboard: match start and end, players joining and leaving, each round with its elimination order and winner, and every kill and deflect. Turn on **Enable Workshop Inspector Log File** in the Overwatch options so it reaches a file the host tool can upload. Keeps the Workshop inspector on, which v1.3.3 turns off to save server load. **off**: nothing is logged, the match can't count, and the inspector is turned off as in v1.3.3. Format: [ranked-log.md](ranked-log.md) |
 
 ### 80 - Visual
 

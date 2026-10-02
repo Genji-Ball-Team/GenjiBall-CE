@@ -182,6 +182,7 @@ The `Ranked log` rules (`features/ranked-log.opy`) only read the round flow's va
 
 | Keep before | Why |
 |---|---|
+| `core/collision` → `Ranked log - DEFLECT` | The deflect rule watches `prevTarget`, which `Collision - collision sub` sets in the deflect. Coming later, it logs in the same tick, when `ballSpeed` and `target` are already the new ones. |
 | `Check for <2 players` → `Ranked log - ROUND_END WIN` | When a player leaves a two-player round, the check clears `IsEnoughPlayersToStart` in the same tick as the `LEAVE` leaves one player in `rankedRound`. The round is logged as `ABORT`, like the round flow, which gives no win. Swapped, it would be logged as a `WIN`. |
 
 **AntiOrbit**

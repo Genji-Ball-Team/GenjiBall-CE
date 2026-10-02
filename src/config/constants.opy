@@ -204,6 +204,7 @@ enum RankedField:
     IN_ROUND    #a ROUND_START is logged and its ROUND_END isn't yet
     TEXT        #the id list being built for ROUND_START
     COUNT       #how many ids are in TEXT so far
+    DEFLECTOR   #the prevTarget "Ranked log - DEFLECT" last saw
 
 #antiGhostMode ("10 - Ball > anti-ghost correction")
 enum AntiGhost:
