@@ -142,6 +142,7 @@ variables {
         124: rankedState
         125: rankedPlayers
         126: rankedRound
+        127: rankTags
     player:
         0: hasMoved
         1: thirdPerson
@@ -165,6 +166,7 @@ variables {
         24: orbitTimer
         25: orbitHeat
         26: kills
+        124: rankTier
 }
 
 subroutines {
@@ -3666,6 +3668,72 @@ rule ("Ranked log - MATCH_END") {
             Call Subroutine(logRankedRoundAbort);
         End;
         Log To Inspector(Custom String("MATCH_END|{0}|TIME", Total Time Elapsed));
+    }
+}
+
+rule ("RANKS - generated") {
+    event {
+        Ongoing - Global;
+    }
+    actions {
+        Set Global Variable(rankTags, Array(Custom String("Ranks update daily"), Array(Custom String("Master"), Custom Color(255, 215, 0, 255), Custom String("Master")), Array(Custom String("Grandmaster"), Custom Color(255, 140, 0, 255), Custom String("Grandmaster")), Array(Custom String("Ascendant"), Custom Color(60, 160, 255, 255), Custom String("Ascendant")), Array(Custom String("Champion"), Custom Color(150, 0, 0, 255), Custom String("Champion")), Array(Custom String("God"), Custom Color(160, 160, 160, 255), Custom String("God"))));
+    }
+}
+
+rule ("Rank tags - find tier") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Has Spawned(Event Player) == True;
+        (Event Player).rankTier == 0;
+    }
+    actions {
+        "As in v1.3.2 RANKED: the name isn't known the moment a bot takes a slot"
+        Wait(0.25, Ignore Condition);
+        Set Player Variable(Event Player, rankTier, Subtract(Count Of(Global.rankTags), 1));
+        While(And(Compare((Event Player).rankTier, >, 0), Not(Array Contains(Array Slice(Value In Array(Global.rankTags, (Event Player).rankTier), 3, Subtract(Count Of(Value In Array(Global.rankTags, (Event Player).rankTier)), 3)), Custom String("{0}", Event Player)))));
+            Modify Player Variable(Event Player, rankTier, Subtract, 1);
+        End;
+        If(Compare((Event Player).rankTier, ==, 0));
+            Set Player Variable(Event Player, rankTier, -1);
+    }
+}
+
+rule ("Rank tags - floating tags") {
+    event {
+        Ongoing - Global;
+    }
+    actions {
+        "Entity creation fail protection"
+        Wait(1, Ignore Condition);
+        Set Global Variable At Index(rankedState, 7, 0);
+        While(Compare(Value In Array(Global.rankedState, 7), <, 12));
+            Create In-World Text(If-Then-Else(And(Compare((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 7)), All Teams)).rankTier, >, 0), Is Alive(Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 7)), All Teams))), All Players(All Teams), Null), First Of(Value In Array(Global.rankTags, Max((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 7)), All Teams)).rankTier, 0))), Add(Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 7)), All Teams), Vector(0, 1.5, 0)), 1, Do Not Clip, Visible To Position String and Color, Value In Array(Value In Array(Global.rankTags, Max((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 7)), All Teams)).rankTier, 0)), 1), Default Visibility);
+            Modify Global Variable At Index(rankedState, 7, Add, 1);
+        End;
+    }
+}
+
+rule ("Rank tags - tier guide") {
+    event {
+        Ongoing - Global;
+    }
+    actions {
+        "Entity creation fail protection"
+        Wait(1, Ignore Condition);
+        Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Null, Custom String("Live leaderboard: genjiball.us"), Right, -40, Null, Null, Color(Aqua), Visible To, Default Visibility);
+        Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Null, Evaluate Once(First Of(Global.rankTags)), Right, -39, Null, Null, Color(White), Visible To, Default Visibility);
+        Set Global Variable At Index(rankedState, 7, Subtract(Count Of(Global.rankTags), 1));
+        While(Compare(Value In Array(Global.rankedState, 7), >, 0));
+            Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Null, Evaluate Once(Value In Array(Value In Array(Global.rankTags, Value In Array(Global.rankedState, 7)), 2)), Right, Subtract(-30, Value In Array(Global.rankedState, 7)), Null, Null, Evaluate Once(Value In Array(Value In Array(Global.rankTags, Value In Array(Global.rankedState, 7)), 1)), Visible To, Default Visibility);
+            Modify Global Variable At Index(rankedState, 7, Subtract, 1);
+        End;
+        "Interact toggles simple HUD, except in Sandbox"
+        If(Compare(Value In Array(Global.addOnSettings, 7), ==, False));
+            Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Null, Custom String("Press [{0}] to hide", Input Binding String(Button(Interact))), Right, -20, Null, Null, Color(White), Visible To, Default Visibility);
     }
 }
 
