@@ -12,7 +12,9 @@ This repository is the community-maintained home of the mode's source code. It i
 
 ## Play it
 
-**Quickest way:** use the import code **`C62PC`**, the current v1.3.2 version (by FROZONE). In Overwatch, go to **Play → Custom Games → Import Code** and enter `C62PC`.
+**Team Deathmatch (v1.3.3T)** has no release or import code yet. Paste [`workshop/genjiball.txt`](workshop/genjiball.txt) from this branch (steps below).
+
+The import code **`C62PC`** is the free-for-all v1.3.2 (by FROZONE), not Teams. In Overwatch, go to **Play → Custom Games → Import Code** and enter `C62PC`.
 
 Or paste the code yourself:
 

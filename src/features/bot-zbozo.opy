@@ -7,8 +7,8 @@ rule "zBozo - spawn":
     while bozo_Bot > 0:
         bozo_Bot--
         if getCurrentGamemode() == Gamemode.TDM:
-            #Teams: TDM has no free-for-all slots, so the bot joins team 2 (as in 1.3T).
-            createDummy(Hero.GENJI, Team.2, 1 + bozo_Bot, null, hostPlayer)
+            #Teams: TDM has no free-for-all slots, so the bot joins team 2 (as in 1.3T), in the first free slot.
+            createDummy(Hero.GENJI, Team.2, -1, null, hostPlayer)
         else:
             createDummy(Hero.GENJI, Team.ALL, 12 + bozo_Bot, null, hostPlayer)
         wait(0.1)

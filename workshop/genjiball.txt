@@ -2632,8 +2632,8 @@ rule ("zBozo - spawn") {
         While(Compare(Global.bozo_Bot, >, 0));
             Modify Global Variable(bozo_Bot, Subtract, 1);
             If(Compare(Current Game Mode, ==, Game Mode(Team Deathmatch)));
-                "Teams: TDM has no free-for-all slots, so the bot joins team 2 (as in 1.3T)."
-                Create Dummy Bot(Hero(Genji), Team 2, Add(1, Global.bozo_Bot), Null, Host Player);
+                "Teams: TDM has no free-for-all slots, so the bot joins team 2 (as in 1.3T), in the first free slot."
+                Create Dummy Bot(Hero(Genji), Team 2, -1, Null, Host Player);
             Else;
                 Create Dummy Bot(Hero(Genji), All Teams, Add(12, Global.bozo_Bot), Null, Host Player);
             End;
@@ -3308,6 +3308,11 @@ rule ("Teams - wait for more players") {
         Big Message(All Players(All Teams), Custom String("Let's begin!"));
         Set Global Variable(IsEnoughPlayersToStart, True);
         Wait Until(Is Game In Progress, 10);
+        "A team may have emptied during the wait."
+        If(Or(Or(Not(Is Game In Progress), Compare(Number Of Players(Team 1), ==, 0)), Compare(Number Of Players(Team 2), ==, 0)));
+            Set Global Variable(IsEnoughPlayersToStart, False);
+            Abort;
+        End;
         "Paused by \"Teams - check for <2 players\""
         Unpause Match Time;
         Call Subroutine(startRound);
@@ -3368,6 +3373,8 @@ rule ("Teams - end assist after 1s") {
         "The passer gets the assist if the teammate's next deflect kills within a second."
         Wait Until(Compare(Global.prevTarget, !=, Global.passingPlayer), 10);
         Wait(1, Ignore Condition);
+        "A teammate passed again during the second: wait for that pass instead. TDMcollision() already stopped the old assist."
+        Loop If(Compare(Global.prevTarget, ==, Global.passingPlayer));
         Stop Assist(Global.passingAssistId);
         Set Global Variable(passingPlayer, Null);
     }

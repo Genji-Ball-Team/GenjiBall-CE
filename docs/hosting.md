@@ -6,7 +6,7 @@
 
 | Version | Import code | Published by |
 |---|---|---|
-| v1.3.2 (current) | **`C62PC`** | FROZONE (Frozonovic) |
+| v1.3.2 (free-for-all, not Teams) | **`C62PC`** | FROZONE (Frozonovic) |
 
 In Overwatch: **Play → Custom Games → Import Code**, and enter the code.
 
@@ -14,7 +14,7 @@ When a new version is released, a maintainer adds its import code to this table 
 
 ### By pasting the Workshop code
 
-1. Get the Workshop code from the latest [release](../../../releases). That's the stable version. [`workshop/genjiball.txt`](../workshop/genjiball.txt) on `main` is the latest development build, and each version branch (e.g. `v1.3.2`) has the code for that release.
+1. For Team Deathmatch (v1.3.3T), there's no release yet: use [`workshop/genjiball.txt`](../workshop/genjiball.txt) on the `v1.3.3T` branch. For free-for-all, get the Workshop code from the latest [release](../../../releases). That's the stable version. [`workshop/genjiball.txt`](../workshop/genjiball.txt) on `main` is the latest development build, and each version branch (e.g. `v1.3.2`) has the code for that release.
 2. In Overwatch: **Play → Custom Games → Create**.
 3. Open **Settings** and click the **Import** / paste icon in the top right. Your clipboard needs to contain the code. Import into a new custom game, not on top of an existing one: pasting over a game that already has Workshop settings can fail with "Categories and names of Workshop Settings may not be blank and may not contain '{', '}', or ':'".
 4. Change anything you want under **Settings → Workshop → Settings** (see below), then start the game.

@@ -64,6 +64,10 @@ rule "Teams - wait for more players":
     bigMessage(getAllPlayers(), "Let's begin!")
     IsEnoughPlayersToStart = true
     waitUntil(isGameInProgress(), 10)
+    #A team may have emptied during the wait.
+    if not isGameInProgress() or getNumberOfPlayers(Team.1) == 0 or getNumberOfPlayers(Team.2) == 0:
+        IsEnoughPlayersToStart = false
+        return
     #Paused by "Teams - check for <2 players"
     unpauseMatchTime()
     startRound()
@@ -110,6 +114,9 @@ rule "Teams - end assist after 1s":
     #The passer gets the assist if the teammate's next deflect kills within a second.
     waitUntil(prevTarget != passingPlayer, 10)
     wait(1)
+    #A teammate passed again during the second: wait for that pass instead. TDMcollision() already stopped the old assist.
+    if prevTarget == passingPlayer:
+        loop()
     stopAssist(passingAssistId)
     passingPlayer = null
 
