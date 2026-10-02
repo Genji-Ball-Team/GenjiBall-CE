@@ -4,6 +4,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## Unreleased
 
+- `docs/ranked-log.md` after the first playtest: the line prefix counts from the game start (not the time of day), and one match can be repeated in several log files (the host going to spectator and back starts a new one). `GBR` gets a `matchKey` so the server keeps one copy. Still format version 1.
 - `AGENTS.md` lists the other ranked repos (genjiball-ranked, genjiball-host-tool) and how to work across them.
 - Wrote the ranked log format, `docs/ranked-log.md`, with an example match in `docs/ranked-log-example.txt`: one event per line, per-match player ids (names only in `JOIN` and the v1.3.2-compatible `KILL`), rounds and elimination order for the rating, and the reasons a match is unranked. No logging code yet.
 - Started the Ranked variant `v1.3.3R` from the `1.3.3` release: the mode name and lobby description say RANKED and point to genjiball.us, and the HUD says "version 1.3.3R". Added the v1.3.2 RANKED export as `original/genjiball-v1.3.2-ranked.txt`, the reference for the ranked rules.
