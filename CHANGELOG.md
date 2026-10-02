@@ -4,6 +4,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## Unreleased
 
+- The Release workflow doesn't mark variant releases (tags ending in a letter, like `1.3.3T`) as the latest GitHub release, so the free-for-all release stays "Latest".
 - Added the v1.3.3 import code `926FG` to the README, `docs/hosting.md` and the v1.3.3 release notes.
 - Retired `v1.3.2T` (an unplayed Teams copy) in the docs. Teams continues as `v1.3.3T`, based on zSh4d0W's 1.3T, which is archived on the `v1.3T` branch. Global slots 71–74 and 108 and subroutine slot 18 now belong to `v1.3.3T`. "Adding an older version" takes its tooling from the `1.3.2` tag.
 
