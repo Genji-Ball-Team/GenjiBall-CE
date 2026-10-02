@@ -14,13 +14,19 @@ Documents/Overwatch/Workshop/Log-<date>-<time>.txt
 
 With the inspector disabled, nothing reaches the file. v1.3.3 disables it at start to save server load, so v1.3.3R keeps it on while ranked logging is on.
 
-The Workshop adds a wall-clock prefix to every line: `[hh:mm:ss] ` (local time, 24-hour, then one space). The parser strips it and doesn't use it: it isn't a date and wraps at midnight. Everything after the prefix is ours:
+The Workshop adds a prefix to every line: `[hh:mm:ss] ` (then one space). It isn't the time of day: it counts from when the game started, the same clock as [`time`](#time) in whole seconds (`[00:00:08]` for `8.02`). The parser strips it and doesn't use it. Everything after the prefix is ours:
 
 ```
-[20:14:29] KILL|28.40|Sparrow|Ghost|1|4
+[00:00:28] KILL|28.40|Sparrow|Ghost|1|4
 ```
 
-A file can hold several matches (the lobby plays another match on the same map), and other lines (an inspector log from another mode, the [legacy](#legacy-v132-logs) `KILL` lines). The parser reads the file top to bottom, starts a match at each [`GBR`](#events) line and ignores lines it doesn't know.
+In the playtest, the next match in the same lobby started a new file, with `time` from 0 again. The parser still allows several matches in one file. A file can also hold other lines (an inspector log from another mode, the [legacy](#legacy-v132-logs) `KILL` lines). The parser reads the file top to bottom, starts a match at each [`GBR`](#events) line and ignores lines it doesn't know.
+
+### One match in several files
+
+The file is written while the match is played. Each time the host moves to spectator, and again when they come back, Overwatch starts a **new file that repeats the whole log so far**, and the old file stops there. So the same match can be in several files, each one a longer copy of the one before.
+
+The `matchKey` in `GBR` tells them apart: lines with the same host and the same `matchKey` are the same match. The host tool may upload every file. The server keeps, for each host and `matchKey`, the copy with the most lines and drops the others, so a match is never counted twice. A copy with fewer lines is always the start of the longer one.
 
 ## Lines
 
@@ -53,7 +59,7 @@ So the game gives every player a **player id** when they join: a whole number, s
 - The id stays the same while the player stays in the lobby. It's stored on the player, so moving slots doesn't change it.
 - A player who leaves and comes back gets a `LEAVE`, then a new `JOIN` with a new id.
 - Two players with the same name get different ids, so the log is never ambiguous within a match.
-- Players already in the lobby when the match starts get their `JOIN` right after `MATCH_START`. Spectators aren't players and get no id until they join a slot.
+- Players already in the lobby when the match starts get their `JOIN` right after `MATCH_START`, or when they spawn if they haven't yet. `JOIN` waits for the spawn so the name is known: an AI bot logged as it took the slot had no name yet (`Entity 84`). Spectators aren't players and get no id until they join a slot.
 
 Which **account** a name belongs to is the server's job, not the log's: the server maps names to players, and admins merge names (genjiball-ranked "Admin: merge aliases and names"). When one match has two players with the same name, the server must not guess which is which. It keeps the match for an admin to review.
 
@@ -77,7 +83,7 @@ Which players are in a round:
 
 | Type | Fields | When |
 |---|---|---|
-| `GBR` | `format`, `gameVersion` | First line of every match, before `MATCH_START`. `format` is the [format version](#versions) (`1`), `gameVersion` the build (`1.3.3R`). |
+| `GBR` | `format`, `gameVersion`, `matchKey` | First line of every match, before `MATCH_START`. `format` is the [format version](#versions) (`1`), `gameVersion` the build (`1.3.3R`). `matchKey` is 12 random digits picked at match start, the same in every [copy of the match](#one-match-in-several-files). Treat it as text, not a number. |
 | `MATCH_START` | `map`, `preset`, `feel`, `addOns` | Match start. `map` is our own code, not the map's name (which the Workshop translates): `workshop-island-night`, or `other`. `preset` is the Preset setting as named in `docs/hosting.md` (`Default`, …). `feel` is `1` if any ball or player feel toggle is on, else `0`: custom ball feel, water ledge fix, tracing mode, anti-ghost correction (not off) or AntiOrbit. `addOns` lists the gameplay add-ons that are on, comma-separated (`duels`, `endless`, `sandbox`, `abilities`), empty when none. |
 | `JOIN` | `id`, `name` | A player joins a slot, or is already in one at `MATCH_START`. |
 | `LEAVE` | `id` | A player leaves the lobby or moves to spectator. |
@@ -168,9 +174,7 @@ The match ends with `MATCH_END` `TIME`. Round wins: Sparrow 2, Nova 1.
 
 ## To check in a custom game
 
-Nothing here has been seen in a real log file yet. In the release candidate playtest, check:
+Seen in the first playtest (2026-10-02, English client): the file is written on the host's PC while the match is played, the prefix counts from the game start, `time` has 2 decimals and a `.` (`8.02`), and each move of the host to or from spectator starts a new file with the whole log so far (3 files for one match, all with the same `matchKey`). The next match in the same lobby started its own file, with `time` from 0 again. Still to check in the release candidate playtest:
 
-- the menu path of **Enable Workshop Inspector Log File**, and that the file is written on the host's PC
-- the `[hh:mm:ss] ` prefix
-- how the Workshop formats Total Time Elapsed (decimals, decimal mark in other languages)
-- whether a second match in the same lobby goes to the same file and restarts Total Time Elapsed
+- the menu path of **Enable Workshop Inspector Log File**
+- the decimal mark in other languages
