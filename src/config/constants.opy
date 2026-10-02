@@ -146,7 +146,6 @@ enum BouncePadField:
     STRENGTH        #upward impulse of a bounce
     DISTANCE        #distance of each pad from circleCenter
     RANGE           #how close a player has to be to a pad to bounce
-    SUPERJUMP_NERF  #taken off STRENGTH while the player has dashNerf
     COOLDOWN        #seconds before a player can bounce again
 
 #Fields of roundTimings ("40 - Match" settings that time the round flow)

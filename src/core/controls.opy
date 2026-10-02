@@ -253,9 +253,6 @@ rule "Controls - Bounce when near a pad":
     @Condition eventPlayer.isHoldingButton(Button.JUMP) == true
     @Condition bouncePadToggle == true
     
-    if eventPlayer.dashNerf:
-        eventPlayer.applyImpulse(Vector.UP, bouncePadConfig[BouncePadField.STRENGTH] - bouncePadConfig[BouncePadField.SUPERJUMP_NERF], Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
-    else:
-        eventPlayer.applyImpulse(Vector.UP, bouncePadConfig[BouncePadField.STRENGTH], Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
+    eventPlayer.applyImpulse(Vector.UP, bouncePadConfig[BouncePadField.STRENGTH], Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
     eventPlayer.bouncePadCooldown = bouncePadConfig[BouncePadField.COOLDOWN]
     playEffect(getAllPlayers(), DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, sorted(bouncePads, lambda pad: distance(eventPlayer.getPosition(), pad))[0], 25)

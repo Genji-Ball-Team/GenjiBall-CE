@@ -259,7 +259,7 @@
         "        Call Subroutine(resetOrbitRoundState);",
         "        Chase Player Variable At Rate(All Players(All Teams), bouncePadCooldown, 0, 1, Destination and Rate);",
         "        Set Global Variable(ballSpawnCountdown, Global.setballspawncountdown);",
-        "        Set Player Variable(All Living Players(All Teams), bouncePadCooldown, Subtract(Value In Array(Global.bouncePadConfig, 4), 1));",
+        "        Set Player Variable(All Living Players(All Teams), bouncePadCooldown, Subtract(Value In Array(Global.bouncePadConfig, 3), 1));",
         "    }",
         "}"
       ]
@@ -312,7 +312,7 @@
         "        Set Global Variable(IsInFinalDuel, True);",
         "        Set Global Variable(RoundSetupPending, False);",
         "        Chase Global Variable At Rate(ballSpawnCountdown, 0, 1, Destination and Rate);",
-        "        Set Player Variable(All Living Players(All Teams), bouncePadCooldown, Subtract(Value In Array(Global.bouncePadConfig, 4), 1));",
+        "        Set Player Variable(All Living Players(All Teams), bouncePadCooldown, Subtract(Value In Array(Global.bouncePadConfig, 3), 1));",
         "        If(Global.isIsland);",
         "            Start Forcing Player Position(First Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved)), Add(Global.circleCenter, Vector(-15, 0, 0)), False);",
         "            Start Forcing Player Position(Value In Array(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved), 1), Add(Global.circleCenter, Vector(15, 0, 0)), False);",
@@ -433,7 +433,7 @@
         "        Stop Chasing Global Variable(ballSpawnCountdown);",
         "        Resurrect(All Dead Players(All Teams));",
         "        Stop Chasing Player Variable(All Players(All Teams), bouncePadCooldown);",
-        "        Set Player Variable(All Players(All Teams), bouncePadCooldown, Value In Array(Global.bouncePadConfig, 4));",
+        "        Set Player Variable(All Players(All Teams), bouncePadCooldown, Value In Array(Global.bouncePadConfig, 3));",
         "        Set Global Variable(ballSpawnCountdown, Global.setballspawncountdown);",
         "        Wait(1, Ignore Condition);",
         "        Loop If Condition Is True;",
