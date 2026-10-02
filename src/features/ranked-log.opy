@@ -117,6 +117,41 @@ rule "Ranked log - ELIM":
     ))
 
 
+#Any death, in or out of a round, like v1.3.2 RANKED's "Match Log": names first, then the ids.
+#attacker is empty for none or the player themself, as in ELIM. victimId is empty for a player without an id yet.
+rule "Ranked log - KILL":
+    @Event playerDied
+    @Condition rankedState[RankedField.STARTED] == true
+
+    logToInspector("KILL|{0}|{1}|{2}|{3}|{4}".format(
+        getTotalTimeElapsed(),
+        attacker if attacker != eventPlayer and attacker != null else "",
+        eventPlayer,
+        rankedPlayers.index(attacker) if attacker != eventPlayer and attacker in rankedPlayers else "",
+        rankedPlayers.index(eventPlayer) if eventPlayer in rankedPlayers else ""
+    ))
+
+
+#A deflect. "Collision - collision sub" is feel-locked, so this rule watches prevTarget instead:
+#every deflect sets it to the deflector, who is never the one before (the next target excludes them),
+#and "Collision - delete ball sub" clears it when the ball goes. Only Endless and custom abilities
+#(unranked add-ons) can give the same deflector twice in a row, and then the second deflect isn't logged.
+#After core/collision, so in the deflect's tick ballSpeed and target are already the new ones.
+rule "Ranked log - DEFLECT":
+    @Condition rankedState[RankedField.STARTED] == true
+    @Condition prevTarget != rankedState[RankedField.DEFLECTOR]
+
+    rankedState[RankedField.DEFLECTOR] = prevTarget
+    if rankedState[RankedField.IN_ROUND] and prevTarget != null:
+        logToInspector("DEFLECT|{0}|{1}|{2}|{3}|{4}".format(
+            getTotalTimeElapsed(),
+            rankedState[RankedField.ROUND],
+            rankedPlayers.index(prevTarget) if prevTarget in rankedPlayers else "",
+            round(ballSpeed),
+            rankedPlayers.index(target) if target in rankedPlayers else ""
+        ))
+
+
 #Stopped before anyone won: "Check for <2 players" (core/lobby.opy) ended it.
 #When a player leaves a two-player round, that rule clears IsEnoughPlayersToStart earlier in the same tick,
 #so the WIN rule below doesn't give the round to the one left behind.
