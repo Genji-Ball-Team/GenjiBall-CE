@@ -10,7 +10,7 @@ This repository is the community-maintained home of the mode's source code. It i
 
 ## Play it
 
-**Quickest way:** use the import code **`C62PC`**, the current v1.3.2 version (by FROZONE). In Overwatch, go to **Play → Custom Games → Import Code** and enter `C62PC`.
+**Quickest way:** use the import code **`926FG`** for the current version, v1.3.3. In Overwatch, go to **Play → Custom Games → Import Code** and enter `926FG`. The v1.3.2 code `C62PC` (by FROZONE) still works for the previous version.
 
 Or paste the code yourself:
 
