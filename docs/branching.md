@@ -27,12 +27,13 @@ fix/some-bug ──PR──▶ main ──tag 1.3.3──▶ release
 
 When `main` is ready to ship as, say, 1.3.3:
 
+Before the bump, write the release notes in their own PR: `docs/releases/v1.3.3.md` for players and hosts, and `docs/releases/v1.3.3-discord.md` for the Discord announcement (under 2,000 characters). `CHANGELOG.md` is for contributors; these say what's new for hosts and players, what's fixed, and where to report bugs. Leave the import code as `TBD` until step 4.
+
 1. Bump the version text in a PR:
    - `src/config/lobby.opy`: the lobby description and mode name
    - `src/ui/hud.opy`: the `"version 1.3.3"` HUD text
    - `package.json`: `version`
    - `CHANGELOG.md`: move "Unreleased" under a `## v1.3.3` heading
-   - `docs/releases/v1.3.3.md`: the player-facing release notes, and `docs/releases/v1.3.3-discord.md` for the Discord announcement (under 2,000 characters). `CHANGELOG.md` is for contributors; these say what's new for hosts and players, what's fixed, and where to report bugs. Write them in their own PR before the bump.
 2. After it's merged, tag the commit and create the version branch:
    ```sh
    git switch main && git pull
