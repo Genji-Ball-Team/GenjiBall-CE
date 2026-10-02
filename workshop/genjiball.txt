@@ -141,6 +141,7 @@ variables {
         115: presetRow
         124: rankedState
         125: rankedPlayers
+        126: rankedRound
     player:
         0: hasMoved
         1: thirdPerson
@@ -188,6 +189,7 @@ subroutines {
     21: startLegacyPlusBall
     22: startExperimentalBall
     124: logRankedJoins
+    125: logRankedRoundAbort
 }
 
 //Strict optimizations enabled
@@ -3470,6 +3472,9 @@ rule ("Ranked log - MATCH_START") {
     actions {
         "Ids start at 1: index 0 is never a player."
         Set Global Variable(rankedPlayers, Array(-1));
+        Set Global Variable(rankedRound, Empty Array);
+        Set Global Variable At Index(rankedState, 2, 0);
+        Set Global Variable At Index(rankedState, 3, False);
         "matchKey: 12 random digits, so the server can tell repeated copies of this match apart from other matches"
         Log To Inspector(Custom String("GBR|{0}|1|1.3.3R|{1}{2}", Total Time Elapsed, Random Integer(100000, 999999), Random Integer(100000, 999999)));
         "feel: any setting that changes how the ball or a player moves, controls or deflects (docs/ranked-log.md)\naddOns: the gameplay add-ons that are on, comma-separated"
@@ -3508,8 +3513,113 @@ rule ("Ranked log - LEAVE") {
         "Everyone who left since the last LEAVE, in case two leave in the same tick.\nA player's index in rankedPlayers is their id."
         While(Is True For Any(Global.rankedPlayers, And(Compare(Current Array Element, !=, -1), Not(Array Contains(All Players(All Teams), Current Array Element)))));
             Log To Inspector(Custom String("LEAVE|{0}|{1}", Total Time Elapsed, Index Of Array Value(Global.rankedPlayers, First Of(Filtered Array(Global.rankedPlayers, And(Compare(Current Array Element, !=, -1), Not(Array Contains(All Players(All Teams), Current Array Element))))))));
+            Modify Global Variable(rankedRound, Remove From Array By Value, First Of(Filtered Array(Global.rankedPlayers, And(Compare(Current Array Element, !=, -1), Not(Array Contains(All Players(All Teams), Current Array Element))))));
             Set Global Variable At Index(rankedPlayers, Index Of Array Value(Global.rankedPlayers, First Of(Filtered Array(Global.rankedPlayers, And(Compare(Current Array Element, !=, -1), Not(Array Contains(All Players(All Teams), Current Array Element)))))), -1);
         End;
+    }
+}
+
+rule ("Ranked log - ROUND_START") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Value In Array(Global.rankedState, 1) == True;
+        Value In Array(Global.rankedState, 3) == False;
+        Is Game In Progress == True;
+        Global.IsEnoughPlayersToStart == True;
+        Global.RoundSetupPending == False;
+        Or(Global.RoundInProgress, Global.IsInFinalDuel) == True;
+        Number Of Living Players(All Teams) > 1;
+    }
+    actions {
+        "Everyone alive needs an id before it's listed"
+        Call Subroutine(logRankedJoins);
+        Modify Global Variable At Index(rankedState, 2, Add, 1);
+        Set Global Variable At Index(rankedState, 3, True);
+        "In the round: everyone alive now. Players who join later are killed by \"Player joins game\" and play from the next round."
+        Set Global Variable(rankedRound, Sorted Array(All Living Players(All Teams), Index Of Array Value(Global.rankedPlayers, Current Array Element)));
+        "ids, comma-separated"
+        Set Global Variable At Index(rankedState, 4, Index Of Array Value(Global.rankedPlayers, First Of(Global.rankedRound)));
+        Set Global Variable At Index(rankedState, 5, 1);
+        While(Compare(Value In Array(Global.rankedState, 5), <, Count Of(Global.rankedRound)));
+            Set Global Variable At Index(rankedState, 4, Custom String("{0},{1}", Value In Array(Global.rankedState, 4), Index Of Array Value(Global.rankedPlayers, Value In Array(Global.rankedRound, Value In Array(Global.rankedState, 5)))));
+            Modify Global Variable At Index(rankedState, 5, Add, 1);
+        End;
+        Log To Inspector(Custom String("ROUND_START|{0}|{1}|{2}", Total Time Elapsed, Value In Array(Global.rankedState, 2), Value In Array(Global.rankedState, 4)));
+    }
+}
+
+rule ("Ranked log - ELIM") {
+    event {
+        Player Died;
+        All;
+        All;
+    }
+    conditions {
+        Value In Array(Global.rankedState, 3) == True;
+        Array Contains(Global.rankedRound, Event Player) == True;
+    }
+    actions {
+        Modify Global Variable(rankedRound, Remove From Array By Value, Event Player);
+        Log To Inspector(Custom String("ELIM|{0}|{1}|{2}", Total Time Elapsed, Value In Array(Global.rankedState, 2), Custom String("{0}|{1}|{2}", Index Of Array Value(Global.rankedPlayers, Event Player), If-Then-Else(And(Compare(Attacker, !=, Event Player), Array Contains(Global.rankedPlayers, Attacker)), Index Of Array Value(Global.rankedPlayers, Attacker), Custom String("")), Add(Count Of(Filtered Array(Global.rankedRound, Is Alive(Current Array Element))), 1))));
+    }
+}
+
+rule ("Ranked log - ROUND_END ABORT") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Value In Array(Global.rankedState, 3) == True;
+        Global.IsEnoughPlayersToStart == False;
+    }
+    actions {
+        Call Subroutine(logRankedRoundAbort);
+    }
+}
+
+rule ("Ranked log - ROUND_END WIN") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Value In Array(Global.rankedState, 3) == True;
+        Global.IsEnoughPlayersToStart == True;
+        Count Of(Global.rankedRound) == 1;
+        Is Alive(First Of(Global.rankedRound)) == True;
+        Number Of Living Players(All Teams) == 1;
+    }
+    actions {
+        Log To Inspector(Custom String("ROUND_END|{0}|{1}|{2}|WIN", Total Time Elapsed, Value In Array(Global.rankedState, 2), Index Of Array Value(Global.rankedPlayers, First Of(Global.rankedRound))));
+        Set Global Variable(rankedRound, Empty Array);
+        Set Global Variable At Index(rankedState, 3, False);
+    }
+}
+
+rule ("Ranked log - ROUND_END NONE") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Value In Array(Global.rankedState, 3) == True;
+        Count Of(Global.rankedRound) == 0;
+    }
+    actions {
+        Log To Inspector(Custom String("ROUND_END|{0}|{1}||NONE", Total Time Elapsed, Value In Array(Global.rankedState, 2)));
+        Set Global Variable At Index(rankedState, 3, False);
+    }
+}
+
+rule ("Ranked log - abort the open round") {
+    event {
+        Subroutine;
+        logRankedRoundAbort;
+    }
+    actions {
+        Log To Inspector(Custom String("ROUND_END|{0}|{1}||ABORT", Total Time Elapsed, Value In Array(Global.rankedState, 2)));
+        Set Global Variable(rankedRound, Empty Array);
+        Set Global Variable At Index(rankedState, 3, False);
     }
 }
 
@@ -3522,6 +3632,10 @@ rule ("Ranked log - MATCH_END") {
         Is Match Complete == True;
     }
     actions {
+        "A round still open when the match ends (Tournament's round limit) never got a winner"
+        If(Value In Array(Global.rankedState, 3));
+            Call Subroutine(logRankedRoundAbort);
+        End;
         Log To Inspector(Custom String("MATCH_END|{0}|TIME", Total Time Elapsed));
     }
 }

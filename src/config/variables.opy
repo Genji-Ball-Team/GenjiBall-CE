@@ -74,6 +74,8 @@ globalvar presetRow 115
 globalvar rankedState 124
 #Ranked log player ids: rankedPlayers[id] is that player, -1 once they've left. Index 0 is unused.
 globalvar rankedPlayers 125
+#Ranked log: the players in the current round who aren't eliminated and haven't left. Empty between rounds.
+globalvar rankedRound 126
 
 #Player variables
 
@@ -124,6 +126,7 @@ subroutine startLegacyPlusBall 21
 subroutine startExperimentalBall 22
 #v1.3.3R (Ranked)
 subroutine logRankedJoins 124
+subroutine logRankedRoundAbort 125
 
 #Activated extensions. Every one is used; OverPy refuses to compile when they cost more points than the Workshop has.
 
