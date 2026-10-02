@@ -6,7 +6,8 @@
 
 | Version | Import code | Published by |
 |---|---|---|
-| v1.3.2 (current) | **`C62PC`** | FROZONE (Frozonovic) |
+| v1.3.3 (current) | **`926FG`** | Genji Ball Team |
+| v1.3.2 | **`C62PC`** | FROZONE (Frozonovic) |
 
 In Overwatch: **Play → Custom Games → Import Code**, and enter the code.
 

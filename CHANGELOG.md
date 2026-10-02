@@ -4,6 +4,8 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## Unreleased
 
+- Added the v1.3.3 import code `926FG` to the README, `docs/hosting.md` and the v1.3.3 release notes.
+
 ## v1.3.3
 
 - `npm run check` fails when a Workshop setting's category or name is blank or contains `{`, `}` or `:`, which the Workshop rejects.
