@@ -206,6 +206,19 @@ enum RankedField:
     COUNT       #how many ids are in TEXT so far
     DEFLECTOR   #the prevTarget "Ranked log - DEFLECT" last saw
     TAG_LOOP    #loop counter for the rank tag and tier guide rules (features/rank-tags.opy)
+    UNRANKED    #the UnrankedReasons logged in this match
+    UNRANKED_TEXT   #the unranked warning's reasons, comma-separated
+    REASON      #the UnrankedReason for logRankedUnranked()
+
+#Why a match won't count: UNRANKED's reason codes (docs/ranked-log.md, "Unranked matches").
+#The code and warning text of each are UNRANKED_CODES and UNRANKED_TEXTS (features/ranked-log.opy).
+enum UnrankedReason:
+    MAP
+    MODE
+    PRESET
+    FEEL
+    ADD_ON
+    BOT
 
 #Fields of a tier in rankTags ("RANKS - generated", docs/rank-tags.md)
 enum RankTagField:

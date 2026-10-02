@@ -5,6 +5,12 @@
 #A player in rankedPlayers who isn't in a slot any more and has no LEAVE yet
 #!define rankedLeaver (rankedPlayers.filter(lambda player: player != -1 and player not in getAllPlayers())[0])
 
+#Any setting that changes how the ball or a player moves, controls or deflects (MATCH_START feel, UNRANKED FEEL)
+#!define RANKED_FEEL_ON (ballFeel[BallFeel.CUSTOM] or addOnSettings[AddOnSetting.WATER_LEDGE_FIX] or addOnSettings[AddOnSetting.TRACING_MODE] or antiGhostMode != AntiGhost.OFF or antiOrbitMode)
+
+#A gameplay add-on is on (MATCH_START addOns, UNRANKED ADD_ON)
+#!define RANKED_ADD_ON_ON (addOnSettings[AddOnSetting.DUELS] or addOnSettings[AddOnSetting.ENDLESS] or addOnSettings[AddOnSetting.SANDBOX] or addOnSettings[AddOnSetting.ABILITIES])
+
 
 #Gives every spawned player without an id the next id, and logs their JOIN.
 #Called at MATCH_START for the players already there, then for each player who joins.
@@ -34,7 +40,7 @@ rule "Ranked log - MATCH_START":
         getTotalTimeElapsed(),
         "workshop-island-night" if __getCurrentMap__() == Map.WORKSHOP_ISLAND_NIGHT else "other",
         ["Default", "Tournament", "Tournament+", "Rapid", "v1", "v7", "Experimental", "Custom"][presetMode],
-        1 if ballFeel[BallFeel.CUSTOM] or addOnSettings[AddOnSetting.WATER_LEDGE_FIX] or addOnSettings[AddOnSetting.TRACING_MODE] or antiGhostMode != AntiGhost.OFF or antiOrbitMode else 0,
+        1 if RANKED_FEEL_ON else 0,
         "{0}{1}{2}{3}".format(
             "duels" if addOnSettings[AddOnSetting.DUELS] else "",
             "{0}endless".format("," if addOnSettings[AddOnSetting.DUELS] else "") if addOnSettings[AddOnSetting.ENDLESS] else "",
@@ -42,8 +48,59 @@ rule "Ranked log - MATCH_START":
             "{0}abilities".format("," if addOnSettings[AddOnSetting.DUELS] or addOnSettings[AddOnSetting.ENDLESS] or addOnSettings[AddOnSetting.SANDBOX] else "") if addOnSettings[AddOnSetting.ABILITIES] else ""
         )
     ))
+    #UNRANKED: one line per reason, and the warning lists them (docs/ranked-log.md, "Unranked matches")
+    rankedState[RankedField.UNRANKED] = []
+    rankedState[RankedField.UNRANKED_TEXT] = ""
+    if __getCurrentMap__() != Map.WORKSHOP_ISLAND_NIGHT:
+        rankedState[RankedField.REASON] = UnrankedReason.MAP
+        logRankedUnranked()
+    if getCurrentGamemode() != Gamemode.FFA:
+        rankedState[RankedField.REASON] = UnrankedReason.MODE
+        logRankedUnranked()
+    if presetMode != Preset.DEFAULT:
+        rankedState[RankedField.REASON] = UnrankedReason.PRESET
+        logRankedUnranked()
+    if RANKED_FEEL_ON:
+        rankedState[RankedField.REASON] = UnrankedReason.FEEL
+        logRankedUnranked()
+    if RANKED_ADD_ON_ON:
+        rankedState[RankedField.REASON] = UnrankedReason.ADD_ON
+        logRankedUnranked()
     logRankedJoins()
     rankedState[RankedField.STARTED] = true
+
+
+#UNRANKED reasons in UnrankedReason order: the logged code, and the warning text
+#!define UNRANKED_CODES ["MAP", "MODE", "PRESET", "FEEL", "ADD_ON", "BOT"]
+#!define UNRANKED_TEXTS ["not on Workshop Island Night", "not free-for-all", "the preset isn't Default", "a ball or player feel setting is on", "a gameplay add-on is on", "a bot joined"]
+
+#Logs UNRANKED for rankedState[REASON] (an UnrankedReason) and adds it to the warning, once per reason.
+def logRankedUnranked():
+    @Name "Ranked log - UNRANKED"
+
+    if rankedState[RankedField.REASON] in rankedState[RankedField.UNRANKED]:
+        return
+    logToInspector("UNRANKED|{0}|{1}".format(getTotalTimeElapsed(), UNRANKED_CODES[rankedState[RankedField.REASON]]))
+    rankedState[RankedField.UNRANKED_TEXT] = "{0}{1}{2}".format(rankedState[RankedField.UNRANKED_TEXT], ", " if len(rankedState[RankedField.UNRANKED]) > 0 else "", UNRANKED_TEXTS[rankedState[RankedField.REASON]])
+    rankedState[RankedField.UNRANKED].append(rankedState[RankedField.REASON])
+
+
+#Zbozo or any other dummy bot, as soon as it's in the match
+rule "Ranked log - UNRANKED BOT":
+    @Event eachPlayer
+    @Condition rankedState[RankedField.STARTED] == true
+    @Condition eventPlayer.isDummy() == true
+
+    rankedState[RankedField.REASON] = UnrankedReason.BOT
+    logRankedUnranked()
+
+
+#The warning, top center, for everyone: above the "map isn't supported" text, away from the ball and the tier guide.
+#Ranked logging off: nothing is logged, so the warning is the only sign.
+rule "Ranked log - unranked warning":
+    #Entity creation fail protection
+    wait(1)
+    hudText(getAllPlayers() if not rankedState[RankedField.LOGGING] or len(rankedState[RankedField.UNRANKED]) > 0 else null, "UNRANKED: this match won't count", "ranked logging is off" if not rankedState[RankedField.LOGGING] else rankedState[RankedField.UNRANKED_TEXT], null, HudPosition.TOP, -5, Color.ORANGE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
 
 
 rule "Ranked log - player joins":

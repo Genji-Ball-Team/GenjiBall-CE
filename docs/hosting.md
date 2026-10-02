@@ -33,7 +33,7 @@ This branch (`v1.3.3R`) is the ranked version. The code is already set up for a 
 
 The code shows rank tags over the top players and a tier guide on the right. The names come from the host tool, which builds the code with the current tags ([rank-tags.md](rank-tags.md)); the code in this repo has no names, so it shows no tags.
 
-Anything else makes the match unranked: see [Unranked matches](ranked-log.md#unranked-matches). The data center is your choice (the v1.3.2 RANKED code forced Netherlands; this one doesn't).
+Anything else makes the match unranked, and the game says so at the top of the screen ("UNRANKED: this match won't count", with the reason): see [Unranked matches](ranked-log.md#unranked-matches). The data center is your choice (the v1.3.2 RANKED code forced Netherlands; this one doesn't).
 
 ## Maps
 
