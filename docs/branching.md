@@ -6,7 +6,7 @@
 |---|---|
 | `main` | **Active development.** PRs go here, which is GitHub's default. It can contain changes that haven't been released yet. |
 | `v1.3.2`, `v1.3.3`, … | **Released versions.** Each is a snapshot created when that version shipped. Only used for hotfixes to that version. |
-| `v1.3.3T`, … | **Variants** (e.g. **T** = Teams). Long-lived branches with their own changes on top of a base version. |
+| `v1.3.3T`, `v1.3.3R`, … | **Variants** (**T** = Teams, **R** = Ranked). Long-lived branches with their own changes on top of a base version. |
 | `v1.3T`, … | **Archives.** Older versions imported as they were played (see [Adding an older version](#adding-an-older-version)). Not developed further. |
 | `feature/…`, `fix/…` | Your working branches (in your fork, or here if you're a maintainer) |
 
@@ -69,6 +69,8 @@ git push -u origin v1.3.3T
 ```
 
 PRs for a variant target its branch. To pick up fixes from `main`, merge `main` (or a release tag) into the variant. Release it by tagging `1.3.3T`.
+
+`v1.3.3R` (Ranked) is v1.3.3 with event logging for the ranked server and rank tags. Its lobby is set up as the ranked lobbies were in v1.3.2 RANKED (FFA, Workshop Island Night, at most 10 players), and that export is kept in `original/` on the branch. Ranked code never goes on `main`. It's started the same way as `v1.3.3T` and released by tagging `1.3.3R`.
 
 `v1.3.2T` is retired: it's v1.3.2 with a reworked but disabled Teams copy that was never played. The branch has been deleted.
 
