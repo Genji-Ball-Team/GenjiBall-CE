@@ -36,7 +36,7 @@ Every variable has a fixed index in `src/config/variables.opy`. Never renumber o
 ## Workshop settings
 
 - Each `createWorkshopSetting*` call is referenced **once**, in `Settings - Workshop settings` (`src/config/workshop-settings.opy`).
-- Setting names must be unique ignoring case and spacing.
+- Setting names must be unique ignoring case and spacing. Categories and names may not be blank or contain `{`, `}` or `:` (`npm run check` fails).
 - To read many settings without spending globals, pack them into one array indexed by an enum, like `experimentalTuning` / `ExperimentalTuning` and `addOnSettings` / `AddOnSetting`.
 - Never use a macro that expands a setting in more than one place: each use compiles to another reference (see #62 / PR #68).
 - Then run `npm run docs:settings` and write the new row's description in `docs/hosting.md`.

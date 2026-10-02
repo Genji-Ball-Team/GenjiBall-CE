@@ -99,8 +99,19 @@ export async function readSettings() {
   const seen = new Set();
   for (const { category, name } of settings) {
     const key = `${category} > ${name}`;
-    if (seen.has(key)) throw new Error(`Setting "${key}" is created twice. Read each setting once.`);
-    seen.add(key);
+    // The Workshop rejects a blank category or name, or one containing {, } or :.
+    for (const [what, text] of [["category", category], ["name", name]]) {
+      if (typeof text !== "string" || text.trim() === "" || /[{}:]/.test(text)) {
+        throw new Error(`Setting "${key}": the ${what} must not be blank or contain {, } or :.`);
+      }
+    }
+    // The Workshop compares names ignoring case and spacing.
+    const normalize = (text) => text.toLowerCase().replace(/\s+/g, "");
+    const normalized = JSON.stringify([normalize(category), normalize(name)]);
+    if (seen.has(normalized)) {
+      throw new Error(`Setting "${key}" is created twice (names are compared ignoring case and spacing). Read each setting once.`);
+    }
+    seen.add(normalized);
   }
   return settings;
 }

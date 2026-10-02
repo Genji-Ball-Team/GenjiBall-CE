@@ -15,7 +15,7 @@ This repository is the community-maintained home of the mode's source code. It i
 Or paste the code yourself:
 
 1. Grab the latest stable Workshop code from [Releases](../../releases). [`workshop/genjiball.txt`](workshop/genjiball.txt) on `main` is the latest development build and may include unreleased changes.
-2. In Overwatch, create a Custom Game, open **Settings**, and use the **Import / paste settings** button (top right).
+2. In Overwatch, create a Custom Game, open **Settings**, and use the **Import / paste settings** button (top right). Use a new custom game: importing on top of an existing one can fail with a Workshop settings error.
 3. Start the game. The default map is Workshop Island (Night).
 
 See [docs/hosting.md](docs/hosting.md) for every Workshop setting, preset and supported map, and [docs/playing.md](docs/playing.md) for rules and controls.
