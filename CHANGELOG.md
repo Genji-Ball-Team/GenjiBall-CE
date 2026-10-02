@@ -5,6 +5,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 ## Unreleased
 
 - Started the Ranked variant `v1.3.3R` from the `1.3.3` release: the mode name and lobby description say RANKED and point to genjiball.us, and the HUD says "version 1.3.3R". Added the v1.3.2 RANKED export as `original/genjiball-v1.3.2-ranked.txt`, the reference for the ranked rules.
+- Documented the Ranked variant `v1.3.3R` (`docs/branching.md`, README). Global slots 124–127 and player slots 124–127 are reserved for it.
 - The README and `docs/branching.md` list existing version branches (`v1.3.2`, `v1.3.3`) as examples instead of `v1.3.1`, which has no branch.
 - The README and `docs/hosting.md` link the Teams version (v1.3.3T, import code `11M60`, workshop.codes/GenjiBall-CE-Teams). The retired `v1.3.2T` branch is deleted.
 - The Release workflow doesn't mark variant releases (tags ending in a letter, like `1.3.3T`) as the latest GitHub release, so the free-for-all release stays "Latest".
