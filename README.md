@@ -36,7 +36,7 @@ See [docs/hosting.md](docs/hosting.md) for every Workshop setting, preset and su
 
 ## Versions and branches
 
-`main` is where development happens, and PRs go there. Each released version gets its own branch (`v1.3.2`, `v1.3.1`, …), and variants like `v1.3.3T` (Teams) live on their own branches. Releases are tagged `1.3.3`, `1.3.3T` and so on. See [docs/branching.md](docs/branching.md).
+`main` is where development happens, and PRs go there. Each released version gets its own branch (`v1.3.2`, `v1.3.3`, …), and variants like `v1.3.3T` (Teams) live on their own branches. Releases are tagged `1.3.3`, `1.3.3T` and so on. See [docs/branching.md](docs/branching.md).
 
 ## Contributing
 
