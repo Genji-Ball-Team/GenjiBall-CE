@@ -39,8 +39,14 @@ jobs:
             else
               notes_args=(--generate-notes)
             fi
+            # A variant (tag ending in a letter, like 1.3.3T) never replaces the
+            # free-for-all release as "Latest".
+            latest_args=()
+            if [[ "$GITHUB_REF_NAME" =~ [A-Za-z]$ ]]; then
+              latest_args=(--latest=false)
+            fi
             gh release create "$GITHUB_REF_NAME" "genjiball-v${GITHUB_REF_NAME}.txt" \
               --title "Genji Ball CE v$GITHUB_REF_NAME" \
-              "${notes_args[@]}" \
+              "${notes_args[@]}" "${latest_args[@]}" \
               --verify-tag
           fi
