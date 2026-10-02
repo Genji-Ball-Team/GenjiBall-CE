@@ -63,6 +63,8 @@ The file table is in include order. When you add a file, include it in `main.opy
        ▼  1 player left  → +1 score, maybe tiebreaker, resurrect ───┘
 ```
 
+The numbers are the defaults. *15 - Ball Feel* (hit radius, speed per deflect) and *40 - Match* (ball respawn delay) can change them.
+
 ### Key state (globals)
 
 | Variable | Meaning |
@@ -86,7 +88,7 @@ See `src/config/variables.opy` for the full list.
 The ball is a point, and it moves fast. The Workshop only evaluates conditions about once per tick (~60 Hz), so a fast ball can skip past a player between checks ("phasing"). Two rules handle this:
 
 - **`Collision - ball reaches player`** fires when `ballPosition` is within "hit radius" (1.9 m by default, `ballFeel`) of the target's eyes.
-- **`Collision - collision check`** runs every tick while `ballSpeed` is above "fast ball speed" (150 by default). It also checks **interpolated points** between the previous and current positions (the halfway and quarter points in `phasePosition`, see `PhasePoint`, and the three-quarter point), so a fast ball can't jump over the target.
+- **`Collision - collision check`** runs every tick while `ballSpeed` is above "fast ball speed" (150 by default), or at any speed with "reliable hit detection" on. It also checks **interpolated points** between the previous and current positions (the halfway and quarter points in `phasePosition`, see `PhasePoint`, and the three-quarter point), so a fast ball can't jump over the target.
 
 Both call `collisionTarget()`. That checks whether the target is deflecting (`isUsingAbility2`) or dashing (`isUsingAbility1`), and with tracing mode on, whether they're still tracing. It then either redirects the ball or calls `deflectFail()`.
 
@@ -238,7 +240,7 @@ How to read these:
 
 ## Odd bits worth knowing
 
-- **Rule names can't contain "Blizzard"**, so the map rule is called "Blizz World".
+- **Rule names can't contain "Blizzard"**, so the commented-out Blizzard World arena in `maps/arenas.opy` is written "Blizz World".
 - **Player rank** (rank-outline placeholders) isn't on `main`. The code is kept on the `feature/player-rank` branch. Its player variable slots (19–22) are free.
 - **Tombstone** (name-based removal of specific players) isn't on `main`. The code is kept on the `feature/tombstone` branch.
 - **Teams** (Team Deathmatch support) isn't on `main`. It lives on the `v1.3.2T` variant branch. Its global variable slots (71–74, 108) and subroutine slot 18 are unused on `main`. Keep them that way, or merging `main` into `v1.3.2T` gives two variables the same slot.
