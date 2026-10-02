@@ -6,7 +6,9 @@
 
 | Version | Import code | Published by |
 |---|---|---|
-| v1.3.2 (current) | **`C62PC`** | FROZONE (Frozonovic) |
+| v1.3.3 (current) | **`926FG`** | Genji Ball Team |
+| v1.3.2 | **`C62PC`** | FROZONE (Frozonovic) |
+| v1.3.3T (Team Deathmatch, [own page](https://workshop.codes/GenjiBall-CE-Teams)) | **`11M60`** | Genji Ball Team |
 
 In Overwatch: **Play → Custom Games → Import Code**, and enter the code.
 

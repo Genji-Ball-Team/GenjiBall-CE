@@ -4,6 +4,8 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## Unreleased
 
+- Brought the docs on the `v1.3.3` branch in line with `main` after the release: import codes `926FG` (v1.3.3) and `11M60` (v1.3.3T) in the README, `docs/hosting.md` and the release notes, and `v1.3.3T` instead of the retired `v1.3.2T` as the Teams variant. No code changes.
+
 ## v1.3.3
 
 - `npm run check` fails when a Workshop setting's category or name is blank or contains `{`, `}` or `:`, which the Workshop rejects.

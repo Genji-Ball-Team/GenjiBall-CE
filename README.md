@@ -10,7 +10,9 @@ This repository is the community-maintained home of the mode's source code. It i
 
 ## Play it
 
-**Quickest way:** use the import code **`C62PC`**, the current v1.3.2 version (by FROZONE). In Overwatch, go to **Play → Custom Games → Import Code** and enter `C62PC`.
+**Quickest way:** use the import code **`926FG`** for the current version, v1.3.3. In Overwatch, go to **Play → Custom Games → Import Code** and enter `926FG`. The v1.3.2 code `C62PC` (by FROZONE) still works for the previous version.
+
+**Team Deathmatch:** the Teams version, v1.3.3T, has its own import code **`11M60`** and Workshop page [workshop.codes/GenjiBall-CE-Teams](https://workshop.codes/GenjiBall-CE-Teams). Its code is on the [`v1.3.3T`](../../tree/v1.3.3T) branch and the [1.3.3T release](../../releases/tag/1.3.3T).
 
 Or paste the code yourself:
 
@@ -34,7 +36,7 @@ See [docs/hosting.md](docs/hosting.md) for every Workshop setting, preset and su
 
 ## Versions and branches
 
-`main` is where development happens, and PRs go there. Each released version gets its own branch (`v1.3.2`, `v1.3.1`, …), and variants like `v1.3.2T` (teams) live on their own branches. Releases are tagged `1.3.2`, `1.3.2T` and so on. See [docs/branching.md](docs/branching.md).
+`main` is where development happens, and PRs go there. Each released version gets its own branch (`v1.3.2`, `v1.3.3`, …), and variants like `v1.3.3T` (Teams) live on their own branches. Releases are tagged `1.3.3`, `1.3.3T` and so on. See [docs/branching.md](docs/branching.md).
 
 ## Contributing
 
