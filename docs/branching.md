@@ -5,8 +5,9 @@
 | Branch | What it is |
 |---|---|
 | `main` | **Active development.** PRs go here, which is GitHub's default. It can contain changes that haven't been released yet. |
-| `v1.3.2`, `v1.3.1`, … | **Released versions.** Each is a snapshot created when that version shipped. Only used for hotfixes to that version. |
-| `v1.3.2T`, … | **Variants** (e.g. **T** = Teams). Long-lived branches with their own changes on top of a base version. |
+| `v1.3.2`, `v1.3.3`, … | **Released versions.** Each is a snapshot created when that version shipped. Only used for hotfixes to that version. |
+| `v1.3.3T`, … | **Variants** (e.g. **T** = Teams). Long-lived branches with their own changes on top of a base version. |
+| `v1.3T`, … | **Archives.** Older versions imported as they were played (see [Adding an older version](#adding-an-older-version)). Not developed further. |
 | `feature/…`, `fix/…` | Your working branches (in your fork, or here if you're a maintainer) |
 
 For players: the **stable** Workshop code is on the [Releases](../../../releases) page. `workshop/genjiball.txt` on `main` is the latest development build.
@@ -17,7 +18,7 @@ For players: the **stable** Workshop code is on the [Releases](../../../releases
 fix/some-bug ──PR──▶ main ──tag 1.3.3──▶ release
                        │
                        ├──▶ v1.3.3   (branch created at release)
-                       └──▶ v1.3.2T  (variant; merge main or a release into it to pick up fixes)
+                       └──▶ v1.3.3T  (variant; merge main or a release into it to pick up fixes)
 ```
 
 1. Contributors branch off `main` and open PRs against `main`.
@@ -45,7 +46,7 @@ Before the bump, write the release notes in their own PR: `docs/releases/v1.3.3.
 3. The **Release** workflow builds the Workshop code and publishes a GitHub release with `genjiball-v1.3.3.txt` attached. Its notes are `docs/releases/v1.3.3.md`, or GitHub's generated list of PRs if that file doesn't exist. If the tag is ever re-pushed, the workflow replaces the attached file and keeps the release notes.
 4. Paste the release's Workshop code in-game and create an **import code**. Put it in both `docs/releases/` files, the table in [hosting.md](hosting.md#with-an-import-code) and the "Play it" section of the README, in one PR. Then update the release with `gh release edit 1.3.3 --notes-file docs/releases/v1.3.3.md` and post the Discord announcement.
 
-**Tags have no `v`** (`1.3.3`, `1.3.2T`) because the branches already use `v1.3.3`-style names. A tag and a branch with the same name make Git commands ambiguous.
+**Tags have no `v`** (`1.3.3`, `1.3.3T`) because the branches already use `v1.3.3`-style names. A tag and a branch with the same name make Git commands ambiguous.
 
 ## Hotfixing an old version
 
@@ -57,17 +58,19 @@ Only needed if people still play an older version while `main` has moved on:
 
 ## Variants
 
-Variants like `v1.3.2T` (Teams) live on their own branch. Their code isn't on `main`: Team Deathmatch support (`src/features/teams.opy`, the *70 - Teams* settings, TDM passing) only exists on `v1.3.2T`.
+Variants like `v1.3.3T` (Teams) live on their own branch. Their code isn't on `main`: Team Deathmatch support (`src/features/teams.opy`, the *70 - Teams* settings, TDM passing) only exists on `v1.3.3T`. Its rules follow zSh4d0W's **1.3T**, the Teams version people played, archived on the `v1.3T` branch.
 
-This is how `v1.3.2T` was started:
+This is how `v1.3.3T` was started:
 
 ```sh
-git switch -c v1.3.2T 1.3.2    # start from the 1.3.2 release
-# change the version text to 1.3.2T, commit
-git push -u origin v1.3.2T
+git switch -c v1.3.3T 1.3.3    # start from the 1.3.3 release
+# change the version text to 1.3.3T, commit
+git push -u origin v1.3.3T
 ```
 
-PRs for a variant target its branch. To pick up fixes from `main`, merge `main` (or a release tag) into the variant. Release it by tagging `1.3.2T`.
+PRs for a variant target its branch. To pick up fixes from `main`, merge `main` (or a release tag) into the variant. Release it by tagging `1.3.3T`.
+
+`v1.3.2T` is retired: it's v1.3.2 with a reworked but disabled Teams copy that was never played. The branch has been deleted.
 
 ## Adding an older version
 
@@ -75,11 +78,13 @@ If you have the Workshop code for an older version (e.g. v1.3.1):
 
 ```sh
 git switch --orphan v1.3.1
-git checkout main -- package.json package-lock.json tools .gitignore .gitattributes .github
+git checkout 1.3.2 -- package.json package-lock.json tools .gitignore .gitattributes .github
 # put the export at original/genjiball-v1.3.1.txt
 npm ci
 npm run decompile -- original/genjiball-v1.3.1.txt src/main.opy
 npm run build
 ```
+
+Take the tooling from the `1.3.2` tag, not `main`: `main`'s `npm run check` includes the feel-lock, which needs the `src/core/` layout, so it fails on a single-file archive. This is how `v1.3T` was set up.
 
 You can split it into folders the same way the current version is, but archived versions don't need it.
