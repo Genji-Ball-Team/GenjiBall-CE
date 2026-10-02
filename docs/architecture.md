@@ -176,6 +176,14 @@ The three chamber rules (`x`, `y`, `z`) each flip a different axis, so they can 
 | `Controls - Dash cooldown` → `Control - Dash reset` | If a dash starts in the same tick its user earns an elimination, the cooldown sets `dashOnCooldown` first and the reset clears it. Swapped, the reset would be lost. |
 | `core/controls` → `maps/restrictions` water rules | `Controls - Dash slow (gravity shift)` and `Map restrictions - water leave` / `island enter` all set gravity. The water rules come later and win in a shared tick. |
 
+**Ranked log** (`v1.3.3R`)
+
+The `Ranked log` rules (`features/ranked-log.opy`) only read the round flow's variables, never change them, and come after it in rule order. So in a shared tick they see what the round flow has just done.
+
+| Keep before | Why |
+|---|---|
+| `Check for <2 players` → `Ranked log - ROUND_END WIN` | When a player leaves a two-player round, the check clears `IsEnoughPlayersToStart` in the same tick as the `LEAVE` leaves one player in `rankedRound`. The round is logged as `ABORT`, like the round flow, which gives no win. Swapped, it would be logged as a `WIN`. |
+
 **AntiOrbit**
 
 | Keep before | Why |
@@ -244,4 +252,4 @@ How to read these:
 - **Player rank** (rank-outline placeholders) isn't on `main`. The code is kept on the `feature/player-rank` branch. Its player variable slots (19–22) are free.
 - **Tombstone** (name-based removal of specific players) isn't on `main`. The code is kept on the `feature/tombstone` branch.
 - **Teams** (Team Deathmatch support) isn't on `main`. It lives on the `v1.3.3T` variant branch. Global variable slots 71–74 and 108 and subroutine slot 18 belong to `v1.3.3T` and are unused on `main`. Keep them that way, or merging `main` into `v1.3.3T` gives two variables the same slot.
-- **Ranked** (event logging and rank tags) isn't on `main`. It lives on the `v1.3.3R` variant branch. Global variable slots 124–127 and player variable slots 124–127 are reserved for `v1.3.3R` and unused on `main`, for the same reason. Ranked state should be packed into as few of them as possible (one array if it fits). On `v1.3.3R`, global 124 is `rankedState` and 125 is `rankedPlayers` (the ranked log), and subroutine slots from 124 up are its own.
+- **Ranked** (event logging and rank tags) isn't on `main`. It lives on the `v1.3.3R` variant branch. Global variable slots 124–127 and player variable slots 124–127 are reserved for `v1.3.3R` and unused on `main`, for the same reason. Ranked state should be packed into as few of them as possible (one array if it fits). On `v1.3.3R`, global 124 is `rankedState`, 125 `rankedPlayers` and 126 `rankedRound` (the ranked log), and subroutine slots from 124 up are its own.

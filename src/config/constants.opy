@@ -200,6 +200,10 @@ enum AddOnSetting:
 enum RankedField:
     LOGGING     #"70 - Ranked > ranked logging"
     STARTED     #MATCH_START is logged, so JOIN and LEAVE can be
+    ROUND       #the current round's number, from 1 in each match
+    IN_ROUND    #a ROUND_START is logged and its ROUND_END isn't yet
+    TEXT        #the id list being built for ROUND_START
+    COUNT       #how many ids are in TEXT so far
 
 #antiGhostMode ("10 - Ball > anti-ghost correction")
 enum AntiGhost:
