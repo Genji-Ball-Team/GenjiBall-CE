@@ -121,7 +121,7 @@ globalvar ballSpeed 22
 playervar kills 26
 ```
 
-- Pick an unused index for new variables. The limit is 127. `npm run check` shows how many global slots are left. Skip the slots variant branches use (global 71–74 and 108 for `v1.3.2T`, see [Odd bits](architecture.md#odd-bits-worth-knowing)), or merging `main` into them clashes.
+- Pick an unused index for new variables. The limit is 127. `npm run check` shows how many global slots are left. Skip the slots variant branches use (global 71–74 and 108 for `v1.3.3T`, see [Odd bits](architecture.md#odd-bits-worth-knowing)), or merging `main` into them clashes.
 - Never change an existing index. It keeps diffs and in-game inspector output stable.
 - Name new variables in `camelCase`. Many older names are inconsistent; rename them only in a PR dedicated to that.
 

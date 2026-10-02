@@ -24,7 +24,7 @@ For editing, [VS Code](https://code.visualstudio.com/) with the **OverPy** exten
 
 ## Making a change
 
-1. **Create a branch from `main`.** That's where development happens. (Working on a variant like `v1.3.2T`, or a hotfix for an old version? Branch from that branch instead. See [docs/branching.md](docs/branching.md).)
+1. **Create a branch from `main`.** That's where development happens. (Working on a variant like `v1.3.3T`, or a hotfix for an old version? Branch from that branch instead. See [docs/branching.md](docs/branching.md).)
    ```sh
    git switch main
    git pull
