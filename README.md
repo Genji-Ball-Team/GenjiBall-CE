@@ -14,7 +14,7 @@ This repository is the community-maintained home of the mode's source code. It i
 
 **Team Deathmatch (v1.3.3T)** has no release or import code yet. Paste [`workshop/genjiball.txt`](workshop/genjiball.txt) from this branch (steps below).
 
-The import code **`C62PC`** is the free-for-all v1.3.2 (by FROZONE), not Teams. In Overwatch, go to **Play → Custom Games → Import Code** and enter `C62PC`.
+The import codes **`926FG`** (v1.3.3) and **`C62PC`** (v1.3.2, by FROZONE) are free-for-all, not Teams.
 
 Or paste the code yourself:
 
@@ -38,7 +38,7 @@ See [docs/hosting.md](docs/hosting.md) for every Workshop setting, preset and su
 
 ## Versions and branches
 
-`main` is where development happens, and PRs go there. Each released version gets its own branch (`v1.3.2`, `v1.3.1`, …), and variants like `v1.3.2T` (teams) live on their own branches. Releases are tagged `1.3.2`, `1.3.2T` and so on. See [docs/branching.md](docs/branching.md).
+`main` is where development happens, and PRs go there. Each released version gets its own branch (`v1.3.2`, `v1.3.1`, …), and variants like `v1.3.3T` (Teams) live on their own branches. Releases are tagged `1.3.3`, `1.3.3T` and so on. See [docs/branching.md](docs/branching.md).
 
 ## Contributing
 
