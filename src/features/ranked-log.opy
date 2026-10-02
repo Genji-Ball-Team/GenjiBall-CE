@@ -6,13 +6,14 @@
 #!define rankedLeaver (rankedPlayers.filter(lambda player: player != -1 and player not in getAllPlayers())[0])
 
 
-#Gives every player in a slot without an id the next id, and logs their JOIN.
+#Gives every spawned player without an id the next id, and logs their JOIN.
 #Called at MATCH_START for the players already there, then for each player who joins.
+#Only once spawned: an AI bot logged the moment it took a slot had no name yet ("Entity 84").
 def logRankedJoins():
     @Name "Ranked log - JOIN"
 
-    while any([player not in rankedPlayers for player in getAllPlayers()]):
-        rankedPlayers.append(getAllPlayers().filter(lambda player: player not in rankedPlayers)[0])
+    while any([player not in rankedPlayers and player.hasSpawned() for player in getAllPlayers()]):
+        rankedPlayers.append(getAllPlayers().filter(lambda player: player not in rankedPlayers and player.hasSpawned())[0])
         logToInspector("JOIN|{0}|{1}|{2}".format(getTotalTimeElapsed(), len(rankedPlayers) - 1, rankedPlayers.last()))
 
 
@@ -46,6 +47,7 @@ rule "Ranked log - player joins":
     @Event eachPlayer
     @Condition rankedState[RankedField.STARTED] == true
     @Condition (eventPlayer in rankedPlayers) == false
+    @Condition eventPlayer.hasSpawned() == true
 
     logRankedJoins()
 

@@ -3452,8 +3452,8 @@ rule ("Ranked log - JOIN") {
         logRankedJoins;
     }
     actions {
-        While(Is True For Any(All Players(All Teams), Not(Array Contains(Global.rankedPlayers, Current Array Element))));
-            Modify Global Variable(rankedPlayers, Append To Array, First Of(Filtered Array(All Players(All Teams), Not(Array Contains(Global.rankedPlayers, Current Array Element)))));
+        While(Is True For Any(All Players(All Teams), And(Not(Array Contains(Global.rankedPlayers, Current Array Element)), Has Spawned(Current Array Element))));
+            Modify Global Variable(rankedPlayers, Append To Array, First Of(Filtered Array(All Players(All Teams), And(Not(Array Contains(Global.rankedPlayers, Current Array Element)), Has Spawned(Current Array Element)))));
             Log To Inspector(Custom String("JOIN|{0}|{1}|{2}", Total Time Elapsed, Subtract(Count Of(Global.rankedPlayers), 1), Last Of(Global.rankedPlayers)));
         End;
     }
@@ -3488,6 +3488,7 @@ rule ("Ranked log - player joins") {
     conditions {
         Value In Array(Global.rankedState, 1) == True;
         Array Contains(Global.rankedPlayers, Event Player) == False;
+        Has Spawned(Event Player) == True;
     }
     actions {
         Call Subroutine(logRankedJoins);
