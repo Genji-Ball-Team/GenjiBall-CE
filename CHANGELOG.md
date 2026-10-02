@@ -4,6 +4,8 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## Unreleased
 
+## v1.3.3
+
 - `npm run check` fails when a Workshop setting's category or name is blank or contains `{`, `}` or `:`, which the Workshop rejects.
 - Documented that the Workshop code must be imported into a new custom game: importing on top of an existing one can fail with a Workshop settings error.
 - `main` is now the development branch, and PRs go there. Version branches (`v1.3.2`, …) are release snapshots and variants.
