@@ -2,8 +2,8 @@ settings
 {
 	main
 	{
-		Description: "Welcome to Genji Ball v1.3.3!\nDeflect the ball when targeted. Last player\nstanding wins the round. Join tournaments,\nevents, and community discussion at\ndiscord.gg/genjiball. More info:\nworkshop.codes/GenjiBall-CE\nReport bugs as an issue on GitHub:\ngithub.com/Genji-Ball-Team/GenjiBall-CE\n\nv1.3.2 rebuild and continued development\nby Frozonovic. Originally developed by\nMazawrath, with major updates by zSh4d0W,\nØøØøØzZØøØøØ, and the official Genji\nDodgeball community."
-		Mode Name: "Genji Ball v1.3.3"
+		Description: "Welcome to Genji Ball v1.3.3 RANKED!\nDeflect the ball when targeted. Last player\nstanding wins the round. This lobby is\nlogged for the ranked leaderboard at\ngenjiball.us. Tournaments, events and\ncommunity: discord.gg/genjiball\nReport bugs as an issue on GitHub:\ngithub.com/Genji-Ball-Team/GenjiBall-CE\n\nv1.3.2 rebuild and continued development\nby Frozonovic. Originally developed by\nMazawrath, with major updates by zSh4d0W,\nØøØøØzZØøØøØ, and the official Genji\nDodgeball community."
+		Mode Name: "Genji Ball v1.3.3 RANKED"
 	}
 	lobby
 	{
@@ -509,7 +509,7 @@ rule ("HUD - community text") {
         Ongoing - Global;
     }
     actions {
-        Create HUD Text(All Players(All Teams), Null, Custom String("version 1.3.3"), Null, Right, -100, Null, Color(Orange), Null, Visible To and String, Default Visibility);
+        Create HUD Text(All Players(All Teams), Null, Custom String("version 1.3.3R"), Null, Right, -100, Null, Color(Orange), Null, Visible To and String, Default Visibility);
         Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Custom String("Discord: discord.gg/genjiball"), Null, Null, Left, -5, Color(Aqua), Null, Null, Visible To and String, Default Visibility);
     }
 }

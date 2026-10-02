@@ -6,7 +6,7 @@ This repository is the community-maintained home of the mode's source code. It i
 
 - **Discord:** [discord.gg/genjiball](https://discord.gg/genjiball)
 - **Workshop page:** [workshop.codes/GenjiBall-CE](https://workshop.codes/GenjiBall-CE)
-- **Current version:** v1.3.3
+- **Current version:** v1.3.3R (Ranked). The free-for-all version without ranked logging is on [`main`](../../tree/main).
 
 ## Play it
 
