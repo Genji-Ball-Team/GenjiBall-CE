@@ -48,13 +48,13 @@ The settings tables in [hosting.md](hosting.md#workshop-settings) are generated 
 - **What it does** is hand-written. Edit it in `hosting.md` as usual, and the script keeps it, matched by setting name.
 - A unit after a range (`1–10 s`, `0–10 m`, `5–180°`) is hand-written too, and kept the same way.
 
-`npm run check` fails when the tables don't match the source, when a setting has no description, or when a category has no table. After adding, renaming or changing a setting, run `npm run docs:settings`, write the description of any new row, and commit `docs/hosting.md`. A renamed setting gets a new, empty row: the script names the row it removed, so you can copy the description over. A new category needs its own `### <category>` section with the comment and a table header, which the script then fills.
+`npm run check` fails when the tables don't match the source, when a setting has no description, when a category has no table, or when a setting's category or name is blank or contains `{`, `}` or `:` (the Workshop rejects those). After adding, renaming or changing a setting, run `npm run docs:settings`, write the description of any new row, and commit `docs/hosting.md`. A renamed setting gets a new, empty row: the script names the row it removed, so you can copy the description over. A new category needs its own `### <category>` section with the comment and a table header, which the script then fills.
 
 ## Testing in-game
 
 1. `npm run build`
 2. Open `workshop/genjiball.txt`, select all, and copy.
-3. In a custom game lobby: **Settings → Import**, top right.
+3. In a new custom game lobby: **Settings → Import**, top right. Importing on top of an existing game can fail with "Categories and names of Workshop Settings may not be blank…"; create a new custom game instead.
 4. Useful settings for testing: `50 - Features > bot` for someone to hit the ball at, `90 - Debug > debug HUD`, and `50 - Features > Sandbox mode` for repeatable ball spawns.
 
 ## OverPy quick reference

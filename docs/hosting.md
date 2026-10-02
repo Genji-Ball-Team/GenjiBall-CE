@@ -16,7 +16,7 @@ When a new version is released, a maintainer adds its import code to this table 
 
 1. Get the Workshop code from the latest [release](../../../releases). That's the stable version. [`workshop/genjiball.txt`](../workshop/genjiball.txt) on `main` is the latest development build, and each version branch (e.g. `v1.3.2`) has the code for that release.
 2. In Overwatch: **Play → Custom Games → Create**.
-3. Open **Settings** and click the **Import** / paste icon in the top right. Your clipboard needs to contain the code.
+3. Open **Settings** and click the **Import** / paste icon in the top right. Your clipboard needs to contain the code. Import into a new custom game, not on top of an existing one: pasting over a game that already has Workshop settings can fail with "Categories and names of Workshop Settings may not be blank and may not contain '{', '}', or ':'".
 4. Change anything you want under **Settings → Workshop → Settings** (see below), then start the game.
 
 The lobby is set up for **Deathmatch (FFA)** with up to **10 players** and 12 spectators. Only Genji is allowed.

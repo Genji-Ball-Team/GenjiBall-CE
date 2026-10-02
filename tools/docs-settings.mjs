@@ -99,6 +99,12 @@ export async function readSettings() {
   const seen = new Set();
   for (const { category, name } of settings) {
     const key = `${category} > ${name}`;
+    // The Workshop rejects a blank category or name, or one containing {, } or :.
+    for (const [what, text] of [["category", category], ["name", name]]) {
+      if (typeof text !== "string" || text.trim() === "" || /[{}:]/.test(text)) {
+        throw new Error(`Setting "${key}": the ${what} must not be blank or contain {, } or :.`);
+      }
+    }
     if (seen.has(key)) throw new Error(`Setting "${key}" is created twice. Read each setting once.`);
     seen.add(key);
   }

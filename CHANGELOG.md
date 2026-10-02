@@ -4,6 +4,8 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## Unreleased
 
+- `npm run check` fails when a Workshop setting's category or name is blank or contains `{`, `}` or `:`, which the Workshop rejects.
+- Documented that the Workshop code must be imported into a new custom game: importing on top of an existing one can fail with a Workshop settings error.
 - `main` is now the development branch, and PRs go there. Version branches (`v1.3.2`, …) are release snapshots and variants.
 - The release workflow updates an existing release instead of failing when a tag is re-pushed.
 - Added the feel-lock: `npm run check` fails when a core ball rule (collision, physics, round flow, dash/deflect timing) changes or moves. `npm run feel-lock:update` records a deliberate change, which needs the `ball feel` label.
