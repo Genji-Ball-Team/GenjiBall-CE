@@ -83,7 +83,11 @@ def collisionTarget():
         prevTarget.Critslash = false
     else:
         ballSpeed = min(ballSpeedCap, ballSpeed * ballFeel[BallFeel.DEFLECT_SPEEDUP])
-    target = sorted(getLivingPlayers(Team.ALL).exclude(target).filter(lambda x: x.hasMoved), lambda x: angleBetweenVectors(target.getFacingDirection(), directionTowards(target, x.getPosition())))[0]
+    if getCurrentGamemode() == Gamemode.TDM:
+        #Teams: the ball goes to the other team, or to a teammate on a pass (features/teams.opy).
+        TDMcollision()
+    else:
+        target = sorted(getLivingPlayers(Team.ALL).exclude(target).filter(lambda x: x.hasMoved), lambda x: angleBetweenVectors(target.getFacingDirection(), directionTowards(target, x.getPosition())))[0]
     playEffect(getAllPlayers(), DynamicEffect.EXPLOSION_SOUND, Color.WHITE, evalOnce(prevTarget.getPosition()), 150)
     playEffect(getAllPlayers(), DynamicEffect.BAPTISTE_BIOTIC_LAUNCHER_EXPLOSION_SOUND, Color.WHITE, evalOnce(prevTarget.getPosition()), 20)
     #Redirect-sensitive systems should start fresh after the ball changes target.
@@ -92,6 +96,9 @@ def collisionTarget():
     antiGhostState = [999, 0]
     if ballMotion == BallMotion.MODERN and ballPhysicsMode != BallPhysics.EXPERIMENTAL:
         async(ballCurve, AsyncBehavior.RESTART)
+    if getCurrentGamemode() == Gamemode.TDM and len(getLivingPlayers(target.getTeam())) == 1 and target == prevTarget:
+        #Teams: the last player alive on a team passed to themselves. Let the ball leave before it can hit them.
+        waitUntil(distance(target.getEyePosition(), ballPosition) > ballFeel[BallFeel.HIT_RADIUS], 99999)
 
 
 def deflectFail():

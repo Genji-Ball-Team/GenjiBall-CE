@@ -87,6 +87,8 @@ rule "Active game - check for last player surviving":
     @Condition getNumberOfLivingPlayers(Team.ALL) == 1
     @Condition IsEnoughPlayersToStart == true
     @Condition addOnSettings[AddOnSetting.DUELS] == false
+    #Team Deathmatch uses "Teams - Last surviving" (features/teams.opy).
+    @Condition getCurrentGamemode() == Gamemode.FFA
     
     IsInFinalDuel = false
     #Cleared by startRound once the next round is under way.
@@ -132,6 +134,7 @@ rule "Active game - all players dead":
     @Condition isGameInProgress() == true
     @Condition TieBreakerActive == false
     @Condition addOnSettings[AddOnSetting.DUELS] == false
+    @Condition getCurrentGamemode() == Gamemode.FFA
     
     IsInFinalDuel = false
     if ballIsOut == false:

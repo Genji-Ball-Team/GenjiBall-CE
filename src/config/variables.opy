@@ -57,6 +57,10 @@ globalvar gravity 60
 globalvar jumpVerticalSpeed 61
 globalvar addOnSettings 62
 globalvar tracingPoints 67
+#Teams (features/teams.opy). Slots 71-74 and 108 and subroutine 18 are kept free on main for this variant.
+globalvar teamSettings 71
+globalvar passingAssistId 72
+globalvar passingPlayer 73
 globalvar antiOrbitMode 75
 globalvar antiOrbitRadius 76
 globalvar antiOrbitPressureRate 77
@@ -114,6 +118,7 @@ subroutine stopBall 14
 subroutine startModernBall 15
 subroutine startAstroBall 16
 subroutine startRetroBall 17
+subroutine TDMcollision 18
 subroutine resetOrbitRoundState 19
 subroutine simpleIslandSideCollision 20
 subroutine startLegacyPlusBall 21

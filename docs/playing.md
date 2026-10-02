@@ -56,6 +56,25 @@ The match lasts 15 minutes by default. When time runs out, the current round fin
 
 In **tournament mode** there's no timer. The match ends after a fixed number of rounds, with optional breaks. See [hosting.md](hosting.md#40---match).
 
+## Teams
+
+This is **v1.3.3T**, the Team Deathmatch version (based on zSh4d0W's 1.3T). Most of the page above still applies, with these differences:
+
+- Two teams of up to 5. A deflect sends the ball at the **other team**: the new target is the opponent closest to your crosshair.
+- A team wins the round when **no one on the other team is left alive**, and gets 1 point. The first team to 15 points wins (the host can change it, or play on match time).
+- When one player is left on each team, they play a **final duel** like the free-for-all one.
+- If time runs out with the teams tied, rounds continue until one team leads.
+- If a team is empty, the game waits for players and the match timer pauses.
+
+### Passing
+
+Only if the host turned on passing. **Hold secondary fire and deflect with ability 2** to pass the ball to the teammate closest to your crosshair. While you hold secondary fire, your teammates see a blue aura on you, and during a pass they see the ball in aqua.
+
+- A pass costs 100 health. A normal deflect at the other team heals 100 back. Passing again with too little health fails, and you die.
+- With passing on, secondary fire alone doesn't deflect. Use ability 2.
+- If you're the last one alive on your team, the pass comes back to you, except on the Default preset, where it fails.
+- With **dash passing** on, holding secondary fire while dash-hitting the ball also passes.
+
 ## Optional modes the host can turn on
 
 These are all Workshop settings. See [hosting.md](hosting.md) for how to enable them.

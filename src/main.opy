@@ -43,5 +43,6 @@
 #!include "features/bot-zbozo.opy"
 #ORDER: after core/collision ("2. Target switch" overrides a same-tick deflect).
 #!include "features/abilities.opy"
+#!include "features/teams.opy"
 #!include "features/sandbox.opy"
 #!include "features/abilities-experimental.opy"
