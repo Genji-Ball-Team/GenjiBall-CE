@@ -11,6 +11,8 @@
 
 In Overwatch: **Play → Custom Games → Import Code**, and enter the code.
 
+The Teams version's Workshop page is [workshop.codes/GenjiBall-CE-Teams](https://workshop.codes/GenjiBall-CE-Teams). Free-for-all is [workshop.codes/GenjiBall-CE](https://workshop.codes/GenjiBall-CE).
+
 When a new version is released, a maintainer adds its import code to this table and to the release notes. Import codes can only be created in-game.
 
 ### By pasting the Workshop code

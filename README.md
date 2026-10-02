@@ -7,7 +7,7 @@ Genji Ball is an Overwatch Workshop game mode. Everyone plays Genji, a homing ba
 This repository is the community-maintained home of the mode's source code. It is open for anyone to read, learn from, and improve with pull requests.
 
 - **Discord:** [discord.gg/genjiball](https://discord.gg/genjiball)
-- **Workshop page:** [workshop.codes/GenjiBall-CE](https://workshop.codes/GenjiBall-CE)
+- **Workshop page:** [workshop.codes/GenjiBall-CE-Teams](https://workshop.codes/GenjiBall-CE-Teams) (free-for-all: [workshop.codes/GenjiBall-CE](https://workshop.codes/GenjiBall-CE))
 - **Current version:** v1.3.3T
 
 ## Play it

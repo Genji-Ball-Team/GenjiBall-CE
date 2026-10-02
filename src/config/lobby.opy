@@ -2,7 +2,7 @@
 
 settings {
     "main": {
-        "description": "Welcome to Genji Ball v1.3.3T (Teams)!\nDeflect the ball at the other team. A team\nscores when the other team is wiped out.\nTournaments, events and community:\ndiscord.gg/genjiball. More info:\nworkshop.codes/GenjiBall-CE\nReport bugs as an issue on GitHub:\ngithub.com/Genji-Ball-Team/GenjiBall-CE\n\nTeams (1.3T) by zSh4d0W. v1.3.2 rebuild\nand development by Frozonovic. Originally\nby Mazawrath, with major updates by\nzSh4d0W, ØøØøØzZØøØøØ and the official\nGenji Dodgeball community.",
+        "description": "Welcome to Genji Ball v1.3.3T (Teams)!\nDeflect the ball at the other team. A team\nscores when the other team is wiped out.\nTournaments, events and community:\ndiscord.gg/genjiball. More info:\nworkshop.codes/GenjiBall-CE-Teams\nReport bugs as an issue on GitHub:\ngithub.com/Genji-Ball-Team/GenjiBall-CE\n\nTeams (1.3T) by zSh4d0W. v1.3.2 rebuild\nand development by Frozonovic. Originally\nby Mazawrath, with major updates by\nzSh4d0W, ØøØøØzZØøØøØ and the official\nGenji Dodgeball community.",
         "modeName": "Genji Ball v1.3.3T"
     },
     "lobby": {
