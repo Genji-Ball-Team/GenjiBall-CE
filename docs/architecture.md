@@ -244,3 +244,4 @@ How to read these:
 - **Player rank** (rank-outline placeholders) isn't on `main`. The code is kept on the `feature/player-rank` branch. Its player variable slots (19–22) are free.
 - **Tombstone** (name-based removal of specific players) isn't on `main`. The code is kept on the `feature/tombstone` branch.
 - **Teams** (Team Deathmatch support) isn't on `main`. It lives on the `v1.3.3T` variant branch. Global variable slots 71–74 and 108 and subroutine slot 18 belong to `v1.3.3T` and are unused on `main`. Keep them that way, or merging `main` into `v1.3.3T` gives two variables the same slot.
+- **Ranked** (event logging and rank tags) isn't on `main`. It lives on the `v1.3.3R` variant branch. Global variable slots 124–127 and player variable slots 124–127 are reserved for `v1.3.3R` and unused on `main`, for the same reason. Ranked state should be packed into as few of them as possible (one array if it fits).
