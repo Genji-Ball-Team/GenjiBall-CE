@@ -109,7 +109,9 @@ For genjiball-ranked "Rating engine: OpenSkill per round". The server, not the l
 
 ## Unranked matches
 
-The game decides when a lobby isn't a ranked setup, shows the warning in game ("Unranked warning") and logs `UNRANKED` with the reason. The server rejects every match with an `UNRANKED` line, even if the host uploads it.
+The game decides when a lobby isn't a ranked setup, shows the warning in game and logs `UNRANKED` with the reason. The server rejects every match with an `UNRANKED` line, even if the host uploads it.
+
+The warning is at the top center of everyone's screen, "UNRANKED: this match won't count", with the reasons under it in words. The reasons are checked at `MATCH_START`, except `BOT`, which is checked whenever a player is in the match.
 
 | Reason | When |
 |---|---|
@@ -118,9 +120,9 @@ The game decides when a lobby isn't a ranked setup, shows the warning in game ("
 | `PRESET` | The Preset isn't `Default`. |
 | `FEEL` | A ball or player feel toggle is on. |
 | `ADD_ON` | A gameplay add-on is on: duels, endless, sandbox or custom abilities. |
-| `BOT` | A bot (Zbozo) joined. Logged when it joins. |
+| `BOT` | A dummy bot (Zbozo) is in the match. Logged when it joins, or at `MATCH_START` if it's already there. |
 
-With ranked logging turned off in the Workshop settings (`70 - Ranked > ranked logging`), the game logs nothing at all (so there's no logging cost), and the in-game warning is the only sign. The host tool ignores files without a `GBR` line.
+With ranked logging turned off in the Workshop settings (`70 - Ranked > ranked logging`), the game logs nothing at all (so there's no logging cost), and the in-game warning ("ranked logging is off") is the only sign. The host tool ignores files without a `GBR` line.
 
 The player limit (10) is a lobby setting, so there's no reason for too many players. Too few players is a server rule (above).
 

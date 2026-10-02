@@ -192,6 +192,7 @@ subroutines {
     22: startExperimentalBall
     124: logRankedJoins
     125: logRankedRoundAbort
+    126: logRankedUnranked
 }
 
 //Strict optimizations enabled
@@ -3481,8 +3482,71 @@ rule ("Ranked log - MATCH_START") {
         Log To Inspector(Custom String("GBR|{0}|1|1.3.3R|{1}{2}", Total Time Elapsed, Random Integer(100000, 999999), Random Integer(100000, 999999)));
         "feel: any setting that changes how the ball or a player moves, controls or deflects (docs/ranked-log.md)\naddOns: the gameplay add-ons that are on, comma-separated"
         Log To Inspector(Custom String("MATCH_START|{0}|{1}|{2}", Total Time Elapsed, If-Then-Else(Compare(Current Map, ==, Map(Workshop Island Night)), Custom String("workshop-island-night"), Custom String("other")), Custom String("{0}|{1}|{2}", Value In Array(Array(Custom String("Default"), Custom String("Tournament"), Custom String("Tournament+"), Custom String("Rapid"), Custom String("v1"), Custom String("v7"), Custom String("Experimental"), Custom String("Custom")), Global.presetMode), If-Then-Else(Or(Or(Or(Or(First Of(Global.ballFeel), Value In Array(Global.addOnSettings, 13)), Value In Array(Global.addOnSettings, 3)), Compare(Global.antiGhostMode, !=, 0)), Global.antiOrbitMode), 1, 0), Custom String("{0}{1}{2}", If-Then-Else(Value In Array(Global.addOnSettings, 5), Custom String("duels"), Custom String("")), If-Then-Else(Value In Array(Global.addOnSettings, 6), Custom String("{0}endless", If-Then-Else(Value In Array(Global.addOnSettings, 5), Custom String(","), Custom String(""))), Custom String("")), Custom String("{0}{1}", If-Then-Else(Value In Array(Global.addOnSettings, 7), Custom String("{0}sandbox", If-Then-Else(Or(Value In Array(Global.addOnSettings, 5), Value In Array(Global.addOnSettings, 6)), Custom String(","), Custom String(""))), Custom String("")), If-Then-Else(Value In Array(Global.addOnSettings, 1), Custom String("{0}abilities", If-Then-Else(Or(Or(Value In Array(Global.addOnSettings, 5), Value In Array(Global.addOnSettings, 6)), Value In Array(Global.addOnSettings, 7)), Custom String(","), Custom String(""))), Custom String("")))))));
+        "UNRANKED: one line per reason, and the warning lists them (docs/ranked-log.md, \"Unranked matches\")"
+        Set Global Variable At Index(rankedState, 8, Empty Array);
+        Set Global Variable At Index(rankedState, 9, Custom String(""));
+        If(Compare(Current Map, !=, Map(Workshop Island Night)));
+            Set Global Variable At Index(rankedState, 10, 0);
+            Call Subroutine(logRankedUnranked);
+        End;
+        If(Compare(Current Game Mode, !=, Game Mode(Deathmatch)));
+            Set Global Variable At Index(rankedState, 10, 1);
+            Call Subroutine(logRankedUnranked);
+        End;
+        If(Compare(Global.presetMode, !=, 0));
+            Set Global Variable At Index(rankedState, 10, 2);
+            Call Subroutine(logRankedUnranked);
+        End;
+        If(Or(Or(Or(Or(First Of(Global.ballFeel), Value In Array(Global.addOnSettings, 13)), Value In Array(Global.addOnSettings, 3)), Compare(Global.antiGhostMode, !=, 0)), Global.antiOrbitMode));
+            Set Global Variable At Index(rankedState, 10, 3);
+            Call Subroutine(logRankedUnranked);
+        End;
+        If(Or(Or(Or(Value In Array(Global.addOnSettings, 5), Value In Array(Global.addOnSettings, 6)), Value In Array(Global.addOnSettings, 7)), Value In Array(Global.addOnSettings, 1)));
+            Set Global Variable At Index(rankedState, 10, 4);
+            Call Subroutine(logRankedUnranked);
+        End;
         Call Subroutine(logRankedJoins);
         Set Global Variable At Index(rankedState, 1, True);
+    }
+}
+
+rule ("Ranked log - UNRANKED") {
+    event {
+        Subroutine;
+        logRankedUnranked;
+    }
+    actions {
+        Abort If(Array Contains(Value In Array(Global.rankedState, 8), Value In Array(Global.rankedState, 10)));
+        Log To Inspector(Custom String("UNRANKED|{0}|{1}", Total Time Elapsed, Value In Array(Array(Custom String("MAP"), Custom String("MODE"), Custom String("PRESET"), Custom String("FEEL"), Custom String("ADD_ON"), Custom String("BOT")), Value In Array(Global.rankedState, 10))));
+        Set Global Variable At Index(rankedState, 9, Custom String("{0}{1}{2}", Value In Array(Global.rankedState, 9), If-Then-Else(Compare(Count Of(Value In Array(Global.rankedState, 8)), >, 0), Custom String(", "), Custom String("")), Value In Array(Array(Custom String("not on Workshop Island Night"), Custom String("not free-for-all"), Custom String("the preset isn't Default"), Custom String("a ball or player feel setting is on"), Custom String("a gameplay add-on is on"), Custom String("a bot joined")), Value In Array(Global.rankedState, 10))));
+        Modify Global Variable At Index(rankedState, 8, Append To Array, Value In Array(Global.rankedState, 10));
+    }
+}
+
+rule ("Ranked log - UNRANKED BOT") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Value In Array(Global.rankedState, 1) == True;
+        Is Dummy Bot(Event Player) == True;
+    }
+    actions {
+        Set Global Variable At Index(rankedState, 10, 5);
+        Call Subroutine(logRankedUnranked);
+    }
+}
+
+rule ("Ranked log - unranked warning") {
+    event {
+        Ongoing - Global;
+    }
+    actions {
+        "Entity creation fail protection"
+        Wait(1, Ignore Condition);
+        Create HUD Text(If-Then-Else(Or(Not(First Of(Global.rankedState)), Compare(Count Of(Value In Array(Global.rankedState, 8)), >, 0)), All Players(All Teams), Null), Custom String("UNRANKED: this match won't count"), If-Then-Else(First Of(Global.rankedState), Value In Array(Global.rankedState, 9), Custom String("ranked logging is off")), Null, Top, -5, Color(Orange), Color(White), Color(White), Visible To and String, Default Visibility);
     }
 }
 

@@ -131,6 +131,7 @@ subroutine startExperimentalBall 22
 #v1.3.3R (Ranked)
 subroutine logRankedJoins 124
 subroutine logRankedRoundAbort 125
+subroutine logRankedUnranked 126
 
 #Activated extensions. Every one is used; OverPy refuses to compile when they cost more points than the Workshop has.
 
