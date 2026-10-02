@@ -5,7 +5,7 @@
 | Branch | What it is |
 |---|---|
 | `main` | **Active development.** PRs go here, which is GitHub's default. It can contain changes that haven't been released yet. |
-| `v1.3.2`, `v1.3.1`, … | **Released versions.** Each is a snapshot created when that version shipped. Only used for hotfixes to that version. |
+| `v1.3.2`, `v1.3.3`, … | **Released versions.** Each is a snapshot created when that version shipped. Only used for hotfixes to that version. |
 | `v1.3.3T`, … | **Variants** (e.g. **T** = Teams). Long-lived branches with their own changes on top of a base version. |
 | `v1.3T`, … | **Archives.** Older versions imported as they were played (see [Adding an older version](#adding-an-older-version)). Not developed further. |
 | `feature/…`, `fix/…` | Your working branches (in your fork, or here if you're a maintainer) |
