@@ -47,6 +47,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 - On a map the mode doesn't support, everyone now sees "This map isn't supported, so no round will start" at the top of the screen, with the list of supported maps, no round or duel starts, Duels doesn't kill extra players and the arena center and boundary don't push players. Before, the arena center and radius were left unset and the game broke without saying why.
 - Commented out the Oasis University, King's Row and Blizzard World arenas (and their Winter versions). Overwatch won't enable a non-Workshop map while Workshop extensions are on ("The current set of workshop extensions prohibits non-workshop maps"), so they couldn't be played. The six Workshop maps are unchanged.
 - With the red-green colorblind filter on, the x-ray heart icon is now blue instead of red, like the other target effects. With the filter off it is red as before.
+- Fixed typos in player-facing text ("Let's begin!", "you're", "subtract", "Don't") and made the toggle messages say "simple HUD" and "anti-rubberbanding" everywhere. The Switch Target description now says what it does: press once to become the target and turn the ball straight at you (20 s cooldown), press twice quickly to become the target without turning the ball (15 s cooldown). Text only; gameplay is unchanged.
 
 ## v1.3.2 (Community Edition import)
 

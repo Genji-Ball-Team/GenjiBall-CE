@@ -26,7 +26,7 @@ rule "HUD - ball speed text":
 rule "HUD - controls text":
     hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "change perspective [{0}]".format(inputBindingString(Button.RELOAD)), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
     if addOnSettings[AddOnSetting.SANDBOX] == false:
-        hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "simple hud [{0}]".format(inputBindingString(Button.INTERACT)), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+        hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "simple HUD [{0}]".format(inputBindingString(Button.INTERACT)), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
     if addOnSettings[AddOnSetting.DOUBLE_SENS] and not addOnSettings[AddOnSetting.ABILITIES]:
         hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "double sens [{0}]".format(inputBindingString(Button.ULTIMATE)), HudPosition.LEFT, 0, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
 

@@ -168,12 +168,12 @@ rule "Controls - toggle anti rubberbanding (melee)":
         eventPlayer.antiRubberbanding = false
         eventPlayer.allowButton(Button.ABILITY_1)
         eventPlayer.allowButton(Button.ABILITY_2)
-        smallMessage(eventPlayer, "anti rubberbanding: off")
+        smallMessage(eventPlayer, "anti-rubberbanding: off")
     elif eventPlayer.antiRubberbanding == false:
         eventPlayer.antiRubberbanding = true
         eventPlayer.disallowButton(Button.ABILITY_1)
         eventPlayer.disallowButton(Button.ABILITY_2)
-        smallMessage(eventPlayer, "anti rubberbanding: on")
+        smallMessage(eventPlayer, "anti-rubberbanding: on")
     playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
     wait(0.1)
 
@@ -217,7 +217,7 @@ rule "Controls - Simple HUD (Interact)":
         eventPlayer.simpleHUD = SimpleHud.OFF
         eventPlayer.enableHeroHud()
         playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
-        smallMessage(eventPlayer, "simple hud: off")
+        smallMessage(eventPlayer, "simple HUD: off")
         return
     waitUntil(not eventPlayer.isHoldingButton(Button.INTERACT), 0.4)
     if eventPlayer.isHoldingButton(Button.INTERACT):
@@ -225,22 +225,22 @@ rule "Controls - Simple HUD (Interact)":
             eventPlayer.simpleHUD = SimpleHud.OFF
             eventPlayer.enableHeroHud()
             playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
-            smallMessage(eventPlayer, "simple hud: off")
+            smallMessage(eventPlayer, "simple HUD: off")
         else:
             eventPlayer.simpleHUD = SimpleHud.ZEN
             eventPlayer.disableHeroHud()
             playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
-            smallMessage(eventPlayer, "simple hud: zen mode")
+            smallMessage(eventPlayer, "simple HUD: zen mode")
     else:
         if eventPlayer.simpleHUD == SimpleHud.OFF:
             eventPlayer.simpleHUD = SimpleHud.ON
             playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
-            smallMessage(eventPlayer, "simple hud: on")
+            smallMessage(eventPlayer, "simple HUD: on")
         else:
             eventPlayer.simpleHUD = SimpleHud.OFF
             eventPlayer.enableHeroHud()
             playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
-            smallMessage(eventPlayer, "simple hud: off")
+            smallMessage(eventPlayer, "simple HUD: off")
     wait(0.1)
 
 
