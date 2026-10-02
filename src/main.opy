@@ -45,3 +45,4 @@
 #!include "features/abilities.opy"
 #!include "features/sandbox.opy"
 #!include "features/abilities-experimental.opy"
+#!include "features/ranked-log.opy"

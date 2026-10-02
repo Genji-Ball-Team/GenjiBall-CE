@@ -70,6 +70,10 @@ globalvar killLeaderboardSortedPlayers 112
 globalvar mapRow 113
 globalvar isIsland 114
 globalvar presetRow 115
+#v1.3.3R (Ranked) slots 124-127. Ranked log state (RankedField in config/constants.opy).
+globalvar rankedState 124
+#Ranked log player ids: rankedPlayers[id] is that player, -1 once they've left. Index 0 is unused.
+globalvar rankedPlayers 125
 
 #Player variables
 
@@ -118,6 +122,8 @@ subroutine resetOrbitRoundState 19
 subroutine simpleIslandSideCollision 20
 subroutine startLegacyPlusBall 21
 subroutine startExperimentalBall 22
+#v1.3.3R (Ranked)
+subroutine logRankedJoins 124
 
 #Activated extensions. Every one is used; OverPy refuses to compile when they cost more points than the Workshop has.
 

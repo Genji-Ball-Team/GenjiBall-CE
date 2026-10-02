@@ -176,6 +176,13 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 | basic anti-orbit speed | 80 | 10–400 | Same, the ball only counts while it's slower than this |
 | basic anti-orbit timer | 7.5 | 1–30 s | Same, seconds of orbiting before you're put to sleep (for 5 s) |
 
+### 70 - Ranked
+
+<!-- settings: 70 - Ranked -->
+| Setting | Default | Range | What it does |
+|---|---|---|---|
+| ranked logging | on | | Writes the match to the Workshop inspector log for the ranked leaderboard: match start and end, and players joining and leaving. Turn on **Enable Workshop Inspector Log File** in the Overwatch options so it reaches a file the host tool can upload. **off**: nothing is logged and the match can't count. Format: [ranked-log.md](ranked-log.md) |
+
 ### 80 - Visual
 
 <!-- settings: 80 - Visual -->

@@ -4,6 +4,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## Unreleased
 
+- Ranked logging: with `70 - Ranked > ranked logging` (on by default) the game writes `GBR`, `MATCH_START`, `JOIN`, `LEAVE` and `MATCH_END` to the inspector log in the `docs/ranked-log.md` format. Every player gets a per-match id when they join, including those already in the lobby when the match starts. No gameplay change.
 - `AGENTS.md` lists the other ranked repos (genjiball-ranked, genjiball-host-tool) and how to work across them.
 - Wrote the ranked log format, `docs/ranked-log.md`, with an example match in `docs/ranked-log-example.txt`: one event per line, per-match player ids (names only in `JOIN` and the v1.3.2-compatible `KILL`), rounds and elimination order for the rating, and the reasons a match is unranked. No logging code yet.
 - Started the Ranked variant `v1.3.3R` from the `1.3.3` release: the mode name and lobby description say RANKED and point to genjiball.us, and the HUD says "version 1.3.3R". Added the v1.3.2 RANKED export as `original/genjiball-v1.3.2-ranked.txt`, the reference for the ranked rules.

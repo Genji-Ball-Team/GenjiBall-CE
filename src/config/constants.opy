@@ -196,6 +196,11 @@ enum AddOnSetting:
     WATERMARK       #"80 - Visual > watermark", the original-author credit
     WATER_LEDGE_FIX #"20 - Arena > water ledge fix", limits the under-ledge push to near the island
 
+#Fields of rankedState, the ranked log's state (features/ranked-log.opy)
+enum RankedField:
+    LOGGING     #"70 - Ranked > ranked logging"
+    STARTED     #MATCH_START is logged, so JOIN and LEAVE can be
+
 #antiGhostMode ("10 - Ball > anti-ghost correction")
 enum AntiGhost:
     OFF
