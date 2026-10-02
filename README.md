@@ -12,7 +12,7 @@ This repository is the community-maintained home of the mode's source code. It i
 
 ## Play it
 
-**Team Deathmatch (v1.3.3T)** has no release or import code yet. Paste [`workshop/genjiball.txt`](workshop/genjiball.txt) from this branch (steps below).
+**Quickest way:** use the import code **`11M60`** for Team Deathmatch, v1.3.3T. In Overwatch, go to **Play → Custom Games → Import Code** and enter `11M60`.
 
 The import codes **`926FG`** (v1.3.3) and **`C62PC`** (v1.3.2, by FROZONE) are free-for-all, not Teams.
 

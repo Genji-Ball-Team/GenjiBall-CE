@@ -6,6 +6,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## v1.3.3T
 
+- Added the v1.3.3T import code `11M60` to the README, `docs/hosting.md` and the v1.3.3T release notes.
 - Release notes for v1.3.3T (`docs/releases/v1.3.3T.md`, `v1.3.3T-discord.md`). Variant releases (tags ending in a letter, like `1.3.3T`) are no longer marked as the latest GitHub release, so the free-for-all release stays "Latest".
 - The Teams version has its own Workshop page: the lobby description's "More info" link, the README and `docs/hosting.md` point to workshop.codes/GenjiBall-CE-Teams.
 - Added the v1.3.3 import code `926FG` to the README, `docs/hosting.md` and the v1.3.3 release notes.
