@@ -48,7 +48,7 @@ On a laggy connection, pressing an ability button can make the server and your c
 - **Target:** `⚠ PlayerName ⚠` on the left. It turns red when the target is you.
 - **Ball speed:** color-coded, from blue (slow) to black (absurd). There are a few jokes at certain speeds.
 - **Version:** top right.
-- In the world, the ball is a red orb for the target and white for everyone else. The target sees a blue circle around the ball, and everyone else sees a red aura on the target. With the red-green colorblind filter on, red is blue and the target's circle is yellow.
+- In the world, the ball is a red orb for the target and white for everyone else. The target sees a blue circle around the ball and a red aura around themselves, and everyone else sees a red aura on the target. With the red-green colorblind filter on, red is blue and the target's circle is yellow.
 
 ## Tiebreakers and the end of the match
 
