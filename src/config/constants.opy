@@ -205,6 +205,17 @@ enum RankedField:
     TEXT        #the id list being built for ROUND_START
     COUNT       #how many ids are in TEXT so far
     DEFLECTOR   #the prevTarget "Ranked log - DEFLECT" last saw
+    TAG_LOOP    #loop counter for the rank tag and tier guide rules (features/rank-tags.opy)
+
+#Fields of a tier in rankTags ("RANKS - generated", docs/rank-tags.md)
+enum RankTagField:
+    LABEL       #the tag over the player
+    COLOR       #the tag's and the guide line's colour
+    GUIDE       #the tier's line in the guide
+    NAMES       #the player names in this tier start here
+
+#FFA slots a lobby can have: one rank tag each
+#!define FFA_SLOTS 12
 
 #antiGhostMode ("10 - Ball > anti-ghost correction")
 enum AntiGhost:

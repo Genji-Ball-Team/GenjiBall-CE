@@ -46,3 +46,4 @@
 #!include "features/sandbox.opy"
 #!include "features/abilities-experimental.opy"
 #!include "features/ranked-log.opy"
+#!include "features/rank-tags.opy"

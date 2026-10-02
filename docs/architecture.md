@@ -38,6 +38,8 @@ This is a map of the game logic for contributors. It assumes you know roughly wh
 | `features/abilities.opy` | Custom abilities (super jump, switch target, blink, crit slash) |
 | `features/sandbox.opy` | Sandbox practice tools |
 | `features/abilities-experimental.opy` | A disabled crit-slash rule (last only because it was last in v1.3.2; it has no order constraint) |
+| `features/ranked-log.opy` | `v1.3.3R` only: the ranked log ([format](ranked-log.md)) |
+| `features/rank-tags.opy` | `v1.3.3R` only: rank tags and the tier guide, with the generated rule `RANKS - generated` ([rank-tags.md](rank-tags.md)) |
 
 The file table is in include order. When you add a file, include it in `main.opy` at the place its rules need to run, and add it here.
 
@@ -253,4 +255,4 @@ How to read these:
 - **Player rank** (rank-outline placeholders) isn't on `main`. The code is kept on the `feature/player-rank` branch. Its player variable slots (19–22) are free.
 - **Tombstone** (name-based removal of specific players) isn't on `main`. The code is kept on the `feature/tombstone` branch.
 - **Teams** (Team Deathmatch support) isn't on `main`. It lives on the `v1.3.3T` variant branch. Global variable slots 71–74 and 108 and subroutine slot 18 belong to `v1.3.3T` and are unused on `main`. Keep them that way, or merging `main` into `v1.3.3T` gives two variables the same slot.
-- **Ranked** (event logging and rank tags) isn't on `main`. It lives on the `v1.3.3R` variant branch. Global variable slots 124–127 and player variable slots 124–127 are reserved for `v1.3.3R` and unused on `main`, for the same reason. Ranked state should be packed into as few of them as possible (one array if it fits). On `v1.3.3R`, global 124 is `rankedState`, 125 `rankedPlayers` and 126 `rankedRound` (the ranked log), and subroutine slots from 124 up are its own.
+- **Ranked** (event logging and rank tags) isn't on `main`. It lives on the `v1.3.3R` variant branch. Global variable slots 124–127 and player variable slots 124–127 are reserved for `v1.3.3R` and unused on `main`, for the same reason. Ranked state should be packed into as few of them as possible (one array if it fits). On `v1.3.3R`, global 124 is `rankedState`, 125 `rankedPlayers` and 126 `rankedRound` (the ranked log), 127 `rankTags` (rank tags), player 124 is `rankTier`, and subroutine slots from 124 up are its own.

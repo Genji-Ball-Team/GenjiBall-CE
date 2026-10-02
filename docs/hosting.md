@@ -31,6 +31,8 @@ This branch (`v1.3.3R`) is the ranked version. The code is already set up for a 
 - Workshop settings at their defaults: preset **Default**, nothing in *15 - Ball Feel* or the other feel toggles, no gameplay add-ons (duels, endless, sandbox, custom abilities), no bot. The ball and players feel exactly as in v1.3.3 `Default`.
 - `70 - Ranked > ranked logging` on (the default), and **Enable Workshop Inspector Log File** on in the Overwatch options, so the match reaches a log file the host tool can upload.
 
+The code shows rank tags over the top players and a tier guide on the right. The names come from the host tool, which builds the code with the current tags ([rank-tags.md](rank-tags.md)); the code in this repo has no names, so it shows no tags.
+
 Anything else makes the match unranked: see [Unranked matches](ranked-log.md#unranked-matches). The data center is your choice (the v1.3.2 RANKED code forced Netherlands; this one doesn't).
 
 ## Maps

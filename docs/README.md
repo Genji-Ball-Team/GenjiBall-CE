@@ -13,3 +13,4 @@
 - [How the code works](architecture.md): the source layout, game loop, collision and physics
 - [Branches and releases](branching.md): versions, variants, tagging a release
 - [Ranked log format](ranked-log.md): the events v1.3.3R logs for the ranked server, with an example log
+- [Rank tags](rank-tags.md): the generated rule v1.3.3R's rank tags come from, as the host tool fills it in
