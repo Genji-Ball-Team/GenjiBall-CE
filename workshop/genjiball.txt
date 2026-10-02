@@ -505,7 +505,9 @@ rule ("Initialization - Disable inspector") {
         Ongoing - Global;
     }
     actions {
-        Disable Inspector Recording;
+        "Ranked logging needs the inspector: with it disabled, Log To Inspector writes nothing to the log file."
+        If(Not(First Of(Global.rankedState)));
+            Disable Inspector Recording;
     }
 }
 

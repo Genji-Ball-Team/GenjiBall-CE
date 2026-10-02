@@ -129,4 +129,6 @@ rule "Initialization - Match length":
 
 
 rule "Initialization - Disable inspector":
-    disableInspector()
+    #Ranked logging needs the inspector: with it disabled, Log To Inspector writes nothing to the log file.
+    if not rankedState[RankedField.LOGGING]:
+        disableInspector()

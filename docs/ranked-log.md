@@ -12,6 +12,8 @@ The example log [`ranked-log-example.txt`](ranked-log-example.txt) is a full sho
 Documents/Overwatch/Workshop/Log-<date>-<time>.txt
 ```
 
+With the inspector disabled, nothing reaches the file. v1.3.3 disables it at start to save server load, so v1.3.3R keeps it on while ranked logging is on.
+
 The Workshop adds a wall-clock prefix to every line: `[hh:mm:ss] ` (local time, 24-hour, then one space). The parser strips it and doesn't use it: it isn't a date and wraps at midnight. Everything after the prefix is ours:
 
 ```
@@ -172,4 +174,3 @@ Nothing here has been seen in a real log file yet. In the release candidate play
 - the `[hh:mm:ss] ` prefix
 - how the Workshop formats Total Time Elapsed (decimals, decimal mark in other languages)
 - whether a second match in the same lobby goes to the same file and restarts Total Time Elapsed
-- that `Log To Inspector` still writes when inspector recording is disabled (v1.3.3 disables it at start)
