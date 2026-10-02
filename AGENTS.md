@@ -52,6 +52,21 @@ The Workshop runs rules top to bottom, and include order in `src/main.opy` is ru
 - Update `docs/` when a setting, control or game rule changes.
 - Match the surrounding code: comment style, `camelCase` for new names, named constants from `src/config/constants.opy` instead of magic numbers.
 
+## Other repos
+
+Ranked spans three repos in the Genji-Ball-Team org, cloned side by side in the same parent folder:
+
+| Repo | What it is |
+|---|---|
+| `GenjiBall-CE` (this one) | The game. Ranked logging and rank tags live on the `v1.3.3R` branch only, never on `main` |
+| `genjiball-ranked` | Cloudflare Worker: upload API, log parser, ratings, website |
+| `genjiball-host-tool` | Tauri app: watches the host's Workshop log folder and uploads matches |
+
+- The log format in `docs/ranked-log.md` (on `v1.3.3R`) is the contract between all three. Change it there first, in its own PR, then update the parser and host tool. Bump the format version when an old parser would misread the new lines.
+- An issue here may need work in another repo. Check that repo's issues before starting, keep one PR per repo, and link them to each other (`Genji-Ball-Team/genjiball-ranked#3`).
+- A sibling repo that isn't cloned yet: use `gh -R Genji-Ball-Team/<repo>` rather than guessing its contents. Each repo has its own `AGENTS.md`; follow it when working there.
+- PRs into a branch other than `main` (like `v1.3.3R`) don't auto-close issues. Close them by hand after the merge.
+
 ## Where to read more
 
 - [docs/development.md](docs/development.md): commands, feel-lock, settings docs, OverPy reference and pitfalls, adding variables
