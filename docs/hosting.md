@@ -23,6 +23,16 @@ When a new version is released, a maintainer adds its import code to this table 
 
 The lobby is set up for **Deathmatch (FFA)** with up to **10 players** and 12 spectators. Only Genji is allowed.
 
+### Ranked lobbies
+
+This branch (`v1.3.3R`) is the ranked version. The code is already set up for a ranked lobby, the same setup as the v1.3.2 RANKED version:
+
+- **Deathmatch (FFA)** on **Workshop Island Night** only, up to **10 players**, 12 spectators. Don't enable other maps.
+- Workshop settings at their defaults: preset **Default**, nothing in *15 - Ball Feel* or the other feel toggles, no gameplay add-ons (duels, endless, sandbox, custom abilities), no bot. The ball and players feel exactly as in v1.3.3 `Default`.
+- `70 - Ranked > ranked logging` on (the default), and **Enable Workshop Inspector Log File** on in the Overwatch options, so the match reaches a log file the host tool can upload.
+
+Anything else makes the match unranked: see [Unranked matches](ranked-log.md#unranked-matches). The data center is your choice (the v1.3.2 RANKED code forced Netherlands; this one doesn't).
+
 ## Maps
 
 Workshop Island (Night) is the only map enabled by default. The mode supports the Workshop maps below. Enable them under **Settings → Modes → Deathmatch → Maps**. On any other map the game shows "This map isn't supported" with the list of supported maps, and no round starts.
