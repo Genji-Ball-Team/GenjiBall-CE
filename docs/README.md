@@ -5,6 +5,7 @@
 
 **Hosts**
 - [Hosting a game](hosting.md): importing the code, maps, every Workshop setting, presets, sandbox
+- [Release notes](releases/): what changed in each version, for hosts and players
 
 **Contributors**
 - [Contributing](../CONTRIBUTING.md): setup and the PR process
