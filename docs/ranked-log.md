@@ -12,6 +12,8 @@ The example log [`ranked-log-example.txt`](ranked-log-example.txt) is a full sho
 Documents/Overwatch/Workshop/Log-<date>-<time>.txt
 ```
 
+With the inspector disabled, nothing reaches the file. v1.3.3 disables it at start to save server load, so v1.3.3R keeps it on while ranked logging is on.
+
 The Workshop adds a prefix to every line: `[hh:mm:ss] ` (then one space). It isn't the time of day: it counts from when the game started, the same clock as [`time`](#time) in whole seconds (`[00:00:08]` for `8.02`). The parser strips it and doesn't use it. Everything after the prefix is ours:
 
 ```
@@ -82,7 +84,7 @@ Which players are in a round:
 | Type | Fields | When |
 |---|---|---|
 | `GBR` | `format`, `gameVersion`, `matchKey` | First line of every match, before `MATCH_START`. `format` is the [format version](#versions) (`1`), `gameVersion` the build (`1.3.3R`). `matchKey` is 12 random digits picked at match start, the same in every [copy of the match](#one-match-in-several-files). Treat it as text, not a number. |
-| `MATCH_START` | `map`, `preset`, `feel`, `addOns` | Match start. `map` is our own code, not the map's name (which the Workshop translates): `workshop-island-night`, or `other`. `preset` is the Preset setting as named in `docs/hosting.md` (`Default`, …). `feel` is `1` if any ball or player feel toggle is on, else `0`. `addOns` lists the gameplay add-ons that are on, comma-separated (`duels`, `endless`, `sandbox`, `abilities`), empty when none. |
+| `MATCH_START` | `map`, `preset`, `feel`, `addOns` | Match start. `map` is our own code, not the map's name (which the Workshop translates): `workshop-island-night`, or `other`. `preset` is the Preset setting as named in `docs/hosting.md` (`Default`, …). `feel` is `1` if any ball or player feel toggle is on, else `0`: custom ball feel, water ledge fix, tracing mode, anti-ghost correction (not off) or AntiOrbit. `addOns` lists the gameplay add-ons that are on, comma-separated (`duels`, `endless`, `sandbox`, `abilities`), empty when none. |
 | `JOIN` | `id`, `name` | A player joins a slot, or is already in one at `MATCH_START`. |
 | `LEAVE` | `id` | A player leaves the lobby or moves to spectator. |
 | `ROUND_START` | `round`, `ids` | A round starts. `ids` lists everyone in the round, comma-separated (`1,2,3,4,5`). |
@@ -118,7 +120,7 @@ The game decides when a lobby isn't a ranked setup, shows the warning in game ("
 | `ADD_ON` | A gameplay add-on is on: duels, endless, sandbox or custom abilities. |
 | `BOT` | A bot (Zbozo) joined. Logged when it joins. |
 
-With ranked logging turned off in the Workshop settings, the game logs nothing at all (so there's no logging cost), and the in-game warning is the only sign. The host tool ignores files without a `GBR` line.
+With ranked logging turned off in the Workshop settings (`70 - Ranked > ranked logging`), the game logs nothing at all (so there's no logging cost), and the in-game warning is the only sign. The host tool ignores files without a `GBR` line.
 
 The player limit (10) is a lobby setting, so there's no reason for too many players. Too few players is a server rule (above).
 
@@ -176,4 +178,3 @@ Seen in the first playtest (2026-10-02, English client): the file is written on 
 
 - the menu path of **Enable Workshop Inspector Log File**
 - the decimal mark in other languages
-- that `Log To Inspector` still writes when inspector recording is disabled (v1.3.3 disables it at start)
