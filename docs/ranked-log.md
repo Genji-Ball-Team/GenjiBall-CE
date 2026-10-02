@@ -22,7 +22,7 @@ A file can hold several matches (the lobby plays another match on the same map),
 
 ### One match in several files
 
-The file is written while the match is played. When the host moves to spectator and back, Overwatch starts a **new file that repeats the whole log so far**, and the old file stops there. So the same match can be in several files, each one a longer copy of the one before.
+The file is written while the match is played. Each time the host moves to spectator, and again when they come back, Overwatch starts a **new file that repeats the whole log so far**, and the old file stops there. So the same match can be in several files, each one a longer copy of the one before.
 
 The `matchKey` in `GBR` tells them apart: lines with the same host and the same `matchKey` are the same match. The host tool may upload every file. The server keeps, for each host and `matchKey`, the copy with the most lines and drops the others, so a match is never counted twice. A copy with fewer lines is always the start of the longer one.
 
@@ -57,7 +57,7 @@ So the game gives every player a **player id** when they join: a whole number, s
 - The id stays the same while the player stays in the lobby. It's stored on the player, so moving slots doesn't change it.
 - A player who leaves and comes back gets a `LEAVE`, then a new `JOIN` with a new id.
 - Two players with the same name get different ids, so the log is never ambiguous within a match.
-- Players already in the lobby when the match starts get their `JOIN` right after `MATCH_START`. Spectators aren't players and get no id until they join a slot.
+- Players already in the lobby when the match starts get their `JOIN` right after `MATCH_START`, or when they spawn if they haven't yet. `JOIN` waits for the spawn so the name is known: an AI bot logged as it took the slot had no name yet (`Entity 84`). Spectators aren't players and get no id until they join a slot.
 
 Which **account** a name belongs to is the server's job, not the log's: the server maps names to players, and admins merge names (genjiball-ranked "Admin: merge aliases and names"). When one match has two players with the same name, the server must not guess which is which. It keeps the match for an admin to review.
 
@@ -172,7 +172,7 @@ The match ends with `MATCH_END` `TIME`. Round wins: Sparrow 2, Nova 1.
 
 ## To check in a custom game
 
-Seen in the first playtest (2026-10-02, English client): the file is written on the host's PC while the match is played, the prefix counts from the game start, `time` has 2 decimals and a `.` (`8.02`), and the host going to spectator and back starts a new file with the whole log so far. Still to check in the release candidate playtest:
+Seen in the first playtest (2026-10-02, English client): the file is written on the host's PC while the match is played, the prefix counts from the game start, `time` has 2 decimals and a `.` (`8.02`), and each move of the host to or from spectator starts a new file with the whole log so far (3 files for one match, all with the same `matchKey`). Still to check in the release candidate playtest:
 
 - the menu path of **Enable Workshop Inspector Log File**
 - the decimal mark in other languages
