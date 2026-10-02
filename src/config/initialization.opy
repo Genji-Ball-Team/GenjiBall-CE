@@ -47,7 +47,7 @@ rule "Initialization - global variables":
     #One entry per BouncePadField (config/constants.opy), in that order.
     #Set here, not in "Initialization - bounce pads" (round flow reads COOLDOWN even with pads off) or in the
     #settings rule (players already in the lobby must still start with a 0 cooldown, see docs/architecture.md).
-    bouncePadConfig = [arenaSettings[ArenaSetting.PAD_STRENGTH], arenaSettings[ArenaSetting.PAD_DISTANCE], arenaSettings[ArenaSetting.PAD_RANGE], 3, arenaSettings[ArenaSetting.PAD_COOLDOWN]]
+    bouncePadConfig = [arenaSettings[ArenaSetting.PAD_STRENGTH], arenaSettings[ArenaSetting.PAD_DISTANCE], arenaSettings[ArenaSetting.PAD_RANGE], arenaSettings[ArenaSetting.PAD_COOLDOWN]]
     ballPosition = Vector.DOWN
     roundsUntilBreakInit = roundsUntilBreak
     ballHitPosition = null

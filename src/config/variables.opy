@@ -84,7 +84,6 @@ playervar canDash 7
 playervar canDeflect 8
 playervar dashOnCooldown 9
 playervar antiRubberbanding 10
-playervar dashNerf 11
 playervar sensHigh 12
 playervar SpecialAbility 13
 playervar Abilitycooldown 14

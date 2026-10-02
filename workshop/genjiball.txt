@@ -151,7 +151,6 @@ variables {
         8: canDeflect
         9: dashOnCooldown
         10: antiRubberbanding
-        11: dashNerf
         12: sensHigh
         13: SpecialAbility
         14: Abilitycooldown
@@ -357,7 +356,7 @@ rule ("Initialization - player variables") {
         Set Player Variable(Event Player, Abilitycooldown, 0);
         Set Status(Event Player, Null, Invincible, 9999);
         Disable Built-In Game Mode Respawning(Event Player);
-        Set Player Variable(Event Player, bouncePadCooldown, Value In Array(Global.bouncePadConfig, 4));
+        Set Player Variable(Event Player, bouncePadCooldown, Value In Array(Global.bouncePadConfig, 3));
         Set Player Variable(Event Player, stunCooldown, 0);
         Chase Player Variable At Rate(Event Player, stunCooldown, 0, 1, None);
         Enable Death Spectate All Players(Event Player);
@@ -394,7 +393,7 @@ rule ("Initialization - global variables") {
         Set Global Variable(CenterOffLimitsSize, First Of(Global.arenaSettings));
         Set Global Variable(IsInFinalDuel, False);
         "Set here, not in \"Initialization - bounce pads\" (round flow reads COOLDOWN even with pads off) or in the\nsettings rule (players already in the lobby must still start with a 0 cooldown, see docs/architecture.md)."
-        Set Global Variable(bouncePadConfig, Array(Value In Array(Global.arenaSettings, 2), Value In Array(Global.arenaSettings, 3), Value In Array(Global.arenaSettings, 4), 3, Value In Array(Global.arenaSettings, 5)));
+        Set Global Variable(bouncePadConfig, Array(Value In Array(Global.arenaSettings, 2), Value In Array(Global.arenaSettings, 3), Value In Array(Global.arenaSettings, 4), Value In Array(Global.arenaSettings, 5)));
         Set Global Variable(ballPosition, Down);
         Set Global Variable(roundsUntilBreakInit, Global.roundsUntilBreak);
         Set Global Variable(ballHitPosition, Null);
@@ -1152,12 +1151,8 @@ rule ("Controls - Bounce when near a pad") {
         Global.bouncePadToggle == True;
     }
     actions {
-        If((Event Player).dashNerf);
-            Apply Impulse(Event Player, Up, Subtract(First Of(Global.bouncePadConfig), Value In Array(Global.bouncePadConfig, 3)), To World, Cancel Contrary Motion);
-        Else;
-            Apply Impulse(Event Player, Up, First Of(Global.bouncePadConfig), To World, Cancel Contrary Motion);
-        End;
-        Set Player Variable(Event Player, bouncePadCooldown, Value In Array(Global.bouncePadConfig, 4));
+        Apply Impulse(Event Player, Up, First Of(Global.bouncePadConfig), To World, Cancel Contrary Motion);
+        Set Player Variable(Event Player, bouncePadCooldown, Value In Array(Global.bouncePadConfig, 3));
         Play Effect(All Players(All Teams), Ring Explosion Sound, Color(White), First Of(Sorted Array(Global.bouncePads, Distance Between(Position Of(Event Player), Current Array Element))), 25);
     }
 }
@@ -1181,7 +1176,7 @@ rule ("Active game - start round") {
         Call Subroutine(resetOrbitRoundState);
         Chase Player Variable At Rate(All Players(All Teams), bouncePadCooldown, 0, 1, Destination and Rate);
         Set Global Variable(ballSpawnCountdown, Global.setballspawncountdown);
-        Set Player Variable(All Living Players(All Teams), bouncePadCooldown, Subtract(Value In Array(Global.bouncePadConfig, 4), 1));
+        Set Player Variable(All Living Players(All Teams), bouncePadCooldown, Subtract(Value In Array(Global.bouncePadConfig, 3), 1));
     }
 }
 
@@ -1226,7 +1221,7 @@ rule ("Subroutine - setup duel") {
         Set Global Variable(IsInFinalDuel, True);
         Set Global Variable(RoundSetupPending, False);
         Chase Global Variable At Rate(ballSpawnCountdown, 0, 1, Destination and Rate);
-        Set Player Variable(All Living Players(All Teams), bouncePadCooldown, Subtract(Value In Array(Global.bouncePadConfig, 4), 1));
+        Set Player Variable(All Living Players(All Teams), bouncePadCooldown, Subtract(Value In Array(Global.bouncePadConfig, 3), 1));
         If(Global.isIsland);
             Start Forcing Player Position(First Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved)), Add(Global.circleCenter, Vector(-15, 0, 0)), False);
             Start Forcing Player Position(Value In Array(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved), 1), Add(Global.circleCenter, Vector(15, 0, 0)), False);
@@ -1335,7 +1330,7 @@ rule ("Active game - all players dead") {
         Stop Chasing Global Variable(ballSpawnCountdown);
         Resurrect(All Dead Players(All Teams));
         Stop Chasing Player Variable(All Players(All Teams), bouncePadCooldown);
-        Set Player Variable(All Players(All Teams), bouncePadCooldown, Value In Array(Global.bouncePadConfig, 4));
+        Set Player Variable(All Players(All Teams), bouncePadCooldown, Value In Array(Global.bouncePadConfig, 3));
         Set Global Variable(ballSpawnCountdown, Global.setballspawncountdown);
         Wait(1, Ignore Condition);
         Loop If Condition Is True;
