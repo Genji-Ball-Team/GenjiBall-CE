@@ -24,7 +24,7 @@ rule "Wait for more players":
     
     if addOnSettings[AddOnSetting.SANDBOX] != true and getNumberOfPlayers(Team.ALL) < 2:
         return
-    bigMessage(getAllPlayers(), "Lets begin!")
+    bigMessage(getAllPlayers(), "Let's begin!")
     IsEnoughPlayersToStart = true
     startRound()
 

@@ -32,12 +32,12 @@ rule "Gb Abilities - Description":
         destroyHudText(getLastCreatedText())
         loop()
     elif eventPlayer.SpecialAbility == AbilityId.TARGET_SWITCH:
-        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "Ability: 2. Switch Target: Press [{0}] to become the target. Double click to make it not beam you.".format(inputBindingString(Button.ULTIMATE)), HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "Ability: 2. Switch Target: Press [{0}] to become the target and turn the ball straight at you (20s cooldown). Press twice quickly to become the target without turning the ball (15s cooldown).".format(inputBindingString(Button.ULTIMATE)), HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
         waitUntil(eventPlayer.SpecialAbility != AbilityId.TARGET_SWITCH, 99999)
         destroyHudText(getLastCreatedText())
         loop()
     elif eventPlayer.SpecialAbility == AbilityId.BLINK:
-        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "Ability: 3. Blink: Press [{0}] to teleport into the direction youre looking at. You will pass through the ball.".format(inputBindingString(Button.ULTIMATE)), HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "Ability: 3. Blink: Press [{0}] to teleport into the direction you're looking at. You will pass through the ball.".format(inputBindingString(Button.ULTIMATE)), HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
         waitUntil(eventPlayer.SpecialAbility != AbilityId.BLINK, 99999)
         destroyHudText(getLastCreatedText())
         loop()

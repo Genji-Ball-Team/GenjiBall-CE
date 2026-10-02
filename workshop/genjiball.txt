@@ -546,7 +546,7 @@ rule ("HUD - controls text") {
     actions {
         Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("change perspective [{0}]", Input Binding String(Button(Reload))), Null, Left, 0, Null, Color(White), Null, Visible To and String, Default Visibility);
         If(Compare(Value In Array(Global.addOnSettings, 7), ==, False));
-            Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("simple hud [{0}]", Input Binding String(Button(Interact))), Null, Left, 0, Null, Color(White), Null, Visible To and String, Default Visibility);
+            Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("simple HUD [{0}]", Input Binding String(Button(Interact))), Null, Left, 0, Null, Color(White), Null, Visible To and String, Default Visibility);
         End;
         If(And(First Of(Global.addOnSettings), Not(Value In Array(Global.addOnSettings, 1))));
             Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("double sens [{0}]", Input Binding String(Button(Ultimate))), Null, Left, 0, Null, Color(White), Null, Visible To and String, Default Visibility);
@@ -768,7 +768,7 @@ rule ("Wait for more players") {
     }
     actions {
         Abort If(And(Compare(Value In Array(Global.addOnSettings, 7), !=, True), Compare(Number Of Players(All Teams), <, 2)));
-        Big Message(All Players(All Teams), Custom String("Lets begin!"));
+        Big Message(All Players(All Teams), Custom String("Let's begin!"));
         Set Global Variable(IsEnoughPlayersToStart, True);
         Call Subroutine(startRound);
     }
@@ -1033,12 +1033,12 @@ rule ("Controls - toggle anti rubberbanding (melee)") {
             Set Player Variable(Event Player, antiRubberbanding, False);
             Allow Button(Event Player, Button(Ability 1));
             Allow Button(Event Player, Button(Ability 2));
-            Small Message(Event Player, Custom String("anti rubberbanding: off"));
+            Small Message(Event Player, Custom String("anti-rubberbanding: off"));
         Else If(Compare((Event Player).antiRubberbanding, ==, False));
             Set Player Variable(Event Player, antiRubberbanding, True);
             Disallow Button(Event Player, Button(Ability 1));
             Disallow Button(Event Player, Button(Ability 2));
-            Small Message(Event Player, Custom String("anti rubberbanding: on"));
+            Small Message(Event Player, Custom String("anti-rubberbanding: on"));
         End;
         Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Color(White), Event Player, 10);
         Wait(0.1, Ignore Condition);
@@ -1105,7 +1105,7 @@ rule ("Controls - Simple HUD (Interact)") {
             Set Player Variable(Event Player, simpleHUD, 0);
             Enable Hero HUD(Event Player);
             Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Color(White), Event Player, 10);
-            Small Message(Event Player, Custom String("simple hud: off"));
+            Small Message(Event Player, Custom String("simple HUD: off"));
             Abort;
         End;
         Wait Until(Not(Is Button Held(Event Player, Button(Interact))), 0.4);
@@ -1114,23 +1114,23 @@ rule ("Controls - Simple HUD (Interact)") {
                 Set Player Variable(Event Player, simpleHUD, 0);
                 Enable Hero HUD(Event Player);
                 Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Color(White), Event Player, 10);
-                Small Message(Event Player, Custom String("simple hud: off"));
+                Small Message(Event Player, Custom String("simple HUD: off"));
             Else;
                 Set Player Variable(Event Player, simpleHUD, 2);
                 Disable Hero HUD(Event Player);
                 Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Color(White), Event Player, 10);
-                Small Message(Event Player, Custom String("simple hud: zen mode"));
+                Small Message(Event Player, Custom String("simple HUD: zen mode"));
             End;
         Else;
             If(Compare((Event Player).simpleHUD, ==, 0));
                 Set Player Variable(Event Player, simpleHUD, 1);
                 Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Color(White), Event Player, 10);
-                Small Message(Event Player, Custom String("simple hud: on"));
+                Small Message(Event Player, Custom String("simple HUD: on"));
             Else;
                 Set Player Variable(Event Player, simpleHUD, 0);
                 Enable Hero HUD(Event Player);
                 Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Color(White), Event Player, 10);
-                Small Message(Event Player, Custom String("simple hud: off"));
+                Small Message(Event Player, Custom String("simple HUD: off"));
             End;
         End;
         Wait(0.1, Ignore Condition);
@@ -2886,12 +2886,12 @@ rule ("Gb Abilities - Description") {
             Destroy HUD Text(Last Text ID);
             Loop;
         Else If(Compare((Event Player).SpecialAbility, ==, 2));
-            Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Ability: 2. Switch Target: Press [{0}] to become the target. Double click to make it not beam you.", Input Binding String(Button(Ultimate))), Null, Right, -133, Null, Color(White), Null, Visible To and String, Default Visibility);
+            Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Ability: 2. Switch Target: Press [{0}] to become the target and turn the ball straight at you (20s cooldown). Press twice qui{1}", Input Binding String(Button(Ultimate)), Custom String("ckly to become the target without turning the ball (15s cooldown).")), Null, Right, -133, Null, Color(White), Null, Visible To and String, Default Visibility);
             Wait Until(Compare((Event Player).SpecialAbility, !=, 2), 99999);
             Destroy HUD Text(Last Text ID);
             Loop;
         Else If(Compare((Event Player).SpecialAbility, ==, 3));
-            Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Ability: 3. Blink: Press [{0}] to teleport into the direction youre looking at. You will pass through the ball.", Input Binding String(Button(Ultimate))), Null, Right, -133, Null, Color(White), Null, Visible To and String, Default Visibility);
+            Create HUD Text(Filtered Array(Event Player, Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Ability: 3. Blink: Press [{0}] to teleport into the direction you're looking at. You will pass through the ball.", Input Binding String(Button(Ultimate))), Null, Right, -133, Null, Color(White), Null, Visible To and String, Default Visibility);
             Wait Until(Compare((Event Player).SpecialAbility, !=, 3), 99999);
             Destroy HUD Text(Last Text ID);
             Loop;
@@ -3415,9 +3415,9 @@ rule ("Sandbox - Controls desc") {
         Value In Array(Global.addOnSettings, 7) == True;
     }
     actions {
-        Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Press [{0}] / [{1}] to switch the axis youre editing. press both to switch between negative and positive.", Input Binding String(Button(Jump)), Input Binding String(Button(Crouch))), Null, Left, 999, Null, Color(White), Null, Visible To and String, Default Visibility);
+        Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Press [{0}] / [{1}] to switch the axis you're editing. Press both to switch between negative and positive.", Input Binding String(Button(Jump)), Input Binding String(Button(Crouch))), Null, Left, 999, Null, Color(White), Null, Visible To and String, Default Visibility);
         Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Hold [{0}] to switch between position/direction/speed", Input Binding String(Button(Reload))), Null, Left, 999, Null, Color(White), Null, Visible To and String, Default Visibility);
-        Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Press [{0}] to add/substract, hold [{1}] while doing so to add/substract more. (dont hold long, because itll deactivate sandbox)", Input Binding String(Button(Interact)), Input Binding String(Button(Ultimate))), Null, Left, 999, Null, Color(White), Null, Visible To and String, Default Visibility);
+        Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Press [{0}] to add/subtract, hold [{1}] while doing so to add/subtract more. (Don't hold it too long, or it will turn off san{2}", Input Binding String(Button(Interact)), Input Binding String(Button(Ultimate)), Custom String("dbox.)")), Null, Left, 999, Null, Color(White), Null, Visible To and String, Default Visibility);
         Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Current settings: Ballpos: [{0}] Balldirection: [{1}] Ballspeed: [{2}]", First Of(Global.sandboxState), Value In Array(Global.sandboxState, 1), Value In Array(Global.sandboxState, 2)), Null, Left, 999, Null, Color(White), Null, Visible To and String, Default Visibility);
         Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("Start the round by pressing [{0}] and [{1}]", Input Binding String(Button(Ultimate)), Input Binding String(Button(Reload))), Null, Left, 999, Null, Color(White), Null, Visible To and String, Default Visibility);
     }
