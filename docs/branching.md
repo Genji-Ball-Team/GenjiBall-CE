@@ -70,7 +70,7 @@ git push -u origin v1.3.3T
 
 PRs for a variant target its branch. To pick up fixes from `main`, merge `main` (or a release tag) into the variant. Release it by tagging `1.3.3T`.
 
-`v1.3.2T` is retired: it's v1.3.2 with a reworked but disabled Teams copy that was never played. The branch is kept for reference only.
+`v1.3.2T` is retired: it's v1.3.2 with a reworked but disabled Teams copy that was never played. The branch has been deleted.
 
 ## Adding an older version
 
