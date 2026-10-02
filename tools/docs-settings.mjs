@@ -106,7 +106,8 @@ export async function readSettings() {
       }
     }
     // The Workshop compares names ignoring case and spacing.
-    const normalized = key.toLowerCase().replace(/\s+/g, "");
+    const normalize = (text) => text.toLowerCase().replace(/\s+/g, "");
+    const normalized = JSON.stringify([normalize(category), normalize(name)]);
     if (seen.has(normalized)) {
       throw new Error(`Setting "${key}" is created twice (names are compared ignoring case and spacing). Read each setting once.`);
     }
