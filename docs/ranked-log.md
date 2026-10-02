@@ -18,7 +18,7 @@ The Workshop adds a prefix to every line: `[hh:mm:ss] ` (then one space). It isn
 [00:00:28] KILL|28.40|Sparrow|Ghost|1|4
 ```
 
-A file can hold several matches (the lobby plays another match on the same map), and other lines (an inspector log from another mode, the [legacy](#legacy-v132-logs) `KILL` lines). The parser reads the file top to bottom, starts a match at each [`GBR`](#events) line and ignores lines it doesn't know.
+In the playtest, the next match in the same lobby started a new file, with `time` from 0 again. The parser still allows several matches in one file, and other lines (an inspector log from another mode, the [legacy](#legacy-v132-logs) `KILL` lines). The parser reads the file top to bottom, starts a match at each [`GBR`](#events) line and ignores lines it doesn't know.
 
 ### One match in several files
 
@@ -172,9 +172,8 @@ The match ends with `MATCH_END` `TIME`. Round wins: Sparrow 2, Nova 1.
 
 ## To check in a custom game
 
-Seen in the first playtest (2026-10-02, English client): the file is written on the host's PC while the match is played, the prefix counts from the game start, `time` has 2 decimals and a `.` (`8.02`), and each move of the host to or from spectator starts a new file with the whole log so far (3 files for one match, all with the same `matchKey`). Still to check in the release candidate playtest:
+Seen in the first playtest (2026-10-02, English client): the file is written on the host's PC while the match is played, the prefix counts from the game start, `time` has 2 decimals and a `.` (`8.02`), and each move of the host to or from spectator starts a new file with the whole log so far (3 files for one match, all with the same `matchKey`). The next match in the same lobby started its own file, with `time` from 0 again. Still to check in the release candidate playtest:
 
 - the menu path of **Enable Workshop Inspector Log File**
 - the decimal mark in other languages
-- whether a second match in the same lobby goes to the same file and restarts Total Time Elapsed
 - that `Log To Inspector` still writes when inspector recording is disabled (v1.3.3 disables it at start)
