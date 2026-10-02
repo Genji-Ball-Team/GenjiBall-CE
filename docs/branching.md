@@ -33,6 +33,7 @@ Before the bump, write the release notes in their own PR: `docs/releases/v1.3.3.
    - `src/config/lobby.opy`: the lobby description and mode name
    - `src/ui/hud.opy`: the `"version 1.3.3"` HUD text
    - `package.json`: `version`
+   - `README.md`: "Current version" (the import code follows in step 4)
    - `CHANGELOG.md`: move "Unreleased" under a `## v1.3.3` heading
 2. After it's merged, tag the commit and create the version branch:
    ```sh

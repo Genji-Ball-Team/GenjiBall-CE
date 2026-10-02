@@ -1,7 +1,7 @@
 #HUD text, debug overlays and kill tracker
 
 rule "HUD - community text":
-    hudSubheader(getAllPlayers(), "version 1.3.2", HudPosition.RIGHT, -100, Color.ORANGE, HudReeval.VISIBILITY_AND_STRING)
+    hudSubheader(getAllPlayers(), "version 1.3.3", HudPosition.RIGHT, -100, Color.ORANGE, HudReeval.VISIBILITY_AND_STRING)
     hudHeader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "Discord: discord.gg/genjiball", HudPosition.LEFT, -5, Color.AQUA, HudReeval.VISIBILITY_AND_STRING)
 
 
