@@ -18,7 +18,7 @@ The Workshop adds a prefix to every line: `[hh:mm:ss] ` (then one space). It isn
 [00:00:28] KILL|28.40|Sparrow|Ghost|1|4
 ```
 
-In the playtest, the next match in the same lobby started a new file, with `time` from 0 again. The parser still allows several matches in one file, and other lines (an inspector log from another mode, the [legacy](#legacy-v132-logs) `KILL` lines). The parser reads the file top to bottom, starts a match at each [`GBR`](#events) line and ignores lines it doesn't know.
+In the playtest, the next match in the same lobby started a new file, with `time` from 0 again. The parser still allows several matches in one file. A file can also hold other lines (an inspector log from another mode, the [legacy](#legacy-v132-logs) `KILL` lines). The parser reads the file top to bottom, starts a match at each [`GBR`](#events) line and ignores lines it doesn't know.
 
 ### One match in several files
 
