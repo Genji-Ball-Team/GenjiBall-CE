@@ -720,7 +720,7 @@ rule ("Appearance - target effects") {
             Create Effect(Global.target, Good Aura, Color(Yellow), Global.ballPosition, 1, Visible To Position and Radius);
         End;
         If(Value In Array(Global.addOnSettings, 2));
-            Create Icon(If-Then-Else(And(Global.ballIsOut, Not(Is In Line of Sight(Eye Position(Global.target), Global.ballPosition, All Barriers Block LOS))), Global.target, Null), Update Every Frame(Global.ballPosition), Heart, Visible To and Position, Color(Red), True);
+            Create Icon(If-Then-Else(And(Global.ballIsOut, Not(Is In Line of Sight(Eye Position(Global.target), Global.ballPosition, All Barriers Block LOS))), Global.target, Null), Update Every Frame(Global.ballPosition), Heart, Visible To and Position, If-Then-Else(Value In Array(Global.addOnSettings, 11), Color(Blue), Color(Red)), True);
     }
 }
 

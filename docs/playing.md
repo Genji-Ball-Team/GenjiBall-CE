@@ -89,7 +89,7 @@ If you're the target, you have to **keep the ball in view** (by default within 4
 
 ### X-ray
 
-When you're the target and a wall blocks your view of the ball, a heart icon shows where it is.
+When you're the target and a wall blocks your view of the ball, a heart icon shows where it is. It's red, or blue with the red-green colorblind filter on.
 
 ### Bot
 
