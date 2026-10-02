@@ -12,6 +12,8 @@ This repository is the community-maintained home of the mode's source code. It i
 
 **Quickest way:** use the import code **`926FG`** for the current version, v1.3.3. In Overwatch, go to **Play → Custom Games → Import Code** and enter `926FG`. The v1.3.2 code `C62PC` (by FROZONE) still works for the previous version.
 
+**Team Deathmatch:** the Teams version, v1.3.3T, has its own import code **`11M60`** and Workshop page [workshop.codes/GenjiBall-CE-Teams](https://workshop.codes/GenjiBall-CE-Teams). Its code is on the [`v1.3.3T`](../../tree/v1.3.3T) branch and the [1.3.3T release](../../releases/tag/1.3.3T).
+
 Or paste the code yourself:
 
 1. Grab the latest stable Workshop code from [Releases](../../releases). [`workshop/genjiball.txt`](workshop/genjiball.txt) on `main` is the latest development build and may include unreleased changes.
