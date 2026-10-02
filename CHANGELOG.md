@@ -4,6 +4,8 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## Unreleased
 
+- Teams README: "Play it" points to the 1.3.3T release instead of the latest release (free-for-all), and calls `workshop/genjiball.txt` this branch's Teams build. `docs/branching.md`: `v1.3.2T` is deleted, not "kept for reference". The README and `docs/branching.md` list `v1.3.2`, `v1.3.3` as version branch examples instead of `v1.3.1`, which has no branch.
+
 ## v1.3.3T
 
 - Added the v1.3.3T import code `11M60` to the README, `docs/hosting.md` and the v1.3.3T release notes.

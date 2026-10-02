@@ -18,7 +18,7 @@ The import codes **`926FG`** (v1.3.3) and **`C62PC`** (v1.3.2, by FROZONE) are f
 
 Or paste the code yourself:
 
-1. Grab the latest stable Workshop code from [Releases](../../releases). [`workshop/genjiball.txt`](workshop/genjiball.txt) on `main` is the latest development build and may include unreleased changes.
+1. Download `genjiball-v1.3.3T.txt` from the [1.3.3T release](../../releases/tag/1.3.3T). The latest release on the [Releases](../../releases) page is free-for-all. [`workshop/genjiball.txt`](workshop/genjiball.txt) on this branch is the latest Teams development build and may include unreleased changes.
 2. In Overwatch, create a Custom Game, open **Settings**, and use the **Import / paste settings** button (top right). Use a new custom game: importing on top of an existing one can fail with a Workshop settings error.
 3. Start the game. The default map is Workshop Island (Night).
 
@@ -38,7 +38,7 @@ See [docs/hosting.md](docs/hosting.md) for every Workshop setting, preset and su
 
 ## Versions and branches
 
-`main` is where development happens, and PRs go there. Each released version gets its own branch (`v1.3.2`, `v1.3.1`, …), and variants like `v1.3.3T` (Teams) live on their own branches. Releases are tagged `1.3.3`, `1.3.3T` and so on. See [docs/branching.md](docs/branching.md).
+`main` is where development happens, and PRs go there. Each released version gets its own branch (`v1.3.2`, `v1.3.3`, …), and variants like `v1.3.3T` (Teams) live on their own branches. Releases are tagged `1.3.3`, `1.3.3T` and so on. See [docs/branching.md](docs/branching.md).
 
 ## Contributing
 
