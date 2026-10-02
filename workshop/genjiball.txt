@@ -2631,7 +2631,12 @@ rule ("zBozo - spawn") {
     actions {
         While(Compare(Global.bozo_Bot, >, 0));
             Modify Global Variable(bozo_Bot, Subtract, 1);
-            Create Dummy Bot(Hero(Genji), All Teams, Add(12, Global.bozo_Bot), Null, Host Player);
+            If(Compare(Current Game Mode, ==, Game Mode(Team Deathmatch)));
+                "Teams: TDM has no free-for-all slots, so the bot joins team 2 (as in 1.3T)."
+                Create Dummy Bot(Hero(Genji), Team 2, Add(1, Global.bozo_Bot), Null, Host Player);
+            Else;
+                Create Dummy Bot(Hero(Genji), All Teams, Add(12, Global.bozo_Bot), Null, Host Player);
+            End;
             Wait(0.1, Ignore Condition);
         End;
         Set Global Variable(bozo_Bot, True);
