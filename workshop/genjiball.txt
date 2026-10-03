@@ -522,7 +522,7 @@ rule ("HUD - community text") {
     }
     actions {
         Create HUD Text(All Players(All Teams), Null, Custom String("version 1.3.3R"), Null, Right, -100, Null, Color(Orange), Null, Visible To and String, Default Visibility);
-        Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Custom String("Discord: discord.gg/sv9VVjh5pT"), Null, Null, Left, -5, Color(Aqua), Null, Null, Visible To and String, Default Visibility);
+        Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Custom String("Discord: discord.gg/genjiball"), Null, Null, Left, -5, Color(Aqua), Null, Null, Visible To and String, Default Visibility);
     }
 }
 

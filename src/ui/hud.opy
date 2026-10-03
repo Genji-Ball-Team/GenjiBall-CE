@@ -2,7 +2,7 @@
 
 rule "HUD - community text":
     hudSubheader(getAllPlayers(), "version 1.3.3R", HudPosition.RIGHT, -100, Color.ORANGE, HudReeval.VISIBILITY_AND_STRING)
-    hudHeader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "Discord: discord.gg/sv9VVjh5pT", HudPosition.LEFT, -5, Color.AQUA, HudReeval.VISIBILITY_AND_STRING)
+    hudHeader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "Discord: discord.gg/genjiball", HudPosition.LEFT, -5, Color.AQUA, HudReeval.VISIBILITY_AND_STRING)
 
 
 rule "HUD - target player text":
