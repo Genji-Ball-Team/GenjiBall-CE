@@ -6,7 +6,7 @@ rule "Map restrictions - put out center":
     @Condition MAP_UNSUPPORTED == false
     @Condition distance(eventPlayer.getPosition(), circleCenter) < CenterOffLimitsSize + 0.5
     
-    eventPlayer.applyImpulse(directionTowards(circleCenter, eventPlayer), 10, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
+    eventPlayer.applyImpulse(directionTowards(circleCenter, eventPlayer), customTuning[CustomTuning.CENTER_PUSH], Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
     eventPlayer.applyImpulse(Vector.UP, 1.5, Relativity.TO_WORLD, Impulse.INCORPORATE_CONTRARY_MOTION)
     wait(0.25)
     if ruleCondition:
@@ -17,12 +17,12 @@ rule "Map restrictions - player dashes too far out of bounds":
     @Event eachPlayer
     #No arena on an unsupported map (circleCenter and SphereSize are unset)
     @Condition MAP_UNSUPPORTED == false
-    @Condition distance(eventPlayer.getPosition(), vect(circleCenter.x, eventPlayer.getPosition().y, circleCenter.z)) > SphereSize + 5
+    @Condition distance(eventPlayer.getPosition(), vect(circleCenter.x, eventPlayer.getPosition().y, circleCenter.z)) > SphereSize + customTuning[CustomTuning.OUT_MARGIN]
     
     #Workshop Island Fix
     #@Condition isIsland == false
-    eventPlayer.setStatusEffect(null, Status.ROOTED, 3)
-    eventPlayer.applyImpulse(vect(directionTowards(eventPlayer.getPosition(), circleCenter).x, 0, directionTowards(eventPlayer.getPosition(), circleCenter).z), 20, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
+    eventPlayer.setStatusEffect(null, Status.ROOTED, customTuning[CustomTuning.OUT_ROOT])
+    eventPlayer.applyImpulse(vect(directionTowards(eventPlayer.getPosition(), circleCenter).x, 0, directionTowards(eventPlayer.getPosition(), circleCenter).z), customTuning[CustomTuning.OUT_PUSH], Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
     eventPlayer.applyImpulse(Vector.UP, 3, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
     bigMessage(eventPlayer, "Do not dash out of the arena!")
 
@@ -31,11 +31,11 @@ rule "Map restrictions - push to circle":
     @Event eachPlayer
     #No arena on an unsupported map (circleCenter and SphereSize are unset)
     @Condition MAP_UNSUPPORTED == false
-    @Condition distance(eventPlayer.getPosition(), vect(circleCenter.x, eventPlayer.getPosition().y, circleCenter.z)) > SphereSize - 1.5
+    @Condition distance(eventPlayer.getPosition(), vect(circleCenter.x, eventPlayer.getPosition().y, circleCenter.z)) > SphereSize - customTuning[CustomTuning.EDGE_MARGIN]
     #Workshop Island Fix
     @Condition isIsland == false
     
-    eventPlayer.applyImpulse(vect(directionTowards(eventPlayer.getPosition(), circleCenter).x, 0, directionTowards(eventPlayer.getPosition(), circleCenter).z), 6, Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
+    eventPlayer.applyImpulse(vect(directionTowards(eventPlayer.getPosition(), circleCenter).x, 0, directionTowards(eventPlayer.getPosition(), circleCenter).z), customTuning[CustomTuning.EDGE_PUSH], Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
     eventPlayer.applyImpulse(Vector.UP, 3, Relativity.TO_WORLD, Impulse.INCORPORATE_CONTRARY_MOTION)
     wait(0.25)
     if ruleCondition:
@@ -49,7 +49,7 @@ rule "Map restrictions - player falls off Workshop Island":
     
     #A MAN HAS FALLEN INTO THE LAKE IN WORKSHOP ISLAND! START THE NEW RESCUE RULE! HEY! BUILD THE NEW WORSHOP RULE, AND OFF TO THE RESCUE! PREPARE THE CONDITION, TELEPORT THE PLAYER, AND MAKE THE RESCUE! THE NEW 2.3.0 UPDATE FROM OVERWATCH WORKSHOP!
     if eventPlayer.isDead():
-        eventPlayer.teleport(circleCenter + vect(random.randint(-10, 10), 8, random.randint(-10, 10)))
+        eventPlayer.teleport(circleCenter + vect(random.randint(-customTuning[CustomTuning.SPAWN_SPREAD], customTuning[CustomTuning.SPAWN_SPREAD]), customTuning[CustomTuning.SPAWN_HEIGHT], random.randint(-customTuning[CustomTuning.SPAWN_SPREAD], customTuning[CustomTuning.SPAWN_SPREAD])))
         if eventPlayer == target:
             if ballIsOut:
                 deleteBall()

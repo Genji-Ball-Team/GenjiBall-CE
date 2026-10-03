@@ -72,6 +72,29 @@ rule "Debug - anti-orbit values":
     hudSubtext(hostPlayer, "ORBIT DEBUG\nTarget: {0}\nTimer: {1}\nPenalty: {2}".format(target, target.orbitTimer, "{0}\nHeat: {1}".format(target.orbitPenalty, target.orbitHeat)), HudPosition.RIGHT, 4, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
 
 
+rule "Debug - hit radius":
+    @Condition addOnSettings[AddOnSetting.SHOW_HIT_RADIUS] == true
+
+    #Host-only: the ball hits the target once it's inside this sphere ("Collision - collision check", BallFeel.HIT_RADIUS).
+    #Entity creation fail protection
+    wait(1)
+    createEffect(hostPlayer if ballIsOut and target != null else null, Effect.SPHERE, Color.ORANGE, updateEveryFrame(target.getEyePosition()), ballFeel[BallFeel.HIT_RADIUS], EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+
+
+rule "Debug - arena bounds":
+    @Condition addOnSettings[AddOnSetting.SHOW_ARENA] == true
+    #No arena on an unsupported map (circleCenter and SphereSize are unset)
+    @Condition MAP_UNSUPPORTED == false
+
+    #Host-only rings where "Map restrictions" push players: out of the center, the soft edge push
+    #(not on Workshop Island) and the hard out-of-bounds push.
+    #Entity creation fail protection
+    wait(1)
+    createEffect(hostPlayer, Effect.RING, Color.ORANGE, circleCenter, CenterOffLimitsSize + 0.5, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    createEffect(hostPlayer if not isIsland else null, Effect.RING, Color.YELLOW, circleCenter, SphereSize - customTuning[CustomTuning.EDGE_MARGIN], EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    createEffect(hostPlayer, Effect.RING, Color.RED, circleCenter, SphereSize + customTuning[CustomTuning.OUT_MARGIN], EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+
+
 rule "Kill Tracker - cache players":
     @Condition addOnSettings[AddOnSetting.KILL_TRACKER] == true
     

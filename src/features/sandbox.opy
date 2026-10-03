@@ -17,9 +17,9 @@ rule "Sandbox - Set Ball spawnpoint":
                 sandboxState[SandboxField.BALL_POSITION] += Vector.RIGHT
         else:
             if sandboxState[SandboxField.SIGN] == 1:
-                sandboxState[SandboxField.BALL_POSITION] += vect(0.25, 0, 0)
+                sandboxState[SandboxField.BALL_POSITION] += vect(addOnSettings[AddOnSetting.SANDBOX_STEP], 0, 0)
             else:
-                sandboxState[SandboxField.BALL_POSITION] += vect(-0.25, 0, 0)
+                sandboxState[SandboxField.BALL_POSITION] += vect(-addOnSettings[AddOnSetting.SANDBOX_STEP], 0, 0)
     elif sandboxState[SandboxField.AXIS] == 2:
         if eventPlayer.isHoldingButton(Button.ULTIMATE):
             if sandboxState[SandboxField.SIGN] == 1:
@@ -28,9 +28,9 @@ rule "Sandbox - Set Ball spawnpoint":
                 sandboxState[SandboxField.BALL_POSITION] += Vector.DOWN
         else:
             if sandboxState[SandboxField.SIGN] == 1:
-                sandboxState[SandboxField.BALL_POSITION] += vect(0, 0.25, 0)
+                sandboxState[SandboxField.BALL_POSITION] += vect(0, addOnSettings[AddOnSetting.SANDBOX_STEP], 0)
             else:
-                sandboxState[SandboxField.BALL_POSITION] += vect(0, -0.25, 0)
+                sandboxState[SandboxField.BALL_POSITION] += vect(0, -addOnSettings[AddOnSetting.SANDBOX_STEP], 0)
     elif sandboxState[SandboxField.AXIS] == 3:
         if eventPlayer.isHoldingButton(Button.ULTIMATE):
             if sandboxState[SandboxField.SIGN] == 1:
@@ -39,9 +39,9 @@ rule "Sandbox - Set Ball spawnpoint":
                 sandboxState[SandboxField.BALL_POSITION] += Vector.BACKWARD
         else:
             if sandboxState[SandboxField.SIGN] == 1:
-                sandboxState[SandboxField.BALL_POSITION] += vect(0, 0, 0.25)
+                sandboxState[SandboxField.BALL_POSITION] += vect(0, 0, addOnSettings[AddOnSetting.SANDBOX_STEP])
             else:
-                sandboxState[SandboxField.BALL_POSITION] += vect(0, 0, -0.25)
+                sandboxState[SandboxField.BALL_POSITION] += vect(0, 0, -addOnSettings[AddOnSetting.SANDBOX_STEP])
 
 
 rule "Sandbox - Set Ball direction":
@@ -61,9 +61,9 @@ rule "Sandbox - Set Ball direction":
                 sandboxState[SandboxField.BALL_DIRECTION] += Vector.RIGHT
         else:
             if sandboxState[SandboxField.SIGN] == 1:
-                sandboxState[SandboxField.BALL_DIRECTION] += vect(0.25, 0, 0)
+                sandboxState[SandboxField.BALL_DIRECTION] += vect(addOnSettings[AddOnSetting.SANDBOX_STEP], 0, 0)
             else:
-                sandboxState[SandboxField.BALL_DIRECTION] += vect(-0.25, 0, 0)
+                sandboxState[SandboxField.BALL_DIRECTION] += vect(-addOnSettings[AddOnSetting.SANDBOX_STEP], 0, 0)
     elif sandboxState[SandboxField.AXIS] == 2:
         if eventPlayer.isHoldingButton(Button.ULTIMATE):
             if sandboxState[SandboxField.SIGN] == 1:
@@ -72,9 +72,9 @@ rule "Sandbox - Set Ball direction":
                 sandboxState[SandboxField.BALL_DIRECTION] += Vector.DOWN
         else:
             if sandboxState[SandboxField.SIGN] == 1:
-                sandboxState[SandboxField.BALL_DIRECTION] += vect(0, 0.25, 0)
+                sandboxState[SandboxField.BALL_DIRECTION] += vect(0, addOnSettings[AddOnSetting.SANDBOX_STEP], 0)
             else:
-                sandboxState[SandboxField.BALL_DIRECTION] += vect(0, -0.25, 0)
+                sandboxState[SandboxField.BALL_DIRECTION] += vect(0, -addOnSettings[AddOnSetting.SANDBOX_STEP], 0)
     elif sandboxState[SandboxField.AXIS] == 3:
         if eventPlayer.isHoldingButton(Button.ULTIMATE):
             if sandboxState[SandboxField.SIGN] == 1:
@@ -83,9 +83,9 @@ rule "Sandbox - Set Ball direction":
                 sandboxState[SandboxField.BALL_DIRECTION] += Vector.BACKWARD
         else:
             if sandboxState[SandboxField.SIGN] == 1:
-                sandboxState[SandboxField.BALL_DIRECTION] += vect(0, 0, 0.25)
+                sandboxState[SandboxField.BALL_DIRECTION] += vect(0, 0, addOnSettings[AddOnSetting.SANDBOX_STEP])
             else:
-                sandboxState[SandboxField.BALL_DIRECTION] += vect(0, 0, -0.25)
+                sandboxState[SandboxField.BALL_DIRECTION] += vect(0, 0, -addOnSettings[AddOnSetting.SANDBOX_STEP])
 
 
 rule "Sandbox - Set Ball speed":
@@ -100,9 +100,9 @@ rule "Sandbox - Set Ball speed":
     
     if eventPlayer.isHoldingButton(Button.ULTIMATE):
         if sandboxState[SandboxField.SIGN] == 1:
-            sandboxState[SandboxField.BALL_SPEED] += 10
+            sandboxState[SandboxField.BALL_SPEED] += addOnSettings[AddOnSetting.SANDBOX_SPEED_STEP]
         else:
-            sandboxState[SandboxField.BALL_SPEED] += -10
+            sandboxState[SandboxField.BALL_SPEED] -= addOnSettings[AddOnSetting.SANDBOX_SPEED_STEP]
     else:
         if sandboxState[SandboxField.SIGN] == 1:
             sandboxState[SandboxField.BALL_SPEED]++

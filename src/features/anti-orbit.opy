@@ -21,13 +21,13 @@ rule "AntiOrbit - no orbit abusing":
         if ruleCondition:
             loop()
         return
-    wait(max(competitiveSettings[CompetitiveSetting.ORBIT_MIN_TIMER], competitiveSettings[CompetitiveSetting.ORBIT_TIMER] - ((eventPlayer.orbitPenalty + eventPlayer.orbitHeat) * 5)), Wait.ABORT_WHEN_FALSE)
+    wait(max(competitiveSettings[CompetitiveSetting.ORBIT_MIN_TIMER], competitiveSettings[CompetitiveSetting.ORBIT_TIMER] - ((eventPlayer.orbitPenalty + eventPlayer.orbitHeat) * customTuning[CustomTuning.TIMER_CUT])), Wait.ABORT_WHEN_FALSE)
     if not ruleCondition:
         return
     if not (distance(eventPlayer.getEyePosition(), ballPosition) < antiOrbitRadius and ballSpeed < competitiveSettings[CompetitiveSetting.ORBIT_SPEED]):
         return
     eventPlayer.setStatusEffect(null, Status.ASLEEP, competitiveSettings[CompetitiveSetting.ORBIT_SLEEP])
-    eventPlayer.applyImpulse(ballDirection + Vector.UP, 10, Relativity.TO_WORLD)
+    eventPlayer.applyImpulse(ballDirection + Vector.UP, customTuning[CustomTuning.ORBIT_KNOCKBACK], Relativity.TO_WORLD)
 
 
 rule "AntiOrbit - track pressure":
@@ -39,9 +39,9 @@ rule "AntiOrbit - track pressure":
     
     if distance(ballPosition, eventPlayer.getEyePosition()) < antiOrbitRadius:
         eventPlayer.orbitTimer += 0.25
-        if eventPlayer.orbitTimer > 2.5:
-            eventPlayer.orbitPenalty = min(eventPlayer.orbitPenalty + antiOrbitPressureRate, 0.25)
-            eventPlayer.orbitHeat = min(eventPlayer.orbitHeat + antiOrbitPressureRate * 0.2, 0.2)
+        if eventPlayer.orbitTimer > customTuning[CustomTuning.PRESSURE_AFTER]:
+            eventPlayer.orbitPenalty = min(eventPlayer.orbitPenalty + antiOrbitPressureRate, customTuning[CustomTuning.MAX_PENALTY])
+            eventPlayer.orbitHeat = min(eventPlayer.orbitHeat + antiOrbitPressureRate * 0.2, customTuning[CustomTuning.MAX_HEAT])
     else:
         eventPlayer.orbitTimer = max(eventPlayer.orbitTimer - 0.5, 0)
         eventPlayer.orbitPenalty = max(eventPlayer.orbitPenalty - 0.02, 0)

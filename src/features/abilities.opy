@@ -32,7 +32,7 @@ rule "Gb Abilities - Description":
         destroyHudText(getLastCreatedText())
         loop()
     elif eventPlayer.SpecialAbility == AbilityId.TARGET_SWITCH:
-        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "Ability: 2. Switch Target: Press [{0}] to become the target and turn the ball straight at you (20s cooldown). Press twice quickly to become the target without turning the ball (15s cooldown).".format(inputBindingString(Button.ULTIMATE)), HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+        hudSubheader(eventPlayer.filter(lambda x: x.simpleHUD == SimpleHud.OFF), "Ability: 2. Switch Target: Press [{0}] to become the target and turn the ball straight at you ({1}s cooldown). Press twice quickly to become the target without turning the ball ({2}s cooldown).".format(inputBindingString(Button.ULTIMATE), addOnSettings[AddOnSetting.SWITCH_COOLDOWN], addOnSettings[AddOnSetting.QUIET_SWITCH_COOLDOWN]), HudPosition.RIGHT, -133, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
         waitUntil(eventPlayer.SpecialAbility != AbilityId.TARGET_SWITCH, 99999)
         destroyHudText(getLastCreatedText())
         loop()
@@ -112,8 +112,8 @@ rule "Gb Abilities - 1. High jump":
     @Condition eventPlayer.SpecialAbility == AbilityId.SUPER_JUMP
     @Condition addOnSettings[AddOnSetting.ABILITIES] == true
     
-    eventPlayer.applyImpulse(Vector.UP, 25, Relativity.TO_PLAYER, Impulse.CANCEL_CONTRARY_MOTION)
-    eventPlayer.Abilitycooldown = 10
+    eventPlayer.applyImpulse(Vector.UP, addOnSettings[AddOnSetting.JUMP_STRENGTH], Relativity.TO_PLAYER, Impulse.CANCEL_CONTRARY_MOTION)
+    eventPlayer.Abilitycooldown = addOnSettings[AddOnSetting.JUMP_COOLDOWN]
     playEffect(getAllPlayers(), DynamicEffect.WINSTON_JUMP_PACK_LANDING_SOUND, Color.WHITE, eventPlayer, 100)
 
 
@@ -157,10 +157,10 @@ rule "Gb Abilities - 2. Target switch":
         return
     target = eventPlayer
     if eventPlayer.isHoldingButton(Button.ULTIMATE):
-        eventPlayer.Abilitycooldown = 15
+        eventPlayer.Abilitycooldown = addOnSettings[AddOnSetting.QUIET_SWITCH_COOLDOWN]
     else:
         ballDirection = directionTowards(ballPosition, eventPlayer.getEyePosition())
-        eventPlayer.Abilitycooldown = 20
+        eventPlayer.Abilitycooldown = addOnSettings[AddOnSetting.SWITCH_COOLDOWN]
     playEffect(getAllPlayers(), DynamicEffect.MOIRA_FADE_DISAPPEAR_SOUND, Color.WHITE, eventPlayer, 200)
 
 
@@ -197,8 +197,8 @@ rule "Gb Abilities - 3. Blink":
     @Condition eventPlayer.isHoldingButton(Button.ULTIMATE) == true
     @Condition addOnSettings[AddOnSetting.ABILITIES] == true
     
-    eventPlayer.teleport(raycastHitPosition(eventPlayer.getEyePosition(), eventPlayer.getEyePosition() + eventPlayer.getFacingDirection() * 20, null, eventPlayer, true))
-    eventPlayer.Abilitycooldown = 10
+    eventPlayer.teleport(raycastHitPosition(eventPlayer.getEyePosition(), eventPlayer.getEyePosition() + eventPlayer.getFacingDirection() * addOnSettings[AddOnSetting.BLINK_DISTANCE], null, eventPlayer, true))
+    eventPlayer.Abilitycooldown = addOnSettings[AddOnSetting.BLINK_COOLDOWN]
     playEffect(getAllPlayers(), DynamicEffect.SOMBRA_TRANSLOCATING_SOUND, Color.WHITE, eventPlayer, 100)
 
 
@@ -239,5 +239,5 @@ rule "Gb Abilities - 4. Critical slash":
     eventPlayer.Critslash = true
     eventPlayer.startForcingOutlineFor(getAllPlayers(), true, rgb(200, 40, 0))
     waitUntil(eventPlayer.Critslash == false, 99999)
-    eventPlayer.Abilitycooldown = 17
+    eventPlayer.Abilitycooldown = addOnSettings[AddOnSetting.CRIT_COOLDOWN]
     eventPlayer.stopForcingOutlineFor(getAllPlayers())

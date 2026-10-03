@@ -50,5 +50,5 @@ rule "Tournament - no orbit abusing":
     if not ruleCondition:
         return
     #smallMessage(getAllPlayers(), "...still orbiting...")
-    eventPlayer.setStatusEffect(null, Status.ASLEEP, 5)
-    eventPlayer.applyImpulse(ballDirection + Vector.UP, 10, Relativity.TO_WORLD)
+    eventPlayer.setStatusEffect(null, Status.ASLEEP, customTuning[CustomTuning.BASIC_ORBIT_SLEEP])
+    eventPlayer.applyImpulse(ballDirection + Vector.UP, customTuning[CustomTuning.ORBIT_KNOCKBACK], Relativity.TO_WORLD)

@@ -36,5 +36,5 @@ rule "Player joins game":
     
     if RoundInProgress and isGameInProgress():
         kill(eventPlayer)
-    eventPlayer.teleport(circleCenter + vect(random.randint(-10, 10), 8, random.randint(-10, 10)))
+    eventPlayer.teleport(circleCenter + vect(random.randint(-customTuning[CustomTuning.SPAWN_SPREAD], customTuning[CustomTuning.SPAWN_SPREAD]), customTuning[CustomTuning.SPAWN_HEIGHT], random.randint(-customTuning[CustomTuning.SPAWN_SPREAD], customTuning[CustomTuning.SPAWN_SPREAD])))
     eventPlayer.hasMoved = true

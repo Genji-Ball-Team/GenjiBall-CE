@@ -70,6 +70,8 @@ globalvar killLeaderboardSortedPlayers 112
 globalvar mapRow 113
 globalvar isIsland 114
 globalvar presetRow 115
+#Custom-preset-only gameplay numbers (CustomTuning in config/constants.opy)
+globalvar customTuning 116
 
 #Player variables
 

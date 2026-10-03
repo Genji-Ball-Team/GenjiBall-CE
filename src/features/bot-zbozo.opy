@@ -33,11 +33,11 @@ rule "zBozo - face target while deflecting":
     @Condition botState[BotField.GHOST_DASHING] != true
     
     if eventPlayer.canDash == true:
-        if random.randint(0, 8) == 0:
-            if ballSpeed < 80:
-                eventPlayer.startFacing(directionFromAngles(horizontalAngleOfDirection(directionTowards(eventPlayer.getEyePosition(), evalOnce(random.choice(getLivingPlayers(Team.ALL).exclude(eventPlayer))).getEyePosition())) + evalOnce(random.randint(-35, 35)), evalOnce(random.randint(-35, 35))), 10000)
+        if random.randint(1, addOnSettings[AddOnSetting.BOT_AIM_ODDS]) == 1:
+            if ballSpeed < addOnSettings[AddOnSetting.BOT_FAST_BALL]:
+                eventPlayer.startFacing(directionFromAngles(horizontalAngleOfDirection(directionTowards(eventPlayer.getEyePosition(), evalOnce(random.choice(getLivingPlayers(Team.ALL).exclude(eventPlayer))).getEyePosition())) + evalOnce(random.randint(-addOnSettings[AddOnSetting.BOT_SLOW_SPREAD], addOnSettings[AddOnSetting.BOT_SLOW_SPREAD])), evalOnce(random.randint(-addOnSettings[AddOnSetting.BOT_SLOW_SPREAD], addOnSettings[AddOnSetting.BOT_SLOW_SPREAD]))), 10000)
             else:
-                eventPlayer.startFacing(directionFromAngles(horizontalAngleOfDirection(directionTowards(eventPlayer.getEyePosition(), evalOnce(random.choice(getLivingPlayers(Team.ALL).exclude(eventPlayer))).getEyePosition())) + evalOnce(random.randint(-10, 10)), evalOnce(random.randint(-10, 10))), 10000)
+                eventPlayer.startFacing(directionFromAngles(horizontalAngleOfDirection(directionTowards(eventPlayer.getEyePosition(), evalOnce(random.choice(getLivingPlayers(Team.ALL).exclude(eventPlayer))).getEyePosition())) + evalOnce(random.randint(-addOnSettings[AddOnSetting.BOT_FAST_SPREAD], addOnSettings[AddOnSetting.BOT_FAST_SPREAD])), evalOnce(random.randint(-addOnSettings[AddOnSetting.BOT_FAST_SPREAD], addOnSettings[AddOnSetting.BOT_FAST_SPREAD]))), 10000)
         else:
             eventPlayer.startFacing(vect(random.randint(-360, 360), random.randint(-360, 360), random.randint(-360, 360)), 10000)
     else:
@@ -95,7 +95,7 @@ rule "zBozo - Movement reworked":
         if ruleCondition:
             loop()
     else:
-        eventPlayer.startThrottleInDirection(directionTowards(eventPlayer.getPosition(), vect(random.uniform(-15, 15), 0, random.uniform(-15, 15))), 0.8, Relativity.TO_PLAYER, Throttle.REPLACE_EXISTING, ThrottleReeval.NONE)
+        eventPlayer.startThrottleInDirection(directionTowards(eventPlayer.getPosition(), vect(random.uniform(-addOnSettings[AddOnSetting.BOT_WANDER], addOnSettings[AddOnSetting.BOT_WANDER]), 0, random.uniform(-addOnSettings[AddOnSetting.BOT_WANDER], addOnSettings[AddOnSetting.BOT_WANDER]))), 0.8, Relativity.TO_PLAYER, Throttle.REPLACE_EXISTING, ThrottleReeval.NONE)
         wait(random.uniform(0.5, 3))
         if ruleCondition:
             loop()

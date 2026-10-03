@@ -65,7 +65,9 @@ These appear in the custom game under **Settings → Workshop → Settings**, gr
 What "Default" forces (all non-Custom presets start from this):
 match length 15 min, tournament off, 30 rounds, breaks on every 10 rounds for 60 s, ball spawn countdown 5 s, ball respawn delay 2 s, round win pause 2 s, ball start speed 60, max speed 400, acceleration 25, motion modern, physics original, custom ball feel off, water moderate, bounce pads off, center exclusion size 3.5, arena radius 0 (the map's), bounce pad strength 30, distance 12, range 2.75 and cooldown 3 s, mobility agile, dash cooldown 3.04 s, dash hit knockdown 1 s and knockdown cooldown 0.6 s.
 
-Settings **not** touched by any preset: everything in *50 - Features*, *80 - Visual*, *90 - Debug*, water ledge fix, double sens and double sens %, and tracing view angle. The "custom ... %" mobility sliders are never forced either, but no preset picks mobility = custom, so they only apply with Preset = Custom. Anti-ghost, AntiOrbit and the rest of *60 - Competitive* are only forced by the presets listed above. The AntiOrbit speed, timer, min timer and sleep and the three basic anti-orbit settings are forced together, to their defaults.
+Settings **not** touched by any preset: everything in *50 - Features*, *80 - Visual*, *90 - Debug*, water ledge fix, double sens and double sens %, and tracing view angle.
+
+Some settings are **Custom preset only**: center push, the out of bounds and edge push settings, spawn spread and spawn height (*20 - Arena*), and orbit sleep knockback, basic anti-orbit sleep and the AntiOrbit pressure after, max penalty, max heat and timer cut settings (*60 - Competitive*). Every other preset uses their defaults, the v1.3.2 values, whatever they are set to. The "custom ... %" mobility sliders are never forced either, but no preset picks mobility = custom, so they only apply with Preset = Custom. Anti-ghost, AntiOrbit and the rest of *60 - Competitive* are only forced by the presets listed above. The AntiOrbit speed, timer, min timer and sleep and the three basic anti-orbit settings are forced together, to their defaults.
 
 ### 10 - Ball
 
@@ -118,6 +120,14 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 | bounce pad range | 2.75 | 0.5–10 m | How close to a pad you have to be to bounce |
 | bounce pad cooldown | 3 | 1–10 s | Seconds before a player can bounce again |
 | water ledge fix | off | | Workshop Island only. Below y = −1.5 the water pushes players up and toward the center, which can drag a player who dashes in next to the island under the ledge and pin them there. **on**: under the island (within 21 m of the center), players are pushed straight out instead. Everywhere else the water behaves as in v1.3.2. No preset turns it on |
+| center push | 10 | 0–40 | Custom preset only (every other preset uses the default). How hard players are pushed out of the center exclusion |
+| out of bounds margin | 5 | 0–30 m | Custom preset only (every other preset uses the default). How far past the arena radius a player can get before the hard push back ("Do not dash out of the arena!") |
+| out of bounds root | 3 | 0–10 s | Custom preset only (every other preset uses the default). How long that push roots the player |
+| out of bounds push | 20 | 0–60 | Custom preset only (every other preset uses the default). How hard that push throws the player back toward the center |
+| edge push margin | 1.5 | 0–10 m | Custom preset only (every other preset uses the default). Not on Workshop Island: how far inside the arena radius the soft push toward the center starts |
+| edge push | 6 | 0–30 | Custom preset only (every other preset uses the default). How hard that soft push is |
+| spawn spread | 10 | 0–40 m | Custom preset only (every other preset uses the default). Joining players, and dead players who fall off Workshop Island, land up to this far from the center on each axis |
+| spawn height | 8 | 0–30 m | Custom preset only (every other preset uses the default). And this high above it |
 
 ### 30 - Player
 
@@ -159,6 +169,20 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 | duels | off | | 1v1 at a time, with a queue |
 | endless mode | off | | The ball doesn't reset after a kill |
 | Sandbox mode | off | | Practice tool for the host. See [Sandbox](#sandbox-mode) |
+| super jump strength | 25 | 5–60 | Custom abilities: how high Super Jump launches you |
+| super jump cooldown | 10 | 0–60 s | Custom abilities: Super Jump cooldown |
+| target switch cooldown | 20 | 0–60 s | Custom abilities: Switch Target cooldown when it turns the ball at you (single press) |
+| quiet target switch cooldown | 15 | 0–60 s | Custom abilities: Switch Target cooldown when it doesn't turn the ball (double press) |
+| blink distance | 20 | 2–60 m | Custom abilities: how far Blink teleports you |
+| blink cooldown | 10 | 0–60 s | Custom abilities: Blink cooldown |
+| critical slash cooldown | 17 | 0–60 s | Custom abilities: Critical Slash cooldown, counted from the critical hit |
+| bot aim odds | 9 | 1–20 | Bot: when it can dash, it aims its deflect at a player 1 time in this many, otherwise in a random direction. Lower is a harder bot |
+| bot aim spread slow | 35 | 0–90° | Bot: how far off that aim can be while the ball is slower than "bot fast ball at" |
+| bot aim spread fast | 10 | 0–90° | Bot: the same, once the ball is at least that fast |
+| bot fast ball at | 80 | 0–800 | Bot: the ball speed from which it uses "bot aim spread fast" |
+| bot wander range | 15 | 1–40 m | Bot: how far from the center it wanders while it's the target |
+| sandbox step | 0.25 | 0.05–5 m | Sandbox: how much one press moves the ball's spawn position or direction |
+| sandbox speed step | 10 | 1–100 | Sandbox: how much one press changes the ball speed while holding Ultimate (without it, 1) |
 
 ### 60 - Competitive
 
@@ -174,7 +198,13 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 | AntiOrbit sleep | 5 | 0–10 s | How long an orbiting player sleeps |
 | basic anti-orbit radius | 20 | 5–40 m | Tournament mode with AntiOrbit off: how close the ball has to be to count as orbiting |
 | basic anti-orbit speed | 80 | 10–400 | Same, the ball only counts while it's slower than this |
-| basic anti-orbit timer | 7.5 | 1–30 s | Same, seconds of orbiting before you're put to sleep (for 5 s) |
+| basic anti-orbit timer | 7.5 | 1–30 s | Same, seconds of orbiting before you're put to sleep (for "basic anti-orbit sleep", 5 s by default) |
+| orbit sleep knockback | 10 | 0–40 | Custom preset only (every other preset uses the default). How hard AntiOrbit and basic anti-orbit knock a player away when they put them to sleep |
+| basic anti-orbit sleep | 5 | 0–10 s | Custom preset only (every other preset uses the default). Tournament mode with AntiOrbit off: how long an orbiting player sleeps |
+| AntiOrbit pressure after | 2.5 | 0–10 s | Custom preset only (every other preset uses the default). AntiOrbit: seconds the ball has to stay near you before pressure and heat start building |
+| AntiOrbit max penalty | 0.25 | 0–1 | Custom preset only (every other preset uses the default). AntiOrbit: the most pressure can build up to |
+| AntiOrbit max heat | 0.2 | 0–1 | Custom preset only (every other preset uses the default). AntiOrbit: the most heat can build up to |
+| AntiOrbit timer cut | 5 | 0–20 s | Custom preset only (every other preset uses the default). AntiOrbit: how many seconds the timer shrinks per 1.0 of pressure + heat (down to "AntiOrbit min timer") |
 
 ### 80 - Visual
 
@@ -187,6 +217,7 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 | kill tracker | off | | Host-only kill leaderboard on the left |
 | red-green colorblind filter | off | | Red-green safe colours: the target, the ball, the x-ray icon and the target's "BALL SPAWNING IN" countdown are blue instead of red, the target sees a yellow circle around the ball instead of a blue one, and used bounce pads show yellow instead of white |
 | watermark | off | | Shows the original author's credit (u/Mazawrath) on the left of everyone's HUD |
+| tracing grace | 0.3 | 0–3 s | Tracing mode: how long the target can lose sight of the ball and still deflect |
 
 ### 90 - Debug
 
@@ -194,6 +225,8 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 | Setting | Default | Range | What it does |
 |---|---|---|---|
 | debug HUD | off | | Host-only: server load, ball speed/engine/distance/turn rate, AntiOrbit values |
+| show hit radius | off | | Host-only: an orange sphere around the target's eyes. The ball hits the target once it's inside (the "hit radius") |
+| show arena bounds | off | | Host-only rings where players get pushed: orange out of the center, yellow the soft edge push (not on Workshop Island), red the hard out-of-bounds push |
 
 ## Sandbox mode
 

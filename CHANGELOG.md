@@ -4,6 +4,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## Unreleased
 
+- Exposed 31 more Workshop settings, all defaulting to the old values: custom ability cooldowns, Super Jump strength and Blink distance, zBozo bot aim and wander, sandbox steps and tracing grace (presets leave these manual), and the arena pushes, spawn spread and height and anti-orbit internals (Custom preset only, so Default and the tournament presets don't change). Two host-only debug views: *90 - Debug* "show hit radius" and "show arena bounds".
 - `AGENTS.md` lists the other ranked repos (genjiball-ranked, genjiball-host-tool) and how to work across them.
 - Documented the Ranked variant `v1.3.3R` (`docs/branching.md`, README). Global slots 124–127 and player slots 124–127 are reserved for it.
 - The README and `docs/branching.md` list existing version branches (`v1.3.2`, `v1.3.3`) as examples instead of `v1.3.1`, which has no branch.

@@ -109,7 +109,42 @@ rule "Settings - Workshop settings":
         createWorkshopSettingInt("80 - Visual", "tracing view angle", 45, 5, 180, 2),
         createWorkshopSettingBool("80 - Visual", "red-green colorblind filter", false, 4),
         createWorkshopSettingBool("80 - Visual", "watermark", false, 5),
-        createWorkshopSettingBool("20 - Arena", "water ledge fix", false, 8)
+        createWorkshopSettingBool("20 - Arena", "water ledge fix", false, 8),
+        createWorkshopSettingInt("50 - Features", "super jump strength", 25, 5, 60, 5),
+        createWorkshopSettingFloat("50 - Features", "super jump cooldown", 10, 0, 60, 6),
+        createWorkshopSettingFloat("50 - Features", "target switch cooldown", 20, 0, 60, 7),
+        createWorkshopSettingFloat("50 - Features", "quiet target switch cooldown", 15, 0, 60, 8),
+        createWorkshopSettingFloat("50 - Features", "blink distance", 20, 2, 60, 9),
+        createWorkshopSettingFloat("50 - Features", "blink cooldown", 10, 0, 60, 10),
+        createWorkshopSettingFloat("50 - Features", "critical slash cooldown", 17, 0, 60, 11),
+        createWorkshopSettingInt("50 - Features", "bot aim odds", 9, 1, 20, 12),
+        createWorkshopSettingInt("50 - Features", "bot aim spread slow", 35, 0, 90, 13),
+        createWorkshopSettingInt("50 - Features", "bot aim spread fast", 10, 0, 90, 14),
+        createWorkshopSettingInt("50 - Features", "bot fast ball at", 80, 0, 800, 15),
+        createWorkshopSettingInt("50 - Features", "bot wander range", 15, 1, 40, 16),
+        createWorkshopSettingFloat("50 - Features", "sandbox step", 0.25, 0.05, 5, 17),
+        createWorkshopSettingInt("50 - Features", "sandbox speed step", 10, 1, 100, 18),
+        createWorkshopSettingFloat("80 - Visual", "tracing grace", 0.3, 0, 3, 6),
+        createWorkshopSettingBool("90 - Debug", "show hit radius", false, 1),
+        createWorkshopSettingBool("90 - Debug", "show arena bounds", false, 2)
+    ]
+    #Gameplay numbers only the Custom preset uses (every other preset replaces them below).
+    #One entry per CustomTuning field (config/constants.opy), in that order.
+    customTuning = [
+        createWorkshopSettingFloat("20 - Arena", "center push", 10, 0, 40, 9),
+        createWorkshopSettingFloat("20 - Arena", "out of bounds margin", 5, 0, 30, 10),
+        createWorkshopSettingFloat("20 - Arena", "out of bounds root", 3, 0, 10, 11),
+        createWorkshopSettingFloat("20 - Arena", "out of bounds push", 20, 0, 60, 12),
+        createWorkshopSettingFloat("20 - Arena", "edge push margin", 1.5, 0, 10, 13),
+        createWorkshopSettingFloat("20 - Arena", "edge push", 6, 0, 30, 14),
+        createWorkshopSettingInt("20 - Arena", "spawn spread", 10, 0, 40, 15),
+        createWorkshopSettingFloat("20 - Arena", "spawn height", 8, 0, 30, 16),
+        createWorkshopSettingFloat("60 - Competitive", "orbit sleep knockback", 10, 0, 40, 10),
+        createWorkshopSettingFloat("60 - Competitive", "basic anti-orbit sleep", 5, 0, 10, 11),
+        createWorkshopSettingFloat("60 - Competitive", "AntiOrbit pressure after", 2.5, 0, 10, 12),
+        createWorkshopSettingFloat("60 - Competitive", "AntiOrbit max penalty", 0.25, 0, 1, 13),
+        createWorkshopSettingFloat("60 - Competitive", "AntiOrbit max heat", 0.2, 0, 1, 14),
+        createWorkshopSettingFloat("60 - Competitive", "AntiOrbit timer cut", 5, 0, 20, 15)
     ]
     #Presets: one row per preset, in Preset order, one column per forced setting
     #(PresetColumn in config/constants.opy). MANUAL keeps the host's value.
@@ -162,6 +197,7 @@ rule "Settings - Workshop settings":
             antiOrbitRadius = presetRow[PresetColumn.ANTI_ORBIT_RADIUS]
         if presetRow[PresetColumn.ANTI_ORBIT_PRESSURE] != MANUAL:
             antiOrbitPressureRate = presetRow[PresetColumn.ANTI_ORBIT_PRESSURE]
+        customTuning = CUSTOM_TUNING_DEFAULTS
     if not ballFeel[BallFeel.CUSTOM]:
         ballFeel = BALL_FEEL_DEFAULTS
     #Mobility.CUSTOM keeps the "custom ... %" settings read above.

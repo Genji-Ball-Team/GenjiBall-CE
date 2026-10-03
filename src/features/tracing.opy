@@ -9,7 +9,7 @@ rule "Tracing mode - gained":
     #@Condition eventPlayer.isInViewAngle(ballPosition, 70) == true
     eventPlayer.clearStatusEffect(Status.BURNING)
     stopChasing(tracingPoints)
-    tracingPoints = 0.3
+    tracingPoints = addOnSettings[AddOnSetting.TRACING_GRACE]
 
 
 rule "Tracing mode - lost":

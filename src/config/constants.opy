@@ -195,6 +195,44 @@ enum AddOnSetting:
     COLORBLIND      #"80 - Visual > red-green colorblind filter", blue/yellow target and bounce pad visuals
     WATERMARK       #"80 - Visual > watermark", the original-author credit
     WATER_LEDGE_FIX #"20 - Arena > water ledge fix", limits the under-ledge push to near the island
+    JUMP_STRENGTH   #"50 - Features > super jump strength", custom abilities: upward impulse of Super Jump
+    JUMP_COOLDOWN   #"50 - Features > super jump cooldown", seconds
+    SWITCH_COOLDOWN #"50 - Features > target switch cooldown", seconds after a Switch Target that turns the ball
+    QUIET_SWITCH_COOLDOWN   #"50 - Features > quiet target switch cooldown", seconds after one that doesn't
+    BLINK_DISTANCE  #"50 - Features > blink distance", how far Blink teleports
+    BLINK_COOLDOWN  #"50 - Features > blink cooldown", seconds
+    CRIT_COOLDOWN   #"50 - Features > critical slash cooldown", seconds after the critical hit
+    BOT_AIM_ODDS    #"50 - Features > bot aim odds": zBozo aims its deflect at a player 1 time in this many, otherwise at random
+    BOT_SLOW_SPREAD #"50 - Features > bot aim spread slow", degrees of error on that aim while the ball is slow
+    BOT_FAST_SPREAD #"50 - Features > bot aim spread fast", same while the ball is fast
+    BOT_FAST_BALL   #"50 - Features > bot fast ball at", the ballSpeed from which zBozo uses the fast spread
+    BOT_WANDER      #"50 - Features > bot wander range", how far from the center zBozo wanders while it's the target
+    SANDBOX_STEP    #"50 - Features > sandbox step", position and direction step per press
+    SANDBOX_SPEED_STEP  #"50 - Features > sandbox speed step", speed step per press while holding Ultimate
+    TRACING_GRACE   #"80 - Visual > tracing grace", seconds the target may lose sight of the ball and still deflect
+    SHOW_HIT_RADIUS #"90 - Debug > show hit radius", host-only sphere around the target's eyes
+    SHOW_ARENA      #"90 - Debug > show arena bounds", host-only rings where the map restrictions push players
+
+#Fields of customTuning: gameplay numbers that only the Custom preset uses.
+#Every other preset replaces customTuning with CUSTOM_TUNING_DEFAULTS, the v1.3.2 values.
+enum CustomTuning:
+    CENTER_PUSH     #"20 - Arena > center push": impulse out of the center exclusion
+    OUT_MARGIN      #"20 - Arena > out of bounds margin": metres past the arena radius before the hard push back
+    OUT_ROOT        #"20 - Arena > out of bounds root": seconds rooted by that push
+    OUT_PUSH        #"20 - Arena > out of bounds push": its impulse toward the center
+    EDGE_MARGIN     #"20 - Arena > edge push margin": metres inside the arena radius where the soft push starts (not Workshop Island)
+    EDGE_PUSH       #"20 - Arena > edge push": its impulse toward the center
+    SPAWN_SPREAD    #"20 - Arena > spawn spread": joining and rescued players land up to this far from the center on x and z
+    SPAWN_HEIGHT    #"20 - Arena > spawn height": and this high above it
+    ORBIT_KNOCKBACK #"60 - Competitive > orbit sleep knockback": impulse when AntiOrbit or basic anti-orbit puts a player to sleep
+    BASIC_ORBIT_SLEEP   #"60 - Competitive > basic anti-orbit sleep": seconds asleep
+    PRESSURE_AFTER  #"60 - Competitive > AntiOrbit pressure after": seconds of orbiting before pressure builds
+    MAX_PENALTY     #"60 - Competitive > AntiOrbit max penalty"
+    MAX_HEAT        #"60 - Competitive > AntiOrbit max heat"
+    TIMER_CUT       #"60 - Competitive > AntiOrbit timer cut": seconds the timer shrinks per 1.0 of penalty + heat
+
+#customTuning for every preset except Custom, in CustomTuning order: the v1.3.2 values
+#!define CUSTOM_TUNING_DEFAULTS [10, 5, 3, 20, 1.5, 6, 10, 8, 10, 5, 2.5, 0.25, 0.2, 5]
 
 #antiGhostMode ("10 - Ball > anti-ghost correction")
 enum AntiGhost:
