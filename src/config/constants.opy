@@ -197,8 +197,14 @@ enum AddOnSetting:
     WATER_LEDGE_FIX #"20 - Arena > water ledge fix", limits the under-ledge push to near the island
 
 #Fields of rankedState, the ranked log's state (features/ranked-log.opy)
+#The settings come first: "Settings - Workshop settings" builds rankedState with them in this order.
 enum RankedField:
     LOGGING     #"70 - Ranked > ranked logging"
+    TAGS        #"70 - Ranked > rank tags", the floating tags over players
+    TAG_HEIGHT  #"70 - Ranked > rank tag height", metres above the player's position
+    TAG_SIZE    #"70 - Ranked > rank tag size", the tag's in-world text size
+    GUIDE       #"70 - Ranked > tier guide", the tier guide and "Live leaderboard" line on the right
+    DEBUG_HUD   #"70 - Ranked > ranked debug HUD", the host-only ranked log state
     STARTED     #MATCH_START is logged, so JOIN and LEAVE can be
     ROUND       #the current round's number, from 1 in each match
     IN_ROUND    #a ROUND_START is logged and its ROUND_END isn't yet

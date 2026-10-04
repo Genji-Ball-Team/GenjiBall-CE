@@ -57,4 +57,5 @@ A player gets the tag of the highest tier that lists their name. The name must b
 - The tier is looked up once per player, a moment after they first spawn. A new code with new names needs a new lobby.
 - Tags follow FFA slots: one in-world text per slot (12), shown over the player in that slot while they are alive and tagged. Nothing is left behind when a player leaves.
 - The guide is on the right, highest tier first, hidden with simple HUD (Interact), with "Press [Interact] to hide" except in Sandbox.
+- `70 - Ranked` in the Workshop settings turns the tags (`rank tags`) and the guide (`tier guide`) off, and sets the tag's height and size ([hosting.md](hosting.md#70---ranked)).
 - There's no live rating in game. Tags change when the host gets a new code from the host tool.

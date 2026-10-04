@@ -103,6 +103,26 @@ rule "Ranked log - unranked warning":
     hudText(getAllPlayers() if not rankedState[RankedField.LOGGING] or len(rankedState[RankedField.UNRANKED]) > 0 else null, "UNRANKED: this match won't count", "ranked logging is off" if not rankedState[RankedField.LOGGING] else rankedState[RankedField.UNRANKED_TEXT], null, HudPosition.TOP, -5, Color.ORANGE, Color.WHITE, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
 
 
+#"70 - Ranked > ranked debug HUD": the ranked log's state for the host, to check logging works
+#without the Workshop Inspector open. Bottom of the left side, away from the kill tracker.
+rule "Ranked log - debug HUD":
+    @Condition rankedState[RankedField.DEBUG_HUD] == true
+
+    hudSubtext(hostPlayer, "RANKED DEBUG\nLogging: {0}  Started: {1}\nRound: {2}".format(
+        "on" if rankedState[RankedField.LOGGING] else "off",
+        "yes" if rankedState[RankedField.STARTED] else "no",
+        "{0}  In round: {1}\nAlive in round: {2}".format(
+            rankedState[RankedField.ROUND],
+            "yes" if rankedState[RankedField.IN_ROUND] else "no",
+            "{0}\nIds handed out: {1}\nUnranked: {2}".format(
+                len([player for player in rankedRound if player.isAlive()]),
+                max(len(rankedPlayers) - 1, 0),
+                rankedState[RankedField.UNRANKED_TEXT] if len(rankedState[RankedField.UNRANKED]) > 0 else "none"
+            )
+        )
+    ), HudPosition.LEFT, 20, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
+
+
 rule "Ranked log - player joins":
     @Event eachPlayer
     @Condition rankedState[RankedField.STARTED] == true

@@ -35,8 +35,10 @@ rule "Rank tags - find tier":
 
 
 #One tag per FFA slot, following whoever is in it. Nothing to destroy when a player leaves (the slot's tag
-#just has no one to show), and the number of texts never grows.
+#just has no one to show), and the number of texts never grows. Height and size: "70 - Ranked".
 rule "Rank tags - floating tags":
+    @Condition rankedState[RankedField.TAGS] == true
+
     #Entity creation fail protection
     wait(1)
     rankedState[RankedField.TAG_LOOP] = 0
@@ -44,8 +46,8 @@ rule "Rank tags - floating tags":
         createInWorldText(
             getAllPlayers() if getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankTier > 0 and getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).isAlive() else null,
             rankTags[max(getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankTier, 0)][RankTagField.LABEL],
-            getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL) + vect(0, 1.5, 0),
-            1,
+            getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL) + vect(0, evalOnce(rankedState[RankedField.TAG_HEIGHT]), 0),
+            rankedState[RankedField.TAG_SIZE],
             Clip.NONE,
             WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR,
             rankTags[max(getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankTier, 0)][RankTagField.COLOR]
@@ -56,6 +58,8 @@ rule "Rank tags - floating tags":
 #The tier guide on the right, highest tier first, hidden by simple HUD.
 #Both loops use rankedState[TAG_LOOP] and have no wait inside, so they can't run into each other.
 rule "Rank tags - tier guide":
+    @Condition rankedState[RankedField.GUIDE] == true
+
     #Entity creation fail protection
     wait(1)
     hudSubtext(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "Live leaderboard: genjiball.us", HudPosition.RIGHT, -40, Color.AQUA, HudReeval.VISIBILITY)

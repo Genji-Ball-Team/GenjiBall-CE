@@ -77,7 +77,7 @@ These appear in the custom game under **Settings → Workshop → Settings**, gr
 What "Default" forces (all non-Custom presets start from this):
 match length 15 min, tournament off, 30 rounds, breaks on every 10 rounds for 60 s, ball spawn countdown 5 s, ball respawn delay 2 s, round win pause 2 s, ball start speed 60, max speed 400, acceleration 25, motion modern, physics original, custom ball feel off, water moderate, bounce pads off, center exclusion size 3.5, arena radius 0 (the map's), bounce pad strength 30, distance 12, range 2.75 and cooldown 3 s, mobility agile, dash cooldown 3.04 s, dash hit knockdown 1 s and knockdown cooldown 0.6 s.
 
-Settings **not** touched by any preset: everything in *50 - Features*, *80 - Visual*, *90 - Debug*, water ledge fix, double sens and double sens %, and tracing view angle. The "custom ... %" mobility sliders are never forced either, but no preset picks mobility = custom, so they only apply with Preset = Custom. Anti-ghost, AntiOrbit and the rest of *60 - Competitive* are only forced by the presets listed above. The AntiOrbit speed, timer, min timer and sleep and the three basic anti-orbit settings are forced together, to their defaults.
+Settings **not** touched by any preset: everything in *50 - Features*, *70 - Ranked*, *80 - Visual*, *90 - Debug*, water ledge fix, double sens and double sens %, and tracing view angle. The "custom ... %" mobility sliders are never forced either, but no preset picks mobility = custom, so they only apply with Preset = Custom. Anti-ghost, AntiOrbit and the rest of *60 - Competitive* are only forced by the presets listed above. The AntiOrbit speed, timer, min timer and sleep and the three basic anti-orbit settings are forced together, to their defaults.
 
 ### 10 - Ball
 
@@ -194,6 +194,11 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 | Setting | Default | Range | What it does |
 |---|---|---|---|
 | ranked logging | on | | Writes the match to the Workshop inspector log for the ranked leaderboard: match start and end, players joining and leaving, each round with its elimination order and winner, and every kill and deflect. Turn on **Enable Workshop Inspector Log File** in the Overwatch options so it reaches a file the host tool can upload. Keeps the Workshop inspector on, which v1.3.3 turns off to save server load. **off**: nothing is logged, the match can't count, and the inspector is turned off as in v1.3.3. Format: [ranked-log.md](ranked-log.md) |
+| rank tags | on | | The tag over the head of players in the top tiers ([rank-tags.md](rank-tags.md)). **off**: no tags. The `RANKS - generated` rule stays, and the tier guide is separate. Doesn't affect ranked logging |
+| rank tag height | 1.5 | 0–5 m | How far above the player's position the tag sits |
+| rank tag size | 1 | 0.5–4 | The tag's in-world text size |
+| tier guide | on | | The tier guide on the right of the screen, with the "Live leaderboard: genjiball.us" line and "Press [Interact] to hide". **off**: none of it. Doesn't affect the tags or ranked logging |
+| ranked debug HUD | off | | Host only, for debugging: the ranked log's state on the left (ranked logging on or off, whether `MATCH_START` is logged, the current round and whether it's open, players alive in the round, ids handed out, the unranked reasons). Checks logging works without the Workshop inspector open. Doesn't change what's logged, and the match still counts |
 
 ### 80 - Visual
 
