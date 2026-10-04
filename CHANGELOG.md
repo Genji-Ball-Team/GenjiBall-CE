@@ -4,6 +4,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## Unreleased
 
+- Rank tags: a sixth tier, Apprentice (bronze), below Master, for the new ranked rating scale (genjiball-ranked: a new player shows 1000; Apprentice 1300, Master 1600, Grandmaster 1900, Ascendant 2200, Champion 2500, God 2800). The tiers and thresholds come from the server through the host tool, so only the default `RANKS - generated` rule changes. No gameplay change.
 - Ranked Discord: the lobby description links the Genji Ball Ranked server (`discord.gg/sv9VVjh5pT`) instead of the main one. The HUD keeps `discord.gg/genjiball`. No gameplay change.
 - Unranked warning: when ranked logging is off, or the lobby isn't the ranked setup (map, mode, preset, a feel setting, a gameplay add-on, a bot), everyone sees "UNRANKED: this match won't count" at the top of the screen with the reasons, and the log gets one `UNRANKED` line per reason so the server rejects the match. No gameplay change.
 - Rank tags, as in v1.3.2 RANKED: players in the top tiers (Master, Grandmaster, Ascendant, Champion, God) get a tag over their head, and a tier guide on the right links genjiball.us (hidden with simple HUD). The tiers and names are in one rule, `RANKS - generated`, that the host tool replaces (`docs/rank-tags.md`); the code here has the tiers but no names. The names are one array instead of five globals, the tags follow FFA slots so nothing is left behind when a player leaves, and the old "Player rank" outline rules stay out. No gameplay change.

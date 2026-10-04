@@ -1,6 +1,6 @@
 # Rank tags
 
-v1.3.3R shows a tag over the head of players in the top tiers (Master, Grandmaster, Ascendant, Champion, God), and a tier guide on the right of the screen. Lower and new players get no tag. The game doesn't know anyone's rating: the tiers and the names in each come from one generated rule, `RANKS - generated`, that the host tool ([genjiball-host-tool](https://github.com/Genji-Ball-Team/genjiball-host-tool) "Ranked code generator") fills in from the ranked server ([genjiball-ranked](https://github.com/Genji-Ball-Team/genjiball-ranked) "Rank tags endpoint"). No share codes: the host pastes the code the host tool gives them.
+v1.3.3R shows a tag over the head of players in the top tiers (Apprentice, Master, Grandmaster, Ascendant, Champion, God), and a tier guide on the right of the screen. Lower and new players get no tag. The game doesn't know anyone's rating: the tiers and the names in each come from one generated rule, `RANKS - generated`, that the host tool ([genjiball-host-tool](https://github.com/Genji-Ball-Team/genjiball-host-tool) "Ranked code generator") fills in from the ranked server ([genjiball-ranked](https://github.com/Genji-Ball-Team/genjiball-ranked) "Rank tags endpoint"). No share codes: the host pastes the code the host tool gives them.
 
 All three repos depend on this page. Change it before changing the rule.
 
@@ -14,7 +14,7 @@ rule ("RANKS - generated") {
         Ongoing - Global;
     }
     actions {
-        Set Global Variable(rankTags, Array(Custom String("Ranks update daily"), Array(Custom String("Master"), Custom Color(255, 215, 0, 255), Custom String("Master")), …));
+        Set Global Variable(rankTags, Array(Custom String("Ranks update daily"), Array(Custom String("Apprentice"), Custom Color(205, 127, 50, 255), Custom String("Apprentice")), …));
     }
 }
 ```
@@ -41,7 +41,7 @@ Array(
 - **Index 1 onward**: one array per tier, **lowest tier first**. Any number of tiers.
   - `label`: the tag over the player (`Grandmaster`).
   - colour: `Custom Color` with 0–255 values, used for the tag and the guide line.
-  - `guide line`: the tier's line in the guide, as the server wants it shown (`Grandmaster - 1600`). The thresholds come from the server's rating scale; the game shows whatever this says.
+  - `guide line`: the tier's line in the guide, as the server wants it shown (`Grandmaster - 1900`). The thresholds come from the server's rating scale; the game shows whatever this says.
   - then the names of the players in that tier, as many as there are. A tier can have none.
 
 A player gets the tag of the highest tier that lists their name. The name must be the in-game display name exactly as the Workshop writes it (`Custom String("{0}", Event Player)`): the BattleTag without `#1234`. The match is case-sensitive.

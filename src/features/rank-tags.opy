@@ -9,6 +9,7 @@
 rule "RANKS - generated":
     rankTags = [
         "Ranks update daily",
+        ["Apprentice", rgba(205, 127, 50, 255), "Apprentice"],
         ["Master", rgba(255, 215, 0, 255), "Master"],
         ["Grandmaster", rgba(255, 140, 0, 255), "Grandmaster"],
         ["Ascendant", rgba(60, 160, 255, 255), "Ascendant"],
