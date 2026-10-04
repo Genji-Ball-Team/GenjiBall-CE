@@ -112,8 +112,16 @@ rule "Settings - Workshop settings":
         createWorkshopSettingBool("20 - Arena", "water ledge fix", false, 8)
     ]
     #70 - Ranked: one entry per RankedField (config/constants.opy), in that order.
-    #Only LOGGING is a setting; the rest is set by features/ranked-log.opy.
-    rankedState = [createWorkshopSettingBool("70 - Ranked", "ranked logging", true), false]
+    #LOGGING to DEBUG_HUD are settings; the rest is set by features/ranked-log.opy.
+    rankedState = [
+        createWorkshopSettingBool("70 - Ranked", "ranked logging", true, 0),
+        createWorkshopSettingBool("70 - Ranked", "rank tags", true, 1),
+        createWorkshopSettingFloat("70 - Ranked", "rank tag height", 1.5, 0, 5, 2),
+        createWorkshopSettingFloat("70 - Ranked", "rank tag size", 1, 0.5, 4, 3),
+        createWorkshopSettingBool("70 - Ranked", "tier guide", true, 4),
+        createWorkshopSettingBool("70 - Ranked", "ranked debug HUD", false, 5),
+        false
+    ]
     #Presets: one row per preset, in Preset order, one column per forced setting
     #(PresetColumn in config/constants.opy). MANUAL keeps the host's value.
     #Custom has no row, so every visible setting stays manual.
