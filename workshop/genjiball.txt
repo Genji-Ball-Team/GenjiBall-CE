@@ -3740,7 +3740,7 @@ rule ("RANKS - generated") {
         Ongoing - Global;
     }
     actions {
-        Set Global Variable(rankTags, Array(Custom String("Ranks update daily"), Array(Custom String("Master"), Custom Color(255, 215, 0, 255), Custom String("Master")), Array(Custom String("Grandmaster"), Custom Color(255, 140, 0, 255), Custom String("Grandmaster")), Array(Custom String("Ascendant"), Custom Color(60, 160, 255, 255), Custom String("Ascendant")), Array(Custom String("Champion"), Custom Color(150, 0, 0, 255), Custom String("Champion")), Array(Custom String("God"), Custom Color(160, 160, 160, 255), Custom String("God"))));
+        Set Global Variable(rankTags, Array(Custom String("Ranks update daily"), Array(Custom String("Apprentice"), Custom Color(205, 127, 50, 255), Custom String("Apprentice")), Array(Custom String("Master"), Custom Color(255, 215, 0, 255), Custom String("Master")), Array(Custom String("Grandmaster"), Custom Color(255, 140, 0, 255), Custom String("Grandmaster")), Array(Custom String("Ascendant"), Custom Color(60, 160, 255, 255), Custom String("Ascendant")), Array(Custom String("Champion"), Custom Color(150, 0, 0, 255), Custom String("Champion")), Array(Custom String("God"), Custom Color(160, 160, 160, 255), Custom String("God"))));
     }
 }
 
