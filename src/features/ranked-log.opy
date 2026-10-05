@@ -15,12 +15,13 @@
 #Gives every spawned player without an id the next id, and logs their JOIN.
 #Called at MATCH_START for the players already there, then for each player who joins.
 #Only once spawned: an AI bot logged the moment it took a slot had no name yet ("Entity 84").
+#host: 1 for the lobby host, so the server can drop them from the rounds they're AFK in (host tool button).
 def logRankedJoins():
     @Name "Ranked log - JOIN"
 
     while any([player not in rankedPlayers and player.hasSpawned() for player in getAllPlayers()]):
         rankedPlayers.append(getAllPlayers().filter(lambda player: player not in rankedPlayers and player.hasSpawned())[0])
-        logToInspector("JOIN|{0}|{1}|{2}".format(getTotalTimeElapsed(), len(rankedPlayers) - 1, rankedPlayers.last()))
+        logToInspector("JOIN|{0}|{1}|{2}|{3}".format(getTotalTimeElapsed(), len(rankedPlayers) - 1, rankedPlayers.last(), 1 if rankedPlayers.last() == hostPlayer else ""))
 
 
 rule "Ranked log - MATCH_START":
