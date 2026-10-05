@@ -1,11 +1,13 @@
 #Rank tags: the leaderboard's top players get a tag over their head with their place and rating, and a
-#top 10 list on the right. They come from "RANKS - generated", which the host tool replaces (docs/rank-tags.md).
+#top 10 list on the right. Other ranked players get their rank tier's name. They come from "RANKS - generated",
+#which the host tool replaces (docs/rank-tags.md).
 
 
 #The host tool replaces this whole rule with one built from the ranked server. Keep it the only thing
 #that sets rankTags, and keep its name: the host tool finds it by name in workshop/genjiball.txt.
-#rankTags[0] is the line under the list's header. rankTags[1] onward are the top players, the best last:
-#[label, colour, list line, name, ...]. Without the host tool there are none.
+#rankTags[0] is the line under the list's header. rankTags[1] onward are the rank tiers, lowest first, with
+#an empty list line, then the top players, the best last: [label, colour, list line, name, ...].
+#Without the host tool there are none.
 rule "RANKS - generated":
     rankTags = ["Top 10 comes with the host tool's code"]
 
@@ -47,7 +49,7 @@ rule "Rank tags - floating tags":
         rankedState[RankedField.TAG_LOOP] += 1
 
 
-#The top 10 list on the right, the best first, hidden by simple HUD. Its two header lines sort above
+#The top 10 list on the right, the best first, hidden by simple HUD. Entries with an empty list line aren't listed. Its two header lines sort above
 #every entry's line (-30 minus the entry's index), however many entries there are.
 #Both loops use rankedState[TAG_LOOP] and have no wait inside, so they can't run into each other.
 rule "Rank tags - top 10 list":
@@ -59,7 +61,9 @@ rule "Rank tags - top 10 list":
     hudSubtext(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), evalOnce(rankTags[0]), HudPosition.RIGHT, -99, Color.WHITE, HudReeval.VISIBILITY)
     rankedState[RankedField.TAG_LOOP] = len(rankTags) - 1
     while rankedState[RankedField.TAG_LOOP] > 0:
-        hudSubtext(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), evalOnce(rankTags[rankedState[RankedField.TAG_LOOP]][RankTagField.GUIDE]), HudPosition.RIGHT, -30 - rankedState[RankedField.TAG_LOOP], evalOnce(rankTags[rankedState[RankedField.TAG_LOOP]][RankTagField.COLOR]), HudReeval.VISIBILITY)
+        #A rank tier's entry has no list line: only the top 10 are listed
+        if rankTags[rankedState[RankedField.TAG_LOOP]][RankTagField.GUIDE] != "":
+            hudSubtext(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), evalOnce(rankTags[rankedState[RankedField.TAG_LOOP]][RankTagField.GUIDE]), HudPosition.RIGHT, -30 - rankedState[RankedField.TAG_LOOP], evalOnce(rankTags[rankedState[RankedField.TAG_LOOP]][RankTagField.COLOR]), HudReeval.VISIBILITY)
         rankedState[RankedField.TAG_LOOP] -= 1
     #Interact toggles simple HUD, except in Sandbox
     if addOnSettings[AddOnSetting.SANDBOX] == false:

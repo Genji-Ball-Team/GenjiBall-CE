@@ -3810,7 +3810,10 @@ rule ("Rank tags - top 10 list") {
         Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Null, Evaluate Once(First Of(Global.rankTags)), Right, -99, Null, Null, Color(White), Visible To, Default Visibility);
         Set Global Variable At Index(rankedState, 12, Subtract(Count Of(Global.rankTags), 1));
         While(Compare(Value In Array(Global.rankedState, 12), >, 0));
-            Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Null, Evaluate Once(Value In Array(Value In Array(Global.rankTags, Value In Array(Global.rankedState, 12)), 2)), Right, Subtract(-30, Value In Array(Global.rankedState, 12)), Null, Null, Evaluate Once(Value In Array(Value In Array(Global.rankTags, Value In Array(Global.rankedState, 12)), 1)), Visible To, Default Visibility);
+            "A rank tier's entry has no list line: only the top 10 are listed"
+            If(Compare(Value In Array(Value In Array(Global.rankTags, Value In Array(Global.rankedState, 12)), 2), !=, Custom String("")));
+                Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Null, Evaluate Once(Value In Array(Value In Array(Global.rankTags, Value In Array(Global.rankedState, 12)), 2)), Right, Subtract(-30, Value In Array(Global.rankedState, 12)), Null, Null, Evaluate Once(Value In Array(Value In Array(Global.rankTags, Value In Array(Global.rankedState, 12)), 1)), Visible To, Default Visibility);
+            End;
             Modify Global Variable At Index(rankedState, 12, Subtract, 1);
         End;
         "Interact toggles simple HUD, except in Sandbox"

@@ -230,7 +230,7 @@ enum UnrankedReason:
 enum RankTagField:
     LABEL       #the tag over the player
     COLOR       #the tag's and the list line's colour
-    GUIDE       #the entry's line in the top 10 list
+    GUIDE       #the entry's line in the top 10 list, empty for a rank tier
     NAMES       #the player names in this entry start here
 
 #FFA slots a lobby can have: one rank tag each
