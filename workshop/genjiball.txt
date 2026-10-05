@@ -3459,7 +3459,7 @@ rule ("Ranked log - JOIN") {
     actions {
         While(Is True For Any(All Players(All Teams), And(Not(Array Contains(Global.rankedPlayers, Current Array Element)), Has Spawned(Current Array Element))));
             Modify Global Variable(rankedPlayers, Append To Array, First Of(Filtered Array(All Players(All Teams), And(Not(Array Contains(Global.rankedPlayers, Current Array Element)), Has Spawned(Current Array Element)))));
-            Log To Inspector(Custom String("JOIN|{0}|{1}|{2}", Total Time Elapsed, Subtract(Count Of(Global.rankedPlayers), 1), Last Of(Global.rankedPlayers)));
+            Log To Inspector(Custom String("JOIN|{0}|{1}|{2}", Total Time Elapsed, Subtract(Count Of(Global.rankedPlayers), 1), Custom String("{0}|{1}", Last Of(Global.rankedPlayers), If-Then-Else(Compare(Last Of(Global.rankedPlayers), ==, Host Player), 1, Custom String("")))));
         End;
     }
 }
