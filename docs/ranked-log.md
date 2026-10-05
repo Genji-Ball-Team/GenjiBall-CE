@@ -59,6 +59,7 @@ So the game gives every player a **player id** when they join: a whole number, s
 - The id stays the same while the player stays in the lobby. It's stored on the player, so moving slots doesn't change it.
 - A player who leaves and comes back gets a `LEAVE`, then a new `JOIN` with a new id.
 - Two players with the same name get different ids, so the log is never ambiguous within a match.
+- The lobby host's `JOIN` has `host` `1`, so the server knows which player is the host (for [host AFK](#host-afk)). A host in spectator has no id, as any spectator.
 - Players already in the lobby when the match starts get their `JOIN` right after `MATCH_START`, or when they spawn if they haven't yet. `JOIN` waits for the spawn so the name is known: an AI bot logged as it took the slot had no name yet (`Entity 84`). Spectators aren't players and get no id until they join a slot.
 
 Which **account** a name belongs to is the server's job, not the log's: the server maps names to players, and admins merge names (genjiball-ranked "Admin: merge aliases and names"). When one match has two players with the same name, the server must not guess which is which. It keeps the match for an admin to review.
@@ -85,7 +86,7 @@ Which players are in a round:
 |---|---|---|
 | `GBR` | `format`, `gameVersion`, `matchKey` | First line of every match, before `MATCH_START`. `format` is the [format version](#versions) (`1`), `gameVersion` the build (`1.3.3R`). `matchKey` is 12 random digits picked at match start, the same in every [copy of the match](#one-match-in-several-files). Treat it as text, not a number. |
 | `MATCH_START` | `map`, `preset`, `feel`, `addOns` | Match start. `map` is our own code, not the map's name (which the Workshop translates): `workshop-island-night`, or `other`. `preset` is the Preset setting as named in `docs/hosting.md` (`Default`, …). `feel` is `1` if any ball or player feel toggle is on, else `0`: custom ball feel, water ledge fix, tracing mode, anti-ghost correction (not off) or AntiOrbit. `addOns` lists the gameplay add-ons that are on, comma-separated (`duels`, `endless`, `sandbox`, `abilities`), empty when none. |
-| `JOIN` | `id`, `name` | A player joins a slot, or is already in one at `MATCH_START`. |
+| `JOIN` | `id`, `name`, `host` | A player joins a slot, or is already in one at `MATCH_START`. `host` is `1` for the lobby host, empty for everyone else. |
 | `LEAVE` | `id` | A player leaves the lobby or moves to spectator. |
 | `ROUND_START` | `round`, `ids` | A round starts. `ids` lists everyone in the round, comma-separated (`1,2,3,4,5`). |
 | `ELIM` | `round`, `id`, `killer`, `place` | A player in the round is eliminated: hit by the ball, fell, or anything else. `killer` is the player whose deflect sent the ball, empty when there is none or it's the player themselves. `place` is their finishing place: the number of players still alive after them, plus 1 (the first of 5 out gets `5`). A place can be skipped when someone left the round. |
@@ -103,9 +104,16 @@ For genjiball-ranked "Rating engine: OpenSkill per round". The server, not the l
 
 - Only rounds with `ROUND_END` `WIN` are rated. `NONE` and `ABORT` rounds are kept for stats only.
 - Finishing order: the winner first, then the `ELIM`s from last to first. Players who left the round are dropped.
-- A round is rated if at least 2 players are left after dropping leavers.
+- The host is dropped the same way from the rounds they're [AFK](#host-afk) in.
+- A round is rated if at least 2 players are left after dropping leavers and an AFK host.
 - A round where a listed player has neither an `ELIM`, a `LEAVE` nor the win is broken: it isn't rated, and the parser reports it.
 - The minimum number of players for a match to count is server config, not part of the log.
+
+## Host AFK
+
+The host can stop their own rating from changing without leaving their slot, with the AFK button in the host tool. While it's on (until they turn it off, across matches), the server drops the host from every round that starts as if they had left it. A round already under way when they turn it on still counts for them: no rating change for them, and the others are rated on their order without them. Everything else about the match counts as usual.
+
+It isn't in the log: the game can't see the host tool's button. The host tool sends the rounds with the upload (genjiball-ranked `docs/api.md`, `X-Host-Afk`), and the server finds the host by `host` `1` in `JOIN`. A host who leaves and comes back has a new id, also with `host` `1`, and is dropped under both.
 
 ## Unranked matches
 
@@ -158,7 +166,7 @@ with `time` the Total Time Elapsed and names, not ids. That's why `KILL` keeps t
 
 [`ranked-log-example.txt`](ranked-log-example.txt) is one match, format 1, map `workshop-island-night`, preset `Default`, no feel toggles or add-ons, not unranked. It starts with a line that isn't ours, which the parser skips.
 
-Players: 1 Sparrow, 2 Tidal, 3 Mochi, 4 Ghost, 5 Ghost (a second player with the same name, so the server holds this match for review), 6 Nova (joins after round 1).
+Players: 1 Sparrow (the host), 2 Tidal, 3 Mochi, 4 Ghost, 5 Ghost (a second player with the same name, so the server holds this match for review), 6 Nova (joins after round 1).
 
 | Round | In the round | Finishing order (rated) | Notes |
 |---|---|---|---|
