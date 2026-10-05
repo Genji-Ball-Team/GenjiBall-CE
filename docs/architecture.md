@@ -39,7 +39,7 @@ This is a map of the game logic for contributors. It assumes you know roughly wh
 | `features/sandbox.opy` | Sandbox practice tools |
 | `features/abilities-experimental.opy` | A disabled crit-slash rule (last only because it was last in v1.3.2; it has no order constraint) |
 | `features/ranked-log.opy` | `v1.3.3R` only: the ranked log ([format](ranked-log.md)) |
-| `features/rank-tags.opy` | `v1.3.3R` only: rank tags and the tier guide, with the generated rule `RANKS - generated` ([rank-tags.md](rank-tags.md)) |
+| `features/rank-tags.opy` | `v1.3.3R` only: rank tags and the top 10 list, with the generated rule `RANKS - generated` ([rank-tags.md](rank-tags.md)) |
 
 The file table is in include order. When you add a file, include it in `main.opy` at the place its rules need to run, and add it here.
 

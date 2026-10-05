@@ -95,7 +95,7 @@ rule "Ranked log - UNRANKED BOT":
     logRankedUnranked()
 
 
-#The warning, top center, for everyone: above the "map isn't supported" text, away from the ball and the tier guide.
+#The warning, top center, for everyone: above the "map isn't supported" text, away from the ball and the top 10 list.
 #Ranked logging off: nothing is logged, so the warning is the only sign.
 rule "Ranked log - unranked warning":
     #Entity creation fail protection

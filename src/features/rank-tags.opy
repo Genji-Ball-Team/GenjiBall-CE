@@ -1,24 +1,16 @@
-#Rank tags: the top tiers get a tag over their head, and a guide on the right lists the tiers.
-#The tiers and names come from "RANKS - generated", which the host tool replaces (docs/rank-tags.md).
+#Rank tags: the leaderboard's top players get a tag over their head with their place and rating, and a
+#top 10 list on the right. They come from "RANKS - generated", which the host tool replaces (docs/rank-tags.md).
 
 
 #The host tool replaces this whole rule with one built from the ranked server. Keep it the only thing
 #that sets rankTags, and keep its name: the host tool finds it by name in workshop/genjiball.txt.
-#rankTags[0] is the line under the guide's header. rankTags[1] onward are the tiers, lowest first:
-#[label, colour, guide line, name, name, ...]. Without the host tool, the tiers have no names.
+#rankTags[0] is the line under the list's header. rankTags[1] onward are the top players, the best last:
+#[label, colour, list line, name, ...]. Without the host tool there are none.
 rule "RANKS - generated":
-    rankTags = [
-        "Ranks update daily",
-        ["Apprentice", rgba(205, 127, 50, 255), "Apprentice"],
-        ["Master", rgba(255, 215, 0, 255), "Master"],
-        ["Grandmaster", rgba(255, 140, 0, 255), "Grandmaster"],
-        ["Ascendant", rgba(60, 160, 255, 255), "Ascendant"],
-        ["Champion", rgba(150, 0, 0, 255), "Champion"],
-        ["God", rgba(160, 160, 160, 255), "God"]
-    ]
+    rankTags = ["Top 10 comes with the host tool's code"]
 
 
-#The highest tier that lists the player's name, or -1 for none. Once, when they first spawn.
+#The best entry that lists the player's name, or -1 for none. Once, when they first spawn.
 #Only the names are searched (from RankTagField.NAMES), so a player named like a label isn't matched.
 rule "Rank tags - find tier":
     @Event eachPlayer
@@ -55,15 +47,16 @@ rule "Rank tags - floating tags":
         rankedState[RankedField.TAG_LOOP] += 1
 
 
-#The tier guide on the right, highest tier first, hidden by simple HUD.
+#The top 10 list on the right, the best first, hidden by simple HUD. Its two header lines sort above
+#every entry's line (-30 minus the entry's index), however many entries there are.
 #Both loops use rankedState[TAG_LOOP] and have no wait inside, so they can't run into each other.
-rule "Rank tags - tier guide":
+rule "Rank tags - top 10 list":
     @Condition rankedState[RankedField.GUIDE] == true
 
     #Entity creation fail protection
     wait(1)
-    hudSubtext(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "Live leaderboard: genjiball.us", HudPosition.RIGHT, -40, Color.AQUA, HudReeval.VISIBILITY)
-    hudSubtext(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), evalOnce(rankTags[0]), HudPosition.RIGHT, -39, Color.WHITE, HudReeval.VISIBILITY)
+    hudSubtext(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "Live leaderboard: genjiball.us", HudPosition.RIGHT, -100, Color.AQUA, HudReeval.VISIBILITY)
+    hudSubtext(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), evalOnce(rankTags[0]), HudPosition.RIGHT, -99, Color.WHITE, HudReeval.VISIBILITY)
     rankedState[RankedField.TAG_LOOP] = len(rankTags) - 1
     while rankedState[RankedField.TAG_LOOP] > 0:
         hudSubtext(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), evalOnce(rankTags[rankedState[RankedField.TAG_LOOP]][RankTagField.GUIDE]), HudPosition.RIGHT, -30 - rankedState[RankedField.TAG_LOOP], evalOnce(rankTags[rankedState[RankedField.TAG_LOOP]][RankTagField.COLOR]), HudReeval.VISIBILITY)

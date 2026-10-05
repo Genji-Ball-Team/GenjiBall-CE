@@ -4,6 +4,8 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## Unreleased
 
+- Rank tags show the ranked leaderboard's top 10 instead of rank names: the host tool writes each top player as an entry of their own, so the tag over them is their place and rating (`#1 | 2074`), and the guide on the right becomes a top 10 list (`70 - Ranked > tier guide` is now `top 10 list`). The list's header lines sort at -100 and -99, above any entry. The default `RANKS - generated` has no tiers left. Same `rankTags` shape (`docs/rank-tags.md`). No gameplay change. Goes out as a re-release of `1.3.3R`.
+
 ## v1.3.3R
 
 - Release notes for v1.3.3R (`docs/releases/v1.3.3R.md`, `v1.3.3R-discord.md`). The import code follows once the release is out.
