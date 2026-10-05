@@ -118,7 +118,7 @@ rule "Settings - Workshop settings":
         createWorkshopSettingBool("70 - Ranked", "rank tags", true, 1),
         createWorkshopSettingFloat("70 - Ranked", "rank tag height", 1.5, 0, 5, 2),
         createWorkshopSettingFloat("70 - Ranked", "rank tag size", 1, 0.5, 4, 3),
-        createWorkshopSettingBool("70 - Ranked", "tier guide", true, 4),
+        createWorkshopSettingBool("70 - Ranked", "top 10 list", true, 4),
         createWorkshopSettingBool("70 - Ranked", "ranked debug HUD", false, 5),
         false
     ]

@@ -203,7 +203,7 @@ enum RankedField:
     TAGS        #"70 - Ranked > rank tags", the floating tags over players
     TAG_HEIGHT  #"70 - Ranked > rank tag height", metres above the player's position
     TAG_SIZE    #"70 - Ranked > rank tag size", the tag's in-world text size
-    GUIDE       #"70 - Ranked > tier guide", the tier guide and "Live leaderboard" line on the right
+    GUIDE       #"70 - Ranked > top 10 list", the top 10 list and "Live leaderboard" line on the right
     DEBUG_HUD   #"70 - Ranked > ranked debug HUD", the host-only ranked log state
     STARTED     #MATCH_START is logged, so JOIN and LEAVE can be
     ROUND       #the current round's number, from 1 in each match
@@ -211,7 +211,7 @@ enum RankedField:
     TEXT        #the id list being built for ROUND_START
     COUNT       #how many ids are in TEXT so far
     DEFLECTOR   #the prevTarget "Ranked log - DEFLECT" last saw
-    TAG_LOOP    #loop counter for the rank tag and tier guide rules (features/rank-tags.opy)
+    TAG_LOOP    #loop counter for the rank tag and top 10 list rules (features/rank-tags.opy)
     UNRANKED    #the UnrankedReasons logged in this match
     UNRANKED_TEXT   #the unranked warning's reasons, comma-separated
     REASON      #the UnrankedReason for logRankedUnranked()
@@ -226,12 +226,12 @@ enum UnrankedReason:
     ADD_ON
     BOT
 
-#Fields of a tier in rankTags ("RANKS - generated", docs/rank-tags.md)
+#Fields of an entry in rankTags ("RANKS - generated", docs/rank-tags.md)
 enum RankTagField:
     LABEL       #the tag over the player
-    COLOR       #the tag's and the guide line's colour
-    GUIDE       #the tier's line in the guide
-    NAMES       #the player names in this tier start here
+    COLOR       #the tag's and the list line's colour
+    GUIDE       #the entry's line in the top 10 list, empty for a rank tier
+    NAMES       #the player names in this entry start here
 
 #FFA slots a lobby can have: one rank tag each
 #!define FFA_SLOTS 12

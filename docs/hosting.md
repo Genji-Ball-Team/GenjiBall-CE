@@ -31,7 +31,7 @@ This branch (`v1.3.3R`) is the ranked version. The code is already set up for a 
 - Workshop settings at their defaults: preset **Default**, nothing in *15 - Ball Feel* or the other feel toggles, no gameplay add-ons (duels, endless, sandbox, custom abilities), no bot. The ball and players feel exactly as in v1.3.3 `Default`.
 - `70 - Ranked > ranked logging` on (the default), and **Enable Workshop Inspector Log File** on in the Overwatch options, so the match reaches a log file the host tool can upload.
 
-The code shows rank tags over the top players and a tier guide on the right. The names come from the host tool, which builds the code with the current tags ([rank-tags.md](rank-tags.md)); the code in this repo has no names, so it shows no tags.
+The code shows the leaderboard's top 10 in the lobby: a tag over each of them with their place and rating (`#1 | 2074`), and a top 10 list on the right. Other players in a rank tier get the tier's name as their tag. They come from the host tool, which builds the code with the region's current tiers and top 10 ([rank-tags.md](rank-tags.md)); the code in this repo has no players, so it shows no tags.
 
 Anything else makes the match unranked, and the game says so at the top of the screen ("UNRANKED: this match won't count", with the reason): see [Unranked matches](ranked-log.md#unranked-matches). The data center is your choice (the v1.3.2 RANKED code forced Netherlands; this one doesn't).
 
@@ -194,10 +194,10 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 | Setting | Default | Range | What it does |
 |---|---|---|---|
 | ranked logging | on | | Writes the match to the Workshop inspector log for the ranked leaderboard: match start and end, players joining and leaving, each round with its elimination order and winner, and every kill and deflect. Turn on **Enable Workshop Inspector Log File** in the Overwatch options so it reaches a file the host tool can upload. Keeps the Workshop inspector on, which v1.3.3 turns off to save server load. **off**: nothing is logged, the match can't count, and the inspector is turned off as in v1.3.3. Format: [ranked-log.md](ranked-log.md) |
-| rank tags | on | | The tag over the head of players in the top tiers ([rank-tags.md](rank-tags.md)). **off**: no tags. The `RANKS - generated` rule stays, and the tier guide is separate. Doesn't affect ranked logging |
+| rank tags | on | | The tag over the head of the leaderboard's top 10, with their place and rating, and of other players in a rank tier, with its name ([rank-tags.md](rank-tags.md)). **off**: no tags. The `RANKS - generated` rule stays, and the top 10 list is separate. Doesn't affect ranked logging |
 | rank tag height | 1.5 | 0–5 m | How far above the player's position the tag sits |
 | rank tag size | 1 | 0.5–4 | The tag's in-world text size |
-| tier guide | on | | The tier guide on the right of the screen, with the "Live leaderboard: genjiball.us" line and "Press [Interact] to hide". **off**: none of it. Doesn't affect the tags or ranked logging |
+| top 10 list | on | | The leaderboard's top 10 on the right of the screen, with the "Live leaderboard: genjiball.us" line and "Press [Interact] to hide". **off**: none of it. Doesn't affect the tags or ranked logging |
 | ranked debug HUD | off | | Host only, for debugging: the ranked log's state on the left (ranked logging on or off, whether `MATCH_START` is logged, the current round and whether it's open, players alive in the round, ids handed out, the unranked reasons). Checks logging works without the Workshop inspector open. Doesn't change what's logged, and the match still counts |
 
 ### 80 - Visual

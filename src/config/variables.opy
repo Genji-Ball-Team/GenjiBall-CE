@@ -76,7 +76,7 @@ globalvar rankedState 124
 globalvar rankedPlayers 125
 #Ranked log: the players in the current round who aren't eliminated and haven't left. Empty between rounds.
 globalvar rankedRound 126
-#Rank tags, set only by "RANKS - generated": the guide line, then one row per tier (RankTagField)
+#Rank tags, set only by "RANKS - generated": the list's line, then one row per rank tier, then per top player (RankTagField)
 globalvar rankTags 127
 
 #Player variables
@@ -103,7 +103,7 @@ playervar orbitPenalty 23
 playervar orbitTimer 24
 playervar orbitHeat 25
 playervar kills 26
-#v1.3.3R (Ranked) slots 124-127. The player's rank tag tier in rankTags: 0 not checked yet, -1 none.
+#v1.3.3R (Ranked) slots 124-127. The player's entry in rankTags: 0 not checked yet, -1 none.
 playervar rankTier 124
 
 #Subroutine names
