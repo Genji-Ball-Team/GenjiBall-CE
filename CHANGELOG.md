@@ -4,6 +4,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## Unreleased
 
+- Double sens is on by default in ranked: players can press Ultimate to switch to the high aim sensitivity without the host turning it on, which they'd lose on every re-paste of the code. Hosts can still turn it off. `main` keeps it off. Goes out as a re-release of `1.3.3R`.
 - Release notes: v1.3.3R has no import code. The notes say to get the code from the host tool's Copy ranked code (or Copy tourney code), with the release file as the fallback without rank tags.
 - Release notes: a Tourneys section in the v1.3.3R notes and the Discord post (tourney code, Tournament preset, rounds, final standings).
 - Tourney final standings (#145): at the end of a tourney match everyone, spectators too, sees "FINAL STANDINGS" at the top of the screen for 30 s, with the tourney, the lobby, the `matchKey` and one line per player: place, name, round wins and kills, counted from their `JOIN` as the server counts the log (most wins first, ties on kills, equal wins and kills share a place). The host screenshots it, then the match ends. Wins and kills are in one player variable, `tourneyStats` (slot 125). Goes out as a re-release of `1.3.3R`.

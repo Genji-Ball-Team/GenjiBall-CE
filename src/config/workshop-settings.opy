@@ -50,7 +50,7 @@ rule "Settings - Workshop settings":
         createWorkshopSettingInt("20 - Arena", "bounce pad cooldown", 3, 1, 10, 7)
     ]
     #30 - Player: mobility, dash and dash hit settings are preset-controlled unless Preset is Custom.
-    #Double sens is a casual add-on.
+    #Double sens is an add-on, on by default in ranked: hosts and players asked for it there.
     mobilityMode = createWorkshopSettingEnum("30 - Player", "mobility", 0, ["agile", "balanced", "sluggish", "custom"])
     #Only used with mobility = custom. Every other mobility overwrites them below.
     #Gravity stays above 0: currentGravity == 0 means "in the water" (maps/restrictions.opy).
@@ -96,7 +96,7 @@ rule "Settings - Workshop settings":
     #One entry per AddOnSetting field (config/constants.opy), in that order.
     #Each setting may only be read once, so read them here and nowhere else.
     addOnSettings = [
-        createWorkshopSettingBool("30 - Player", "double sens", false, 7),
+        createWorkshopSettingBool("30 - Player", "double sens", true, 7),
         createWorkshopSettingBool("50 - Features", "custom abilities", false),
         createWorkshopSettingBool("80 - Visual", "x-ray", false),
         createWorkshopSettingBool("80 - Visual", "tracing mode", false, 1),
