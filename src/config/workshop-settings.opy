@@ -38,7 +38,8 @@ rule "Settings - Workshop settings":
         createWorkshopSettingBool("15 - Ball Feel", "reliable hit detection", false, 10)
     ]
     #20 - Arena: core arena/environment tuning is preset-controlled unless Preset is Custom.
-    waterLevel = createWorkshopSettingEnum("20 - Arena", "water", 0, ["moderate", "none", "minimal", "flood"])
+    #Water is none (y = -1000) in ranked, in the Default preset and the setting: asked for ranked lobbies.
+    waterLevel = createWorkshopSettingEnum("20 - Arena", "water", 1, ["moderate", "none", "minimal", "flood"])
     bouncePadToggle = createWorkshopSettingBool("20 - Arena", "bounce pads", false, 1)
     #One entry per ArenaSetting field (config/constants.opy), in that order.
     arenaSettings = [
@@ -136,7 +137,7 @@ rule "Settings - Workshop settings":
     if presetMode != Preset.CUSTOM:
         presetRow = [
             #match, tourn, rounds, breaks, every, length, start, max, accel, motion,               physics,                  feel,  water,          pads,  mobility,          anti-ghost,      AntiOrbit, radius, pressure, countdown, respawn, win pause, orbit spd, orbit t, min t,  sleep,  basic r, basic spd, basic t, dash cd, knockdown, knock cd, center, radius, pad str, pad dist, pad range, pad cd
-            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     false, Water.MODERATE, false, Mobility.AGILE,    MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         MANUAL,    MANUAL,  MANUAL, MANUAL, MANUAL, MANUAL,    MANUAL,  3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Default
+            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     false, Water.NONE,     false, Mobility.AGILE,    MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         MANUAL,    MANUAL,  MANUAL, MANUAL, MANUAL, MANUAL,    MANUAL,  3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Default
             [900,   true,  30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     false, Water.MODERATE, false, Mobility.AGILE,    AntiGhost.OFF,   false,     MANUAL, MANUAL,   5,         2,       2,         80,        7.5,     5.5,   5,      20,      80,        7.5,     3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Tournament
             [900,   true,  30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     false, Water.MODERATE, false, Mobility.AGILE,    AntiGhost.STEER, true,      14,     0.02,   5,         2,       2,         80,        7.5,     5.5,   5,      20,      80,        7.5,     3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Tournament+
             [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.RAPID,     BallPhysics.ORIGINAL,     false, Water.FLOOD,    true,  Mobility.BALANCED, MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         MANUAL,    MANUAL,  MANUAL, MANUAL, MANUAL, MANUAL,    MANUAL,  3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Rapid
