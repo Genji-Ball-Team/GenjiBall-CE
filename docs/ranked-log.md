@@ -2,7 +2,7 @@
 
 v1.3.3R writes what happens in a match to the Workshop log, the host tool uploads it, and the ranked server ([genjiball-ranked](https://github.com/Genji-Ball-Team/genjiball-ranked)) turns it into matches, rounds and ratings. All three depend on this page. Change it before changing the logging code, and bump the [format version](#versions) when an old parser would misread the new lines.
 
-The example log [`ranked-log-example.txt`](ranked-log-example.txt) is a full short match in this format. It's the parser's test file, and [Example](#example) says what it should parse to.
+The example logs [`ranked-log-example.txt`](ranked-log-example.txt) (a ranked match) and [`ranked-log-tourney-example.txt`](ranked-log-tourney-example.txt) (a [tourney](#tourney-matches) match) are full short matches in this format. They're the parser's test files, and [Example](#example) says what they should parse to.
 
 ## The log file
 
@@ -68,6 +68,8 @@ Which **account** a name belongs to is the server's job, not the log's: the serv
 
 A **match** is everything from `GBR` to `MATCH_END`. If the file ends without `MATCH_END` (the host closed the lobby, the game crashed), the match is incomplete: rounds that have a `ROUND_END` can still be used, and the rest is dropped.
 
+A match is **ranked** (timed, ends with `MATCH_END` `TIME`) or a **tourney** match (a `TOURNEY` line after `GBR`, a fixed number of rounds, ends with `MATCH_END` `ROUNDS`). See [Tourney matches](#tourney-matches).
+
 A **round** is one round of play, from `ROUND_START` to `ROUND_END`. Rounds are numbered from 1 in each match, and the number goes up at every `ROUND_START`, including a round that restarts because everyone died and a tiebreaker round. The final duel isn't a round of its own: it's the end of the round it happens in.
 
 Which players are in a round:
@@ -84,7 +86,8 @@ Which players are in a round:
 
 | Type | Fields | When |
 |---|---|---|
-| `GBR` | `format`, `gameVersion`, `matchKey` | First line of every match, before `MATCH_START`. `format` is the [format version](#versions) (`1`), `gameVersion` the build (`1.3.3R`). `matchKey` is 12 random digits picked at match start, the same in every [copy of the match](#one-match-in-several-files). Treat it as text, not a number. |
+| `GBR` | `format`, `gameVersion`, `matchKey` | First line of every match, before `MATCH_START`. `format` is the [format version](#versions) (`2`), `gameVersion` the build (`1.3.3R`). `matchKey` is 12 random digits picked at match start, the same in every [copy of the match](#one-match-in-several-files). Treat it as text, not a number. |
+| `TOURNEY` | `lobbyKey`, `roundLimit` | Only in a [tourney match](#tourney-matches), as the line right after `GBR`. `lobbyKey` is the server's id for the tourney lobby, from the `TOURNEY - generated` rule: digits, treat it as text (it may start with `0`). `roundLimit` is the number of rounds the match lasts. A ranked match has no `TOURNEY` line. |
 | `MATCH_START` | `map`, `preset`, `feel`, `addOns` | Match start. `map` is our own code, not the map's name (which the Workshop translates): `workshop-island-night`, or `other`. `preset` is the Preset setting as named in `docs/hosting.md` (`Default`, …). `feel` is `1` if any ball or player feel toggle is on, else `0`: custom ball feel, water ledge fix, tracing mode, anti-ghost correction (not off) or AntiOrbit. `addOns` lists the gameplay add-ons that are on, comma-separated (`duels`, `endless`, `sandbox`, `abilities`), empty when none. |
 | `JOIN` | `id`, `name`, `host` | A player joins a slot, or is already in one at `MATCH_START`. `host` is `1` for the lobby host, empty for everyone else. |
 | `LEAVE` | `id` | A player leaves the lobby or moves to spectator. |
@@ -94,7 +97,7 @@ Which players are in a round:
 | `KILL` | `attacker`, `victim`, `attackerId`, `victimId` | Any player death, in or out of a round (a player who joins mid-round is killed too). The first fields are the v1.3.2 `KILL` line unchanged ([legacy](#legacy-v132-logs)), the ids are new. `attacker` and `attackerId` are empty when there's no attacker or it's the victim themself, as in `ELIM`. `victimId` is empty for a player who has no id yet (not spawned). |
 | `DEFLECT` | `round`, `id`, `speed`, `target` | A player deflects the ball, during a round only. `speed` is the ball speed after the deflect, rounded to a whole number; `target` is the player the ball now goes for. Each player can deflect at most once every 0.8 s (deflect window plus lockout), so a round logs at most about 1.25 `DEFLECT` lines per second per player alive. |
 | `UNRANKED` | `reason` | The match [won't count](#unranked-matches). Logged once per reason, at `MATCH_START` or when it happens. |
-| `MATCH_END` | `result` | `TIME` when the match ends normally (time ran out and any tiebreaker is over). |
+| `MATCH_END` | `result` | How the match ended normally. `TIME` in a ranked match: time ran out and any tiebreaker is over. `ROUNDS` in a tourney match: round `roundLimit` has ended. |
 
 `ELIM` and `KILL` for the same death are both logged. The rating uses only `ELIM`. `KILL` is for stats and for one parser path shared with legacy logs. Don't rely on which of the two comes first.
 
@@ -115,6 +118,28 @@ The host can stop their own rating from changing without leaving their slot, wit
 
 It isn't in the log: the game can't see the host tool's button. The host tool sends the rounds with the upload (genjiball-ranked `docs/api.md`, `X-Host-Afk`), and the server finds the host by `host` `1` in `JOIN`. A host who leaves and comes back has a new id, also with `host` `1`, and is dropped under both.
 
+## Tourney matches
+
+A tourney is a set of ranked lobbies played at a set time, each with an assigned host. The server schedules them (genjiball-ranked "Admin: schedule tourneys, lobbies and hosts"), and the host tool builds the lobby's **tourney code**: the ranked code plus the `TOURNEY - generated` rule (GenjiBall-CE#143) filled in with the lobby's values from the server. Without that rule, or with it off, the match is a ranked match, exactly as before.
+
+With the rule on:
+
+- The match logs `TOURNEY` right after `GBR`, before `MATCH_START`, so every [copy of the match](#one-match-in-several-files) has it.
+- There's no match timer and no timed tiebreaker: the match lasts `roundLimit` rounds. Every `ROUND_START` counts toward the limit, restarts included: a round that ends `NONE` (everyone died) or `ABORT` uses up one of them. Everyone dying only happens when something is bugged, and then it's the host's call what to do.
+- After the `ROUND_END` of round `roundLimit`, the match ends with `MATCH_END` `ROUNDS`. A file that ends before it is an incomplete match, as for a ranked match.
+- The lobby plays the **Tournament** preset instead of Default (tournament mode on, its basic anti-orbit and water rule, no feel toggle). The rule's `roundLimit` replaces the "tournament rounds" setting.
+- Everything else is logged as in a ranked match, and the same [unranked](#unranked-matches) checks apply, with Tournament as the preset to have.
+
+**Final standings.** At the end of a tourney match the game shows a final standings panel to everyone (GenjiBall-CE#145), and the host takes the lobby's verify screenshot of it. It shows the tourney's name, the lobby's label and the `matchKey` from `GBR` (the same 12 digits), so an admin can match the screenshot to the log. Its numbers are the ones the server counts from the log:
+
+- **Wins:** rounds the player won (`ROUND_END` `WIN` with them as `winner`), rated or not.
+- **Kills:** `KILL` lines with the player as `attackerId` (a player killing themselves has no attacker).
+- **Place:** most wins first, ties broken by kills. The same wins and kills share a place.
+
+The panel counts per player id, so it lists the players in a slot at the end, and a player who left and came back shows what they did since their last `JOIN`. The server counts per account, both ids together, and may show more for them.
+
+**On the server** (genjiball-ranked "Parse tourney matches"): the `lobbyKey` links the match to its tourney lobby. Copies of one match (same host and `matchKey`) are one match, as always. The match goes to an admin's review instead of onto the boards when the `lobbyKey` is unknown, the uploader isn't the lobby's assigned host, or the lobby already has another match.
+
 ## Unranked matches
 
 The game decides when a lobby isn't a ranked setup, shows the warning in game and logs `UNRANKED` with the reason. The server rejects every match with an `UNRANKED` line, even if the host uploads it.
@@ -125,7 +150,7 @@ The warning is at the top center of everyone's screen, "UNRANKED: this match won
 |---|---|
 | `MAP` | The map isn't Workshop Island Night. |
 | `MODE` | The mode isn't free-for-all. |
-| `PRESET` | The Preset isn't `Default`. |
+| `PRESET` | The Preset isn't `Default` in a ranked match, or isn't `Tournament` in a [tourney match](#tourney-matches). |
 | `FEEL` | A ball or player feel toggle is on. |
 | `ADD_ON` | A gameplay add-on is on: duels, endless, sandbox or custom abilities. |
 | `BOT` | A dummy bot (Zbozo) is in the match. Logged when it joins, or at `MATCH_START` if it's already there. |
@@ -145,12 +170,20 @@ Lines with more than 3 fields (`KILL`, `ELIM`, `DEFLECT`, `MATCH_START`) need ne
 
 ## Versions
 
-The `format` field of `GBR` is the format version. This page describes version **1**.
+The `format` field of `GBR` is the format version. This page describes version **2**.
 
 - Adding a field at the end of a line, a new event type or a new `UNRANKED` reason: same version. Old parsers ignore what they don't know.
 - Changing or removing a field, or changing what a field means: new version, and the server keeps a parser for each version it has accepted logs in.
+- A line that changes what the match is, so an old parser that skipped it would count the match wrong: new version too.
 
 The parser rejects a match whose version it doesn't know, with a clear error.
+
+| Version | Changes |
+|---|---|
+| 1 | The first v1.3.3R release. Ranked matches only. |
+| 2 | [Tourney matches](#tourney-matches): the `TOURNEY` line and `MATCH_END` `ROUNDS`. A format 1 parser would skip `TOURNEY` and rate a tourney as a ranked match. The game writes `2` for every match, ranked ones too; a format 2 parser reads a format 1 match as a ranked match. |
+
+The server has to accept a version before the game writes it: it goes live first, then the game is released.
 
 ## Legacy v1.3.2 logs
 
@@ -164,7 +197,7 @@ with `time` the Total Time Elapsed and names, not ids. That's why `KILL` keeps t
 
 ## Example
 
-[`ranked-log-example.txt`](ranked-log-example.txt) is one match, format 1, map `workshop-island-night`, preset `Default`, no feel toggles or add-ons, not unranked. It starts with a line that isn't ours, which the parser skips.
+[`ranked-log-example.txt`](ranked-log-example.txt) is one ranked match, format 2, map `workshop-island-night`, preset `Default`, no feel toggles or add-ons, not unranked. It starts with a line that isn't ours, which the parser skips.
 
 Players: 1 Sparrow (the host), 2 Tidal, 3 Mochi, 4 Ghost, 5 Ghost (a second player with the same name, so the server holds this match for review), 6 Nova (joins after round 1).
 
@@ -175,6 +208,18 @@ Players: 1 Sparrow (the host), 2 Tidal, 3 Mochi, 4 Ghost, 5 Ghost (a second play
 | 3 | 1, 3, 4, 5, 6 | 1, 4, 5, 3, 6 | |
 
 The match ends with `MATCH_END` `TIME`. Round wins: Sparrow 2, Nova 1.
+
+[`ranked-log-tourney-example.txt`](ranked-log-tourney-example.txt) is one tourney match, format 2, preset `Tournament`, otherwise the same setup: `TOURNEY` with `lobbyKey` `073518264903` and `roundLimit` `3`.
+
+Players: 1 Sparrow (the host), 2 Tidal, 3 Mochi, 4 Ghost.
+
+| Round | In the round | Result | Finishing order (rated) | Notes |
+|---|---|---|---|---|
+| 1 | 1, 2, 3, 4 | `WIN` | 2, 1, 4, 3 | |
+| 2 | 1, 2, 3, 4 | `NONE` | not rated | Everyone dies: Mochi and Ghost fall, then Sparrow and Tidal in the same tick (both place 1: neither is alive after the other). Counts toward the limit. |
+| 3 | 1, 2, 3, 4 | `WIN` | 2, 3, 1, 4 | Ghost falls. The last round. |
+
+The match ends with `MATCH_END` `ROUNDS` after round 3. Standings: 1 Tidal (2 wins, 3 kills), 2 Sparrow and Mochi (0 wins, 1 kill each), 4 Ghost (0 wins, 0 kills).
 
 ## Left out
 
