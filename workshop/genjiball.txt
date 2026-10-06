@@ -3686,6 +3686,7 @@ rule ("Ranked log - ROUND_START") {
     conditions {
         Value In Array(Global.rankedState, 6) == True;
         Value In Array(Global.rankedState, 8) == False;
+        Or(Compare(First Of(Value In Array(Global.rankedState, 16)), !=, True), Compare(Value In Array(Global.rankedState, 7), <, Global.totalRounds)) == True;
         Is Game In Progress == True;
         Global.IsEnoughPlayersToStart == True;
         Global.RoundSetupPending == False;

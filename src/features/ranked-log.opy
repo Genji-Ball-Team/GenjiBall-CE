@@ -161,9 +161,12 @@ rule "Ranked log - LEAVE":
 
 #A round starts when startRound() (or setupFinal() after a restart with two players) has cleared
 #RoundSetupPending and at least two players are alive. Not at the final duel: that's the same round, still open.
+#Not after a tourney's last round: with a short round win pause the round flow starts another one before
+#"Ranked log - MATCH_END ROUNDS" has waited.
 rule "Ranked log - ROUND_START":
     @Condition rankedState[RankedField.STARTED] == true
     @Condition rankedState[RankedField.IN_ROUND] == false
+    @Condition (not TOURNEY_ON or rankedState[RankedField.ROUND] < totalRounds) == true
     @Condition isGameInProgress() == true
     @Condition IsEnoughPlayersToStart == true
     @Condition RoundSetupPending == false
