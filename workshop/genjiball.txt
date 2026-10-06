@@ -167,6 +167,7 @@ variables {
         25: orbitHeat
         26: kills
         124: rankTier
+        125: tourneyStats
 }
 
 subroutines {
@@ -315,6 +316,71 @@ rule ("Settings - Workshop settings") {
         End;
         If(Global.bozo_Bot);
             Set Global Variable(bozo_Bot, 1);
+    }
+}
+
+rule ("TOURNEY - generated") {
+    event {
+        Ongoing - Global;
+    }
+    actions {
+        Set Global Variable At Index(rankedState, 16, Array(False, Custom String(""), 30, Custom String(""), Custom String("")));
+    }
+}
+
+rule ("Tourney - settings") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        First Of(Value In Array(Global.rankedState, 16)) == True;
+    }
+    actions {
+        "No match timer and no timed tiebreaker, whatever the preset. Anything but Tournament is unranked anyway."
+        Set Global Variable(tournamentMode, True);
+        "The rule's round limit replaces \"tournament rounds\" and the preset's value"
+        Set Global Variable(totalRounds, If-Then-Else(Compare(Value In Array(Value In Array(Global.rankedState, 16), 2), >=, 1), Round To Integer(Value In Array(Value In Array(Global.rankedState, 16), 2), Down), 30));
+        "The ranked log counts the rounds and ends the match, and the server needs the log"
+        Set Global Variable At Index(rankedState, 0, True);
+    }
+}
+
+rule ("Tourney - hold the next round") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        First Of(Value In Array(Global.rankedState, 16)) == True;
+        Value In Array(Global.rankedState, 7) >= Global.totalRounds;
+        Value In Array(Global.rankedState, 8) == False;
+    }
+    actions {
+        Set Global Variable(setballspawncountdown, 31);
+    }
+}
+
+rule ("Tourney - final standings") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Value In Array(Global.rankedState, 18) == True;
+    }
+    actions {
+        Set Global Variable At Index(rankedState, 19, Sorted Array(Filtered Array(All Players(All Teams), Array Contains(Global.rankedPlayers, Current Array Element)), Multiply(-1, Add(Multiply(First Of((Current Array Element).tourneyStats), 10000), Value In Array((Current Array Element).tourneyStats, 1)))));
+        Create HUD Text(All Players(All Teams), Custom String("FINAL STANDINGS"), Null, Null, Top, -40, Color(Orange), Null, Null, Visible To, Visible Always);
+        Create HUD Text(All Players(All Teams), Null, Custom String("{0}   {1}", Value In Array(Value In Array(Global.rankedState, 16), 3), Value In Array(Value In Array(Global.rankedState, 16), 4)), Null, Top, -39, Null, Color(White), Null, Visible To, Visible Always);
+        Create HUD Text(All Players(All Teams), Null, Null, Custom String("Match {0}", Value In Array(Global.rankedState, 17)), Top, -38, Null, Null, Color(White), Visible To, Visible Always);
+        "One line per player: place, name, wins, kills. The place is 1 + the players with a better score."
+        Set Global Variable At Index(rankedState, 10, 0);
+        While(Compare(Value In Array(Global.rankedState, 10), <, Count Of(Value In Array(Global.rankedState, 19))));
+            Create HUD Text(All Players(All Teams), Null, Custom String("{0}. {1}   {2}", Add(Count Of(Filtered Array(Value In Array(Global.rankedState, 19), Compare(Add(Multiply(First Of((Current Array Element).tourneyStats), 10000), Value In Array((Current Array Element).tourneyStats, 1)), >, Add(Multiply(First Of((Value In Array(Value In Array(Global.rankedState, 19), Value In Array(Global.rankedState, 10))).tourneyStats), 10000), Value In Array((Value In Array(Value In Array(Global.rankedState, 19), Value In Array(Global.rankedState, 10))).tourneyStats, 1))))), 1), Value In Array(Value In Array(Global.rankedState, 19), Value In Array(Global.rankedState, 10)), Custom String("{0} wins   {1} kills", First Of((Value In Array(Value In Array(Global.rankedState, 19), Value In Array(Global.rankedState, 10))).tourneyStats), Value In Array((Value In Array(Value In Array(Global.rankedState, 19), Value In Array(Global.rankedState, 10))).tourneyStats, 1))), Null, Top, Add(-37, Value In Array(Global.rankedState, 10)), Null, Color(White), Null, Visible To, Visible Always);
+            Modify Global Variable At Index(rankedState, 10, Add, 1);
+        End;
+        "Time for the screenshot, then the match ends as in \"Tournament - game ends after 0 Rounds left\""
+        Wait(30, Ignore Condition);
+        Set Match Time(0);
+        Enable Built-In Game Mode Completion;
     }
 }
 
@@ -576,9 +642,10 @@ rule ("HUD - add-ons text") {
         If(Value In Array(Global.addOnSettings, 3));
             Create HUD Text(Filtered Array(All Players(All Teams), Compare((Current Array Element).simpleHUD, ==, 0)), Null, Custom String("tracing: dont lose sight with the ball!"), Null, Top, -1, Null, Color(White), Null, Visible To and String, Default Visibility);
         End;
+        "A tourney (features/tourney.opy) is always in tournament mode. Its rounds are the ranked log's, restarts included."
         If(Global.tournamentMode);
-            Create HUD Text(All Players(All Teams), Custom String("Tournament"), Null, Null, Right, 8, Color(Black), Null, Null, Visible To and String, Default Visibility);
-            Create HUD Text(All Players(All Teams), Null, Null, Custom String("ROUNDS LEFT: {0}", Global.totalRounds), Right, 9, Null, Null, Color(Purple), Visible To and String, Default Visibility);
+            Create HUD Text(All Players(All Teams), If-Then-Else(Compare(First Of(Value In Array(Global.rankedState, 16)), ==, True), Custom String("{0}   {1}", Value In Array(Value In Array(Global.rankedState, 16), 3), Value In Array(Value In Array(Global.rankedState, 16), 4)), Custom String("Tournament")), Null, Null, Right, 8, Color(Black), Null, Null, Visible To and String, Default Visibility);
+            Create HUD Text(All Players(All Teams), Null, Null, If-Then-Else(Compare(First Of(Value In Array(Global.rankedState, 16)), ==, True), Custom String("ROUND: {0} / {1}", Max(Value In Array(Global.rankedState, 7), 1), Global.totalRounds), Custom String("ROUNDS LEFT: {0}", Global.totalRounds)), Right, 9, Null, Null, Color(Purple), Visible To and String, Default Visibility);
             Create HUD Text(All Players(All Teams), Null, Null, Custom String("ROUNDS UNTIL BREAK: {0}", Global.roundsUntilBreak), Right, 10, Null, Null, Color(Purple), Visible To and String, Default Visibility);
     }
 }
@@ -2364,6 +2431,13 @@ rule ("Subroutine - Round end call") {
         alert;
     }
     actions {
+        "Tourney: the ranked log counts the rounds (every ROUND_START, restarts included) and ends the match,\nso totalRounds stays the round limit. No break after the last round: the final standings come instead."
+        If(Compare(First Of(Value In Array(Global.rankedState, 16)), ==, True));
+            If(Compare(Value In Array(Global.rankedState, 7), <, Global.totalRounds));
+                Modify Global Variable(roundsUntilBreak, Subtract, 1);
+            End;
+            Abort;
+        End;
         Modify Global Variable(totalRounds, Subtract, 1);
         Modify Global Variable(roundsUntilBreak, Subtract, 1);
     }
@@ -3460,6 +3534,8 @@ rule ("Ranked log - JOIN") {
         While(Is True For Any(All Players(All Teams), And(Not(Array Contains(Global.rankedPlayers, Current Array Element)), Has Spawned(Current Array Element))));
             Modify Global Variable(rankedPlayers, Append To Array, First Of(Filtered Array(All Players(All Teams), And(Not(Array Contains(Global.rankedPlayers, Current Array Element)), Has Spawned(Current Array Element)))));
             Log To Inspector(Custom String("JOIN|{0}|{1}|{2}", Total Time Elapsed, Subtract(Count Of(Global.rankedPlayers), 1), Custom String("{0}|{1}", Last Of(Global.rankedPlayers), If-Then-Else(Compare(Last Of(Global.rankedPlayers), ==, Host Player), 1, Custom String("")))));
+            "Their wins and kills count from this JOIN, as the server counts them per id"
+            Set Player Variable(Last Of(Global.rankedPlayers), tourneyStats, Array(0, 0));
         End;
     }
 }
@@ -3478,8 +3554,13 @@ rule ("Ranked log - MATCH_START") {
         Set Global Variable(rankedRound, Empty Array);
         Set Global Variable At Index(rankedState, 7, 0);
         Set Global Variable At Index(rankedState, 8, False);
-        "matchKey: 12 random digits, so the server can tell repeated copies of this match apart from other matches"
-        Log To Inspector(Custom String("GBR|{0}|1|1.3.3R|{1}{2}", Total Time Elapsed, Random Integer(100000, 999999), Random Integer(100000, 999999)));
+        "matchKey: 12 random digits, so the server can tell repeated copies of this match apart from other matches.\nKept for a tourney's final standings. Format 2 for every match, ranked ones too."
+        Set Global Variable At Index(rankedState, 17, Custom String("{0}{1}", Random Integer(100000, 999999), Random Integer(100000, 999999)));
+        Log To Inspector(Custom String("GBR|{0}|2|1.3.3R|{1}", Total Time Elapsed, Value In Array(Global.rankedState, 17)));
+        "Tourney: right after GBR, so every copy of the match has it. roundLimit is the one the match plays (totalRounds)."
+        If(Compare(First Of(Value In Array(Global.rankedState, 16)), ==, True));
+            Log To Inspector(Custom String("TOURNEY|{0}|{1}|{2}", Total Time Elapsed, Value In Array(Value In Array(Global.rankedState, 16), 1), Global.totalRounds));
+        End;
         "feel: any setting that changes how the ball or a player moves, controls or deflects (docs/ranked-log.md)\naddOns: the gameplay add-ons that are on, comma-separated"
         Log To Inspector(Custom String("MATCH_START|{0}|{1}|{2}", Total Time Elapsed, If-Then-Else(Compare(Current Map, ==, Map(Workshop Island Night)), Custom String("workshop-island-night"), Custom String("other")), Custom String("{0}|{1}|{2}", Value In Array(Array(Custom String("Default"), Custom String("Tournament"), Custom String("Tournament+"), Custom String("Rapid"), Custom String("v1"), Custom String("v7"), Custom String("Experimental"), Custom String("Custom")), Global.presetMode), If-Then-Else(Or(Or(Or(Or(First Of(Global.ballFeel), Value In Array(Global.addOnSettings, 13)), Value In Array(Global.addOnSettings, 3)), Compare(Global.antiGhostMode, !=, 0)), Global.antiOrbitMode), 1, 0), Custom String("{0}{1}{2}", If-Then-Else(Value In Array(Global.addOnSettings, 5), Custom String("duels"), Custom String("")), If-Then-Else(Value In Array(Global.addOnSettings, 6), Custom String("{0}endless", If-Then-Else(Value In Array(Global.addOnSettings, 5), Custom String(","), Custom String(""))), Custom String("")), Custom String("{0}{1}", If-Then-Else(Value In Array(Global.addOnSettings, 7), Custom String("{0}sandbox", If-Then-Else(Or(Value In Array(Global.addOnSettings, 5), Value In Array(Global.addOnSettings, 6)), Custom String(","), Custom String(""))), Custom String("")), If-Then-Else(Value In Array(Global.addOnSettings, 1), Custom String("{0}abilities", If-Then-Else(Or(Or(Value In Array(Global.addOnSettings, 5), Value In Array(Global.addOnSettings, 6)), Value In Array(Global.addOnSettings, 7)), Custom String(","), Custom String(""))), Custom String("")))))));
         "UNRANKED: one line per reason, and the warning lists them (docs/ranked-log.md, \"Unranked matches\")"
@@ -3493,7 +3574,8 @@ rule ("Ranked log - MATCH_START") {
             Set Global Variable At Index(rankedState, 15, 1);
             Call Subroutine(logRankedUnranked);
         End;
-        If(Compare(Global.presetMode, !=, 0));
+        "Default for a ranked match, Tournament for a tourney"
+        If(Compare(Global.presetMode, !=, If-Then-Else(Compare(First Of(Value In Array(Global.rankedState, 16)), ==, True), 1, 0)));
             Set Global Variable At Index(rankedState, 15, 2);
             Call Subroutine(logRankedUnranked);
         End;
@@ -3518,7 +3600,7 @@ rule ("Ranked log - UNRANKED") {
     actions {
         Abort If(Array Contains(Value In Array(Global.rankedState, 13), Value In Array(Global.rankedState, 15)));
         Log To Inspector(Custom String("UNRANKED|{0}|{1}", Total Time Elapsed, Value In Array(Array(Custom String("MAP"), Custom String("MODE"), Custom String("PRESET"), Custom String("FEEL"), Custom String("ADD_ON"), Custom String("BOT")), Value In Array(Global.rankedState, 15))));
-        Set Global Variable At Index(rankedState, 14, Custom String("{0}{1}{2}", Value In Array(Global.rankedState, 14), If-Then-Else(Compare(Count Of(Value In Array(Global.rankedState, 13)), >, 0), Custom String(", "), Custom String("")), Value In Array(Array(Custom String("not on Workshop Island Night"), Custom String("not free-for-all"), Custom String("the preset isn't Default"), Custom String("a ball or player feel setting is on"), Custom String("a gameplay add-on is on"), Custom String("a bot joined")), Value In Array(Global.rankedState, 15))));
+        Set Global Variable At Index(rankedState, 14, Custom String("{0}{1}{2}", Value In Array(Global.rankedState, 14), If-Then-Else(Compare(Count Of(Value In Array(Global.rankedState, 13)), >, 0), Custom String(", "), Custom String("")), Value In Array(Array(Custom String("not on Workshop Island Night"), Custom String("not free-for-all"), Custom String("the preset isn't {0}", If-Then-Else(Compare(First Of(Value In Array(Global.rankedState, 16)), ==, True), Custom String("Tournament"), Custom String("Default"))), Custom String("a ball or player feel setting is on"), Custom String("a gameplay add-on is on"), Custom String("a bot joined")), Value In Array(Global.rankedState, 15))));
         Modify Global Variable At Index(rankedState, 13, Append To Array, Value In Array(Global.rankedState, 15));
     }
 }
@@ -3655,6 +3737,9 @@ rule ("Ranked log - KILL") {
     }
     actions {
         Log To Inspector(Custom String("KILL|{0}|{1}|{2}", Total Time Elapsed, If-Then-Else(And(Compare(Attacker, !=, Event Player), Compare(Attacker, !=, Null)), Attacker, Custom String("")), Custom String("{0}|{1}|{2}", Event Player, If-Then-Else(And(Compare(Attacker, !=, Event Player), Array Contains(Global.rankedPlayers, Attacker)), Index Of Array Value(Global.rankedPlayers, Attacker), Custom String("")), If-Then-Else(Array Contains(Global.rankedPlayers, Event Player), Index Of Array Value(Global.rankedPlayers, Event Player), Custom String("")))));
+        "The kill counts for the attacker whenever attackerId is logged (final standings)"
+        If(And(Compare(Attacker, !=, Event Player), Array Contains(Global.rankedPlayers, Attacker)));
+            Modify Player Variable At Index(Attacker, tourneyStats, 1, Add, 1);
     }
 }
 
@@ -3699,6 +3784,7 @@ rule ("Ranked log - ROUND_END WIN") {
     }
     actions {
         Log To Inspector(Custom String("ROUND_END|{0}|{1}|{2}|WIN", Total Time Elapsed, Value In Array(Global.rankedState, 7), Index Of Array Value(Global.rankedPlayers, First Of(Global.rankedRound))));
+        Modify Player Variable At Index(First Of(Global.rankedRound), tourneyStats, 0, Add, 1);
         Set Global Variable(rankedRound, Empty Array);
         Set Global Variable At Index(rankedState, 8, False);
     }
@@ -3744,6 +3830,24 @@ rule ("Ranked log - MATCH_END") {
             Call Subroutine(logRankedRoundAbort);
         End;
         Log To Inspector(Custom String("MATCH_END|{0}|TIME", Total Time Elapsed));
+    }
+}
+
+rule ("Ranked log - MATCH_END ROUNDS") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Value In Array(Global.rankedState, 6) == True;
+        First Of(Value In Array(Global.rankedState, 16)) == True;
+        Value In Array(Global.rankedState, 8) == False;
+        Value In Array(Global.rankedState, 7) >= Global.totalRounds;
+    }
+    actions {
+        Wait(1, Ignore Condition);
+        Log To Inspector(Custom String("MATCH_END|{0}|ROUNDS", Total Time Elapsed));
+        Set Global Variable At Index(rankedState, 6, False);
+        Set Global Variable At Index(rankedState, 18, True);
     }
 }
 

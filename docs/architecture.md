@@ -20,6 +20,7 @@ This is a map of the game logic for contributors. It assumes you know roughly wh
 | `config/lobby.opy` | Lobby, game mode, hero and extension settings (the part of the export that isn't rules) |
 | `config/variables.opy` | Every global/player variable and subroutine, with its **fixed index**, plus active extensions |
 | `config/workshop-settings.opy` | Reads the Workshop settings and applies presets |
+| `features/tourney.opy` | `v1.3.3R` only: tourney matches, with the generated rule `TOURNEY - generated` ([tourney-rule.md](tourney-rule.md)), its settings, holding the ball after the last round, and the final standings. Early because its first two rules change settings in the first tick |
 | `maps/arenas.opy` | Arena center and size per map (the map table), and `isIsland` |
 | `config/initialization.opy` | Initial variable values, map sphere, bounce pads, mobility, match length |
 | `ui/hud.opy` | All HUD text, debug overlays, kill tracker |
@@ -141,6 +142,8 @@ Each line reads "A must stay before B". Rules are named as they appear in-game.
 | `Settings - Workshop settings` → everything else | It must be the first rule. It reads the Workshop settings and applies presets, and the startup rules below read the results. |
 | `Settings - Workshop settings` → `Initialization - global variables` | Init copies `ballSpawnSpeed` into `ballSpeed`, `setballspawncountdownoriginal` ("ball spawn countdown") into `setballspawncountdown` and `ballSpawnCountdown`, `roundsUntilBreak` into `roundsUntilBreakInit`, the "exp incoming min %" value into `experimentalState`, `arenaSettings` into `CenterOffLimitsSize` and `bouncePadConfig`, and picks `ballDirectionRateInit` from `ballMotion` and `ballFeel`. Swapped, the ball would use the pre-preset defaults (0). |
 | `Settings - Workshop settings` → `Initialization - Set map` | Set map reads the "arena radius" setting (`arenaSettings`) once. Swapped, every map would keep its own radius. |
+| `Settings - Workshop settings` → `TOURNEY - generated` → `Tourney - settings` | `v1.3.3R`. The settings rule builds `rankedState`, the generated rule then sets its `TOURNEY` field, and `Tourney - settings` reads it to force `tournamentMode`, `totalRounds` and ranked logging (`rankedState[LOGGING]`) in a tourney. |
+| `Tourney - settings` → `Initialization - Match length`, `Initialization - Disable inspector`, `HUD - add-ons text`, `Ranked log - MATCH_START` | They read `tournamentMode`, ranked logging, the tourney settings or `totalRounds` once, at start. Swapped, a tourney would get a match timer, a disabled inspector, the "ROUNDS LEFT" HUD or the preset's round limit in `TOURNEY`. |
 | `Settings - Workshop settings` → `HUD - controls text` | The HUD rule reads `addOnSettings` (Sandbox, double sens, custom abilities) once, when it starts. |
 | `Settings - Workshop settings` → `HUD - Watermark` | The HUD rule checks the "watermark" setting (`addOnSettings`) once. Swapped, the watermark would never show. |
 | `Settings - Workshop settings` → `Initialization - bounce pads`, `Appearance - target effects` | Both read the "red-green colorblind filter" setting (`addOnSettings`) once when they create their effects. Swapped, the filter would be ignored. |
@@ -186,6 +189,9 @@ The `Ranked log` rules (`features/ranked-log.opy`) only read the round flow's va
 |---|---|
 | `core/collision` → `Ranked log - DEFLECT` | The deflect rule watches `prevTarget`, which `Collision - collision sub` sets in the deflect. Coming later, it logs in the same tick, when `ballSpeed` and `target` are already the new ones. |
 | `Check for <2 players` → `Ranked log - ROUND_END WIN` | When a player leaves a two-player round, the check clears `IsEnoughPlayersToStart` in the same tick as the `LEAVE` leaves one player in `rankedRound`. The round is logged as `ABORT`, like the round flow, which gives no win. Swapped, it would be logged as a `WIN`. |
+| `Ranked log - ROUND_END WIN`, `NONE`, `ABORT`, `MATCH_END` → `Ranked log - MATCH_END ROUNDS` | In a tourney, the last round's `ROUND_END` closes the round (`IN_ROUND`) in the same tick `MATCH_END ROUNDS` checks it. It waits 1 s before logging anyway, so the order only changes that start by a tick. |
+
+`Tourney - hold the next round` comes before the round flow and the ranked log, so it sees the last round close one tick late. That's fine: the round flow starts the next round at least 0.35 s later (round win pause, `randomTarget()`), and reads `setballspawncountdown` only then.
 
 **AntiOrbit**
 
@@ -255,4 +261,4 @@ How to read these:
 - **Player rank** (rank-outline placeholders) isn't on `main`. The code is kept on the `feature/player-rank` branch. Its player variable slots (19–22) are free.
 - **Tombstone** (name-based removal of specific players) isn't on `main`. The code is kept on the `feature/tombstone` branch.
 - **Teams** (Team Deathmatch support) isn't on `main`. It lives on the `v1.3.3T` variant branch. Global variable slots 71–74 and 108 and subroutine slot 18 belong to `v1.3.3T` and are unused on `main`. Keep them that way, or merging `main` into `v1.3.3T` gives two variables the same slot.
-- **Ranked** (event logging and rank tags) isn't on `main`. It lives on the `v1.3.3R` variant branch. Global variable slots 124–127 and player variable slots 124–127 are reserved for `v1.3.3R` and unused on `main`, for the same reason. Ranked state should be packed into as few of them as possible (one array if it fits). On `v1.3.3R`, global 124 is `rankedState`, 125 `rankedPlayers` and 126 `rankedRound` (the ranked log), 127 `rankTags` (rank tags), player 124 is `rankTier`, and subroutine slots from 124 up are its own.
+- **Ranked** (event logging and rank tags) isn't on `main`. It lives on the `v1.3.3R` variant branch. Global variable slots 124–127 and player variable slots 124–127 are reserved for `v1.3.3R` and unused on `main`, for the same reason. Ranked state should be packed into as few of them as possible (one array if it fits). On `v1.3.3R`, global 124 is `rankedState`, 125 `rankedPlayers` and 126 `rankedRound` (the ranked log), 127 `rankTags` (rank tags), player 124 is `rankTier`, player 125 `tourneyStats` (a tourney's final standings), and subroutine slots from 124 up are its own.

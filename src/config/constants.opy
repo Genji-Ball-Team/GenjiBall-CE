@@ -215,6 +215,40 @@ enum RankedField:
     UNRANKED    #the UnrankedReasons logged in this match
     UNRANKED_TEXT   #the unranked warning's reasons, comma-separated
     REASON      #the UnrankedReason for logRankedUnranked()
+    TOURNEY     #the tourney settings (TourneyField), set only by "TOURNEY - generated". Its index (16) is
+                #part of the rule's contract (docs/tourney-rule.md): add new fields after it, never before
+    MATCH_KEY   #this match's matchKey from GBR, 12 digits as text
+    ENDED       #tourney: MATCH_END ROUNDS is logged, the final standings are up
+    STANDINGS   #tourney: the players on the final standings, best first
+
+#Fields of rankedState[TOURNEY], the tourney rule's values (docs/tourney-rule.md), in the rule's order
+enum TourneyField:
+    ON          #true in a tourney code: round-based match, TOURNEY line, final standings
+    LOBBY_KEY   #the server's id for the tourney lobby, digits as text (may start with 0)
+    ROUND_LIMIT #rounds the match lasts. Replaces "40 - Match > tournament rounds"
+    NAME        #the tourney's name on the HUD and final standings ("October Cup")
+    LOBBY_LABEL #the lobby's label next to it ("Lobby 1/2")
+
+#A tourney code: the tourney rule is on (features/tourney.opy)
+#!define TOURNEY_ON (rankedState[RankedField.TOURNEY][TourneyField.ON] == true)
+
+#Rounds a tourney lasts when the rule's round limit is below 1
+#!define TOURNEY_DEFAULT_ROUNDS 30
+
+#Seconds between the last round's ROUND_END and MATCH_END ROUNDS, so that round's last KILL and LEAVE lines come first
+#!define TOURNEY_MATCH_END_DELAY 1
+
+#Seconds the final standings stay up before the match ends and the lobby resets: time for the host's screenshot
+#!define TOURNEY_STANDINGS_TIME 30
+
+#Final standings: wins count this much more than kills, so sorting on wins * weight + kills puts most wins
+#first and breaks ties on kills. More kills than one match can have.
+#!define TOURNEY_WIN_WEIGHT 10000
+
+#Fields of a player's tourneyStats, counted from their JOIN as the server counts the log (docs/ranked-log.md)
+enum TourneyStat:
+    WINS        #ROUND_END WIN rounds they won, rated or not
+    KILLS       #KILL lines with them as the attacker (not themselves)
 
 #Why a match won't count: UNRANKED's reason codes (docs/ranked-log.md, "Unranked matches").
 #The code and warning text of each are UNRANKED_CODES and UNRANKED_TEXTS (features/ranked-log.opy).

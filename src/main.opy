@@ -15,6 +15,9 @@
 
 #ORDER: must be first. Its settings rule has to run before the startup rules in config/initialization and ui/hud.
 #!include "config/workshop-settings.opy"
+#ORDER: right after config/workshop-settings. "TOURNEY - generated" and "Tourney - settings" change rankedState,
+#tournamentMode and totalRounds in the first tick, before the startup rules below read them.
+#!include "features/tourney.opy"
 #ORDER: after config/workshop-settings. Before config/initialization ("Initialization - bounce pads" reads circleCenter once).
 #!include "maps/arenas.opy"
 #ORDER: after config/workshop-settings and maps/arenas.

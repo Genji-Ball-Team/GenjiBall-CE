@@ -22,6 +22,8 @@ def logRankedJoins():
     while any([player not in rankedPlayers and player.hasSpawned() for player in getAllPlayers()]):
         rankedPlayers.append(getAllPlayers().filter(lambda player: player not in rankedPlayers and player.hasSpawned())[0])
         logToInspector("JOIN|{0}|{1}|{2}|{3}".format(getTotalTimeElapsed(), len(rankedPlayers) - 1, rankedPlayers.last(), 1 if rankedPlayers.last() == hostPlayer else ""))
+        #Their wins and kills count from this JOIN, as the server counts them per id
+        rankedPlayers.last().tourneyStats = [0, 0]
 
 
 rule "Ranked log - MATCH_START":
@@ -33,8 +35,13 @@ rule "Ranked log - MATCH_START":
     rankedRound = []
     rankedState[RankedField.ROUND] = 0
     rankedState[RankedField.IN_ROUND] = false
-    #matchKey: 12 random digits, so the server can tell repeated copies of this match apart from other matches
-    logToInspector("GBR|{0}|1|1.3.3R|{1}{2}".format(getTotalTimeElapsed(), random.randint(100000, 999999), random.randint(100000, 999999)))
+    #matchKey: 12 random digits, so the server can tell repeated copies of this match apart from other matches.
+    #Kept for a tourney's final standings. Format 2 for every match, ranked ones too.
+    rankedState[RankedField.MATCH_KEY] = "{0}{1}".format(random.randint(100000, 999999), random.randint(100000, 999999))
+    logToInspector("GBR|{0}|2|1.3.3R|{1}".format(getTotalTimeElapsed(), rankedState[RankedField.MATCH_KEY]))
+    #Tourney: right after GBR, so every copy of the match has it. roundLimit is the one the match plays (totalRounds).
+    if TOURNEY_ON:
+        logToInspector("TOURNEY|{0}|{1}|{2}".format(getTotalTimeElapsed(), rankedState[RankedField.TOURNEY][TourneyField.LOBBY_KEY], totalRounds))
     #feel: any setting that changes how the ball or a player moves, controls or deflects (docs/ranked-log.md)
     #addOns: the gameplay add-ons that are on, comma-separated
     logToInspector("MATCH_START|{0}|{1}|{2}|{3}|{4}".format(
@@ -58,7 +65,8 @@ rule "Ranked log - MATCH_START":
     if getCurrentGamemode() != Gamemode.FFA:
         rankedState[RankedField.REASON] = UnrankedReason.MODE
         logRankedUnranked()
-    if presetMode != Preset.DEFAULT:
+    #Default for a ranked match, Tournament for a tourney
+    if presetMode != (Preset.TOURNAMENT if TOURNEY_ON else Preset.DEFAULT):
         rankedState[RankedField.REASON] = UnrankedReason.PRESET
         logRankedUnranked()
     if RANKED_FEEL_ON:
@@ -73,7 +81,7 @@ rule "Ranked log - MATCH_START":
 
 #UNRANKED reasons in UnrankedReason order: the logged code, and the warning text
 #!define UNRANKED_CODES ["MAP", "MODE", "PRESET", "FEEL", "ADD_ON", "BOT"]
-#!define UNRANKED_TEXTS ["not on Workshop Island Night", "not free-for-all", "the preset isn't Default", "a ball or player feel setting is on", "a gameplay add-on is on", "a bot joined"]
+#!define UNRANKED_TEXTS ["not on Workshop Island Night", "not free-for-all", "the preset isn't {0}".format("Tournament" if TOURNEY_ON else "Default"), "a ball or player feel setting is on", "a gameplay add-on is on", "a bot joined"]
 
 #Logs UNRANKED for rankedState[REASON] (an UnrankedReason) and adds it to the warning, once per reason.
 def logRankedUnranked():
@@ -208,6 +216,9 @@ rule "Ranked log - KILL":
         rankedPlayers.index(attacker) if attacker != eventPlayer and attacker in rankedPlayers else "",
         rankedPlayers.index(eventPlayer) if eventPlayer in rankedPlayers else ""
     ))
+    #The kill counts for the attacker whenever attackerId is logged (final standings)
+    if attacker != eventPlayer and attacker in rankedPlayers:
+        attacker.tourneyStats[TourneyStat.KILLS] += 1
 
 
 #A deflect. "Collision - collision sub" is feel-locked, so this rule watches prevTarget instead:
@@ -250,6 +261,7 @@ rule "Ranked log - ROUND_END WIN":
     @Condition getNumberOfLivingPlayers(Team.ALL) == 1
 
     logToInspector("ROUND_END|{0}|{1}|{2}|WIN".format(getTotalTimeElapsed(), rankedState[RankedField.ROUND], rankedPlayers.index(rankedRound[0])))
+    rankedRound[0].tourneyStats[TourneyStat.WINS] += 1
     rankedRound = []
     rankedState[RankedField.IN_ROUND] = false
 
@@ -280,3 +292,19 @@ rule "Ranked log - MATCH_END":
     if rankedState[RankedField.IN_ROUND]:
         logRankedRoundAbort()
     logToInspector("MATCH_END|{0}|TIME".format(getTotalTimeElapsed()))
+
+
+#Tourney: the match ends after round roundLimit (totalRounds), whatever its ROUND_END (WIN, NONE or ABORT).
+#After the ROUND_END rules, so it sees the last round close in the same tick. The short wait lets that
+#round's last KILL and LEAVE lines come first. Then nothing more is logged, and features/tourney.opy shows
+#the final standings and ends the match. The match timer can't end a tourney, so MATCH_END TIME never comes.
+rule "Ranked log - MATCH_END ROUNDS":
+    @Condition rankedState[RankedField.STARTED] == true
+    @Condition TOURNEY_ON
+    @Condition rankedState[RankedField.IN_ROUND] == false
+    @Condition rankedState[RankedField.ROUND] >= totalRounds
+
+    wait(TOURNEY_MATCH_END_DELAY)
+    logToInspector("MATCH_END|{0}|ROUNDS".format(getTotalTimeElapsed()))
+    rankedState[RankedField.STARTED] = false
+    rankedState[RankedField.ENDED] = true
