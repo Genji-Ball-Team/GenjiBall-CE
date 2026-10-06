@@ -152,7 +152,7 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 | dash cooldown | 3.04 | 0–10 s | Seconds after a dash ends before you can dash again |
 | dash hit knockdown | 1 | 0–3 s | How long hitting the ball with a dash knocks you down |
 | dash hit knockdown cooldown | 0.6 | 0–5 s | After a dash hit knockdown, how long before another dash hit can knock you down |
-| double sens | off | | Players can press Ultimate to switch between 100% aim sensitivity and "double sens %". Disabled while custom abilities are on, because they use Ultimate |
+| double sens | on | | Players can press Ultimate to switch between 100% aim sensitivity and "double sens %". Disabled while custom abilities are on, because they use Ultimate |
 | double sens % | 275 | 100–500 | The high aim sensitivity double sens switches to |
 
 ### 40 - Match
