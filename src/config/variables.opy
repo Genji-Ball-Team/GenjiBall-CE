@@ -105,6 +105,8 @@ playervar orbitHeat 25
 playervar kills 26
 #v1.3.3R (Ranked) slots 124-127. The player's entry in rankTags: 0 not checked yet, -1 none.
 playervar rankTier 124
+#Ranked log: the player's round wins and kills since their JOIN (TourneyStat), for a tourney's final standings
+playervar tourneyStats 125
 
 #Subroutine names
 

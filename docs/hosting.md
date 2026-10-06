@@ -35,6 +35,15 @@ The code shows the leaderboard's top 10 in the lobby: a tag over each of them wi
 
 Anything else makes the match unranked, and the game says so at the top of the screen ("UNRANKED: this match won't count", with the reason): see [Unranked matches](ranked-log.md#unranked-matches). The data center is your choice (the v1.3.2 RANKED code forced Netherlands; this one doesn't).
 
+### Tourney lobbies
+
+For a tourney, the host tool gives the lobby's host a **tourney code**: the ranked code with the `TOURNEY - generated` rule filled in ([tourney-rule.md](tourney-rule.md)). The lobby setup is the ranked one, except the preset:
+
+- Preset **Tournament** instead of Default. Any other preset makes the match unranked ("the preset isn't Tournament").
+- The match lasts the tourney's number of rounds, from the code: `tournament rounds` and `match length` are ignored, and there's no match timer or tiebreaker. Every round counts, restarts included. The HUD on the right shows the tourney, the lobby and `ROUND: x / N`.
+- Ranked logging is always on, whatever `70 - Ranked > ranked logging` says. Keep **Enable Workshop Inspector Log File** on.
+- After the last round, everyone sees the **final standings** at the top of the screen for 30 s: place, name, round wins and kills, with the tourney, the lobby and the match key. Take the screenshot then (spectators see it too). Then the match ends and the lobby resets; close it rather than play another match with the same code.
+
 ## Maps
 
 Workshop Island (Night) is the only map enabled by default. The mode supports the Workshop maps below. Enable them under **Settings → Modes → Deathmatch → Maps**. On any other map the game shows "This map isn't supported" with the list of supported maps, and no round starts.
@@ -153,7 +162,7 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 |---|---|---|---|
 | match length | 15 | 5–60 min | Ignored in tournament mode |
 | tournament mode | off | | Plays a fixed number of rounds instead of using a timer. Also: non-targets can't dash into the water, and a basic anti-orbit rule applies (if AntiOrbit is off, stalling a ball slower than 80 within 20 m for 7.5 s puts you to sleep by default; tuned in [60 - Competitive](#60---competitive)) |
-| tournament rounds | 30 | 1–50 | Rounds until the match ends |
+| tournament rounds | 30 | 1–50 | Rounds until the match ends. A [tourney code](#tourney-lobbies) replaces it with the tourney's number of rounds |
 | breaks | on | | Take a break every N rounds |
 | break every | 10 | 4–25 | Rounds between breaks |
 | break length | 60 | 1–120 s | Length of the break (the ball spawn countdown is extended) |
@@ -193,7 +202,7 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 <!-- settings: 70 - Ranked -->
 | Setting | Default | Range | What it does |
 |---|---|---|---|
-| ranked logging | on | | Writes the match to the Workshop inspector log for the ranked leaderboard: match start and end, players joining and leaving, each round with its elimination order and winner, and every kill and deflect. Turn on **Enable Workshop Inspector Log File** in the Overwatch options so it reaches a file the host tool can upload. Keeps the Workshop inspector on, which v1.3.3 turns off to save server load. **off**: nothing is logged, the match can't count, and the inspector is turned off as in v1.3.3. Format: [ranked-log.md](ranked-log.md) |
+| ranked logging | on | | Writes the match to the Workshop inspector log for the ranked leaderboard: match start and end, players joining and leaving, each round with its elimination order and winner, and every kill and deflect. Turn on **Enable Workshop Inspector Log File** in the Overwatch options so it reaches a file the host tool can upload. Keeps the Workshop inspector on, which v1.3.3 turns off to save server load. **off**: nothing is logged, the match can't count, and the inspector is turned off as in v1.3.3. A [tourney code](#tourney-lobbies) keeps it on. Format: [ranked-log.md](ranked-log.md) |
 | rank tags | on | | The tag over the head of the leaderboard's top 10, with their place and rating, and of other players in a rank tier, with its name ([rank-tags.md](rank-tags.md)). **off**: no tags. The `RANKS - generated` rule stays, and the top 10 list is separate. Doesn't affect ranked logging |
 | rank tag height | 1.5 | 0–5 m | How far above the player's position the tag sits |
 | rank tag size | 1 | 0.5–4 | The tag's in-world text size |

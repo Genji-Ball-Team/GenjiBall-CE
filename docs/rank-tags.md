@@ -2,7 +2,7 @@
 
 v1.3.3R shows the ranked leaderboard's top 10 in the lobby: a tag over each of their heads with their place and rating (`#1 | 2074`), and a top 10 list on the right of the screen. Other players in a rank tier (Apprentice, Master, Grandmaster, Ascendant, Champion, God) get the tier's name over their head; lower and new players get no tag. The game doesn't know anyone's rating: the tiers, the top 10 and their names come from one generated rule, `RANKS - generated`, that the host tool ([genjiball-host-tool](https://github.com/Genji-Ball-Team/genjiball-host-tool) "Ranked code generator") fills in from the ranked server ([genjiball-ranked](https://github.com/Genji-Ball-Team/genjiball-ranked) `GET /api/rank-tags` and `GET /api/leaderboard`) for the host's region. No share codes: the host pastes the code the host tool gives them.
 
-All three repos depend on this page. Change it before changing the rule.
+All three repos depend on this page. Change it before changing the rule. A tourney code has a second generated rule, `TOURNEY - generated` ([tourney-rule.md](tourney-rule.md)).
 
 ## The generated rule
 

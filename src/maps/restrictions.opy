@@ -171,6 +171,12 @@ rule "Map restrictions - island enter":
 
 def alert():
     @Name "Subroutine - Round end call"
-    
+
+    #Tourney: the ranked log counts the rounds (every ROUND_START, restarts included) and ends the match,
+    #so totalRounds stays the round limit. No break after the last round: the final standings come instead.
+    if TOURNEY_ON:
+        if rankedState[RankedField.ROUND] < totalRounds:
+            roundsUntilBreak--
+        return
     totalRounds--
     roundsUntilBreak--
