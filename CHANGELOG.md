@@ -4,7 +4,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## Unreleased
 
-- No water by default in ranked: the Default preset and the "water" setting are **none** (y = −1000) instead of moderate, so the ball never skims off the water around Workshop Island. Tournament, Tournament+ and Experimental keep moderate. `main` keeps moderate. Goes out as a re-release of `1.3.3R`.
+- Moderate water is back by default in ranked (reverts #162): the Default preset and the "water" setting are **moderate** (y = −15) again, as in v1.3.3. Goes out as a re-release of `1.3.3R`.
 - Double sens is on by default in ranked: players can press Ultimate to switch to the high aim sensitivity without the host turning it on, which they'd lose on every re-paste of the code. Hosts can still turn it off. `main` keeps it off. Goes out as a re-release of `1.3.3R`.
 - Release notes: v1.3.3R has no import code. The notes say to get the code from the host tool's Copy ranked code (or Copy tourney code), with the release file as the fallback without rank tags.
 - Release notes: a Tourneys section in the v1.3.3R notes and the Discord post (tourney code, Tournament preset, rounds, final standings).
