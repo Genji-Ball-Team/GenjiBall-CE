@@ -75,16 +75,16 @@ These appear in the custom game under **Settings → Workshop → Settings**, gr
 | Preset | What it's for | Differences from Default |
 |---|---|---|
 | **Default** | Standard casual play | none |
-| **Tournament** | The current tournament ruleset | Tournament mode on, water = moderate, anti-ghost off, AntiOrbit off, AntiOrbit and basic anti-orbit tuning at their defaults |
-| **Tournament+** | Candidate for future tournaments | Tournament mode on, water = moderate, anti-ghost = steer, AntiOrbit on (radius 14, pressure 2), AntiOrbit and basic anti-orbit tuning at their defaults |
+| **Tournament** | The current tournament ruleset | Tournament mode on, anti-ghost off, AntiOrbit off, AntiOrbit and basic anti-orbit tuning at their defaults |
+| **Tournament+** | Candidate for future tournaments | Tournament mode on, anti-ghost = steer, AntiOrbit on (radius 14, pressure 2), AntiOrbit and basic anti-orbit tuning at their defaults |
 | **Rapid** | Workshop Expanse-style: fast and bouncy | water = flood, motion = rapid, bounce pads on, mobility = balanced |
-| **v1** | Dry Workshop Island, as in the early versions | none (Default is dry in ranked too) |
+| **v1** | Dry Workshop Island, as in the early versions | water = none |
 | **v7** | v7-style (partial) | water = flood, bounce pads on, mobility = sluggish |
-| **Experimental** | Playtesting new rebound physics. Not tournament-safe | water = moderate, physics = experimental, anti-ghost off, AntiOrbit on (radius 14, pressure 2), AntiOrbit and basic anti-orbit tuning at their defaults |
+| **Experimental** | Playtesting new rebound physics. Not tournament-safe | physics = experimental, anti-ghost off, AntiOrbit on (radius 14, pressure 2), AntiOrbit and basic anti-orbit tuning at their defaults |
 | **Custom** | Everything manual | uses your values for every setting |
 
 What "Default" forces (all non-Custom presets start from this):
-match length 15 min, tournament off, 30 rounds, breaks on every 10 rounds for 60 s, ball spawn countdown 5 s, ball respawn delay 2 s, round win pause 2 s, ball start speed 60, max speed 400, acceleration 25, motion modern, physics original, custom ball feel off, water none (moderate in v1.3.3), bounce pads off, center exclusion size 3.5, arena radius 0 (the map's), bounce pad strength 30, distance 12, range 2.75 and cooldown 3 s, mobility agile, dash cooldown 3.04 s, dash hit knockdown 1 s and knockdown cooldown 0.6 s.
+match length 15 min, tournament off, 30 rounds, breaks on every 10 rounds for 60 s, ball spawn countdown 5 s, ball respawn delay 2 s, round win pause 2 s, ball start speed 60, max speed 400, acceleration 25, motion modern, physics original, custom ball feel off, water moderate, bounce pads off, center exclusion size 3.5, arena radius 0 (the map's), bounce pad strength 30, distance 12, range 2.75 and cooldown 3 s, mobility agile, dash cooldown 3.04 s, dash hit knockdown 1 s and knockdown cooldown 0.6 s.
 
 Settings **not** touched by any preset: everything in *50 - Features*, *70 - Ranked*, *80 - Visual*, *90 - Debug*, water ledge fix, double sens and double sens %, and tracing view angle. The "custom ... %" mobility sliders are never forced either, but no preset picks mobility = custom, so they only apply with Preset = Custom. Anti-ghost, AntiOrbit and the rest of *60 - Competitive* are only forced by the presets listed above. The AntiOrbit speed, timer, min timer and sleep and the three basic anti-orbit settings are forced together, to their defaults.
 
@@ -130,7 +130,7 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 <!-- settings: 20 - Arena -->
 | Setting | Default | Range | What it does |
 |---|---|---|---|
-| water | none | moderate / none / minimal / flood | Workshop Island only. The height at which the ball skims off the water outside the island: **moderate** (y = −15), **none** (no water), **minimal** (y = −26), **flood** (y = −0.5, almost at island level) |
+| water | moderate | moderate / none / minimal / flood | Workshop Island only. The height at which the ball skims off the water outside the island: **moderate** (y = −15), **none** (no water), **minimal** (y = −26), **flood** (y = −0.5, almost at island level) |
 | bounce pads | off | | Four blue rings around the center (12 m out by default). Press Jump on one for a big vertical launch (3 s cooldown per player by default). Tuned with the bounce pad settings below |
 | center exclusion size | 3.5 | 0–10 m | Radius of the black sphere at the center that pushes players out |
 | arena radius | 0 | 0–100 m | **0** uses the map's radius (see [Maps](#maps)), anything else replaces it. The radius is at least 10 and at least 1.5 × (center exclusion size + 0.5), so final duel spawns stay in bounds and outside the center |
