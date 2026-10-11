@@ -1,5 +1,6 @@
-#Rank tags: the leaderboard's top players get a tag over their head with their place and rating, and a
-#top 10 list on the right. Other ranked players get their rank tier's name. They come from "RANKS - generated",
+#Rank tags: ranked players get their rank tier's name over their head (the top 10 too, with
+#host tool codes that list them with no names; older codes tag them with their place and rating), and the top 10 are listed
+#on the right. Grandmaster, Ascendant and Champion players also glow. They come from "RANKS - generated",
 #which the host tool replaces (docs/rank-tags.md).
 
 
@@ -45,6 +46,31 @@ rule "Rank tags - floating tags":
             Clip.NONE,
             WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR,
             rankTags[max(getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankTier, 0)][RankTagField.COLOR]
+        )
+        rankedState[RankedField.TAG_LOOP] += 1
+
+
+#Rank glow: players in these tiers get the Baptiste immortality look, the same as the bot's "bot effect".
+#Visual only. Matched by the tier's label, as the ranked server names it (docs/rank-tags.md).
+#!define RANK_GLOW_TIERS ["Grandmaster", "Ascendant", "Champion"]
+
+#One glow per FFA slot, following whoever is in it, like the tags: hidden while they're dead, nothing to
+#destroy when a player leaves, and the number of effects never grows. Off with "70 - Ranked > rank tags".
+#It shares rankedState[TAG_LOOP] with the other loops here, and none of them waits inside its loop.
+rule "Rank tags - glow":
+    @Condition rankedState[RankedField.TAGS] == true
+
+    #Entity creation fail protection
+    wait(1)
+    rankedState[RankedField.TAG_LOOP] = 0
+    while rankedState[RankedField.TAG_LOOP] < FFA_SLOTS:
+        createEffect(
+            getAllPlayers() if getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankTier > 0 and getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).isAlive() and rankTags[max(getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankTier, 0)][RankTagField.LABEL] in RANK_GLOW_TIERS else null,
+            Effect.BAPTISTE_IMMORTALITY_FIELD_PROTECTED,
+            Color.WHITE,
+            getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL),
+            1,
+            EffectReeval.VISIBILITY_POSITION_AND_RADIUS
         )
         rankedState[RankedField.TAG_LOOP] += 1
 

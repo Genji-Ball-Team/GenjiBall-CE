@@ -1,6 +1,6 @@
 # Rank tags
 
-v1.3.3R shows the ranked leaderboard's top 10 in the lobby: a tag over each of their heads with their place and rating (`#1 | 2074`), and a top 10 list on the right of the screen. Other players in a rank tier (Apprentice, Master, Grandmaster, Ascendant, Champion, God) get the tier's name over their head; lower and new players get no tag. The game doesn't know anyone's rating: the tiers, the top 10 and their names come from one generated rule, `RANKS - generated`, that the host tool ([genjiball-host-tool](https://github.com/Genji-Ball-Team/genjiball-host-tool) "Ranked code generator") fills in from the ranked server ([genjiball-ranked](https://github.com/Genji-Ball-Team/genjiball-ranked) `GET /api/rank-tags` and `GET /api/leaderboard`) for the host's region. No share codes: the host pastes the code the host tool gives them.
+v1.3.3R shows each player in a rank tier (Apprentice, Master, Grandmaster, Ascendant, Champion, God) the tier's name over their head, and the ranked leaderboard's top 10 in a list on the right of the screen; lower and new players get no tag. Grandmaster, Ascendant and Champion players also glow with the Baptiste immortality effect. The game doesn't know anyone's rating: the tiers, the top 10 and their names come from one generated rule, `RANKS - generated`, that the host tool ([genjiball-host-tool](https://github.com/Genji-Ball-Team/genjiball-host-tool) "Ranked code generator") fills in from the ranked server ([genjiball-ranked](https://github.com/Genji-Ball-Team/genjiball-ranked) `GET /api/rank-tags` and `GET /api/leaderboard`) for the host's region. No share codes: the host pastes the code the host tool gives them.
 
 All three repos depend on this page. Change it before changing the rule. A tourney code has a second generated rule, `TOURNEY - generated` ([tourney-rule.md](tourney-rule.md)).
 
@@ -39,10 +39,11 @@ Array(
 
 - **Index 0**: one line shown under "Live leaderboard: genjiball.us", for example `Top 10 on 2026-10-05`.
 - **Index 1 onward**: one array per entry, at most 60. First the rank tiers, **lowest first**, then the top players, **the best last**:
-  - `label`: the tag over the player: the tier's name (`Grandmaster`), or a top player's place and rating (`#1 | 2074`).
+  - `label`: the tag over the player: the tier's name (`Grandmaster`). A top player's entry has an empty label and no names, so they keep their tier's tag. (Older host tool codes gave the top players their place and rating as the label, `#1 | 2074`, and their name; the game still shows that.)
   - colour: `Custom Color` with 0–255 values, used for the tag and the list line. A top player's is the colour of their tier on the site.
+  - The glow goes by the label: a player whose entry's label is `Grandmaster`, `Ascendant` or `Champion` glows (`RANK_GLOW_TIERS` in `src/features/rank-tags.opy`). Renaming a tier on the server needs that list changed too.
   - `list line`: the entry's line in the top 10 list, `#1 MauMau - 2074`, or empty (`Custom String("")`) for a rank tier: entries with an empty line aren't listed. The game shows whatever this says.
-  - then the names: every player in the tier, or the top player's one. A tier can have none.
+  - then the names: every player in the tier, top players included. A tier can have none, and a top player's entry has none.
 
 A player gets the tag of the last entry that lists their name, so a top player also listed in their tier gets their place and rating. The name must be the in-game display name exactly as the Workshop writes it (`Custom String("{0}", Event Player)`): the BattleTag without `#1234`. The match is case-sensitive.
 
@@ -56,6 +57,7 @@ A player gets the tag of the last entry that lists their name, so a top player a
 
 - The entry is looked up once per player, a moment after they first spawn. A new code with new names needs a new lobby.
 - Tags follow FFA slots: one in-world text per slot (12), shown over the player in that slot while they are alive and tagged. Nothing is left behind when a player leaves.
+- The glow works the same way: one Baptiste immortality effect per slot (12), white, shown on the player in that slot while they are alive and in a glowing tier. It's only a look: it changes nothing in play. It's on and off with the tags.
 - The list is on the right: "Live leaderboard: genjiball.us" (sort order -100), index 0 (-99), then each entry with a list line at -30 minus its index, so the best is first and no entry's line can go above the header. Simple HUD (Interact) hides it, with "Press [Interact] to hide" (-20) except in Sandbox.
 - `70 - Ranked` in the Workshop settings turns the tags (`rank tags`) and the list (`top 10 list`) off, and sets the tag's height and size ([hosting.md](hosting.md#70---ranked)).
 - There's no live rating in game. Tags change when the host gets a new code from the host tool.

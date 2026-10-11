@@ -203,7 +203,7 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 | Setting | Default | Range | What it does |
 |---|---|---|---|
 | ranked logging | on | | Writes the match to the Workshop inspector log for the ranked leaderboard: match start and end, players joining and leaving, each round with its elimination order and winner, and every kill and deflect. Turn on **Enable Workshop Inspector Log File** in the Overwatch options so it reaches a file the host tool can upload. Keeps the Workshop inspector on, which v1.3.3 turns off to save server load. **off**: nothing is logged, the match can't count, and the inspector is turned off as in v1.3.3. A [tourney code](#tourney-lobbies) keeps it on. Format: [ranked-log.md](ranked-log.md) |
-| rank tags | on | | The tag over the head of the leaderboard's top 10, with their place and rating, and of other players in a rank tier, with its name ([rank-tags.md](rank-tags.md)). **off**: no tags. The `RANKS - generated` rule stays, and the top 10 list is separate. Doesn't affect ranked logging |
+| rank tags | on | | The tag over the head of players in a rank tier, with its name, and the Baptiste immortality glow on Grandmaster, Ascendant and Champion players ([rank-tags.md](rank-tags.md)). **off**: no tags and no glow. The `RANKS - generated` rule stays, and the top 10 list is separate. Doesn't affect ranked logging |
 | rank tag height | 1.5 | 0–5 m | How far above the player's position the tag sits |
 | rank tag size | 1 | 0.5–4 | The tag's in-world text size |
 | top 10 list | on | | The leaderboard's top 10 on the right of the screen, with the "Live leaderboard: genjiball.us" line and "Press [Interact] to hide". **off**: none of it. Doesn't affect the tags or ranked logging |
