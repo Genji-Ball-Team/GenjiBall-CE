@@ -3858,7 +3858,8 @@ rule ("RANKS - generated") {
         Ongoing - Global;
     }
     actions {
-        Set Global Variable(rankTags, Array(Custom String("Top 10 comes with the host tool's code")));
+        "TEST ONLY, not for release: Fealthy as Grandmaster to check the glow"
+        Set Global Variable(rankTags, Array(Custom String("Top 10 comes with the host tool's code"), Array(Custom String("Grandmaster"), Custom Color(220, 60, 60, 255), Custom String(""), Custom String("Fealthy"))));
     }
 }
 
@@ -3914,7 +3915,8 @@ rule ("Rank tags - glow") {
         Wait(1, Ignore Condition);
         Set Global Variable At Index(rankedState, 12, 0);
         While(Compare(Value In Array(Global.rankedState, 12), <, 12));
-            Create Effect(If-Then-Else(And(And(Compare((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).rankTier, >, 0), Is Alive(Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams))), Array Contains(Array(Custom String("Grandmaster"), Custom String("Ascendant"), Custom String("Champion")), First Of(Value In Array(Global.rankTags, Max((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).rankTier, 0))))), All Players(All Teams), Null), Baptiste Immortality Field Protected Effect, Color(White), Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams), 1, Visible To Position and Radius);
+            "Everyone sees it, except its wearer while they have simple HUD on (Interact)"
+            Create Effect(If-Then-Else(And(And(Compare((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).rankTier, >, 0), Is Alive(Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams))), Array Contains(Array(Custom String("Grandmaster"), Custom String("Ascendant"), Custom String("Champion")), First Of(Value In Array(Global.rankTags, Max((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).rankTier, 0))))), Remove From Array(All Players(All Teams), If-Then-Else(Compare((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).simpleHUD, !=, 0), Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams), Null)), Null), Baptiste Immortality Field Protected Effect, Color(White), Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams), 1, Visible To Position and Radius);
             Modify Global Variable At Index(rankedState, 12, Add, 1);
         End;
     }

@@ -10,7 +10,8 @@
 #an empty list line, then the top players, the best last: [label, colour, list line, name, ...].
 #Without the host tool there are none.
 rule "RANKS - generated":
-    rankTags = ["Top 10 comes with the host tool's code"]
+    #TEST ONLY, not for release: Fealthy as Grandmaster to check the glow
+    rankTags = ["Top 10 comes with the host tool's code", ["Grandmaster", rgba(220, 60, 60, 255), "", "Fealthy"]]
 
 
 #The best entry that lists the player's name, or -1 for none. Once, when they first spawn.
@@ -64,8 +65,9 @@ rule "Rank tags - glow":
     wait(1)
     rankedState[RankedField.TAG_LOOP] = 0
     while rankedState[RankedField.TAG_LOOP] < FFA_SLOTS:
+        #Everyone sees it, except its wearer while they have simple HUD on (Interact)
         createEffect(
-            getAllPlayers() if getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankTier > 0 and getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).isAlive() and rankTags[max(getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankTier, 0)][RankTagField.LABEL] in RANK_GLOW_TIERS else null,
+            getAllPlayers().exclude(getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL) if getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).simpleHUD != SimpleHud.OFF else null) if getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankTier > 0 and getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).isAlive() and rankTags[max(getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankTier, 0)][RankTagField.LABEL] in RANK_GLOW_TIERS else null,
             Effect.BAPTISTE_IMMORTALITY_FIELD_PROTECTED,
             Color.WHITE,
             getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL),
