@@ -3858,8 +3858,8 @@ rule ("RANKS - generated") {
         Ongoing - Global;
     }
     actions {
-        "TEST ONLY, not for release: Fealthy as Grandmaster to check the glow"
-        Set Global Variable(rankTags, Array(Custom String("Top 10 comes with the host tool's code"), Array(Custom String("Grandmaster"), Custom Color(220, 60, 60, 255), Custom String(""), Custom String("Fealthy"))));
+        "TEST ONLY, not for release: Fealthy and Alterschuh as Grandmaster to check the glow"
+        Set Global Variable(rankTags, Array(Custom String("Top 10 comes with the host tool's code"), Array(Custom String("Grandmaster"), Custom Color(220, 60, 60, 255), Custom String(""), Custom String("Fealthy"), Custom String("Alterschuh"))));
     }
 }
 
