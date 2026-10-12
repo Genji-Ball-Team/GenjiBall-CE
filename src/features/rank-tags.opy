@@ -11,7 +11,7 @@
 #Without the host tool there are none.
 rule "RANKS - generated":
     #TEST ONLY, not for release: Fealthy and Alterschuh as Grandmaster to check the glow
-    rankTags = ["Top 10 comes with the host tool's code", ["Grandmaster", rgba(220, 60, 60, 255), "", "Fealthy", "Alterschuh"]]
+    rankTags = ["Top 10 comes with the host tool's code", ["Grandmaster", rgba(255, 140, 0, 255), "", "Fealthy", "Alterschuh"]]
 
 
 #The best entry that lists the player's name, or -1 for none. Once, when they first spawn.
