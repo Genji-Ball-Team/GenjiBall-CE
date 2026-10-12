@@ -169,6 +169,7 @@ variables {
         26: kills
         124: rankTier
         125: tourneyStats
+        126: rankGlowHidden
 }
 
 subroutines {
@@ -3915,10 +3916,30 @@ rule ("Rank tags - glow") {
         Wait(1, Ignore Condition);
         Set Global Variable At Index(rankedState, 12, 0);
         While(Compare(Value In Array(Global.rankedState, 12), <, 12));
-            "Everyone sees it, except its wearer while they have simple HUD on (Interact)"
-            Create Effect(If-Then-Else(And(And(Compare((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).rankTier, >, 0), Is Alive(Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams))), Array Contains(Array(Custom String("Grandmaster"), Custom String("Ascendant"), Custom String("Champion")), First Of(Value In Array(Global.rankTags, Max((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).rankTier, 0))))), Remove From Array(All Players(All Teams), If-Then-Else(Compare((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).simpleHUD, !=, 0), Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams), Null)), Null), Baptiste Immortality Field Protected Effect, Color(White), Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams), 1, Visible To Position and Radius);
+            "Everyone sees it, except its wearer once they've hidden it (tap Crouch)"
+            Create Effect(If-Then-Else(And(And(Compare((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).rankTier, >, 0), Is Alive(Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams))), Array Contains(Array(Custom String("Grandmaster"), Custom String("Ascendant"), Custom String("Champion")), First Of(Value In Array(Global.rankTags, Max((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).rankTier, 0))))), Remove From Array(All Players(All Teams), If-Then-Else((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).rankGlowHidden, Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams), Null)), Null), Baptiste Immortality Field Protected Effect, Color(White), Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams), 1, Visible To Position and Radius);
             Modify Global Variable At Index(rankedState, 12, Add, 1);
         End;
+    }
+}
+
+rule ("Rank tags - hide own glow") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Button Held(Event Player, Button(Crouch)) == True;
+        Array Contains(Array(Custom String("Grandmaster"), Custom String("Ascendant"), Custom String("Champion")), First Of(Value In Array(Global.rankTags, Max((Event Player).rankTier, 0)))) == True;
+        Value In Array(Global.addOnSettings, 7) == False;
+    }
+    actions {
+        Wait Until(Or(Not(Is Button Held(Event Player, Button(Crouch))), Is Button Held(Event Player, Button(Jump))), 0.3);
+        Abort If(Or(Is Button Held(Event Player, Button(Crouch)), Is Button Held(Event Player, Button(Jump))));
+        Set Player Variable(Event Player, rankGlowHidden, Not((Event Player).rankGlowHidden));
+        Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Color(White), Event Player, 10);
+        Small Message(Event Player, If-Then-Else((Event Player).rankGlowHidden, Custom String("your glow: hidden for you"), Custom String("your glow: shown")));
     }
 }
 
