@@ -105,6 +105,8 @@ playervar orbitHeat 25
 playervar kills 26
 #v1.3.3R (Ranked) slots 124-127. The player's entry in rankTags: 0 not checked yet, -1 none.
 playervar rankTier 124
+#True if the player's tier glows (RANK_GLOW_TIERS), set with rankTier so the glow doesn't look it up every tick
+playervar rankGlow 127
 #Ranked log: the player's round wins and kills since their JOIN (TourneyStat), for a tourney's final standings
 playervar tourneyStats 125
 

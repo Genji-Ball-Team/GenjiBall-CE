@@ -13,6 +13,11 @@ rule "RANKS - generated":
     rankTags = ["Top 10 comes with the host tool's code"]
 
 
+#Rank glow: players in these tiers get the Baptiste immortality look, the same as the bot's "bot effect".
+#Visual only. Matched by the tier's label, as the ranked server names it (docs/rank-tags.md).
+#Checked once, in "Rank tags - find tier" (rankGlow).
+#!define RANK_GLOW_TIERS ["Grandmaster", "Ascendant", "Champion"]
+
 #The best entry that lists the player's name, or -1 for none. Once, when they first spawn.
 #Only the names are searched (from RankTagField.NAMES), so a player named like a label isn't matched.
 rule "Rank tags - find tier":
@@ -25,6 +30,7 @@ rule "Rank tags - find tier":
     eventPlayer.rankTier = len(rankTags) - 1
     while eventPlayer.rankTier > 0 and "{0}".format(eventPlayer) not in rankTags[eventPlayer.rankTier].slice(RankTagField.NAMES, len(rankTags[eventPlayer.rankTier]) - RankTagField.NAMES):
         eventPlayer.rankTier -= 1
+    eventPlayer.rankGlow = eventPlayer.rankTier > 0 and rankTags[eventPlayer.rankTier][RankTagField.LABEL] in RANK_GLOW_TIERS
     if eventPlayer.rankTier == 0:
         eventPlayer.rankTier = -1
 
@@ -50,12 +56,9 @@ rule "Rank tags - floating tags":
         rankedState[RankedField.TAG_LOOP] += 1
 
 
-#Rank glow: players in these tiers get the Baptiste immortality look, the same as the bot's "bot effect".
-#Visual only. Matched by the tier's label, as the ranked server names it (docs/rank-tags.md).
-#!define RANK_GLOW_TIERS ["Grandmaster", "Ascendant", "Champion"]
-
 #One glow per FFA slot, following whoever is in it, like the tags: hidden while they're dead, nothing to
 #destroy when a player leaves, and the number of effects never grows. Off with "70 - Ranked > rank tags".
+#Its visibility is re-checked every tick, so it reads the rankGlow flag instead of matching tier names.
 #It shares rankedState[TAG_LOOP] with the other loops here, and none of them waits inside its loop.
 rule "Rank tags - glow":
     @Condition rankedState[RankedField.TAGS] == true
@@ -65,7 +68,7 @@ rule "Rank tags - glow":
     rankedState[RankedField.TAG_LOOP] = 0
     while rankedState[RankedField.TAG_LOOP] < FFA_SLOTS:
         createEffect(
-            getAllPlayers() if getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankTier > 0 and getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).isAlive() and rankTags[max(getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankTier, 0)][RankTagField.LABEL] in RANK_GLOW_TIERS else null,
+            getAllPlayers() if getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankGlow and getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).isAlive() else null,
             Effect.BAPTISTE_IMMORTALITY_FIELD_PROTECTED,
             Color.WHITE,
             getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL),
