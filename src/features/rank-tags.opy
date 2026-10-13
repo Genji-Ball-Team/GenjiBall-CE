@@ -67,8 +67,9 @@ rule "Rank tags - glow":
     wait(1)
     rankedState[RankedField.TAG_LOOP] = 0
     while rankedState[RankedField.TAG_LOOP] < FFA_SLOTS:
+        #Everyone sees it, except its wearer once they've hidden it (tap Crouch)
         createEffect(
-            getAllPlayers() if getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankGlow and getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).isAlive() else null,
+            getAllPlayers().exclude(getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL) if getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankGlowHidden else null) if getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankGlow and getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).isAlive() else null,
             Effect.BAPTISTE_IMMORTALITY_FIELD_PROTECTED,
             Color.WHITE,
             getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL),
@@ -76,6 +77,22 @@ rule "Rank tags - glow":
             EffectReeval.VISIBILITY_POSITION_AND_RADIUS
         )
         rankedState[RankedField.TAG_LOOP] += 1
+
+
+#A tap of Crouch hides a glowing player's own glow from them, and shows it again. Everyone else still sees it.
+#Holding Crouch (to crouch) or pressing Jump with it (Super Jump) doesn't count.
+rule "Rank tags - hide own glow":
+    @Event eachPlayer
+    @Condition eventPlayer.isHoldingButton(Button.CROUCH) == true
+    @Condition eventPlayer.rankGlow == true
+    @Condition addOnSettings[AddOnSetting.SANDBOX] == false
+
+    waitUntil(not eventPlayer.isHoldingButton(Button.CROUCH) or eventPlayer.isHoldingButton(Button.JUMP), 0.3)
+    if eventPlayer.isHoldingButton(Button.CROUCH) or eventPlayer.isHoldingButton(Button.JUMP):
+        return
+    eventPlayer.rankGlowHidden = not eventPlayer.rankGlowHidden
+    playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
+    smallMessage(eventPlayer, "your glow: hidden for you" if eventPlayer.rankGlowHidden else "your glow: shown")
 
 
 #The top 10 list on the right, the best first, hidden by simple HUD. Entries with an empty list line aren't listed. Its two header lines sort above

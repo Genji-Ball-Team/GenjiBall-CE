@@ -107,6 +107,8 @@ playervar kills 26
 playervar rankTier 124
 #True if the player's tier glows (RANK_GLOW_TIERS), set with rankTier so the glow doesn't look it up every tick
 playervar rankGlow 127
+#Rank glow hidden from its wearer (tap Crouch), "Rank tags - hide own glow"
+playervar rankGlowHidden 126
 #Ranked log: the player's round wins and kills since their JOIN (TourneyStat), for a tourney's final standings
 playervar tourneyStats 125
 
