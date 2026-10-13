@@ -4,7 +4,6 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## Unreleased
 
-- Rank glow: Grandmaster, Ascendant and Champion players glow with the Baptiste immortality effect (only a look), one effect per FFA slot like the tags, off with "rank tags". Uses the `buffStatusEffects` extension (21 of 24 points). With the matching host tool, the top 10 keep their tier tag over their head; the top 10 list on the right is unchanged. Goes out as a re-release of `1.3.3R`.
 - Moderate water is back by default in ranked (reverts #162): the Default preset and the "water" setting are **moderate** (y = −15) again, as in v1.3.3. Goes out as a re-release of `1.3.3R`.
 - Double sens is on by default in ranked: players can press Ultimate to switch to the high aim sensitivity without the host turning it on, which they'd lose on every re-paste of the code. Hosts can still turn it off. `main` keeps it off. Goes out as a re-release of `1.3.3R`.
 - Release notes: v1.3.3R has no import code. The notes say to get the code from the host tool's Copy ranked code (or Copy tourney code), with the release file as the fallback without rank tags.

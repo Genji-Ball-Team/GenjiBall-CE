@@ -151,8 +151,6 @@ subroutine logRankedUnranked 126
 #!extension spawnMoreDummyBots
 #The ball's createProjectileEffect (ui/effects.opy)
 #!extension projectiles
-#Baptiste immortality glow on Grandmaster, Ascendant and Champion players (features/rank-tags)
-#!extension buffStatusEffects
 
 
 #Only remove the following directive if the gamemode does not use tricks such as A+0, A*0, A or "", "am" == "**", etc which would otherwise be optimized out.
