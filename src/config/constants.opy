@@ -211,7 +211,7 @@ enum RankedField:
     TEXT        #the id list being built for ROUND_START
     COUNT       #how many ids are in TEXT so far
     DEFLECTOR   #the prevTarget "Ranked log - DEFLECT" last saw
-    TAG_LOOP    #loop counter for the rank tag and top 10 list rules (features/rank-tags.opy)
+    TAG_LOOP    #loop counter for the rank tag and top 10 list rules, and the leaver in "glow of a leaver" (features/rank-tags.opy)
     UNRANKED    #the UnrankedReasons logged in this match
     UNRANKED_TEXT   #the unranked warning's reasons, comma-separated
     REASON      #the UnrankedReason for logRankedUnranked()

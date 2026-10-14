@@ -36,6 +36,7 @@ You can also hit the ball by **dashing into it**. It redirects the same way, but
 | **Melee** | Toggle anti-rubberbanding (see below) |
 | **Ultimate** | Toggle double sensitivity (only if the host enabled it) |
 | **Jump** on a blue ring | Bounce pad (only if the host enabled bounce pads) |
+| **Crouch** (tap) | Ranked, if you glow (Grandmaster, Ascendant, Champion): hide your own glow from yourself, or show it again. Others still see it |
 
 Quick melee, primary fire shurikens and Dragonblade are disabled.
 

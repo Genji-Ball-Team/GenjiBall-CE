@@ -3960,9 +3960,10 @@ rule ("Rank tags - glow of a leaver") {
     }
     actions {
         While(Is True For Any(Value In Array(Global.rankedState, 20), Not(Array Contains(All Players(All Teams), Current Array Element))));
-            Destroy Effect(Value In Array(Value In Array(Global.rankedState, 21), Index Of Array Value(Value In Array(Global.rankedState, 20), First Of(Filtered Array(Value In Array(Global.rankedState, 20), Not(Array Contains(All Players(All Teams), Current Array Element)))))));
-            Modify Global Variable At Index(rankedState, 21, Remove From Array By Value, Value In Array(Value In Array(Global.rankedState, 21), Index Of Array Value(Value In Array(Global.rankedState, 20), First Of(Filtered Array(Value In Array(Global.rankedState, 20), Not(Array Contains(All Players(All Teams), Current Array Element)))))));
-            Modify Global Variable At Index(rankedState, 20, Remove From Array By Value, First Of(Filtered Array(Value In Array(Global.rankedState, 20), Not(Array Contains(All Players(All Teams), Current Array Element)))));
+            Set Global Variable At Index(rankedState, 12, First Of(Filtered Array(Value In Array(Global.rankedState, 20), Not(Array Contains(All Players(All Teams), Current Array Element)))));
+            Destroy Effect(Value In Array(Value In Array(Global.rankedState, 21), Index Of Array Value(Value In Array(Global.rankedState, 20), Value In Array(Global.rankedState, 12))));
+            Modify Global Variable At Index(rankedState, 21, Remove From Array By Value, Value In Array(Value In Array(Global.rankedState, 21), Index Of Array Value(Value In Array(Global.rankedState, 20), Value In Array(Global.rankedState, 12))));
+            Modify Global Variable At Index(rankedState, 20, Remove From Array By Value, Value In Array(Global.rankedState, 12));
         End;
     }
 }
@@ -3975,6 +3976,7 @@ rule ("Rank tags - hide own glow") {
     }
     conditions {
         Is Button Held(Event Player, Button(Crouch)) == True;
+        Value In Array(Global.rankedState, 1) == True;
         (Event Player).rankGlow == True;
         Value In Array(Global.addOnSettings, 7) == False;
     }

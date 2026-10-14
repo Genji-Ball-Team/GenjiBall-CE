@@ -18,8 +18,10 @@ rule "RANKS - generated":
 #by their tier's colour, once, in "Rank tags - find tier" (rankGlow).
 #!define RANK_GLOW_TIERS ["Grandmaster", "Ascendant", "Champion"]
 
-#The glow of a player in GLOW_OWNERS. Only read while they're in it.
-#!define RANK_GLOW_EFFECT rankedState[RankedField.GLOW_EFFECTS][rankedState[RankedField.GLOW_OWNERS].index(eventPlayer)]
+#Destroys the glow of a player in GLOW_OWNERS and takes them off both lists. No wait in between.
+#!define removeRankGlow(owner) destroyEffect(rankedState[RankedField.GLOW_EFFECTS][rankedState[RankedField.GLOW_OWNERS].index(owner)])\
+rankedState[RankedField.GLOW_EFFECTS].remove(rankedState[RankedField.GLOW_EFFECTS][rankedState[RankedField.GLOW_OWNERS].index(owner)])\
+rankedState[RankedField.GLOW_OWNERS].remove(owner)
 
 #A player in GLOW_OWNERS who left the match, or null
 #!define RANK_GLOW_LEAVER (rankedState[RankedField.GLOW_OWNERS].filter(lambda player: player not in getAllPlayers())[0])
@@ -49,6 +51,9 @@ rule "Rank tags - find tier":
         eventPlayer.rankTier = -1
 
 
+#The player in the slot of the tag being made, followed by that tag
+#!define TAGGED_PLAYER getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL)
+
 #One tag per FFA slot, following whoever is in it. Nothing to destroy when a player leaves (the slot's tag
 #just has no one to show), and the number of texts never grows. Height and size: "70 - Ranked".
 rule "Rank tags - floating tags":
@@ -59,13 +64,13 @@ rule "Rank tags - floating tags":
     rankedState[RankedField.TAG_LOOP] = 0
     while rankedState[RankedField.TAG_LOOP] < FFA_SLOTS:
         createInWorldText(
-            getAllPlayers() if getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankTier > 0 and getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).isAlive() else null,
-            rankTags[max(getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankTier, 0)][RankTagField.LABEL],
-            getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL) + vect(0, evalOnce(rankedState[RankedField.TAG_HEIGHT]), 0),
+            getAllPlayers() if TAGGED_PLAYER.rankTier > 0 and TAGGED_PLAYER.isAlive() else null,
+            rankTags[max(TAGGED_PLAYER.rankTier, 0)][RankTagField.LABEL],
+            TAGGED_PLAYER + vect(0, evalOnce(rankedState[RankedField.TAG_HEIGHT]), 0),
             rankedState[RankedField.TAG_SIZE],
             Clip.NONE,
             WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR,
-            rankTags[max(getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankTier, 0)][RankTagField.COLOR]
+            rankTags[max(TAGGED_PLAYER.rankTier, 0)][RankTagField.COLOR]
         )
         rankedState[RankedField.TAG_LOOP] += 1
 
@@ -91,19 +96,17 @@ rule "Rank tags - glow off":
     @Condition (eventPlayer in rankedState[RankedField.GLOW_OWNERS]) == true
     @Condition (eventPlayer.isAlive() and rankedState[RankedField.TAGS]) == false
 
-    destroyEffect(RANK_GLOW_EFFECT)
-    rankedState[RankedField.GLOW_EFFECTS].remove(RANK_GLOW_EFFECT)
-    rankedState[RankedField.GLOW_OWNERS].remove(eventPlayer)
+    removeRankGlow(eventPlayer)
 
 
 #A player who leaves can't run "glow off": their glow goes here. Everyone who left, in case two leave in the same tick.
+#The leaver is kept in TAG_LOOP for the pass (no wait, so the tag loops can't be running).
 rule "Rank tags - glow of a leaver":
     @Event playerLeft
 
     while any([player not in getAllPlayers() for player in rankedState[RankedField.GLOW_OWNERS]]):
-        destroyEffect(rankedState[RankedField.GLOW_EFFECTS][rankedState[RankedField.GLOW_OWNERS].index(RANK_GLOW_LEAVER)])
-        rankedState[RankedField.GLOW_EFFECTS].remove(rankedState[RankedField.GLOW_EFFECTS][rankedState[RankedField.GLOW_OWNERS].index(RANK_GLOW_LEAVER)])
-        rankedState[RankedField.GLOW_OWNERS].remove(RANK_GLOW_LEAVER)
+        rankedState[RankedField.TAG_LOOP] = RANK_GLOW_LEAVER
+        removeRankGlow(rankedState[RankedField.TAG_LOOP])
 
 
 #A tap of Crouch hides a glowing player's own glow from them, and shows it again. Everyone else still sees it.
@@ -112,6 +115,7 @@ rule "Rank tags - glow of a leaver":
 rule "Rank tags - hide own glow":
     @Event eachPlayer
     @Condition eventPlayer.isHoldingButton(Button.CROUCH) == true
+    @Condition rankedState[RankedField.TAGS] == true
     @Condition eventPlayer.rankGlow == true
     @Condition addOnSettings[AddOnSetting.SANDBOX] == false
 
@@ -122,9 +126,7 @@ rule "Rank tags - hide own glow":
     playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
     smallMessage(eventPlayer, "your glow: hidden for you" if eventPlayer.rankGlowHidden else "your glow: shown")
     if eventPlayer in rankedState[RankedField.GLOW_OWNERS]:
-        destroyEffect(RANK_GLOW_EFFECT)
-        rankedState[RankedField.GLOW_EFFECTS].remove(RANK_GLOW_EFFECT)
-        rankedState[RankedField.GLOW_OWNERS].remove(eventPlayer)
+        removeRankGlow(eventPlayer)
 
 
 #The top 10 list on the right, the best first, hidden by simple HUD. Entries with an empty list line aren't listed. Its two header lines sort above

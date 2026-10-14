@@ -57,5 +57,8 @@ A player gets the tag of the last entry that lists their name, so a top player a
 - The entry is looked up once per player, a moment after they first spawn. A new code with new names needs a new lobby.
 - Tags follow FFA slots: one in-world text per slot (12), shown over the player in that slot while they are alive and tagged. Nothing is left behind when a player leaves.
 - The list is on the right: "Live leaderboard: genjiball.us" (sort order -100), index 0 (-99), then each entry with a list line at -30 minus its index, so the best is first and no entry's line can go above the header. Simple HUD (Interact) hides it, with "Press [Interact] to hide" (-20) except in Sandbox.
-- `70 - Ranked` in the Workshop settings turns the tags (`rank tags`) and the list (`top 10 list`) off, and sets the tag's height and size ([hosting.md](hosting.md#70---ranked)).
+- Grandmaster, Ascendant and Champion players glow (Baptiste's immortality look, visual only), one effect per glowing player, made when they spawn and gone when they die or leave. A top player's label is their place, so they glow if their colour is one of those tiers' colours (the host tool gives a top player their tier's colour).
+- Tapping Crouch hides your own glow from you, and tapping it again shows it. Everyone else still sees it. Holding Crouch or Super Jump (Crouch, then Jump) doesn't count, and Sandbox doesn't have it.
+- Who sees a glow is set when it's made: a player who joins sees someone's glow from that player's next spawn.
+- `70 - Ranked` in the Workshop settings turns the tags and the glow (`rank tags`) and the list (`top 10 list`) off, and sets the tag's height and size ([hosting.md](hosting.md#70---ranked)).
 - There's no live rating in game. Tags change when the host gets a new code from the host tool.
