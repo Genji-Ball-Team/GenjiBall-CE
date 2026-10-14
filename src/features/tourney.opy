@@ -3,9 +3,6 @@
 #in this repo), nothing here changes the game: the match is a ranked match.
 #The ranked log counts the rounds and logs MATCH_END ROUNDS (features/ranked-log.opy).
 
-#Final standings: the sort order of their header line, at the top of the screen above the unranked warning
-#!define TOURNEY_STANDINGS_SORT -40
-
 #A player's place key on the final standings: most wins first, then most kills
 #!define tourneyScore(player) (player.tourneyStats[TourneyStat.WINS] * TOURNEY_WIN_WEIGHT + player.tourneyStats[TourneyStat.KILLS])
 
@@ -35,12 +32,15 @@ rule "Tourney - settings":
 #Holds the ball of the round the round flow starts after the last one: the match ends before its countdown
 #does. Set as the last round closes, before the round win pause ends. alert() (maps/restrictions.opy) gives
 #no break after the last round, so "Tournament - break" doesn't reset it.
+#The countdown too: when the last round ends with everyone dead, "Active game - all players dead" can copy
+#the old value into it before the ranked log closes the round, and with two players the final duel counts that down.
 rule "Tourney - hold the next round":
     @Condition TOURNEY_ON
     @Condition rankedState[RankedField.ROUND] >= totalRounds
     @Condition rankedState[RankedField.IN_ROUND] == false
 
     setballspawncountdown = TOURNEY_MATCH_END_DELAY + TOURNEY_STANDINGS_TIME
+    ballSpawnCountdown = setballspawncountdown
 
 
 #The final standings, for everyone, spectators too (the host may be spectating), once MATCH_END ROUNDS is logged.
@@ -52,18 +52,16 @@ rule "Tourney - final standings":
 
     rankedState[RankedField.STANDINGS] = sorted(getAllPlayers().filter(lambda player: player in rankedPlayers), lambda player: -tourneyScore(player))
     hudHeader(getAllPlayers(), "FINAL STANDINGS", HudPosition.TOP, TOURNEY_STANDINGS_SORT, Color.ORANGE, HudReeval.VISIBILITY, SpecVisibility.ALWAYS)
-    hudSubheader(getAllPlayers(), "{0}   {1}".format(rankedState[RankedField.TOURNEY][TourneyField.NAME], rankedState[RankedField.TOURNEY][TourneyField.LOBBY_LABEL]), HudPosition.TOP, TOURNEY_STANDINGS_SORT + 1, Color.WHITE, HudReeval.VISIBILITY, SpecVisibility.ALWAYS)
+    hudSubheader(getAllPlayers(), TOURNEY_TITLE, HudPosition.TOP, TOURNEY_STANDINGS_SORT + 1, Color.WHITE, HudReeval.VISIBILITY, SpecVisibility.ALWAYS)
     hudSubtext(getAllPlayers(), "Match {0}".format(rankedState[RankedField.MATCH_KEY]), HudPosition.TOP, TOURNEY_STANDINGS_SORT + 2, Color.WHITE, HudReeval.VISIBILITY, SpecVisibility.ALWAYS)
     #One line per player: place, name, wins, kills. The place is 1 + the players with a better score.
     rankedState[RankedField.COUNT] = 0
     while rankedState[RankedField.COUNT] < len(rankedState[RankedField.STANDINGS]):
-        hudSubheader(getAllPlayers(), "{0}. {1}   {2}".format(
+        hudSubheader(getAllPlayers(), "{0}. {1}   {2} wins   {3} kills".format(
             len([player for player in rankedState[RankedField.STANDINGS] if tourneyScore(player) > tourneyScore(rankedState[RankedField.STANDINGS][rankedState[RankedField.COUNT]])]) + 1,
             rankedState[RankedField.STANDINGS][rankedState[RankedField.COUNT]],
-            "{0} wins   {1} kills".format(
-                rankedState[RankedField.STANDINGS][rankedState[RankedField.COUNT]].tourneyStats[TourneyStat.WINS],
-                rankedState[RankedField.STANDINGS][rankedState[RankedField.COUNT]].tourneyStats[TourneyStat.KILLS]
-            )
+            rankedState[RankedField.STANDINGS][rankedState[RankedField.COUNT]].tourneyStats[TourneyStat.WINS],
+            rankedState[RankedField.STANDINGS][rankedState[RankedField.COUNT]].tourneyStats[TourneyStat.KILLS]
         ), HudPosition.TOP, TOURNEY_STANDINGS_SORT + 3 + rankedState[RankedField.COUNT], Color.WHITE, HudReeval.VISIBILITY, SpecVisibility.ALWAYS)
         rankedState[RankedField.COUNT] += 1
     #Time for the screenshot, then the match ends as in "Tournament - game ends after 0 Rounds left"

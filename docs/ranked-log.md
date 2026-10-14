@@ -56,7 +56,7 @@ What the Workshop knows about a player: their **display name** (the BattleTag wi
 
 So the game gives every player a **player id** when they join: a whole number, starting at 1 in each match and never reused in that match. The name is logged once, in `JOIN`, and every other line uses the id.
 
-- The id stays the same while the player stays in the lobby. It's stored on the player, so moving slots doesn't change it.
+- The id stays the same while the player stays in the lobby. It's the player's index in the global `rankedPlayers` list, not their slot, so moving slots doesn't change it.
 - A player who leaves and comes back gets a `LEAVE`, then a new `JOIN` with a new id.
 - Two players with the same name get different ids, so the log is never ambiguous within a match.
 - The lobby host's `JOIN` has `host` `1`, so the server knows which player is the host (for [host AFK](#host-afk)). A host in spectator has no id, as any spectator.

@@ -14,6 +14,9 @@ enum Preset:
     EXPERIMENTAL
     CUSTOM
 
+#The preset names MATCH_START logs (docs/ranked-log.md), in Preset order: a new preset goes in both, at the same place
+#!define PRESET_LOG_NAMES ["Default", "Tournament", "Tournament+", "Rapid", "v1", "v7", "Experimental", "Custom"]
+
 #Columns of the preset table in config/workshop-settings.opy
 enum PresetColumn:
     MATCH_TIME
@@ -234,6 +237,9 @@ enum TourneyField:
 #A tourney code: the tourney rule is on (features/tourney.opy)
 #!define TOURNEY_ON (rankedState[RankedField.TOURNEY][TourneyField.ON] == true)
 
+#The tourney's name and lobby label, on the HUD (ui/hud.opy) and the final standings (features/tourney.opy)
+#!define TOURNEY_TITLE "{0}   {1}".format(rankedState[RankedField.TOURNEY][TourneyField.NAME], rankedState[RankedField.TOURNEY][TourneyField.LOBBY_LABEL])
+
 #Rounds a tourney lasts when the rule's round limit is below 1
 #!define TOURNEY_DEFAULT_ROUNDS 30
 
@@ -246,6 +252,9 @@ enum TourneyField:
 #Final standings: wins count this much more than kills, so sorting on wins * weight + kills puts most wins
 #first and breaks ties on kills. More kills than one match can have.
 #!define TOURNEY_WIN_WEIGHT 10000
+
+#Final standings: the sort order of their header line, at the top of the screen above the unranked warning
+#!define TOURNEY_STANDINGS_SORT -40
 
 #Fields of a player's tourneyStats, counted from their JOIN as the server counts the log (docs/ranked-log.md)
 enum TourneyStat:

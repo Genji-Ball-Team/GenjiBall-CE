@@ -14,3 +14,4 @@
 - [Branches and releases](branching.md): versions, variants, tagging a release
 - [Ranked log format](ranked-log.md): the events v1.3.3R logs for the ranked server, with an example log
 - [Rank tags](rank-tags.md): the generated rule v1.3.3R's top 10 tags and list come from, as the host tool fills it in
+- [Tourney rule](tourney-rule.md): the generated rule that turns a v1.3.3R code into a tourney lobby, as the host tool fills it in

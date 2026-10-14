@@ -42,7 +42,7 @@ rule "HUD - add-ons text":
         hudSubheader(getAllPlayers().filter(lambda player: player.simpleHUD == SimpleHud.OFF), "tracing: dont lose sight with the ball!", HudPosition.TOP, -1, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
     #A tourney (features/tourney.opy) is always in tournament mode. Its rounds are the ranked log's, restarts included.
     if tournamentMode:
-        hudHeader(getAllPlayers(), "{0}   {1}".format(rankedState[RankedField.TOURNEY][TourneyField.NAME], rankedState[RankedField.TOURNEY][TourneyField.LOBBY_LABEL]) if TOURNEY_ON else "Tournament", HudPosition.RIGHT, 8, Color.BLACK, HudReeval.VISIBILITY_AND_STRING)
+        hudHeader(getAllPlayers(), TOURNEY_TITLE if TOURNEY_ON else "Tournament", HudPosition.RIGHT, 8, Color.BLACK, HudReeval.VISIBILITY_AND_STRING)
         hudSubtext(getAllPlayers(), "ROUND: {0} / {1}".format(max(rankedState[RankedField.ROUND], 1), totalRounds) if TOURNEY_ON else "ROUNDS LEFT: {0}".format(totalRounds), HudPosition.RIGHT, 9, Color.PURPLE, HudReeval.VISIBILITY_AND_STRING)
         hudSubtext(getAllPlayers(), "ROUNDS UNTIL BREAK: {0}".format(roundsUntilBreak), HudPosition.RIGHT, 10, Color.PURPLE, HudReeval.VISIBILITY_AND_STRING)
 

@@ -8,9 +8,6 @@
 #Any setting that changes how the ball or a player moves, controls or deflects (MATCH_START feel, UNRANKED FEEL)
 #!define RANKED_FEEL_ON (ballFeel[BallFeel.CUSTOM] or addOnSettings[AddOnSetting.WATER_LEDGE_FIX] or addOnSettings[AddOnSetting.TRACING_MODE] or antiGhostMode != AntiGhost.OFF or antiOrbitMode)
 
-#A gameplay add-on is on (MATCH_START addOns, UNRANKED ADD_ON)
-#!define RANKED_ADD_ON_ON (addOnSettings[AddOnSetting.DUELS] or addOnSettings[AddOnSetting.ENDLESS] or addOnSettings[AddOnSetting.SANDBOX] or addOnSettings[AddOnSetting.ABILITIES])
-
 
 #Gives every spawned player without an id the next id, and logs their JOIN.
 #Called at MATCH_START for the players already there, then for each player who joins.
@@ -42,19 +39,23 @@ rule "Ranked log - MATCH_START":
     #Tourney: right after GBR, so every copy of the match has it. roundLimit is the one the match plays (totalRounds).
     if TOURNEY_ON:
         logToInspector("TOURNEY|{0}|{1}|{2}".format(getTotalTimeElapsed(), rankedState[RankedField.TOURNEY][TourneyField.LOBBY_KEY], totalRounds))
-    #feel: any setting that changes how the ball or a player moves, controls or deflects (docs/ranked-log.md)
+    #feel (docs/ranked-log.md) and addOns, kept in COUNT and TEXT for UNRANKED FEEL and ADD_ON below.
+    #Both are free until the first ROUND_START.
+    rankedState[RankedField.COUNT] = 1 if RANKED_FEEL_ON else 0
     #addOns: the gameplay add-ons that are on, comma-separated
+    rankedState[RankedField.TEXT] = "duels" if addOnSettings[AddOnSetting.DUELS] else ""
+    if addOnSettings[AddOnSetting.ENDLESS]:
+        rankedState[RankedField.TEXT] = "{0}{1}endless".format(rankedState[RankedField.TEXT], "," if rankedState[RankedField.TEXT] != "" else "")
+    if addOnSettings[AddOnSetting.SANDBOX]:
+        rankedState[RankedField.TEXT] = "{0}{1}sandbox".format(rankedState[RankedField.TEXT], "," if rankedState[RankedField.TEXT] != "" else "")
+    if addOnSettings[AddOnSetting.ABILITIES]:
+        rankedState[RankedField.TEXT] = "{0}{1}abilities".format(rankedState[RankedField.TEXT], "," if rankedState[RankedField.TEXT] != "" else "")
     logToInspector("MATCH_START|{0}|{1}|{2}|{3}|{4}".format(
         getTotalTimeElapsed(),
         "workshop-island-night" if __getCurrentMap__() == Map.WORKSHOP_ISLAND_NIGHT else "other",
-        ["Default", "Tournament", "Tournament+", "Rapid", "v1", "v7", "Experimental", "Custom"][presetMode],
-        1 if RANKED_FEEL_ON else 0,
-        "{0}{1}{2}{3}".format(
-            "duels" if addOnSettings[AddOnSetting.DUELS] else "",
-            "{0}endless".format("," if addOnSettings[AddOnSetting.DUELS] else "") if addOnSettings[AddOnSetting.ENDLESS] else "",
-            "{0}sandbox".format("," if addOnSettings[AddOnSetting.DUELS] or addOnSettings[AddOnSetting.ENDLESS] else "") if addOnSettings[AddOnSetting.SANDBOX] else "",
-            "{0}abilities".format("," if addOnSettings[AddOnSetting.DUELS] or addOnSettings[AddOnSetting.ENDLESS] or addOnSettings[AddOnSetting.SANDBOX] else "") if addOnSettings[AddOnSetting.ABILITIES] else ""
-        )
+        PRESET_LOG_NAMES[presetMode],
+        rankedState[RankedField.COUNT],
+        rankedState[RankedField.TEXT]
     ))
     #UNRANKED: one line per reason, and the warning lists them (docs/ranked-log.md, "Unranked matches")
     rankedState[RankedField.UNRANKED] = []
@@ -69,10 +70,10 @@ rule "Ranked log - MATCH_START":
     if presetMode != (Preset.TOURNAMENT if TOURNEY_ON else Preset.DEFAULT):
         rankedState[RankedField.REASON] = UnrankedReason.PRESET
         logRankedUnranked()
-    if RANKED_FEEL_ON:
+    if rankedState[RankedField.COUNT]:
         rankedState[RankedField.REASON] = UnrankedReason.FEEL
         logRankedUnranked()
-    if RANKED_ADD_ON_ON:
+    if rankedState[RankedField.TEXT] != "":
         rankedState[RankedField.REASON] = UnrankedReason.ADD_ON
         logRankedUnranked()
     logRankedJoins()
@@ -117,18 +118,14 @@ rule "Ranked log - unranked warning":
 rule "Ranked log - debug HUD":
     @Condition rankedState[RankedField.DEBUG_HUD] == true
 
-    hudSubtext(hostPlayer, "RANKED DEBUG\nLogging: {0}  Started: {1}\nRound: {2}".format(
+    hudSubtext(hostPlayer, "RANKED DEBUG\nLogging: {0}  Started: {1}\nRound: {2}  In round: {3}\nAlive in round: {4}\nIds handed out: {5}\nUnranked: {6}".format(
         "on" if rankedState[RankedField.LOGGING] else "off",
         "yes" if rankedState[RankedField.STARTED] else "no",
-        "{0}  In round: {1}\nAlive in round: {2}".format(
-            rankedState[RankedField.ROUND],
-            "yes" if rankedState[RankedField.IN_ROUND] else "no",
-            "{0}\nIds handed out: {1}\nUnranked: {2}".format(
-                len([player for player in rankedRound if player.isAlive()]),
-                max(len(rankedPlayers) - 1, 0),
-                rankedState[RankedField.UNRANKED_TEXT] if len(rankedState[RankedField.UNRANKED]) > 0 else "none"
-            )
-        )
+        rankedState[RankedField.ROUND],
+        "yes" if rankedState[RankedField.IN_ROUND] else "no",
+        len([player for player in rankedRound if player.isAlive()]),
+        max(len(rankedPlayers) - 1, 0),
+        rankedState[RankedField.UNRANKED_TEXT] if len(rankedState[RankedField.UNRANKED]) > 0 else "none"
     ), HudPosition.LEFT, 20, Color.WHITE, HudReeval.VISIBILITY_AND_STRING)
 
 
@@ -146,12 +143,14 @@ rule "Ranked log - LEAVE":
     @Condition rankedState[RankedField.STARTED] == true
 
     #Everyone who left since the last LEAVE, in case two leave in the same tick.
-    #A player's index in rankedPlayers is their id.
+    #A player's index in rankedPlayers is their id, kept in COUNT for the pass. No wait here, and none inside
+    #the other loops on COUNT (ROUND_START, the final standings), so they can't run into each other.
     while any([player != -1 and player not in getAllPlayers() for player in rankedPlayers]):
-        logToInspector("LEAVE|{0}|{1}".format(getTotalTimeElapsed(), rankedPlayers.index(rankedLeaver)))
+        rankedState[RankedField.COUNT] = rankedPlayers.index(rankedLeaver)
+        logToInspector("LEAVE|{0}|{1}".format(getTotalTimeElapsed(), rankedState[RankedField.COUNT]))
         #Out of the round, without an ELIM: the server drops them from it
-        rankedRound.remove(rankedLeaver)
-        rankedPlayers[rankedPlayers.index(rankedLeaver)] = -1
+        rankedRound.remove(rankedPlayers[rankedState[RankedField.COUNT]])
+        rankedPlayers[rankedState[RankedField.COUNT]] = -1
 
 
 #Rounds. A round is open from ROUND_START to ROUND_END (rankedState[IN_ROUND]).
@@ -295,6 +294,8 @@ rule "Ranked log - MATCH_END":
     if rankedState[RankedField.IN_ROUND]:
         logRankedRoundAbort()
     logToInspector("MATCH_END|{0}|TIME".format(getTotalTimeElapsed()))
+    #Nothing after MATCH_END (the server ignores it): no JOIN, LEAVE, KILL or DEFLECT during the end screen
+    rankedState[RankedField.STARTED] = false
 
 
 #Tourney: the match ends after round roundLimit (totalRounds), whatever its ROUND_END (WIN, NONE or ABORT).

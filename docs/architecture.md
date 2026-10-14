@@ -191,7 +191,7 @@ The `Ranked log` rules (`features/ranked-log.opy`) only read the round flow's va
 | `Check for <2 players` → `Ranked log - ROUND_END WIN` | When a player leaves a two-player round, the check clears `IsEnoughPlayersToStart` in the same tick as the `LEAVE` leaves one player in `rankedRound`. The round is logged as `ABORT`, like the round flow, which gives no win. Swapped, it would be logged as a `WIN`. |
 | `Ranked log - ROUND_END WIN`, `NONE`, `ABORT`, `MATCH_END` → `Ranked log - MATCH_END ROUNDS` | In a tourney, the last round's `ROUND_END` closes the round (`IN_ROUND`) in the same tick `MATCH_END ROUNDS` checks it. It waits 1 s before logging anyway, so the order only changes that start by a tick. |
 
-`Tourney - hold the next round` comes before the round flow and the ranked log, so it sees the last round close one tick late. That's fine: the round flow starts the next round at least 0.35 s later (round win pause, `randomTarget()`), and reads `setballspawncountdown` only then.
+`Tourney - hold the next round` comes before the round flow and the ranked log, so it sees the last round close one tick late. The round flow starts the next round at least 0.35 s later (round win pause, `randomTarget()`), and `startRound()` reads `setballspawncountdown` only then. `Active game - all players dead` copies it into `ballSpawnCountdown` straight away, before the round is closed, and with two players the final duel counts that copy down, so the hold sets `ballSpawnCountdown` as well.
 
 **AntiOrbit**
 
