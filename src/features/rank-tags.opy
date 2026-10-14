@@ -1,6 +1,5 @@
-#Rank tags: ranked players get their rank tier's name over their head (the top 10 too, with
-#host tool codes that list them with no names; older codes tag them with their place and rating), and the top 10 are listed
-#on the right. Grandmaster, Ascendant and Champion players also glow. They come from "RANKS - generated",
+#Rank tags: the leaderboard's top players get a tag over their head with their place and rating, and a
+#top 10 list on the right. Other ranked players get their rank tier's name. They come from "RANKS - generated",
 #which the host tool replaces (docs/rank-tags.md).
 
 
@@ -12,11 +11,6 @@
 rule "RANKS - generated":
     rankTags = ["Top 10 comes with the host tool's code"]
 
-
-#Rank glow: players in these tiers get the Baptiste immortality look, the same as the bot's "bot effect".
-#Visual only. Matched by the tier's label, as the ranked server names it (docs/rank-tags.md).
-#Checked once, in "Rank tags - find tier" (rankGlow).
-#!define RANK_GLOW_TIERS ["Grandmaster", "Ascendant", "Champion"]
 
 #The best entry that lists the player's name, or -1 for none. Once, when they first spawn.
 #Only the names are searched (from RankTagField.NAMES), so a player named like a label isn't matched.
@@ -30,7 +24,6 @@ rule "Rank tags - find tier":
     eventPlayer.rankTier = len(rankTags) - 1
     while eventPlayer.rankTier > 0 and "{0}".format(eventPlayer) not in rankTags[eventPlayer.rankTier].slice(RankTagField.NAMES, len(rankTags[eventPlayer.rankTier]) - RankTagField.NAMES):
         eventPlayer.rankTier -= 1
-    eventPlayer.rankGlow = eventPlayer.rankTier > 0 and rankTags[eventPlayer.rankTier][RankTagField.LABEL] in RANK_GLOW_TIERS
     if eventPlayer.rankTier == 0:
         eventPlayer.rankTier = -1
 
@@ -54,45 +47,6 @@ rule "Rank tags - floating tags":
             rankTags[max(getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankTier, 0)][RankTagField.COLOR]
         )
         rankedState[RankedField.TAG_LOOP] += 1
-
-
-#One glow per FFA slot, following whoever is in it, like the tags: hidden while they're dead, nothing to
-#destroy when a player leaves, and the number of effects never grows. Off with "70 - Ranked > rank tags".
-#Its visibility is re-checked every tick, so it reads the rankGlow flag instead of matching tier names.
-#It shares rankedState[TAG_LOOP] with the other loops here, and none of them waits inside its loop.
-rule "Rank tags - glow":
-    @Condition rankedState[RankedField.TAGS] == true
-
-    #Entity creation fail protection
-    wait(1)
-    rankedState[RankedField.TAG_LOOP] = 0
-    while rankedState[RankedField.TAG_LOOP] < FFA_SLOTS:
-        #Everyone sees it, except its wearer once they've hidden it (tap Crouch)
-        createEffect(
-            getAllPlayers().exclude(getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL) if getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankGlowHidden else null) if getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).rankGlow and getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL).isAlive() else null,
-            Effect.BAPTISTE_IMMORTALITY_FIELD_PROTECTED,
-            Color.WHITE,
-            getPlayersInSlot(evalOnce(rankedState[RankedField.TAG_LOOP]), Team.ALL),
-            1,
-            EffectReeval.VISIBILITY_POSITION_AND_RADIUS
-        )
-        rankedState[RankedField.TAG_LOOP] += 1
-
-
-#A tap of Crouch hides a glowing player's own glow from them, and shows it again. Everyone else still sees it.
-#Holding Crouch (to crouch) or pressing Jump with it (Super Jump) doesn't count.
-rule "Rank tags - hide own glow":
-    @Event eachPlayer
-    @Condition eventPlayer.isHoldingButton(Button.CROUCH) == true
-    @Condition eventPlayer.rankGlow == true
-    @Condition addOnSettings[AddOnSetting.SANDBOX] == false
-
-    waitUntil(not eventPlayer.isHoldingButton(Button.CROUCH) or eventPlayer.isHoldingButton(Button.JUMP), 0.3)
-    if eventPlayer.isHoldingButton(Button.CROUCH) or eventPlayer.isHoldingButton(Button.JUMP):
-        return
-    eventPlayer.rankGlowHidden = not eventPlayer.rankGlowHidden
-    playEffect(eventPlayer, DynamicEffect.BRIGITTE_REPAIR_PACK_ARMOR_SOUND, Color.WHITE, eventPlayer, 10)
-    smallMessage(eventPlayer, "your glow: hidden for you" if eventPlayer.rankGlowHidden else "your glow: shown")
 
 
 #The top 10 list on the right, the best first, hidden by simple HUD. Entries with an empty list line aren't listed. Its two header lines sort above
