@@ -4,6 +4,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## Unreleased
 
+- Rank glow fix and docs: with "rank tags" off, tapping Crouch no longer plays the hide-glow sound and message. Removing a glow is one macro, and a leaver is looked up once per pass (5 fewer Workshop elements). The glow, the Crouch tap and "rank tags" turning the glow off are now in `docs/rank-tags.md`, `hosting.md`, `playing.md` and `architecture.md`.
 - Rank glow, rebuilt to cost nothing when no one glows: one Baptiste immortality effect per glowing player, made when they spawn and destroyed when they die or leave (no effects per FFA slot, nothing re-checked every tick but the effect's position). Grandmaster, Ascendant and Champion glow; a top 10 player, whose tag is their place, by their tier's colour. Tap Crouch to hide your own glow (everyone else still sees it). Who sees a glow is set when it's made, so a player who joins sees it from the wearer's next spawn. Uses the `buffStatusEffects` extension (21 of 24 points); `rankGlow` and `rankGlowHidden` are player slots 127 and 126, the glows are `rankedState` fields 20 and 21. Off with "rank tags". Needs a playtest before it's released.
 - Rank glow removed (reverts #177 and #178), so the game is back to how it was before it, after reports of lower FPS. Goes out as a re-release of `1.3.3R`.
 - Moderate water is back by default in ranked (reverts #162): the Default preset and the "water" setting are **moderate** (y = −15) again, as in v1.3.3. Goes out as a re-release of `1.3.3R`.
