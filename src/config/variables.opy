@@ -107,6 +107,8 @@ playervar kills 26
 playervar rankTier 124
 #Ranked log: the player's round wins and kills since their JOIN (TourneyStat), for a tourney's final standings
 playervar tourneyStats 125
+#Rank outline: the player's tier is one of RANK_OUTLINE_TIERS (set with rankTier)
+playervar rankOutline 127
 
 #Subroutine names
 

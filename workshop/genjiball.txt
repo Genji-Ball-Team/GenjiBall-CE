@@ -168,6 +168,7 @@ variables {
         26: kills
         124: rankTier
         125: tourneyStats
+        127: rankOutline
 }
 
 subroutines {
@@ -3878,8 +3879,28 @@ rule ("Rank tags - find tier") {
         While(And(Compare((Event Player).rankTier, >, 0), Not(Array Contains(Array Slice(Value In Array(Global.rankTags, (Event Player).rankTier), 3, Subtract(Count Of(Value In Array(Global.rankTags, (Event Player).rankTier)), 3)), Custom String("{0}", Event Player)))));
             Modify Player Variable(Event Player, rankTier, Subtract, 1);
         End;
+        "A top player's entry has their place as its label, so it's matched by its colour: the host tool gives it their tier's"
+        Set Player Variable(Event Player, rankOutline, And(Compare((Event Player).rankTier, >, 0), Or(Array Contains(Array(Custom String("Grandmaster"), Custom String("Ascendant"), Custom String("Champion")), First Of(Value In Array(Global.rankTags, (Event Player).rankTier))), Array Contains(Mapped Array(Filtered Array(Global.rankTags, Array Contains(Array(Custom String("Grandmaster"), Custom String("Ascendant"), Custom String("Champion")), First Of(Current Array Element))), Value In Array(Current Array Element, 1)), Value In Array(Value In Array(Global.rankTags, (Event Player).rankTier), 1)))));
         If(Compare((Event Player).rankTier, ==, 0));
             Set Player Variable(Event Player, rankTier, -1);
+    }
+}
+
+rule ("Rank tags - outline") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Value In Array(Global.rankedState, 1) == True;
+        (Event Player).rankOutline == True;
+        (Event Player).Critslash == False;
+        Is Alive(Event Player) == True;
+    }
+    actions {
+        Wait(0.1, Ignore Condition);
+        Start Forcing Player Outlines(Event Player, All Players(All Teams), True, Value In Array(Value In Array(Global.rankTags, (Event Player).rankTier), 1), Default);
     }
 }
 

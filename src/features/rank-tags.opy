@@ -12,6 +12,10 @@ rule "RANKS - generated":
     rankTags = ["Top 10 comes with the host tool's code"]
 
 
+#Rank outline (see "Rank tags - outline"): these tiers, by the label the ranked server gives them (docs/rank-tags.md).
+#!define RANK_OUTLINE_TIERS ["Grandmaster", "Ascendant", "Champion"]
+
+
 #The best entry that lists the player's name, or -1 for none. Once, when they first spawn.
 #Only the names are searched (from RankTagField.NAMES), so a player named like a label isn't matched.
 rule "Rank tags - find tier":
@@ -24,8 +28,27 @@ rule "Rank tags - find tier":
     eventPlayer.rankTier = len(rankTags) - 1
     while eventPlayer.rankTier > 0 and "{0}".format(eventPlayer) not in rankTags[eventPlayer.rankTier].slice(RankTagField.NAMES, len(rankTags[eventPlayer.rankTier]) - RankTagField.NAMES):
         eventPlayer.rankTier -= 1
+    #A top player's entry has their place as its label, so it's matched by its colour: the host tool gives it their tier's
+    eventPlayer.rankOutline = eventPlayer.rankTier > 0 and (rankTags[eventPlayer.rankTier][RankTagField.LABEL] in RANK_OUTLINE_TIERS or rankTags[eventPlayer.rankTier][RankTagField.COLOR] in [entry[RankTagField.COLOR] for entry in rankTags if entry[RankTagField.LABEL] in RANK_OUTLINE_TIERS])
     if eventPlayer.rankTier == 0:
         eventPlayer.rankTier = -1
+
+
+#Rank outline: players in these tiers get an outline in their tier's colour, which everyone else sees.
+#An outline is a player status, not an effect: no entity, nothing to follow them, nothing per tick.
+#Who sees it is set when it's made, so it's made again on each spawn, for players who joined since.
+#Critical slash's red outline replaces it while it lasts, and stopping that removes it, so it's set again
+#a moment after. Off with "70 - Ranked > rank tags".
+
+rule "Rank tags - outline":
+    @Event eachPlayer
+    @Condition rankedState[RankedField.TAGS] == true
+    @Condition eventPlayer.rankOutline == true
+    @Condition eventPlayer.Critslash == false
+    @Condition eventPlayer.isAlive() == true
+
+    wait(0.1)
+    eventPlayer.startForcingOutlineFor(getAllPlayers(), true, rankTags[eventPlayer.rankTier][RankTagField.COLOR], OutlineVisibility.DEFAULT)
 
 
 #One tag per FFA slot, following whoever is in it. Nothing to destroy when a player leaves (the slot's tag
