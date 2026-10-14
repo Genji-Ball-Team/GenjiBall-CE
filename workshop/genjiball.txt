@@ -66,6 +66,7 @@ settings
 		Play More Effects
 		Spawn More Dummy Bots
 		Projectiles
+		Buff Status Effects
 	}
 }
 
@@ -168,6 +169,8 @@ variables {
         26: kills
         124: rankTier
         125: tourneyStats
+        126: rankGlowHidden
+        127: rankGlow
 }
 
 subroutines {
@@ -3861,6 +3864,16 @@ rule ("RANKS - generated") {
     }
 }
 
+rule ("Rank tags - glow list") {
+    event {
+        Ongoing - Global;
+    }
+    actions {
+        Set Global Variable At Index(rankedState, 20, Empty Array);
+        Set Global Variable At Index(rankedState, 21, Empty Array);
+    }
+}
+
 rule ("Rank tags - find tier") {
     event {
         Ongoing - Each Player;
@@ -3878,6 +3891,8 @@ rule ("Rank tags - find tier") {
         While(And(Compare((Event Player).rankTier, >, 0), Not(Array Contains(Array Slice(Value In Array(Global.rankTags, (Event Player).rankTier), 3, Subtract(Count Of(Value In Array(Global.rankTags, (Event Player).rankTier)), 3)), Custom String("{0}", Event Player)))));
             Modify Player Variable(Event Player, rankTier, Subtract, 1);
         End;
+        "A top player's entry has their place as its label, so it's matched by its colour: the host tool gives it their tier's"
+        Set Player Variable(Event Player, rankGlow, And(Compare((Event Player).rankTier, >, 0), Or(Array Contains(Array(Custom String("Grandmaster"), Custom String("Ascendant"), Custom String("Champion")), First Of(Value In Array(Global.rankTags, (Event Player).rankTier))), Array Contains(Mapped Array(Filtered Array(Global.rankTags, Array Contains(Array(Custom String("Grandmaster"), Custom String("Ascendant"), Custom String("Champion")), First Of(Current Array Element))), Value In Array(Current Array Element, 1)), Value In Array(Value In Array(Global.rankTags, (Event Player).rankTier), 1)))));
         If(Compare((Event Player).rankTier, ==, 0));
             Set Player Variable(Event Player, rankTier, -1);
     }
@@ -3898,6 +3913,81 @@ rule ("Rank tags - floating tags") {
             Create In-World Text(If-Then-Else(And(Compare((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).rankTier, >, 0), Is Alive(Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams))), All Players(All Teams), Null), First Of(Value In Array(Global.rankTags, Max((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).rankTier, 0))), Add(Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams), Vector(0, Evaluate Once(Value In Array(Global.rankedState, 2)), 0)), Value In Array(Global.rankedState, 3), Do Not Clip, Visible To Position String and Color, Value In Array(Value In Array(Global.rankTags, Max((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).rankTier, 0)), 1), Default Visibility);
             Modify Global Variable At Index(rankedState, 12, Add, 1);
         End;
+    }
+}
+
+rule ("Rank tags - glow on") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Value In Array(Global.rankedState, 1) == True;
+        (Event Player).rankGlow == True;
+        Is Alive(Event Player) == True;
+        Array Contains(Value In Array(Global.rankedState, 20), Event Player) == False;
+    }
+    actions {
+        Create Effect(Remove From Array(All Players(All Teams), If-Then-Else((Event Player).rankGlowHidden, Event Player, Null)), Baptiste Immortality Field Protected Effect, Color(White), Event Player, 1, Position and Radius);
+        Modify Global Variable At Index(rankedState, 21, Append To Array, Last Created Entity);
+        Modify Global Variable At Index(rankedState, 20, Append To Array, Event Player);
+    }
+}
+
+rule ("Rank tags - glow off") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Array Contains(Value In Array(Global.rankedState, 20), Event Player) == True;
+        And(Is Alive(Event Player), Value In Array(Global.rankedState, 1)) == False;
+    }
+    actions {
+        Destroy Effect(Value In Array(Value In Array(Global.rankedState, 21), Index Of Array Value(Value In Array(Global.rankedState, 20), Event Player)));
+        Modify Global Variable At Index(rankedState, 21, Remove From Array By Value, Value In Array(Value In Array(Global.rankedState, 21), Index Of Array Value(Value In Array(Global.rankedState, 20), Event Player)));
+        Modify Global Variable At Index(rankedState, 20, Remove From Array By Value, Event Player);
+    }
+}
+
+rule ("Rank tags - glow of a leaver") {
+    event {
+        Player Left Match;
+        All;
+        All;
+    }
+    actions {
+        While(Is True For Any(Value In Array(Global.rankedState, 20), Not(Array Contains(All Players(All Teams), Current Array Element))));
+            Destroy Effect(Value In Array(Value In Array(Global.rankedState, 21), Index Of Array Value(Value In Array(Global.rankedState, 20), First Of(Filtered Array(Value In Array(Global.rankedState, 20), Not(Array Contains(All Players(All Teams), Current Array Element)))))));
+            Modify Global Variable At Index(rankedState, 21, Remove From Array By Value, Value In Array(Value In Array(Global.rankedState, 21), Index Of Array Value(Value In Array(Global.rankedState, 20), First Of(Filtered Array(Value In Array(Global.rankedState, 20), Not(Array Contains(All Players(All Teams), Current Array Element)))))));
+            Modify Global Variable At Index(rankedState, 20, Remove From Array By Value, First Of(Filtered Array(Value In Array(Global.rankedState, 20), Not(Array Contains(All Players(All Teams), Current Array Element)))));
+        End;
+    }
+}
+
+rule ("Rank tags - hide own glow") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Button Held(Event Player, Button(Crouch)) == True;
+        (Event Player).rankGlow == True;
+        Value In Array(Global.addOnSettings, 7) == False;
+    }
+    actions {
+        Wait Until(Or(Not(Is Button Held(Event Player, Button(Crouch))), Is Button Held(Event Player, Button(Jump))), 0.3);
+        Abort If(Or(Is Button Held(Event Player, Button(Crouch)), Is Button Held(Event Player, Button(Jump))));
+        Set Player Variable(Event Player, rankGlowHidden, Not((Event Player).rankGlowHidden));
+        Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Color(White), Event Player, 10);
+        Small Message(Event Player, If-Then-Else((Event Player).rankGlowHidden, Custom String("your glow: hidden for you"), Custom String("your glow: shown")));
+        If(Array Contains(Value In Array(Global.rankedState, 20), Event Player));
+            Destroy Effect(Value In Array(Value In Array(Global.rankedState, 21), Index Of Array Value(Value In Array(Global.rankedState, 20), Event Player)));
+            Modify Global Variable At Index(rankedState, 21, Remove From Array By Value, Value In Array(Value In Array(Global.rankedState, 21), Index Of Array Value(Value In Array(Global.rankedState, 20), Event Player)));
+            Modify Global Variable At Index(rankedState, 20, Remove From Array By Value, Event Player);
     }
 }
 

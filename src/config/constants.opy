@@ -220,6 +220,8 @@ enum RankedField:
     MATCH_KEY   #this match's matchKey from GBR, 12 digits as text
     ENDED       #tourney: MATCH_END ROUNDS is logged, the final standings are up
     STANDINGS   #tourney: the players on the final standings, best first
+    GLOW_OWNERS #rank glow: the players wearing one now (features/rank-tags.opy)
+    GLOW_EFFECTS    #rank glow: their effects, in the same order as GLOW_OWNERS
 
 #Fields of rankedState[TOURNEY], the tourney rule's values (docs/tourney-rule.md), in the rule's order
 enum TourneyField:

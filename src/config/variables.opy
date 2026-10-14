@@ -105,6 +105,10 @@ playervar orbitHeat 25
 playervar kills 26
 #v1.3.3R (Ranked) slots 124-127. The player's entry in rankTags: 0 not checked yet, -1 none.
 playervar rankTier 124
+#True if the player's tier glows (RANK_GLOW_TIERS), set with rankTier
+playervar rankGlow 127
+#Rank glow hidden from its wearer (tap Crouch), "Rank tags - hide own glow"
+playervar rankGlowHidden 126
 #Ranked log: the player's round wins and kills since their JOIN (TourneyStat), for a tourney's final standings
 playervar tourneyStats 125
 
@@ -151,6 +155,10 @@ subroutine logRankedUnranked 126
 #!extension spawnMoreDummyBots
 #The ball's createProjectileEffect (ui/effects.opy)
 #!extension projectiles
+
+
+#Baptiste immortality glow on Grandmaster, Ascendant and Champion players (features/rank-tags)
+#!extension buffStatusEffects
 
 
 #Only remove the following directive if the gamemode does not use tricks such as A+0, A*0, A or "", "am" == "**", etc which would otherwise be optimized out.
