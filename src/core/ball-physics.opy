@@ -106,6 +106,21 @@ def startAstroBall():
         loop()
 
 
+rule "Ball Physics - network resync":
+    @Condition ballIsOut == true
+    @Condition ballPhysicsMode == BallPhysics.ORIGINAL
+    @Condition (ballMotion == BallMotion.MODERN or ballMotion == BallMotion.RAPID) == true
+    
+    #Ported from Genji Ball vTec ("Hack: Fix BallPosition network sync"). Restarting the
+    #ballDirection chase resends it to every client, so a client's copy of the ball can't
+    #drift from the server's (the ball clipping through an orbiting player on their screen).
+    chaseAtRate(ballDirection, directionTowards(ballPosition, target.getEyePosition()), updateEveryFrame(ballDirectionRate))
+    #20 times a second, as in vTec
+    wait(0.05, Wait.ABORT_WHEN_FALSE)
+    if ruleCondition:
+        loop()
+
+
 rule "Ball Physics - anti ghost correction":
     @Condition antiGhostMode != AntiGhost.OFF
     @Condition ballIsOut == true

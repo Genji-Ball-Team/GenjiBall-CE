@@ -1855,6 +1855,24 @@ rule ("Ball Physics - astro motion") {
     }
 }
 
+rule ("Ball Physics - network resync") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Global.ballIsOut == True;
+        Global.ballPhysicsMode == 0;
+        Or(Compare(Global.ballMotion, ==, 0), Compare(Global.ballMotion, ==, 1)) == True;
+    }
+    actions {
+        "Ported from Genji Ball vTec (\"Hack: Fix BallPosition network sync\"). Restarting the\nballDirection chase resends it to every client, so a client's copy of the ball can't\ndrift from the server's (the ball clipping through an orbiting player on their screen)."
+        Chase Global Variable At Rate(ballDirection, Direction Towards(Global.ballPosition, Eye Position(Global.target)), Update Every Frame(Global.ballDirectionRate), Destination and Rate);
+        "20 times a second, as in vTec"
+        Wait(0.05, Abort When False);
+        Loop If Condition Is True;
+    }
+}
+
 rule ("Ball Physics - anti ghost correction") {
     event {
         Ongoing - Global;

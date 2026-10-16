@@ -4,6 +4,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## Unreleased
 
+- Network resync, ported from v1.3.3R (Genji Ball vTec's "Hack: Fix BallPosition network sync"): a new rule, `Ball Physics - network resync`, restarts the ball's direction chase 20 times a second while the ball is out (Original physics, Modern or Rapid motion), so every player's copy of the ball stays in step with the server and it no longer seems to pass through an orbiting player. Always on, no setting, as in ranked. Ball feel change. The vTec join sit-out from v1.3.3R is not ported.
 - Dependabot opens one PR a month for the CI actions (`.github/dependabot.yml`). OverPy gets security updates only: a new compiler version is bumped by hand and checked in a custom game.
 - `AGENTS.md` lists the other ranked repos (genjiball-ranked, genjiball-host-tool) and how to work across them.
 - Documented the Ranked variant `v1.3.3R` (`docs/branching.md`, README). Global slots 124–127 and player slots 124–127 are reserved for it.

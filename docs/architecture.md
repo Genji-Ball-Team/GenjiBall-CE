@@ -112,6 +112,8 @@ Both call `collisionTarget()`. That checks whether the target is deflecting (`is
 - `Ball Physics - chamber x/y/z collision`: axis-aligned walls for Workshop Chamber.
 - `Ball Physics - water`: flattens the ball's vertical direction when it dips below `waterLevel` outside the island.
 
+**Network resync** (`Ball Physics - network resync`): while the ball is out with original physics and modern or rapid motion, it restarts the `ballDirection` chase 20 times a second, so every client's copy of the ball stays in step with the server (ported from vTec, as in `v1.3.3R`). It is always on and has no setting.
+
 **Anti-ghost** only applies to modern motion. It temporarily raises `ballDirectionRate` to 4 when the ball is near the target but not converging.
 
 > **Chase warning:** OverPy reports warnings like *"rule condition will possibly not trigger properly … because the global variable 'ballPosition' is chased"*. This is a known Workshop quirk: conditions on chased variables don't always re-evaluate. Existing rules have worked with it for years. Newer code (e.g. AntiOrbit) avoids it by checking chased variables in the rule body instead of in conditions. Please do the same in new rules.
