@@ -33,8 +33,28 @@ rule "Player joins game":
     @Event eachPlayer
     @Condition eventPlayer.hasMoved == false
     @Condition eventPlayer.hasSpawned() == true
-    
-    if RoundInProgress and isGameInProgress():
-        kill(eventPlayer)
+
     eventPlayer.teleport(circleCenter + vect(random.randint(-10, 10), 8, random.randint(-10, 10)))
+    #From vTec: a player who joins mid-round isn't killed the moment they spawn (a group joining at once lagged
+    #the lobby). They sit out hidden and frozen, out of the round (hasMoved stays false), until the round ends
+    #or JOIN_SIT_OUT_TIME passes, then die if a round is on. Killed during a round win, they're revived with the others.
+    if RoundInProgress and isGameInProgress() and not addOnSettings[AddOnSetting.DUELS]:
+        eventPlayer.setInvisibility(Invis.ALL)
+        eventPlayer.disablePlayerCollision()
+        eventPlayer.setAbility1Enabled(false)
+        eventPlayer.setAbility2Enabled(false)
+        eventPlayer.startForcingPosition(eventPlayer.getPosition(), false)
+        waitUntil(RoundSetupPending or not RoundInProgress or not isGameInProgress(), JOIN_SIT_OUT_TIME)
+        #They may have left during the wait
+        if not entityExists(eventPlayer):
+            return
+        if RoundInProgress and isGameInProgress():
+            kill(eventPlayer)
+        eventPlayer.stopForcingPosition()
+        eventPlayer.setAbility1Enabled(true)
+        eventPlayer.setAbility2Enabled(true)
+        eventPlayer.enablePlayerCollision()
+        eventPlayer.setInvisibility(Invis.NONE)
+    elif RoundInProgress and isGameInProgress():
+        kill(eventPlayer)
     eventPlayer.hasMoved = true

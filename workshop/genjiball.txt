@@ -867,10 +867,27 @@ rule ("Player joins game") {
         Has Spawned(Event Player) == True;
     }
     actions {
-        If(And(Global.RoundInProgress, Is Game In Progress));
+        Teleport(Event Player, Add(Global.circleCenter, Vector(Random Integer(-10, 10), 8, Random Integer(-10, 10))));
+        "the lobby). They sit out hidden and frozen, out of the round (hasMoved stays false), until the round ends\nor JOIN_SIT_OUT_TIME passes, then die if a round is on. Killed during a round win, they're revived with the others."
+        If(And(And(Global.RoundInProgress, Is Game In Progress), Not(Value In Array(Global.addOnSettings, 5))));
+            Set Invisible(Event Player, All);
+            Disable Movement Collision With Players(Event Player);
+            Set Ability 1 Enabled(Event Player, False);
+            Set Ability 2 Enabled(Event Player, False);
+            Start Forcing Player Position(Event Player, Position Of(Event Player), False);
+            Wait Until(Or(Or(Global.RoundSetupPending, Not(Global.RoundInProgress)), Not(Is Game In Progress)), 4);
+            Abort If(Not(Entity Exists(Event Player)));
+            If(And(Global.RoundInProgress, Is Game In Progress));
+                Kill(Event Player, Null);
+            End;
+            Stop Forcing Player Position(Event Player);
+            Set Ability 1 Enabled(Event Player, True);
+            Set Ability 2 Enabled(Event Player, True);
+            Enable Movement Collision With Players(Event Player);
+            Set Invisible(Event Player, None);
+        Else If(And(Global.RoundInProgress, Is Game In Progress));
             Kill(Event Player, Null);
         End;
-        Teleport(Event Player, Add(Global.circleCenter, Vector(Random Integer(-10, 10), 8, Random Integer(-10, 10))));
         Set Player Variable(Event Player, hasMoved, True);
     }
 }
@@ -1349,7 +1366,8 @@ rule ("Active game - check for last player surviving") {
     }
     conditions {
         Is Game In Progress == True;
-        Number Of Living Players(All Teams) == 1;
+        "Not counting a player who joined mid-round and sits out hidden (core/lobby.opy)"
+        Count Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved)) == 1;
         Global.IsEnoughPlayersToStart == True;
         Value In Array(Global.addOnSettings, 5) == False;
     }
@@ -1357,7 +1375,7 @@ rule ("Active game - check for last player surviving") {
         Set Global Variable(IsInFinalDuel, False);
         "Cleared by startRound once the next round is under way."
         Set Global Variable(RoundSetupPending, True);
-        Modify Player Score(All Living Players(All Teams), 1);
+        Modify Player Score(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved), 1);
         Wait(0.25, Ignore Condition);
         If(And(Or(Compare(Match Time, ==, 0), Global.TieBreakerActive), Not(Global.tournamentMode)));
             "If there is alredy a tiebreaker, then the tiebreaker has ended.\nif TieBreakerActive:\nbreak\n__end__()"
@@ -1376,7 +1394,7 @@ rule ("Active game - check for last player surviving") {
         End;
         Stop Chasing Global Variable(ballSpawnCountdown);
         Stop Chasing Player Variable(All Players(All Teams), bouncePadCooldown);
-        Big Message(All Players(All Teams), Custom String("{0} has won the round", First Of(All Living Players(All Teams))));
+        Big Message(All Players(All Teams), Custom String("{0} has won the round", First Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved))));
         Wait(Value In Array(Global.roundTimings, 1), Ignore Condition);
         Skip If(Value In Array(Global.addOnSettings, 5), 8);
         If(Not(Global.TieBreakerActive));
@@ -1399,7 +1417,8 @@ rule ("Active game - all players dead") {
         Ongoing - Global;
     }
     conditions {
-        Number Of Living Players(All Teams) == 0;
+        "Not counting a player who joined mid-round and sits out hidden (core/lobby.opy)"
+        Count Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved)) == 0;
         Is Game In Progress == True;
         Global.TieBreakerActive == False;
         Value In Array(Global.addOnSettings, 5) == False;
@@ -3733,7 +3752,7 @@ rule ("Ranked log - ROUND_START") {
         Call Subroutine(logRankedJoins);
         Modify Global Variable At Index(rankedState, 7, Add, 1);
         Set Global Variable At Index(rankedState, 8, True);
-        "In the round: everyone alive now. Players who join later are killed by \"Player joins game\" and play from the next round."
+        "In the round: everyone alive now. Players who join later sit out (killed, or hidden until the round ends) in \"Player joins game\" and play from the next round."
         Set Global Variable(rankedRound, Sorted Array(All Living Players(All Teams), Index Of Array Value(Global.rankedPlayers, Current Array Element)));
         "ids, comma-separated"
         Set Global Variable At Index(rankedState, 9, Index Of Array Value(Global.rankedPlayers, First Of(Global.rankedRound)));
@@ -3944,7 +3963,7 @@ rule ("Rank tags - floating tags") {
         Wait(1, Ignore Condition);
         Set Global Variable At Index(rankedState, 12, 0);
         While(Compare(Value In Array(Global.rankedState, 12), <, 12));
-            Create In-World Text(If-Then-Else(And(Compare((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).rankTier, >, 0), Is Alive(Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams))), All Players(All Teams), Null), First Of(Value In Array(Global.rankTags, Max((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).rankTier, 0))), Add(Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams), Vector(0, Evaluate Once(Value In Array(Global.rankedState, 2)), 0)), Value In Array(Global.rankedState, 3), Do Not Clip, Visible To Position String and Color, Value In Array(Value In Array(Global.rankTags, Max((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).rankTier, 0)), 1), Default Visibility);
+            Create In-World Text(If-Then-Else(And(And(Compare((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).rankTier, >, 0), Is Alive(Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams))), (Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).hasMoved), All Players(All Teams), Null), First Of(Value In Array(Global.rankTags, Max((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).rankTier, 0))), Add(Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams), Vector(0, Evaluate Once(Value In Array(Global.rankedState, 2)), 0)), Value In Array(Global.rankedState, 3), Do Not Clip, Visible To Position String and Color, Value In Array(Value In Array(Global.rankTags, Max((Players In Slot(Evaluate Once(Value In Array(Global.rankedState, 12)), All Teams)).rankTier, 0)), 1), Default Visibility);
             Modify Global Variable At Index(rankedState, 12, Add, 1);
         End;
     }
@@ -3960,6 +3979,8 @@ rule ("Rank tags - glow on") {
         Value In Array(Global.rankedState, 1) == True;
         (Event Player).rankGlow == True;
         Is Alive(Event Player) == True;
+        "Not while they sit out hidden after joining mid-round (core/lobby.opy)"
+        (Event Player).hasMoved == True;
         Array Contains(Value In Array(Global.rankedState, 20), Event Player) == False;
     }
     actions {
