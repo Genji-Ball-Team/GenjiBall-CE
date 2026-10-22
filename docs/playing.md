@@ -18,7 +18,7 @@ Stay alive longest to win the round. Each round won is worth 1 point.
 5. **Final duel.** When only two players are left, both are placed on opposite sides of the arena and frozen for 1.5 seconds. Then it's a 1v1.
 6. **Round won.** The last player alive gets a point. Everyone respawns and the next round starts.
 
-Players who join mid-round sit out (dead, spectating) until the next round.
+Players who join mid-round sit out until the next round: hidden and frozen for up to 4 seconds, then dead and spectating if the round is still going.
 
 ### Dash-hitting
 

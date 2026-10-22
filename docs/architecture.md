@@ -82,7 +82,7 @@ The numbers are the defaults. *15 - Ball Feel* (hit radius, speed per deflect) a
 | `isIsland` | True on Workshop Island (day or night). Set once in `maps/arenas.opy`. Use it instead of comparing `__getCurrentMap__()` |
 | `presetMode`, `ballMotion`, `ballPhysicsMode`, … | Settings from `config/workshop-settings.opy`. Most are named after their Workshop setting. Compare enum settings against `config/constants.opy` (`ballMotion == BallMotion.ASTRO`), not raw numbers |
 
-Per-player: `canDash`, `canDeflect`, `dashOnCooldown` (input gating), `hasMoved` (has spawned into the arena, used to exclude people who haven't really joined yet), `antiRubberbanding`, `simpleHUD` (`SimpleHud.OFF`, `ON`, `ZEN`), `orbit*` (AntiOrbit), `kills` (kill tracker).
+Per-player: `canDash`, `canDeflect`, `dashOnCooldown` (input gating), `hasMoved` (has spawned into the arena, used to exclude people who haven't really joined yet, including a mid-round joiner sitting out hidden in `core/lobby.opy`), `antiRubberbanding`, `simpleHUD` (`SimpleHud.OFF`, `ON`, `ZEN`), `orbit*` (AntiOrbit), `kills` (kill tracker).
 
 See `src/config/variables.opy` for the full list.
 

@@ -77,7 +77,7 @@ Which players are in a round:
 - **In the round:** the players listed in `ROUND_START`, every player alive when the round starts. In a tiebreaker, only the tied players are alive, so only they are listed.
 - **Eliminated:** each gets one `ELIM`, in the order they went out.
 - **Left:** a player who leaves during the round gets a `LEAVE` and no `ELIM`. The server drops them from that round: no rating change for them, the others are rated on their order without them. Leaving is normal and is never punished.
-- **Joined:** a player who joins during a round isn't in it. They play from the next round.
+- **Joined:** a player who joins during a round isn't in it. They sit out hidden for up to 4 s and are then killed if the round is still on (a `KILL`, no `ELIM`), and play from the next round.
 - **Winner:** the last player alive, in `ROUND_END`.
 
 ## Events
@@ -94,7 +94,7 @@ Which players are in a round:
 | `ROUND_START` | `round`, `ids` | A round starts. `ids` lists everyone in the round, comma-separated (`1,2,3,4,5`). |
 | `ELIM` | `round`, `id`, `killer`, `place` | A player in the round is eliminated: hit by the ball, fell, or anything else. `killer` is the player whose deflect sent the ball, empty when there is none or it's the player themselves. `place` is their finishing place: the number of players still alive after them, plus 1 (the first of 5 out gets `5`). A place can be skipped when someone left the round. |
 | `ROUND_END` | `round`, `winner`, `result` | A round ends. `result` is `WIN` (one player left, `winner` is their id), `NONE` (everyone died, `winner` empty, the round restarts) or `ABORT` (the round was stopped before anyone won, `winner` empty). |
-| `KILL` | `attacker`, `victim`, `attackerId`, `victimId` | Any player death, in or out of a round (a player who joins mid-round is killed too). The first fields are the v1.3.2 `KILL` line unchanged ([legacy](#legacy-v132-logs)), the ids are new. `attacker` and `attackerId` are empty when there's no attacker or it's the victim themself, as in `ELIM`. `victimId` is empty for a player who has no id yet (not spawned). |
+| `KILL` | `attacker`, `victim`, `attackerId`, `victimId` | Any player death, in or out of a round (a player who joins mid-round is killed too, up to 4 s after they spawn, unless the round ends first). The first fields are the v1.3.2 `KILL` line unchanged ([legacy](#legacy-v132-logs)), the ids are new. `attacker` and `attackerId` are empty when there's no attacker or it's the victim themself, as in `ELIM`. `victimId` is empty for a player who has no id yet (not spawned). |
 | `DEFLECT` | `round`, `id`, `speed`, `target` | A player deflects the ball, during a round only. `speed` is the ball speed after the deflect, rounded to a whole number; `target` is the player the ball now goes for. Each player can deflect at most once every 0.8 s (deflect window plus lockout), so a round logs at most about 1.25 `DEFLECT` lines per second per player alive. |
 | `UNRANKED` | `reason` | The match [won't count](#unranked-matches). Logged once per reason, at `MATCH_START` or when it happens. |
 | `MATCH_END` | `result` | How the match ended normally. `TIME` in a ranked match: time ran out and any tiebreaker is over. `ROUNDS` in a tourney match: round `roundLimit` has ended. |

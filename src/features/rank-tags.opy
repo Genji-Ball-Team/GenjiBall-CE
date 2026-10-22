@@ -64,7 +64,7 @@ rule "Rank tags - floating tags":
     rankedState[RankedField.TAG_LOOP] = 0
     while rankedState[RankedField.TAG_LOOP] < FFA_SLOTS:
         createInWorldText(
-            getAllPlayers() if TAGGED_PLAYER.rankTier > 0 and TAGGED_PLAYER.isAlive() else null,
+            getAllPlayers() if TAGGED_PLAYER.rankTier > 0 and TAGGED_PLAYER.isAlive() and TAGGED_PLAYER.hasMoved else null,
             rankTags[max(TAGGED_PLAYER.rankTier, 0)][RankTagField.LABEL],
             TAGGED_PLAYER + vect(0, evalOnce(rankedState[RankedField.TAG_HEIGHT]), 0),
             rankedState[RankedField.TAG_SIZE],
@@ -84,6 +84,8 @@ rule "Rank tags - glow on":
     @Condition rankedState[RankedField.TAGS] == true
     @Condition eventPlayer.rankGlow == true
     @Condition eventPlayer.isAlive() == true
+    #Not while they sit out hidden after joining mid-round (core/lobby.opy)
+    @Condition eventPlayer.hasMoved == true
     @Condition (eventPlayer in rankedState[RankedField.GLOW_OWNERS]) == false
 
     createEffect(getAllPlayers().exclude(eventPlayer if eventPlayer.rankGlowHidden else null), Effect.BAPTISTE_IMMORTALITY_FIELD_PROTECTED, Color.WHITE, eventPlayer, 1, EffectReeval.POSITION_AND_RADIUS)
