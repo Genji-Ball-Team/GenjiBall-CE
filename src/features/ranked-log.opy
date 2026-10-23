@@ -8,6 +8,10 @@
 #Any setting that changes how the ball or a player moves, controls or deflects (MATCH_START feel, UNRANKED FEEL)
 #!define RANKED_FEEL_ON (ballFeel[BallFeel.CUSTOM] or addOnSettings[AddOnSetting.WATER_LEDGE_FIX] or addOnSettings[AddOnSetting.TRACING_MODE] or antiGhostMode != AntiGhost.OFF or antiOrbitMode)
 
+#Adds an add-on's name to the comma-separated list in TEXT when its setting is on
+#!define appendRankedAddOn(setting, name) if addOnSettings[setting]:\
+    rankedState[RankedField.TEXT] = "{0}{1}{2}".format(rankedState[RankedField.TEXT], "," if rankedState[RankedField.TEXT] != "" else "", name)
+
 
 #Gives every spawned player without an id the next id, and logs their JOIN.
 #Called at MATCH_START for the players already there, then for each player who joins.
@@ -44,12 +48,9 @@ rule "Ranked log - MATCH_START":
     rankedState[RankedField.COUNT] = 1 if RANKED_FEEL_ON else 0
     #addOns: the gameplay add-ons that are on, comma-separated
     rankedState[RankedField.TEXT] = "duels" if addOnSettings[AddOnSetting.DUELS] else ""
-    if addOnSettings[AddOnSetting.ENDLESS]:
-        rankedState[RankedField.TEXT] = "{0}{1}endless".format(rankedState[RankedField.TEXT], "," if rankedState[RankedField.TEXT] != "" else "")
-    if addOnSettings[AddOnSetting.SANDBOX]:
-        rankedState[RankedField.TEXT] = "{0}{1}sandbox".format(rankedState[RankedField.TEXT], "," if rankedState[RankedField.TEXT] != "" else "")
-    if addOnSettings[AddOnSetting.ABILITIES]:
-        rankedState[RankedField.TEXT] = "{0}{1}abilities".format(rankedState[RankedField.TEXT], "," if rankedState[RankedField.TEXT] != "" else "")
+    appendRankedAddOn(AddOnSetting.ENDLESS, "endless")
+    appendRankedAddOn(AddOnSetting.SANDBOX, "sandbox")
+    appendRankedAddOn(AddOnSetting.ABILITIES, "abilities")
     logToInspector("MATCH_START|{0}|{1}|{2}|{3}|{4}".format(
         getTotalTimeElapsed(),
         "workshop-island-night" if __getCurrentMap__() == Map.WORKSHOP_ISLAND_NIGHT else "other",
