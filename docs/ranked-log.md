@@ -86,7 +86,7 @@ Which players are in a round:
 
 | Type | Fields | When |
 |---|---|---|
-| `GBR` | `format`, `gameVersion`, `matchKey` | First line of every match, before `MATCH_START`. `format` is the [format version](#versions) (`2`), `gameVersion` the build (`1.3.3R`). `matchKey` is 12 random digits picked at match start, the same in every [copy of the match](#one-match-in-several-files). Treat it as text, not a number. |
+| `GBR` | `format`, `gameVersion`, `matchKey`, `build` | First line of every match, before `MATCH_START`. `format` is the [format version](#versions) (`2`), `gameVersion` the release (`1.3.3R`). `matchKey` is 12 random digits picked at match start, the same in every [copy of the match](#one-match-in-several-files). Treat it as text, not a number. `build` is the [build id](#build-id) of the game code that wrote the log, 8 lower-case hex digits (`3fa9c07b`); treat it as text, as it can be all digits. Logs from before it was added have no `build`: the server stores none. |
 | `TOURNEY` | `lobbyKey`, `roundLimit` | Only in a [tourney match](#tourney-matches), as the line right after `GBR`. `lobbyKey` is the server's id for the tourney lobby, from the `TOURNEY - generated` rule: digits, treat it as text (it may start with `0`). `roundLimit` is the number of rounds the match lasts. A ranked match has no `TOURNEY` line. |
 | `MATCH_START` | `map`, `preset`, `feel`, `addOns` | Match start. `map` is our own code, not the map's name (which the Workshop translates): `workshop-island-night`, or `other`. `preset` is the Preset setting as named in `docs/hosting.md` (`Default`, …). `feel` is `1` if any ball or player feel toggle is on, else `0`: custom ball feel, water ledge fix, tracing mode, anti-ghost correction (not off) or AntiOrbit. `addOns` lists the gameplay add-ons that are on, comma-separated (`duels`, `endless`, `sandbox`, `abilities`), empty when none. |
 | `JOIN` | `id`, `name`, `host` | A player joins a slot, or is already in one at `MATCH_START`. `host` is `1` for the lobby host, empty for everyone else. |
@@ -159,6 +159,15 @@ With ranked logging turned off in the Workshop settings (`70 - Ranked > ranked l
 
 The player limit (10) is a lobby setting, so there's no reason for too many players. Too few players is a server rule (above).
 
+## Build id
+
+`1.3.3R` is re-released every time a change is merged into the `v1.3.3R` branch, so `gameVersion` can't tell two builds apart. The `build` field of `GBR` can: it identifies the exact game code that wrote the log, so a build with a bug can be traced to its matches.
+
+- It is the first 8 hex digits of the SHA-256 of the OverPy source in `src/` (every `.opy` file, paths sorted, line endings as LF). It is worked out by `npm run build` and `npm run check`, nobody sets it by hand, and it changes exactly when the game code changes. A release that only changes docs keeps the build id, because it is the same game.
+- `node tools/build-id.mjs` prints the build id of the working tree, and `node tools/build-id.mjs <id>` looks it up in the branch's history and prints the commit that introduced it. That is how a `build` in the log maps back to a commit and a re-release.
+- Hex digits and 8 characters are safe in a Workshop string and in the log: no `|`, no line break; the game writes it as literal text in the `GBR` line, which stays under the [string limits](#string-limits).
+- The server stores the `build` of each match, so matches from a bad build can be listed. It doesn't affect parsing, rating or whether a match counts.
+
 ## String limits
 
 A Workshop custom string holds at most 128 characters of literal text and 3 placeholders (`{0}`, `{1}`, `{2}`). OverPy splits longer strings into nested ones, but we don't rely on long results: every line stays well under 128 characters.
@@ -182,8 +191,9 @@ The parser rejects a match whose version it doesn't know, with a clear error.
 |---|---|
 | 1 | The first v1.3.3R release. Ranked matches only. |
 | 2 | [Tourney matches](#tourney-matches): the `TOURNEY` line and `MATCH_END` `ROUNDS`. A format 1 parser would skip `TOURNEY` and rate a tourney as a ranked match. The game writes `2` for every match, ranked ones too; a format 2 parser reads a format 1 match as a ranked match. |
+| 2 (same version) | The `build` field at the end of `GBR` ([build id](#build-id)). A field added at the end of a line, so it needs no new version: older parsers ignore it, and a parser reading a log without it stores no build. |
 
-The server has to accept a version before the game writes it: it goes live first, then the game is released.
+The server has to accept a version before the game writes it: it goes live first, then the game is released. A field added at the end of a line (like `build`) needs no such ordering: the old server keeps working, and it only starts storing the field once it's updated.
 
 ## Legacy v1.3.2 logs
 
@@ -197,7 +207,7 @@ with `time` the Total Time Elapsed and names, not ids. That's why `KILL` keeps t
 
 ## Example
 
-[`ranked-log-example.txt`](ranked-log-example.txt) is one ranked match, format 2, map `workshop-island-night`, preset `Default`, no feel toggles or add-ons, not unranked. It starts with a line that isn't ours, which the parser skips.
+[`ranked-log-example.txt`](ranked-log-example.txt) is one ranked match, format 2, build `3fa9c07b`, map `workshop-island-night`, preset `Default`, no feel toggles or add-ons, not unranked. It starts with a line that isn't ours, which the parser skips.
 
 Players: 1 Sparrow (the host), 2 Tidal, 3 Mochi, 4 Ghost, 5 Ghost (a second player with the same name, so the server holds this match for review), 6 Nova (joins after round 1).
 
