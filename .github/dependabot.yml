@@ -1,0 +1,12 @@
+# Monthly version updates for the CI actions, in one PR.
+# overpy (npm) gets security updates only: a new compiler version changes the compiled Workshop
+# code, so it's bumped by hand and checked in a custom game.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]
