@@ -16,8 +16,9 @@ The OverPy version is pinned in `package.json`, so everyone builds identical out
 | Command | What it does |
 |---|---|
 | `npm ci` | Install the pinned OverPy version |
-| `npm run build` | Compile `src/main.opy` → `workshop/genjiball.txt` |
+| `npm run build` | Compile `src/main.opy` → `workshop/genjiball.txt`, with the ranked log's build id filled in |
 | `npm run check` | Compile and fail if `workshop/genjiball.txt` is stale, a [feel-locked](#feel-lock) rule changed, a Workshop limit is nearly used up, or the [settings tables](#settings-docs) in `docs/hosting.md` are out of date (this is what CI runs). Also prints the [resource budget](architecture.md#limits-to-keep-in-mind) |
+| `node tools/build-id.mjs [id]` | Print the build id the ranked log writes (a hash of `src/`, filled in by the build), or find the commit that introduced a build id from a log (see `docs/ranked-log.md`, "Build id") |
 | `npm run feel-lock:update` | Rewrite `tools/feel-lock.json` after a deliberate ball feel change |
 | `npm run docs:settings` | Regenerate the [settings tables](#settings-docs) in `docs/hosting.md` from `src/` |
 | `npm run decompile -- in.txt out.opy` | Turn Workshop code copied from the game into OverPy |

@@ -10,6 +10,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import overpy from "overpy";
+import { buildId } from "./build-id.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 export const snapshotPath = resolve(root, "tools/feel-lock.json");
@@ -30,9 +31,14 @@ const LOCKED_RULES = [
 ];
 
 // The full OverPy compile result, with `result` normalized to LF line endings.
+// BUILD_ID (the GBR line's build field, tools/build-id.mjs) is the hash of src/, so it is filled in
+// here and not committed: the placeholder in main.opy is replaced before OverPy sees it.
 export async function compile() {
   await overpy.readyPromise;
-  const source = await readFile(resolve(root, "src/main.opy"), "utf8");
+  const placeholder = '#!define BUILD_ID "dev"';
+  const main = await readFile(resolve(root, "src/main.opy"), "utf8");
+  if (!main.includes(placeholder)) throw new Error(`src/main.opy must contain ${placeholder}`);
+  const source = main.replace(placeholder, `#!define BUILD_ID "${await buildId()}"`);
   const compiled = await overpy.compile(source, "en-US", resolve(root, "src"), "main.opy");
   return { ...compiled, result: compiled.result.replace(/\r\n/g, "\n") };
 }

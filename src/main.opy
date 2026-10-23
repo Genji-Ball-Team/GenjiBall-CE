@@ -9,6 +9,9 @@
 #collision, ball physics; feel-locked, see CONTRIBUTING.md), maps/ (per-map
 #setup and restrictions), features/ (optional modes and tools), ui/ (HUD, effects).
 
+#The build id for the GBR log line. tools/build-id.mjs hashes src/ and the build replaces this line, so it never needs bumping by hand.
+#!define BUILD_ID "dev"
+
 #!include "config/constants.opy"
 #!include "config/lobby.opy"
 #!include "config/variables.opy"

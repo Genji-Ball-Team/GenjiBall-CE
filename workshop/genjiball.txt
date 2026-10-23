@@ -3597,7 +3597,8 @@ rule ("Ranked log - MATCH_START") {
         Set Global Variable At Index(rankedState, 8, False);
         "matchKey: 12 random digits, so the server can tell repeated copies of this match apart from other matches.\nKept for a tourney's final standings. Format 2 for every match, ranked ones too."
         Set Global Variable At Index(rankedState, 17, Custom String("{0}{1}", Random Integer(100000, 999999), Random Integer(100000, 999999)));
-        Log To Inspector(Custom String("GBR|{0}|2|1.3.3R|{1}", Total Time Elapsed, Value In Array(Global.rankedState, 17)));
+        "The build id is the last field, so an older parser ignores it (docs/ranked-log.md, \"Build id\")."
+        Log To Inspector(Custom String("GBR|{0}|2|1.3.3R|{1}|4183a81d", Total Time Elapsed, Value In Array(Global.rankedState, 17)));
         "Tourney: right after GBR, so every copy of the match has it. roundLimit is the one the match plays (totalRounds)."
         If(Compare(First Of(Value In Array(Global.rankedState, 16)), ==, True));
             Log To Inspector(Custom String("TOURNEY|{0}|{1}|{2}", Total Time Elapsed, Value In Array(Value In Array(Global.rankedState, 16), 1), Global.totalRounds));

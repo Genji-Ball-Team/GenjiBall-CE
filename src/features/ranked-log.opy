@@ -39,7 +39,8 @@ rule "Ranked log - MATCH_START":
     #matchKey: 12 random digits, so the server can tell repeated copies of this match apart from other matches.
     #Kept for a tourney's final standings. Format 2 for every match, ranked ones too.
     rankedState[RankedField.MATCH_KEY] = "{0}{1}".format(random.randint(100000, 999999), random.randint(100000, 999999))
-    logToInspector("GBR|{0}|2|1.3.3R|{1}".format(getTotalTimeElapsed(), rankedState[RankedField.MATCH_KEY]))
+    #The build id is the last field, so an older parser ignores it (docs/ranked-log.md, "Build id").
+    logToInspector("GBR|{0}|2|1.3.3R|{1}|{2}".format(getTotalTimeElapsed(), rankedState[RankedField.MATCH_KEY], BUILD_ID))
     #Tourney: right after GBR, so every copy of the match has it. roundLimit is the one the match plays (totalRounds).
     if TOURNEY_ON:
         logToInspector("TOURNEY|{0}|{1}|{2}".format(getTotalTimeElapsed(), rankedState[RankedField.TOURNEY][TourneyField.LOBBY_KEY], totalRounds))
