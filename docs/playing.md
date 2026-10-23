@@ -34,7 +34,7 @@ You can also hit the ball by **dashing into it**. It redirects the same way, but
 | **Interact** (tap) | Simple HUD: hides the Discord/controls text |
 | **Interact** (hold) | Zen mode: hides the hero HUD and shows big Dash/Deflect ready indicators |
 | **Melee** | Toggle anti-rubberbanding (see below) |
-| **Ultimate** | Toggle double sensitivity (only if the host enabled it) |
+| **Ultimate** | Toggle double sensitivity (on by default in ranked, off in v1.3.3 unless the host enabled it) |
 | **Jump** on a blue ring | Bounce pad (only if the host enabled bounce pads) |
 | **Crouch** (tap) | Ranked, if you glow (Grandmaster, Ascendant, Champion): hide your own glow from yourself, or show it again. Others still see it |
 

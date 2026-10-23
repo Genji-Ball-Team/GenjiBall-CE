@@ -28,7 +28,7 @@ The lobby is set up for **Deathmatch (FFA)** with up to **10 players** and 12 sp
 This branch (`v1.3.3R`) is the ranked version. The code is already set up for a ranked lobby, the same setup as the v1.3.2 RANKED version:
 
 - **Deathmatch (FFA)** on **Workshop Island Night** only, up to **10 players**, 12 spectators. Don't enable other maps.
-- Workshop settings at their defaults: preset **Default**, nothing in *15 - Ball Feel* or the other feel toggles, no gameplay add-ons (duels, endless, sandbox, custom abilities), no bot. The ball and players feel exactly as in v1.3.3 `Default`.
+- Workshop settings at their defaults: preset **Default**, nothing in *15 - Ball Feel* or the other feel toggles, no gameplay add-ons (duels, endless, sandbox, custom abilities), no bot. The ball and players feel as in v1.3.3 `Default`, plus the network resync (the ball's direction is resent to every client 20 times a second) and double sens on by default.
 - `70 - Ranked > ranked logging` on (the default), and **Enable Workshop Inspector Log File** on in the Overwatch options, so the match reaches a log file the host tool can upload.
 
 The code shows the leaderboard's top 10 in the lobby: a tag over each of them with their place and rating (`#1 | 2074`), and a top 10 list on the right. Other players in a rank tier get the tier's name as their tag. They come from the host tool, which builds the code with the region's current tiers and top 10 ([rank-tags.md](rank-tags.md)); the code in this repo has no players, so it shows no tags.
