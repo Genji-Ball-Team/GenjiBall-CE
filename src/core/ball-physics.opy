@@ -204,7 +204,17 @@ rule "Ball Physics - island collision":
     @Condition ballPosition.y < 0
     @Condition isIsland == true
     
-    CollisionSurfaceDistances = [distance(ballPosition, vect(ballPosition.x, 0, ballPosition.z)), distance(ballPosition, vect(20, ballPosition.y, ballPosition.z)), distance(ballPosition, vect(-20, ballPosition.y, ballPosition.z)), distance(ballPosition, vect(ballPosition.x, ballPosition.y, 20)), distance(ballPosition, vect(ballPosition.x, ballPosition.y, -20))]
+    #Ranked: bounce off the surface the ball came in through, not the nearest one. For each surface the
+    #ball is moving into, how long ago it crossed it (depth / inward speed), 999 if it's moving away. The
+    #smallest is the way in. v1.3.2 took the nearest surface, so near a corner a ball that came in through
+    #one side was bounced off the other, or not at all, and went through the island.
+    CollisionSurfaceDistances = [
+        max(0, -ballPosition.y) / -ballDirection.y if ballDirection.y < 0 else 999,
+        max(0, 20.2 - ballPosition.x) / -ballDirection.x if ballDirection.x < 0 else 999,
+        max(0, ballPosition.x + 20.2) / ballDirection.x if ballDirection.x > 0 else 999,
+        max(0, 20.2 - ballPosition.z) / -ballDirection.z if ballDirection.z < 0 else 999,
+        max(0, ballPosition.z + 20.2) / ballDirection.z if ballDirection.z > 0 else 999
+    ]
     simpleIslandCollision()
     if ballPhysicsMode == BallPhysics.EXPERIMENTAL:
         #Floor/platform rebounds use the same surface tuning slider as walls.

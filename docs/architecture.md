@@ -111,7 +111,7 @@ Both call `collisionTarget()`. That checks whether the target is deflecting (`is
 
 **Bounces:**
 - `Ball Physics - general collision`: raycasts one step ahead. On a hit it reflects `ballDirection` around the surface normal (Workshop Island uses the simplified side-collision helper).
-- `Ball Physics - island collision`: Workshop Island platform floor and sides, using the nearest-surface helpers `simpleIslandCollision` / `simpleIslandSideCollision`.
+- `Ball Physics - island collision`: Workshop Island platform floor and sides. It bounces the ball off the surface it came in through (the one it crossed most recently, from its depth and direction), using `simpleIslandCollision`. In v1.3.2 it took the nearest surface, which near a corner let the ball through the island. `general collision` still uses the nearest-surface side helper `simpleIslandSideCollision`.
 - `Ball Physics - chamber x/y/z collision`: axis-aligned walls for Workshop Chamber.
 - `Ball Physics - water`: flattens the ball's vertical direction when it dips below `waterLevel` outside the island.
 
