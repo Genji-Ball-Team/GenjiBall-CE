@@ -64,7 +64,9 @@ rule "Bots - incoming ball":
     else:
         eventPlayer.botHook[BotHook.DEFLECT] = BotDeflect.PRESS
     waitUntil(target != eventPlayer or eventPlayer.isDead() or ballIsOut == false or botBallIsStale or distance(eventPlayer.getEyePosition(), ballPosition) <= botNearDistance, 99999)
-    if eventPlayer.botTuning[BotTuning.REACTION_MAX] > 0:
+    if ballSpeed >= eventPlayer.botTuning[BotTuning.BALL_FAST] and eventPlayer.botTuning[BotTuning.REACTION_FAST_MAX] > 0:
+        wait(random.uniform(eventPlayer.botTuning[BotTuning.REACTION_FAST_MIN], eventPlayer.botTuning[BotTuning.REACTION_FAST_MAX]))
+    elif eventPlayer.botTuning[BotTuning.REACTION_MAX] > 0:
         wait(random.uniform(eventPlayer.botTuning[BotTuning.REACTION_MIN], eventPlayer.botTuning[BotTuning.REACTION_MAX]))
     #A dash asked for by "Bots - edash" owns the facing until it's pressed
     waitUntil(eventPlayer.botState[BotField.FACING] != BotFacing.DASH, 1)
@@ -121,8 +123,14 @@ rule "Bots - incoming ball":
         eventPlayer.botState[BotField.FACING] = BotFacing.CAMERA
         return
     eventPlayer.botState[BotField.FACING] = BotFacing.CAMERA
+    #After shot: dash sideways away from the shot, inside WALK_EDGE (else toward a spot near the middle)
+    if eventPlayer.botTuning[BotTuning.DASH_AWAY] > 0 and prevTarget == eventPlayer and (eventPlayer.botState[BotField.INTENT] == BotIntent.AT_ENEMY or random.randint(0, 99) < eventPlayer.botTuning[BotTuning.DASH_AWAY]):
+        eventPlayer.botHook[BotHook.DASH_DIRECTION] = directionFromAngles(horizontalAngleOfDirection(eventPlayer.getFacingDirection()) + random.choice([-1, 1]) * random.randint(70, 120), 0)
+        if abs(eventPlayer.getPosition().x + eventPlayer.botHook[BotHook.DASH_DIRECTION].x * 12 - circleCenter.x) > eventPlayer.botTuning[BotTuning.WALK_EDGE] or abs(eventPlayer.getPosition().z + eventPlayer.botHook[BotHook.DASH_DIRECTION].z * 12 - circleCenter.z) > eventPlayer.botTuning[BotTuning.WALK_EDGE]:
+            eventPlayer.botHook[BotHook.DASH_DIRECTION] = directionTowards(eventPlayer.getPosition(), vect(circleCenter.x + random.uniform(-8, 8), eventPlayer.getPosition().y, circleCenter.z + random.uniform(-8, 8)))
+        botDash()
     #After shot: ghost dash when the ball flies straight at the next player
-    if eventPlayer.botTuning[BotTuning.GHOST_DASH] and angleBetweenVectors(ballDirection * -1, directionTowards(target, ballPosition)) < 20 and distance(eventPlayer.getEyePosition(), ballPosition) < ballSpeed:
+    elif eventPlayer.botTuning[BotTuning.GHOST_DASH] and angleBetweenVectors(ballDirection * -1, directionTowards(target, ballPosition)) < 20 and distance(eventPlayer.getEyePosition(), ballPosition) < ballSpeed:
         #Facing Direction Of a vector, kept as zBozo had it
         eventPlayer.botHook[BotHook.DASH_DIRECTION] = evalOnce(ballDirection.getFacingDirection()) * -1
         botDash()
@@ -157,6 +165,9 @@ def botCheckCondition():
         case BotCondition.ENEMY_FAR:
             eventPlayer.botState[BotField.PASSED] = eventPlayer.botState[BotField.ENEMY] != null and distance(eventPlayer, eventPlayer.botState[BotField.ENEMY]) > eventPlayer.botTuning[BotTuning.ENEMY_FAR]
             break
+        case BotCondition.ALL_FAR:
+            eventPlayer.botState[BotField.PASSED] = all([distance(eventPlayer, x) > eventPlayer.botTuning[BotTuning.ENEMY_FAR] for x in getLivingPlayers(Team.ALL).exclude(eventPlayer)])
+            break
         case BotCondition.BALL_FAST:
             eventPlayer.botState[BotField.PASSED] = ballSpeed >= eventPlayer.botTuning[BotTuning.BALL_FAST]
             break
@@ -182,6 +193,10 @@ def botAimShot():
             botAimError()
             break
         case BotShot.AT_ANYONE:
+            #Nobody else alive: down
+            if len(getLivingPlayers(Team.ALL).exclude(eventPlayer)) == 0:
+                eventPlayer.botState[BotField.AIM] = Vector.DOWN
+                break
             eventPlayer.botState[BotField.AIM] = directionTowards(eventPlayer.getEyePosition(), random.choice(getLivingPlayers(Team.ALL).exclude(eventPlayer)).getEyePosition())
             botAimError()
             break
@@ -339,6 +354,41 @@ rule "Bots - punish":
         eventPlayer.botState[BotField.FACING] = BotFacing.CAMERA
 
 
+rule "Bots - ace dash":
+    #As the ball reaches a player close by, ACE_CHANCE % of the time: dash along where that player looks
+    @Event eachPlayer
+    @Condition eventPlayer.botHook[BotHook.PRESET] != BotPreset.NONE
+    @Condition eventPlayer.botTuning[BotTuning.ACE_CHANCE] > 0
+    @Condition eventPlayer.botState[BotField.FACING] == BotFacing.CAMERA
+    @Condition ballIsOut == true
+    @Condition target != eventPlayer
+    @Condition eventPlayer.isAlive() == true
+    @Condition eventPlayer.isUsingAbility1() == false
+    @Condition eventPlayer.isUsingAbility2() == false
+    @Condition eventPlayer.hasStatus(Status.STUNNED) == false
+    @Condition eventPlayer.canDash == true
+    @Condition eventPlayer.dashOnCooldown == false
+    @Condition distance(eventPlayer, target) <= 10
+    @Condition distance(target.getEyePosition(), ballPosition) <= ballSpeed * 0.3
+
+    if random.randint(0, 99) >= eventPlayer.botTuning[BotTuning.ACE_CHANCE]:
+        #No ace dash for this ball
+        waitUntil(target == eventPlayer or eventPlayer.isDead(), 5)
+        return
+    eventPlayer.botState[BotField.FACING] = BotFacing.ACE
+    eventPlayer.setFacing(evalOnce(target.getFacingDirection()), Relativity.TO_WORLD)
+    eventPlayer.startFacing(evalOnce(target.getFacingDirection()), 10000)
+    wait(0.05)
+    #The brain took over: the ball came to the bot meanwhile
+    if eventPlayer.botState[BotField.FACING] != BotFacing.ACE or target == eventPlayer or eventPlayer.isDead():
+        return
+    eventPlayer.forceButtonPress(Button.ABILITY_1)
+    wait(0.05)
+    waitUntil(not eventPlayer.isUsingAbility1() or eventPlayer.isDead(), 1)
+    if eventPlayer.botState[BotField.FACING] == BotFacing.ACE:
+        eventPlayer.botState[BotField.FACING] = BotFacing.CAMERA
+
+
 rule "Bots - camera":
     #Looks between the ball and its target while the ball is far
     @Event eachPlayer
@@ -372,18 +422,23 @@ rule "Bots - human camera":
 
 
 rule "Bots - spin near the ball":
-    #While the ball is near and the bot's dash is down, it looks around at random
+    #While the ball is near and the bot's dash is down, it looks around at random, or down (or up)
     @Event eachPlayer
     @Condition eventPlayer.botHook[BotHook.PRESET] != BotPreset.NONE
-    @Condition eventPlayer.botTuning[BotTuning.SPIN_NEAR_BALL] == true
+    @Condition eventPlayer.botTuning[BotTuning.SPIN_NEAR_BALL] != BotSpin.NONE
     @Condition eventPlayer.botState[BotField.FACING] == BotFacing.CAMERA
     @Condition distance(eventPlayer.getEyePosition(), ballPosition) <= botNearDistance
     @Condition ballIsOut == true
     @Condition eventPlayer.isAlive() == true
     @Condition eventPlayer.getAbilityCooldown(Button.ABILITY_1) != 0
 
-    eventPlayer.setFacing(vect(random.uniform(-360, 360), random.uniform(-360, 360), random.uniform(-360, 360)), Relativity.TO_WORLD)
-    eventPlayer.startFacing(vect(random.uniform(-360, 360), random.uniform(-360, 360), random.randint(-360, 360)), 10000)
+    if eventPlayer.botTuning[BotTuning.SPIN_NEAR_BALL] == BotSpin.RANDOM:
+        eventPlayer.setFacing(vect(random.uniform(-360, 360), random.uniform(-360, 360), random.uniform(-360, 360)), Relativity.TO_WORLD)
+        eventPlayer.startFacing(vect(random.uniform(-360, 360), random.uniform(-360, 360), random.randint(-360, 360)), 10000)
+    elif random.randint(0, 1) == 0 and all([distance(eventPlayer, x) > eventPlayer.botTuning[BotTuning.ENEMY_FAR] for x in getLivingPlayers(Team.ALL).exclude(eventPlayer)]):
+        eventPlayer.startFacing(Vector.UP, 10000)
+    else:
+        eventPlayer.startFacing(Vector.DOWN, 10000)
     wait(0.3)
     if ruleCondition:
         loop()
@@ -396,8 +451,8 @@ rule "Bots - movement":
     @Condition isGameInProgress() == true
     @Condition eventPlayer.isAlive() == true
 
-    #Off the map: walk back to the middle
-    if abs(eventPlayer.getPosition().x - circleCenter.x) > eventPlayer.botTuning[BotTuning.OFF_MAP] or abs(eventPlayer.getPosition().z - circleCenter.z) > eventPlayer.botTuning[BotTuning.OFF_MAP]:
+    #Past WALK_EDGE: walk back to the middle
+    if botFromCentre > eventPlayer.botTuning[BotTuning.WALK_EDGE]:
         eventPlayer.stopThrottleInDirection()
         eventPlayer.startThrottleInDirection(directionTowards(eventPlayer.getPosition(), circleCenter), 1, Relativity.TO_WORLD, Throttle.REPLACE_EXISTING, ThrottleReeval.NONE)
         wait(random.uniform(1, 1.5))
@@ -420,7 +475,7 @@ rule "Bots - circling":
     @Condition isGameInProgress() == true
     @Condition eventPlayer.isAlive() == true
 
-    if botFromCentre > eventPlayer.botTuning[BotTuning.CIRCLE_EDGE]:
+    if botFromCentre > eventPlayer.botTuning[BotTuning.WALK_EDGE]:
         eventPlayer.startThrottleInDirection(directionTowards(eventPlayer.getPosition(), vect(circleCenter.x, eventPlayer.getPosition().y, circleCenter.z)), 1, Relativity.TO_WORLD, Throttle.REPLACE_EXISTING, ThrottleReeval.NONE)
         wait(random.uniform(0.5, 1))
     elif random.randint(0, 99) < 15:
@@ -443,6 +498,35 @@ rule "Bots - circling":
                 eventPlayer.botState[BotField.MOVE_DIR] = vect(eventPlayer.botState[BotField.MOVE_DIR].z, 0, -eventPlayer.botState[BotField.MOVE_DIR].x) * random.choice([-1, 1])
             eventPlayer.startThrottleInDirection(directionTowards(vect(0, 0, 0), eventPlayer.botState[BotField.MOVE_DIR]), random.uniform(0.6, 1), Relativity.TO_WORLD, Throttle.REPLACE_EXISTING, ThrottleReeval.NONE)
             wait(random.uniform(0.4, 1.6))
+    if ruleCondition:
+        loop()
+
+
+rule "Bots - strafing":
+    #Moves like a player who isn't watching anyone: 15 % stops, 35 % strafes, 25 % forward or back, 25 % diagonal
+    @Event eachPlayer
+    @Condition eventPlayer.botHook[BotHook.PRESET] != BotPreset.NONE
+    @Condition eventPlayer.botTuning[BotTuning.MOVEMENT] == BotMovement.STRAFE
+    @Condition isGameInProgress() == true
+    @Condition eventPlayer.isAlive() == true
+
+    if botFromCentre > eventPlayer.botTuning[BotTuning.WALK_EDGE]:
+        eventPlayer.startThrottleInDirection(directionTowards(eventPlayer.getPosition(), vect(circleCenter.x + random.uniform(-7, 7), eventPlayer.getPosition().y, circleCenter.z + random.uniform(-7, 7))), random.uniform(0.7, 1), Relativity.TO_WORLD, Throttle.REPLACE_EXISTING, ThrottleReeval.NONE)
+        wait(random.uniform(0.5, 1))
+    else:
+        eventPlayer.botState[BotField.MOVE_DIR] = random.randint(0, 99)
+        if eventPlayer.botState[BotField.MOVE_DIR] < 15:
+            eventPlayer.stopThrottleInDirection()
+            wait(random.uniform(0.2, 0.7))
+        elif eventPlayer.botState[BotField.MOVE_DIR] < 50:
+            eventPlayer.startThrottleInDirection(vect(random.choice([-1, 1]), 0, 0), random.uniform(0.6, 1), Relativity.TO_PLAYER, Throttle.REPLACE_EXISTING, ThrottleReeval.NONE)
+            wait(random.uniform(0.4, 1.6))
+        elif eventPlayer.botState[BotField.MOVE_DIR] < 75:
+            eventPlayer.startThrottleInDirection(vect(0, 0, random.choice([-1, 1])), random.uniform(0.6, 1), Relativity.TO_PLAYER, Throttle.REPLACE_EXISTING, ThrottleReeval.NONE)
+            wait(random.uniform(0.3, 1.2))
+        else:
+            eventPlayer.startThrottleInDirection(vect(random.choice([-1, 1]), 0, random.choice([-1, 1])), random.uniform(0.6, 1), Relativity.TO_PLAYER, Throttle.REPLACE_EXISTING, ThrottleReeval.NONE)
+            wait(random.uniform(0.3, 1.4))
     if ruleCondition:
         loop()
 

@@ -239,7 +239,7 @@ rule ("Settings - Workshop settings") {
         "One entry per RoundTiming field (config/constants.opy), in that order."
         Set Global Variable(roundTimings, Array(Workshop Setting Integer(Custom String("40 - Match"), Custom String("ball respawn delay"), 2, 1, 10, 7), Workshop Setting Integer(Custom String("40 - Match"), Custom String("round win pause"), 2, 0, 10, 8)));
         "50 - Features: casual/gameplay add-ons. Presets leave these manual. The rest are in addOnSettings below.\nOne option per BotPreset, in that order"
-        Set Global Variable(botSetting, Workshop Setting Combo(Custom String("50 - Features"), Custom String("bot"), 0, Array(Custom String("none"), Custom String("zBozo"), Custom String("firebuss")), 1));
+        Set Global Variable(botSetting, Workshop Setting Combo(Custom String("50 - Features"), Custom String("bot"), 0, Array(Custom String("none"), Custom String("zBozo"), Custom String("firebuss"), Custom String("lucybuss"), Custom String("azertybuss")), 1));
         "60 - Competitive: competitive test systems. Tournament, Tournament+ and Experimental force them."
         Set Global Variable(antiOrbitMode, Workshop Setting Toggle(Custom String("60 - Competitive"), Custom String("AntiOrbit"), False, 0));
         Set Global Variable(antiOrbitRadius, Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("AntiOrbit radius"), 14, 10, 20, 1));
@@ -2667,17 +2667,31 @@ rule ("Bots - load preset") {
         "zBozo, named after zSh4d0W: random shots, edash and ghost dash, odd walking"
         If(Compare(First Of((Event Player).botHook), ==, 1));
             Start Forcing Dummy Bot Name(Event Player, Custom String("[BOT] zBozo"));
-            "edash, ghost dash; camera between ball and target at 1000, spins near the ball; roams;\n50 % double jumps, 3-7 s after a single, 5-15 s after a double;\nno dash guard, safe dash, brad shot, punish or jump before impact (the circling numbers are unused)"
-            Set Player Variable(Event Player, botTuning, Array(0.1, 0, 0, 0, True, 0, 0, 0, 10000, 35, 10, 80, 18, 8, 30, 100, True, True, 0, 1000, True, 0, 50, 3, 7, 5, 15, 0, False, 0, 0, 0, 0, 0, 0, 0, 0));
+            "50 % double jumps, 3-7 s after a single, 5-15 s after a double;\nno dash guard, safe dash, brad shot, punish or jump before impact (the circling numbers are unused);\nback to the middle past 18 m; no fast reaction, ace dash or dash away"
+            Set Player Variable(Event Player, botTuning, Array(0.1, 0, 0, 0, True, 0, 0, 0, 10000, 35, 10, 80, 18, 8, 30, 100, True, True, 0, 1000, 1, 0, 50, 3, 7, 5, 15, 0, False, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0));
             "Dash ready: 11 % at a random player, else a random direction. Dash down: away from everyone"
             Set Player Variable(Event Player, botShots, Array(Array(1, 3, 11, 1), Array(1, 8, 100, 2), Array(0, 9, 100, 0)));
         "firebuss, by gybbus: hard shots by priority, early deflect, safe dash, brad shot, circling"
         Else If(Compare(First Of((Event Player).botHook), ==, 2));
             Start Forcing Dummy Bot Name(Event Player, Custom String("[BOT] firebuss"));
-            "40 % double jumps, 1-3.5 s after either;\nno dash while another player within 20 m has theirs ready; safe dash; brad shot from speed 100; punish from 90;\njump before impact 60 % within 0.35 * speed + 5 m; circles at 6-14 m, back to the middle past 16 m"
-            Set Player Variable(Event Player, botTuning, Array(0.45, 8, 0, 0, True, 0, 0, 0.12, 10000, 0, 0, 80, 18, 8, 30, 100, True, True, 1, 700, False, 1, 40, 1, 3.5, 1, 3.5, 20, True, 100, 90, 60, 0.35, 5, 6, 14, 16));
+            "no dash while another player within 20 m has theirs ready; safe dash; brad shot from speed 100; punish from 90;\njump before impact 60 % within 0.35 * speed + 5 m; circles at 6-14 m, back to the middle past 16 m;\nno fast reaction, ace dash or dash away"
+            Set Player Variable(Event Player, botTuning, Array(0.45, 8, 0, 0, True, 0, 0, 0.12, 10000, 0, 0, 80, 18, 8, 30, 100, True, True, 1, 700, 0, 1, 40, 1, 3.5, 1, 3.5, 20, True, 100, 90, 60, 0.35, 5, 6, 14, 16, 0, 0, 0, 0));
             "The first row that holds wins; the chances share one roll per ball (see docs/bots.md)"
             Set Player Variable(Event Player, botShots, Array(Array(4, 0, 100, 0), Array(3, 0, 100, 0), Array(5, 0, 100, 0), Array(6, 7, 100, 0), Array(2, 2, 100, 1), Array(7, 1, 75, 0), Array(0, 4, 30, 2), Array(0, 5, 65, 2), Array(0, 6, 100, 2)));
+        "lucybuss, by gybbus: down/up shots, misses fast balls, ace dash"
+        Else If(Compare(First Of((Event Player).botHook), ==, 3));
+            Start Forcing Dummy Bot Name(Event Player, Custom String("[BOT] lucybuss"));
+            "50 % double jumps, 1-2 s after either;\nno dash guard, safe dash, brad shot, punish or jump before impact (the circling numbers are unused);\nback to the middle past 30 m; no fast reaction; ace dash 30 %; no dash away"
+            Set Player Variable(Event Player, botTuning, Array(0.1, 0, 0, 0, True, 110, 30, 0, 10000, 35, 10, 80, 18, 8, 30, 100, True, True, 0, 1000, 2, 0, 50, 1, 2, 1, 2, 0, False, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 30, 0));
+            "Off the map: down. Else 60 %: up while everyone is far (half of that), else down. Else zBozo's table, its 11 % scaled to the 40 % left"
+            Set Player Variable(Event Player, botShots, Array(Array(4, 0, 100, 0), Array(9, 1, 30, 0), Array(0, 0, 60, 0), Array(1, 3, 64, 1), Array(1, 8, 100, 2), Array(0, 9, 100, 0)));
+        "azertybuss, by gybbus: floor bounces with a human delay, dashes away after a shot, strafes and hops"
+        Else If(Compare(First Of((Event Player).botHook), ==, 4));
+            Start Forcing Dummy Bot Name(Event Player, Custom String("[BOT] azertybuss"));
+            "no dash guard, safe dash, brad shot, punish or jump before impact (the circling numbers are unused);\nback to the middle past 15 m; reacts in 0.01-0.04 s from speed 100; no ace dash; dashes away 55 %"
+            Set Player Variable(Event Player, botTuning, Array(0.3, 8, 0.03, 0.12, True, 0, 0, 0, 10000, 6, 6, 80, 20.5, 8, 30, 100, False, False, 1, 350, 0, 2, 80, 0.55, 1.35, 0.3, 0.9, 0, False, 0, 0, 0, 0, 0, 0, 0, 15, 0.01, 0.04, 0, 55));
+            "Fast balls: 70 % down, then 5 % at a player and a 50/50 bounce. Slow: 15 % at a player, then a 50/50 bounce"
+            Set Player Variable(Event Player, botShots, Array(Array(4, 0, 100, 0), Array(8, 10, 70, 0), Array(8, 3, 75, 1), Array(8, 11, 87, 2), Array(8, 12, 100, 2), Array(0, 3, 15, 1), Array(0, 11, 57, 2), Array(0, 12, 100, 2)));
         End;
     }
 }
@@ -2728,7 +2742,9 @@ rule ("Bots - incoming ball") {
             Set Player Variable At Index(Event Player, botHook, 1, 1);
         End;
         Wait Until(Or(Or(Or(Or(Compare(Global.target, !=, Event Player), Is Dead(Event Player)), Compare(Global.ballIsOut, ==, False)), Compare(Value In Array((Event Player).botState, 1), !=, First Of((Event Player).botState))), Compare(Distance Between(Eye Position(Event Player), Global.ballPosition), <=, Add(Multiply(First Of((Event Player).botTuning), Global.ballSpeed), Value In Array((Event Player).botTuning, 1)))), 99999);
-        If(Compare(Value In Array((Event Player).botTuning, 3), >, 0));
+        If(And(Compare(Global.ballSpeed, >=, Value In Array((Event Player).botTuning, 15)), Compare(Value In Array((Event Player).botTuning, 38), >, 0)));
+            Wait(Random Real(Value In Array((Event Player).botTuning, 37), Value In Array((Event Player).botTuning, 38)), Ignore Condition);
+        Else If(Compare(Value In Array((Event Player).botTuning, 3), >, 0));
             Wait(Random Real(Value In Array((Event Player).botTuning, 2), Value In Array((Event Player).botTuning, 3)), Ignore Condition);
         End;
         "A dash asked for by \"Bots - edash\" owns the facing until it's pressed"
@@ -2793,8 +2809,15 @@ rule ("Bots - incoming ball") {
             Abort;
         End;
         Set Player Variable At Index(Event Player, botState, 8, 0);
+        "After shot: dash sideways away from the shot, inside WALK_EDGE (else toward a spot near the middle)"
+        If(And(And(Compare(Value In Array((Event Player).botTuning, 40), >, 0), Compare(Global.prevTarget, ==, Event Player)), Or(Compare(Value In Array((Event Player).botState, 7), ==, 1), Compare(Random Integer(0, 99), <, Value In Array((Event Player).botTuning, 40)))));
+            Set Player Variable At Index(Event Player, botHook, 4, Direction From Angles(Add(Horizontal Angle From Direction(Facing Direction Of(Event Player)), Multiply(Random Value In Array(Array(-1, 1)), Random Integer(70, 120))), 0));
+            If(Or(Compare(Absolute Value(Subtract(Add(X Component Of(Position Of(Event Player)), Multiply(X Component Of(Value In Array((Event Player).botHook, 4)), 12)), X Component Of(Global.circleCenter))), >, Value In Array((Event Player).botTuning, 36)), Compare(Absolute Value(Subtract(Add(Z Component Of(Position Of(Event Player)), Multiply(Z Component Of(Value In Array((Event Player).botHook, 4)), 12)), Z Component Of(Global.circleCenter))), >, Value In Array((Event Player).botTuning, 36))));
+                Set Player Variable At Index(Event Player, botHook, 4, Direction Towards(Position Of(Event Player), Vector(Add(X Component Of(Global.circleCenter), Random Real(-8, 8)), Y Component Of(Position Of(Event Player)), Add(Z Component Of(Global.circleCenter), Random Real(-8, 8)))));
+            End;
+            Call Subroutine(botDash);
         "After shot: ghost dash when the ball flies straight at the next player"
-        If(And(And(Value In Array((Event Player).botTuning, 17), Compare(Angle Between Vectors(Multiply(Global.ballDirection, -1), Direction Towards(Global.target, Global.ballPosition)), <, 20)), Compare(Distance Between(Eye Position(Event Player), Global.ballPosition), <, Global.ballSpeed)));
+        Else If(And(And(Value In Array((Event Player).botTuning, 17), Compare(Angle Between Vectors(Multiply(Global.ballDirection, -1), Direction Towards(Global.target, Global.ballPosition)), <, 20)), Compare(Distance Between(Eye Position(Event Player), Global.ballPosition), <, Global.ballSpeed)));
             "Facing Direction Of a vector, kept as zBozo had it"
             Set Player Variable At Index(Event Player, botHook, 4, Multiply(Evaluate Once(Facing Direction Of(Global.ballDirection)), -1));
             Call Subroutine(botDash);
@@ -2809,7 +2832,7 @@ rule ("Bots - check condition") {
     actions {
         "Sets botState PASSED for the condition of botState ROW"
         If(True);
-            Skip(Value In Array(Array(20, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), First Of(Value In Array((Event Player).botState, 4))))));
+            Skip(Value In Array(Array(22, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 10), First Of(Value In Array((Event Player).botState, 4))))));
         //__label_switch_2_0__:
         Set Player Variable At Index(Event Player, botState, 5, True);
         Else;
@@ -2835,9 +2858,12 @@ rule ("Bots - check condition") {
         Set Player Variable At Index(Event Player, botState, 5, And(Compare(Value In Array((Event Player).botState, 3), !=, Null), Compare(Distance Between(Event Player, Value In Array((Event Player).botState, 3)), >, Value In Array((Event Player).botTuning, 14))));
         Else;
         //__label_switch_2_8__:
-        Set Player Variable At Index(Event Player, botState, 5, Compare(Global.ballSpeed, >=, Value In Array((Event Player).botTuning, 15)));
+        Set Player Variable At Index(Event Player, botState, 5, Is True For All(Remove From Array(All Living Players(All Teams), Event Player), Compare(Distance Between(Event Player, Current Array Element), >, Value In Array((Event Player).botTuning, 14))));
         Else;
         //__label_switch_2_9__:
+        Set Player Variable At Index(Event Player, botState, 5, Compare(Global.ballSpeed, >=, Value In Array((Event Player).botTuning, 15)));
+        Else;
+        //__label_switch_2_10__:
         Set Player Variable At Index(Event Player, botState, 5, And(And(And(And(And(Is Alive(Value In Array((Event Player).botState, 3)), Compare(Distance Between(Eye Position(Event Player), Global.ballPosition), >=, 3)), Compare(Distance Between(Eye Position(Event Player), Global.ballPosition), <=, 12)), Compare(Absolute Value(Subtract(Angle Between Vectors(Global.ballDirection, Direction Towards(Global.ballPosition, Eye Position(Event Player))), 90)), <, 30)), Compare(Absolute Value(Subtract(Angle Between Vectors(Direction Towards(Eye Position(Event Player), Global.ballPosition), Direction Towards(Eye Position(Event Player), Eye Position(Value In Array((Event Player).botState, 3)))), 90)), >, 75)), Compare(Distance Between(Event Player, Value In Array((Event Player).botState, 3)), <=, 15)));
         Else;
         //__label_switch_2_default__:
@@ -2853,7 +2879,7 @@ rule ("Bots - aim shot") {
     actions {
         "Sets botState AIM, a world direction, for the shot of botState ROW. Shots that need the enemy\nonly appear after a row that catches NO_ENEMY"
         If(True);
-            Skip(Value In Array(Array(32, 0, 2, 4, 7, 10, 12, 14, 20, 22, 24, 26, 28, 30), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), Value In Array(Value In Array((Event Player).botState, 4), 1)))));
+            Skip(Value In Array(Array(36, 0, 2, 4, 7, 14, 16, 18, 24, 26, 28, 30, 32, 34), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), Value In Array(Value In Array((Event Player).botState, 4), 1)))));
         //__label_switch_3_0__:
         Set Player Variable At Index(Event Player, botState, 6, Down);
         Else;
@@ -2865,6 +2891,11 @@ rule ("Bots - aim shot") {
         Call Subroutine(botAimError);
         Else;
         //__label_switch_3_3__:
+        "Nobody else alive: down"
+        If(Compare(Count Of(Remove From Array(All Living Players(All Teams), Event Player)), ==, 0));
+            Set Player Variable At Index(Event Player, botState, 6, Down);
+            Else;
+        End;
         Set Player Variable At Index(Event Player, botState, 6, Direction Towards(Eye Position(Event Player), Eye Position(Random Value In Array(Remove From Array(All Living Players(All Teams), Event Player)))));
         Call Subroutine(botAimError);
         Else;
@@ -3073,6 +3104,47 @@ rule ("Bots - punish") {
     }
 }
 
+rule ("Bots - ace dash") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        First Of((Event Player).botHook) != 0;
+        Value In Array((Event Player).botTuning, 39) > 0;
+        Value In Array((Event Player).botState, 8) == 0;
+        Global.ballIsOut == True;
+        Global.target != Event Player;
+        Is Alive(Event Player) == True;
+        Is Using Ability 1(Event Player) == False;
+        Is Using Ability 2(Event Player) == False;
+        Has Status(Event Player, Stunned) == False;
+        (Event Player).canDash == True;
+        (Event Player).dashOnCooldown == False;
+        Distance Between(Event Player, Global.target) <= 10;
+        Distance Between(Eye Position(Global.target), Global.ballPosition) <= Multiply(Global.ballSpeed, 0.3);
+    }
+    actions {
+        If(Compare(Random Integer(0, 99), >=, Value In Array((Event Player).botTuning, 39)));
+            "No ace dash for this ball"
+            Wait Until(Or(Compare(Global.target, ==, Event Player), Is Dead(Event Player)), 5);
+            Abort;
+        End;
+        Set Player Variable At Index(Event Player, botState, 8, 4);
+        Set Facing(Event Player, Evaluate Once(Facing Direction Of(Global.target)), To World);
+        Start Facing(Event Player, Evaluate Once(Facing Direction Of(Global.target)), 10000, To World, Direction and Turn Rate);
+        Wait(0.05, Ignore Condition);
+        "The brain took over: the ball came to the bot meanwhile"
+        Abort If(Or(Or(Compare(Value In Array((Event Player).botState, 8), !=, 4), Compare(Global.target, ==, Event Player)), Is Dead(Event Player)));
+        Press Button(Event Player, Button(Ability 1));
+        Wait(0.05, Ignore Condition);
+        Wait Until(Or(Not(Is Using Ability 1(Event Player)), Is Dead(Event Player)), 1);
+        If(Compare(Value In Array((Event Player).botState, 8), ==, 4));
+            Set Player Variable At Index(Event Player, botState, 8, 0);
+    }
+}
+
 rule ("Bots - camera") {
     event {
         Ongoing - Each Player;
@@ -3124,7 +3196,7 @@ rule ("Bots - spin near the ball") {
     }
     conditions {
         First Of((Event Player).botHook) != 0;
-        Value In Array((Event Player).botTuning, 20) == True;
+        Value In Array((Event Player).botTuning, 20) != 0;
         Value In Array((Event Player).botState, 8) == 0;
         Distance Between(Eye Position(Event Player), Global.ballPosition) <= Add(Multiply(First Of((Event Player).botTuning), Global.ballSpeed), Value In Array((Event Player).botTuning, 1));
         Global.ballIsOut == True;
@@ -3132,8 +3204,14 @@ rule ("Bots - spin near the ball") {
         Ability Cooldown(Event Player, Button(Ability 1)) != 0;
     }
     actions {
-        Set Facing(Event Player, Vector(Random Real(-360, 360), Random Real(-360, 360), Random Real(-360, 360)), To World);
-        Start Facing(Event Player, Vector(Random Real(-360, 360), Random Real(-360, 360), Random Integer(-360, 360)), 10000, To World, Direction and Turn Rate);
+        If(Compare(Value In Array((Event Player).botTuning, 20), ==, 1));
+            Set Facing(Event Player, Vector(Random Real(-360, 360), Random Real(-360, 360), Random Real(-360, 360)), To World);
+            Start Facing(Event Player, Vector(Random Real(-360, 360), Random Real(-360, 360), Random Integer(-360, 360)), 10000, To World, Direction and Turn Rate);
+        Else If(And(Compare(Random Integer(0, 1), ==, 0), Is True For All(Remove From Array(All Living Players(All Teams), Event Player), Compare(Distance Between(Event Player, Current Array Element), >, Value In Array((Event Player).botTuning, 14)))));
+            Start Facing(Event Player, Up, 10000, To World, Direction and Turn Rate);
+        Else;
+            Start Facing(Event Player, Down, 10000, To World, Direction and Turn Rate);
+        End;
         Wait(0.3, Ignore Condition);
         Loop If Condition Is True;
     }
@@ -3152,8 +3230,8 @@ rule ("Bots - movement") {
         Is Alive(Event Player) == True;
     }
     actions {
-        "Off the map: walk back to the middle"
-        If(Or(Compare(Absolute Value(Subtract(X Component Of(Position Of(Event Player)), X Component Of(Global.circleCenter))), >, Value In Array((Event Player).botTuning, 12)), Compare(Absolute Value(Subtract(Z Component Of(Position Of(Event Player)), Z Component Of(Global.circleCenter))), >, Value In Array((Event Player).botTuning, 12))));
+        "Past WALK_EDGE: walk back to the middle"
+        If(Compare(Max(Absolute Value(Subtract(X Component Of(Position Of(Event Player)), X Component Of(Global.circleCenter))), Absolute Value(Subtract(Z Component Of(Position Of(Event Player)), Z Component Of(Global.circleCenter)))), >, Value In Array((Event Player).botTuning, 36)));
             Stop Throttle In Direction(Event Player);
             Start Throttle In Direction(Event Player, Direction Towards(Position Of(Event Player), Global.circleCenter), 1, To World, Replace existing throttle, None);
             Wait(Random Real(1, 1.5), Ignore Condition);
@@ -3206,6 +3284,42 @@ rule ("Bots - circling") {
                 End;
                 Start Throttle In Direction(Event Player, Direction Towards(Vector(0, 0, 0), Value In Array((Event Player).botState, 10)), Random Real(0.6, 1), To World, Replace existing throttle, None);
                 Wait(Random Real(0.4, 1.6), Ignore Condition);
+            End;
+        End;
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Bots - strafing") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        First Of((Event Player).botHook) != 0;
+        Value In Array((Event Player).botTuning, 21) == 2;
+        Is Game In Progress == True;
+        Is Alive(Event Player) == True;
+    }
+    actions {
+        If(Compare(Max(Absolute Value(Subtract(X Component Of(Position Of(Event Player)), X Component Of(Global.circleCenter))), Absolute Value(Subtract(Z Component Of(Position Of(Event Player)), Z Component Of(Global.circleCenter)))), >, Value In Array((Event Player).botTuning, 36)));
+            Start Throttle In Direction(Event Player, Direction Towards(Position Of(Event Player), Vector(Add(X Component Of(Global.circleCenter), Random Real(-7, 7)), Y Component Of(Position Of(Event Player)), Add(Z Component Of(Global.circleCenter), Random Real(-7, 7)))), Random Real(0.7, 1), To World, Replace existing throttle, None);
+            Wait(Random Real(0.5, 1), Ignore Condition);
+        Else;
+            Set Player Variable At Index(Event Player, botState, 10, Random Integer(0, 99));
+            If(Compare(Value In Array((Event Player).botState, 10), <, 15));
+                Stop Throttle In Direction(Event Player);
+                Wait(Random Real(0.2, 0.7), Ignore Condition);
+            Else If(Compare(Value In Array((Event Player).botState, 10), <, 50));
+                Start Throttle In Direction(Event Player, Vector(Random Value In Array(Array(-1, 1)), 0, 0), Random Real(0.6, 1), To Player, Replace existing throttle, None);
+                Wait(Random Real(0.4, 1.6), Ignore Condition);
+            Else If(Compare(Value In Array((Event Player).botState, 10), <, 75));
+                Start Throttle In Direction(Event Player, Vector(0, 0, Random Value In Array(Array(-1, 1))), Random Real(0.6, 1), To Player, Replace existing throttle, None);
+                Wait(Random Real(0.3, 1.2), Ignore Condition);
+            Else;
+                Start Throttle In Direction(Event Player, Vector(Random Value In Array(Array(-1, 1)), 0, Random Value In Array(Array(-1, 1))), Random Real(0.6, 1), To Player, Replace existing throttle, None);
+                Wait(Random Real(0.3, 1.4), Ignore Condition);
             End;
         End;
         Loop If Condition Is True;
