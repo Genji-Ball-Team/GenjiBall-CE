@@ -27,8 +27,8 @@ The parts of a bot:
   2. Waits until the ball is near: `NEAR_FACTOR × ballSpeed + NEAR_OFFSET` metres. Then waits a reaction delay between `REACTION_MIN` and `REACTION_MAX`.
   3. Picks the first row of the shot table whose chance is over the roll and whose condition holds, then turns to aim (`AIM_RATE`).
   4. If `EARLY_LEAD` is set, presses deflect that many seconds before contact (at most one tick less than a deflect lasts).
-  5. After the deflect, maybe ghost dashes.
-- **Facing owner** (`botState[FACING]`): `CAMERA`, `AIM` or `DASH`. Only the owner turns the bot. The camera and the spin only run while it's `CAMERA`.
+  5. After the deflect, a safe dash (after a shot at the enemy) or maybe a ghost dash.
+- **Facing owner** (`botState[FACING]`): `CAMERA`, `AIM`, `DASH` or `PUNISH`. Only the owner turns the bot. The camera and the spin only run while it's `CAMERA`. The brain takes over from `PUNISH` when it aims.
 - **Dashes**: `botDash` asks the core for a dash (`DASH_WANTED`) and faces its direction. `Bots - edash` dashes into the ball, or at the next player while they deflect or dash. A dash asked for after the deflect ends is dropped.
 - **Camera, movement, jumping**: run on their own, from the preset's numbers.
 - **Reset** (`Bots - reset`): on spawn and whenever the ball is gone. It clears the dash and aim and marks the brain's ball stale, so a brain still waiting stops.
@@ -54,9 +54,9 @@ The table should end in an `ALWAYS` row with chance 100. Without one, the bot de
 | `I_CAN_DASH` | `RANDOM` | 100 | `RISKY` |
 | `ALWAYS` | `AWAY` | 100 | `SAFE` |
 
-### Fit check: firebuss
+### firebuss
 
-The library was built so that firebuss's shot logic is only a table:
+By gybbus. Its hard shots, in priority order:
 
 | Condition | Shot | Chance | Intent |
 |---|---|---|---|
@@ -71,6 +71,19 @@ The library was built so that firebuss's shot logic is only a table:
 | `ALWAYS` | `WALL_NEAR_ENEMY` | 100 | `RISKY` |
 
 The shared roll is firebuss's own: when the enemy is far and the `UP` row's roll fails, the roll is 75 or more, so the shot is always the wall.
+
+Its other moves, all from the library:
+
+- **Early deflect** (`EARLY_LEAD` 0.12): it presses deflect itself about 0.12 s before contact, so a late press can fail.
+- **Safe dash** (`SAFE_DASH`): after an `AT_ENEMY` shot, it dashes sideways, to the side nearer the middle.
+- **Brad shot** (`BRAD_SPEED` 100): while it aims, if the ball is coming round it (`ORBIT_LINE`), it dashes at the enemy and the shot goes into their face.
+- **Dash guard** (`DASH_GUARD` 20 m): its edash and ghost dash are dropped while another player within 20 m has their dash ready. The safe dash and brad shot don't check this.
+- **Punish** (`PUNISH_SPEED` 90): after a human deflects a ball this fast, it turns to the nearest player until its own ball comes.
+- **Human camera** (`CAMERA` `HUMAN`): looks at the ball, or the nearest human between balls, a little off, turning at 350–700°/s.
+- **Circling** (`MOVEMENT` `CIRCLE`): strafes round the nearest human, closing in past 14 m and backing off under 6 m, with 15 % short pauses. Back to the middle past 16 m.
+- **Jumps**: a double jump as the ball comes in (`IMPACT_JUMP` 60 %, always past `EDGE`, so a shot can go under the map), and random jumps every 1–3.5 s, 40 % of them double.
+
+Left out on purpose: firebuss's **anti-stun**, which cleared its own knockdown and stun. With it, a dash hit couldn't knock the bot down. Without it, the bot plays by the same rules as everyone else. Its random jumps now only run while the ball is out, like zBozo's.
 
 ## Adding things
 
