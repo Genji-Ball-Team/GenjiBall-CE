@@ -70,6 +70,8 @@ The library was built so that firebuss's shot logic is only a table:
 | `ALWAYS` | `CORNER_NEAR_ENEMY` | 65 | `RISKY` |
 | `ALWAYS` | `WALL_NEAR_ENEMY` | 100 | `RISKY` |
 
+The shared roll is firebuss's own: when the enemy is far and the `UP` row's roll fails, the roll is 75 or more, so the shot is always the wall.
+
 ## Adding things
 
 - **A condition**: add a `BotCondition` entry, then a `case` in `botCheckCondition` that sets `botState[PASSED]`. Put any number it needs in `BotTuning` rather than in the code.

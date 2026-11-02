@@ -48,12 +48,17 @@ rule "Bots - incoming ball":
     #Deflect part: decided before contact, read by "Collision - collision sub"
     if ballSpeed >= eventPlayer.botTuning[BotTuning.MISS_SPEED] and random.randint(0, 99) < eventPlayer.botTuning[BotTuning.MISS_CHANCE]:
         eventPlayer.botHook[BotHook.DEFLECT] = BotDeflect.MISS
+    elif eventPlayer.botTuning[BotTuning.EARLY_LEAD] > 0:
+        #Only its own early press counts, so a late one can fail
+        eventPlayer.botHook[BotHook.DEFLECT] = BotDeflect.NONE
     else:
         eventPlayer.botHook[BotHook.DEFLECT] = BotDeflect.PRESS
-    waitUntil(target != eventPlayer or eventPlayer.isDead() or distance(eventPlayer.getEyePosition(), ballPosition) <= botNearDistance, 99999)
+    waitUntil(target != eventPlayer or eventPlayer.isDead() or ballIsOut == false or botBallIsStale or distance(eventPlayer.getEyePosition(), ballPosition) <= botNearDistance, 99999)
     if eventPlayer.botTuning[BotTuning.REACTION_MAX] > 0:
         wait(random.uniform(eventPlayer.botTuning[BotTuning.REACTION_MIN], eventPlayer.botTuning[BotTuning.REACTION_MAX]))
-    if target != eventPlayer or eventPlayer.isDead() or botBallIsStale:
+    #A dash asked for by "Bots - edash" owns the facing until it's pressed
+    waitUntil(eventPlayer.botState[BotField.FACING] != BotFacing.DASH, 1)
+    if target != eventPlayer or eventPlayer.isDead() or ballIsOut == false or botBallIsStale:
         return
     #Shot part: the first row whose condition holds and whose chance passes
     eventPlayer.botState[BotField.ENEMY] = sorted(getLivingPlayers(Team.ALL).filter(lambda x: not x.isDummy()), lambda x: distance(eventPlayer, x))[0]
@@ -73,15 +78,15 @@ rule "Bots - incoming ball":
     if eventPlayer.botState[BotField.ROW][BotShotColumn.SHOT] == BotShot.AWAY:
         #Turn first, then re-roll while anyone is in view
         wait(0)
-        while target == eventPlayer and eventPlayer.isAlive() and any([eventPlayer.isInViewAngle(x.getEyePosition(), 30) for x in getLivingPlayers(Team.ALL).exclude(eventPlayer)]):
+        while target == eventPlayer and eventPlayer.isAlive() and ballIsOut and any([eventPlayer.isInViewAngle(x.getEyePosition(), 30) for x in getLivingPlayers(Team.ALL).exclude(eventPlayer)]):
             botAimShot()
             eventPlayer.startFacing(eventPlayer.botState[BotField.AIM], eventPlayer.botTuning[BotTuning.AIM_RATE])
             wait(0)
     #Early deflect: press it when the ball is EARLY_LEAD s away, at most one tick less than a deflect lasts
     if eventPlayer.botTuning[BotTuning.EARLY_LEAD] > 0:
-        while target == eventPlayer and eventPlayer.isAlive() and botTimeToContact > min(eventPlayer.botTuning[BotTuning.EARLY_LEAD], ballFeel[BallFeel.DEFLECT_WINDOW] - 0.016):
+        while target == eventPlayer and eventPlayer.isAlive() and ballIsOut and botTimeToContact > min(eventPlayer.botTuning[BotTuning.EARLY_LEAD], ballFeel[BallFeel.DEFLECT_WINDOW] - 0.016):
             wait(0)
-        if target == eventPlayer and eventPlayer.canDeflect and eventPlayer.botHook[BotHook.DEFLECT] != BotDeflect.MISS:
+        if target == eventPlayer and ballIsOut and eventPlayer.canDeflect and eventPlayer.botHook[BotHook.DEFLECT] != BotDeflect.MISS:
             eventPlayer.forceButtonPress(Button.ABILITY_2)
     waitUntil(target != eventPlayer or eventPlayer.isDead() or ballIsOut == false, 99999)
     if eventPlayer.isDead() or ballIsOut == false or botBallIsStale:
@@ -233,6 +238,8 @@ rule "Bots - edash":
     @Condition eventPlayer.isUsingAbility2() == true
 
     waitUntil(eventPlayer != target and (target.isUsingAbility1() or target.isUsingAbility2()), 0.25)
+    if ballIsOut == false or eventPlayer.isDead() or not eventPlayer.isUsingAbility2():
+        return
     if eventPlayer == target:
         if angleBetweenVectors(ballDirection, directionTowards(ballPosition, eventPlayer.getEyePosition())) < 20:
             eventPlayer.botHook[BotHook.DASH_DIRECTION] = directionTowards(eventPlayer.getEyePosition(), ballPosition)

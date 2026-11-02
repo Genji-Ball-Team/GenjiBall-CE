@@ -2710,14 +2710,19 @@ rule ("Bots - incoming ball") {
         "Deflect part: decided before contact, read by \"Collision - collision sub\""
         If(And(Compare(Global.ballSpeed, >=, Value In Array((Event Player).botTuning, 5)), Compare(Random Integer(0, 99), <, Value In Array((Event Player).botTuning, 6))));
             Set Player Variable At Index(Event Player, botHook, 1, 2);
+        Else If(Compare(Value In Array((Event Player).botTuning, 7), >, 0));
+            "Only its own early press counts, so a late one can fail"
+            Set Player Variable At Index(Event Player, botHook, 1, 0);
         Else;
             Set Player Variable At Index(Event Player, botHook, 1, 1);
         End;
-        Wait Until(Or(Or(Compare(Global.target, !=, Event Player), Is Dead(Event Player)), Compare(Distance Between(Eye Position(Event Player), Global.ballPosition), <=, Add(Multiply(First Of((Event Player).botTuning), Global.ballSpeed), Value In Array((Event Player).botTuning, 1)))), 99999);
+        Wait Until(Or(Or(Or(Or(Compare(Global.target, !=, Event Player), Is Dead(Event Player)), Compare(Global.ballIsOut, ==, False)), Compare(Value In Array((Event Player).botState, 1), !=, First Of((Event Player).botState))), Compare(Distance Between(Eye Position(Event Player), Global.ballPosition), <=, Add(Multiply(First Of((Event Player).botTuning), Global.ballSpeed), Value In Array((Event Player).botTuning, 1)))), 99999);
         If(Compare(Value In Array((Event Player).botTuning, 3), >, 0));
             Wait(Random Real(Value In Array((Event Player).botTuning, 2), Value In Array((Event Player).botTuning, 3)), Ignore Condition);
         End;
-        Abort If(Or(Or(Compare(Global.target, !=, Event Player), Is Dead(Event Player)), Compare(Value In Array((Event Player).botState, 1), !=, First Of((Event Player).botState))));
+        "A dash asked for by \"Bots - edash\" owns the facing until it's pressed"
+        Wait Until(Compare(Value In Array((Event Player).botState, 8), !=, 2), 1);
+        Abort If(Or(Or(Or(Compare(Global.target, !=, Event Player), Is Dead(Event Player)), Compare(Global.ballIsOut, ==, False)), Compare(Value In Array((Event Player).botState, 1), !=, First Of((Event Player).botState))));
         "Shot part: the first row whose condition holds and whose chance passes"
         Set Player Variable At Index(Event Player, botState, 3, First Of(Sorted Array(Filtered Array(All Living Players(All Teams), Not(Is Dummy Bot(Current Array Element))), Distance Between(Event Player, Current Array Element))));
         Set Player Variable At Index(Event Player, botState, 5, False);
@@ -2738,7 +2743,7 @@ rule ("Bots - incoming ball") {
         If(Compare(Value In Array(Value In Array((Event Player).botState, 4), 1), ==, 9));
             "Turn first, then re-roll while anyone is in view"
             Wait(0, Ignore Condition);
-            While(And(And(Compare(Global.target, ==, Event Player), Is Alive(Event Player)), Is True For Any(Remove From Array(All Living Players(All Teams), Event Player), Is In View Angle(Event Player, Eye Position(Current Array Element), 30))));
+            While(And(And(And(Compare(Global.target, ==, Event Player), Is Alive(Event Player)), Global.ballIsOut), Is True For Any(Remove From Array(All Living Players(All Teams), Event Player), Is In View Angle(Event Player, Eye Position(Current Array Element), 30))));
                 Call Subroutine(botAimShot);
                 Start Facing(Event Player, Value In Array((Event Player).botState, 6), Value In Array((Event Player).botTuning, 8), To World, Direction and Turn Rate);
                 Wait(0, Ignore Condition);
@@ -2746,10 +2751,10 @@ rule ("Bots - incoming ball") {
         End;
         "Early deflect: press it when the ball is EARLY_LEAD s away, at most one tick less than a deflect lasts"
         If(Compare(Value In Array((Event Player).botTuning, 7), >, 0));
-            While(And(And(Compare(Global.target, ==, Event Player), Is Alive(Event Player)), Compare(Divide(Subtract(Distance Between(Eye Position(Event Player), Global.ballPosition), Value In Array(Global.ballFeel, 2)), Global.ballSpeed), >, Min(Value In Array((Event Player).botTuning, 7), Subtract(Value In Array(Global.ballFeel, 7), 0.016)))));
+            While(And(And(And(Compare(Global.target, ==, Event Player), Is Alive(Event Player)), Global.ballIsOut), Compare(Divide(Subtract(Distance Between(Eye Position(Event Player), Global.ballPosition), Value In Array(Global.ballFeel, 2)), Global.ballSpeed), >, Min(Value In Array((Event Player).botTuning, 7), Subtract(Value In Array(Global.ballFeel, 7), 0.016)))));
                 Wait(0, Ignore Condition);
             End;
-            If(And(And(Compare(Global.target, ==, Event Player), (Event Player).canDeflect), Compare(Value In Array((Event Player).botHook, 1), !=, 2)));
+            If(And(And(And(Compare(Global.target, ==, Event Player), Global.ballIsOut), (Event Player).canDeflect), Compare(Value In Array((Event Player).botHook, 1), !=, 2)));
                 Press Button(Event Player, Button(Ability 2));
             End;
         End;
@@ -2941,6 +2946,7 @@ rule ("Bots - edash") {
     }
     actions {
         Wait Until(And(Compare(Event Player, !=, Global.target), Or(Is Using Ability 1(Global.target), Is Using Ability 2(Global.target))), 0.25);
+        Abort If(Or(Or(Compare(Global.ballIsOut, ==, False), Is Dead(Event Player)), Not(Is Using Ability 2(Event Player))));
         If(Compare(Event Player, ==, Global.target));
             If(Compare(Angle Between Vectors(Global.ballDirection, Direction Towards(Global.ballPosition, Eye Position(Event Player))), <, 20));
                 Set Player Variable At Index(Event Player, botHook, 4, Direction Towards(Eye Position(Event Player), Global.ballPosition));
