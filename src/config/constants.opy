@@ -281,9 +281,6 @@ enum RankTagField:
 #FFA slots a lobby can have: one rank tag each
 #!define FFA_SLOTS 12
 
-#Most seconds a player who joins mid-round sits out hidden before they're killed (core/lobby.opy)
-#!define JOIN_SIT_OUT_TIME 4
-
 #antiGhostMode ("10 - Ball > anti-ghost correction")
 enum AntiGhost:
     OFF

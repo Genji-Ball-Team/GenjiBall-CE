@@ -178,7 +178,7 @@ rule "Ranked log - ROUND_START":
     logRankedJoins()
     rankedState[RankedField.ROUND] += 1
     rankedState[RankedField.IN_ROUND] = true
-    #In the round: everyone alive now. Players who join later sit out (killed, or hidden until the round ends) in "Player joins game" and play from the next round.
+    #In the round: everyone alive now. Players who join later are killed by "Player joins game" and play from the next round.
     rankedRound = sorted(getLivingPlayers(Team.ALL), lambda player: rankedPlayers.index(player))
     #ids, comma-separated
     rankedState[RankedField.TEXT] = rankedPlayers.index(rankedRound[0])
