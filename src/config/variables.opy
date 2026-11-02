@@ -61,7 +61,6 @@ globalvar antiOrbitMode 75
 globalvar antiOrbitRadius 76
 globalvar antiOrbitPressureRate 77
 globalvar bozo_Bot 78
-globalvar botState 80
 globalvar sandboxState 90
 globalvar ballPhysicsMode 97
 globalvar experimentalState 98
@@ -96,6 +95,11 @@ playervar orbitTimer 24
 playervar orbitHeat 25
 playervar kills 26
 playervar botHook 27
+#Bots only (features/bots.opy): working values (BotField), the preset's numbers (BotTuning) and shot table (BotShotColumn rows), and a loop counter
+playervar botState 28
+playervar botTuning 29
+playervar botShots 30
+playervar botLoop 31
 
 #Subroutine names
 
@@ -119,6 +123,11 @@ subroutine resetOrbitRoundState 19
 subroutine simpleIslandSideCollision 20
 subroutine startLegacyPlusBall 21
 subroutine startExperimentalBall 22
+subroutine botLoadPreset 23
+subroutine botCheckCondition 24
+subroutine botAimShot 25
+subroutine botAimError 26
+subroutine botDash 27
 
 #Activated extensions. Every one is used; OverPy refuses to compile when they cost more points than the Workshop has.
 

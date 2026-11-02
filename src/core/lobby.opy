@@ -34,7 +34,8 @@ rule "Player joins game":
     @Condition eventPlayer.hasMoved == false
     @Condition eventPlayer.hasSpawned() == true
     
-    if RoundInProgress and isGameInProgress():
+    #Not bots: they spawn when the host turns them on, often mid-round, and must stay alive
+    if RoundInProgress and isGameInProgress() and not eventPlayer.isDummy():
         kill(eventPlayer)
     eventPlayer.teleport(circleCenter + vect(random.randint(-10, 10), 8, random.randint(-10, 10)))
     eventPlayer.hasMoved = true

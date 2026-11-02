@@ -72,11 +72,103 @@ enum SandboxField:
     SIGN            #1 = add, -1 = subtract
     EDITING         #value being edited: 1 = position, 2 = direction, 3 = speed
 
-#Fields of botState (features/bot-zbozo.opy)
+#Fields of the player variable botState, a bot's working values (features/bots.opy)
 enum BotField:
-    WILL_GHOST_DASH
-    WILL_EDASH
-    GHOST_DASHING
+    BALL_ID         #counts up for every ball coming at the bot, and on a reset
+    THIS_BALL       #BALL_ID when the brain started on this ball; a different BALL_ID means the ball is stale
+    ROLL            #0-99, rolled once per ball, shared by every chance in the shot table
+    ENEMY           #the nearest living human, set once per ball (null when there is none)
+    ROW             #the shot table row being checked, then the one that won
+    PASSED          #true when ROW's condition holds
+    AIM             #world direction the shot goes to
+    INTENT          #BotIntent of the shot, for the after-shot part
+    FACING          #BotFacing: which part may write the bot's facing
+
+#Which part owns a bot's facing (botState[BotField.FACING]), so no two rules turn the bot at once
+enum BotFacing:
+    CAMERA          #the camera part: looking around, between balls
+    AIM             #the brain, from the moment it aims at a ball until the ball leaves
+    DASH            #a dash is planned: facing its direction until the dash is pressed
+
+#Columns of a shot table row (botShots): the first row whose condition holds and whose chance passes wins
+enum BotShotColumn:
+    CONDITION       #BotCondition
+    SHOT            #BotShot
+    CHANCE          #the row passes when botState[BotField.ROLL] is under this (100 = always)
+    INTENT          #BotIntent
+
+#Conditions a shot table row can ask for (botCheckCondition in features/bots.opy)
+enum BotCondition:
+    ALWAYS
+    I_CAN_DASH          #the bot's dash is ready
+    ENEMY_CANT_DASH     #the enemy's dash isn't ready and the bot's is: a shot at them can be dodged after
+    NO_ENEMY            #no living human
+    ME_OFF_MAP          #the bot is past OFF_MAP on x or z
+    ENEMY_OFF_MAP
+    AIR_NEAR_EDGE       #the bot is in the air and past EDGE on x or z
+    ENEMY_FAR           #the enemy is more than ENEMY_FAR away
+    BALL_FAST           #ballSpeed is at least BALL_FAST
+    ORBIT_LINE          #the ball is coming round the bot in an orbit, with the enemy close and in line (firebuss's brad shot)
+
+#Where a shot table row sends the ball (botAimShot in features/bots.opy)
+enum BotShot:
+    DOWN
+    UP
+    AT_ENEMY            #the enemy's eyes, within the aim error
+    AT_ANYONE           #a random other living player's eyes, within the aim error
+    FLOOR_BEHIND_ENEMY  #the floor 6 m behind the enemy, seen from the bot
+    CORNER_NEAR_ENEMY   #the arena corner (OFF_MAP) nearest the enemy
+    WALL_NEAR_ENEMY     #the arena side (OFF_MAP) nearest the enemy
+    UNDER_MAP           #outwards from the middle and under the map
+    RANDOM              #any direction
+    AWAY                #away from everyone: turned 45-90° from the player closest to the crosshair, re-rolled while anyone is within 30°
+    RANDOM_DOWN         #up to 60° off the bot's facing, 25-55° below the horizon (as azertybuss writes it)
+    SHALLOW_BOUNCE      #up to 110° off the bot's facing, 15-40° below the horizon (as azertybuss writes it)
+    STEEP_BOUNCE        #up to 110° off the bot's facing, 45-85° below the horizon (as azertybuss writes it)
+
+#What a shot was meant to do, read by after-shot moves
+enum BotIntent:
+    SAFE
+    AT_ENEMY
+    RISKY
+
+#Fields of the player variable botTuning: a preset's numbers (features/bot-presets.opy)
+enum BotTuning:
+    NEAR_FACTOR         #the ball counts as near within NEAR_FACTOR * ballSpeed + NEAR_OFFSET m of the bot's eyes
+    NEAR_OFFSET
+    REACTION_MIN        #seconds the bot waits after the ball is near, before it aims
+    REACTION_MAX
+    MISS_AT_CAP         #true: dies when the ball is at the speed cap
+    MISS_SPEED          #from this ballSpeed on, the bot misses MISS_CHANCE % of balls (rolled once per ball)
+    MISS_CHANCE
+    EARLY_LEAD          #seconds before contact the bot presses deflect itself; 0 = pressed on contact
+    AIM_RATE            #turn rate while aiming, degrees per second
+    AIM_ERROR_SLOW      #degrees of aim error on AT_ENEMY and AT_ANYONE below AIM_FAST_SPEED
+    AIM_ERROR_FAST      #the same from AIM_FAST_SPEED on
+    AIM_FAST_SPEED
+    OFF_MAP             #m from the arena centre on x or z that count as off the map; corner and wall shots aim there
+    EDGE                #m from the centre on x or z that count as near the edge (AIR_NEAR_EDGE)
+    ENEMY_FAR           #m (ENEMY_FAR)
+    BALL_FAST           #ballSpeed (BALL_FAST)
+    EDASH               #true: edash when the ball comes straight back (botEdash)
+    GHOST_DASH          #true: ghost dash when the shot goes straight at the next player
+    CAMERA              #BotCamera
+    CAMERA_RATE         #turn rate of the camera, degrees per second
+    SPIN_NEAR_BALL      #true: spins at random while the ball is near and the bot's dash is down
+    MOVEMENT            #BotMovement
+    JUMP_DOUBLE         #% of jumps that are double jumps
+    JUMP_WAIT_MIN       #seconds between single jumps
+    JUMP_WAIT_MAX
+    DOUBLE_WAIT_MIN     #seconds after a double jump
+    DOUBLE_WAIT_MAX
+
+#botTuning[BotTuning.CAMERA]
+enum BotCamera:
+    BETWEEN         #looks between the ball and its target
+
+#botTuning[BotTuning.MOVEMENT]
+enum BotMovement:
+    ROAM            #zBozo: walks to the ball's target, or to a random spot when it is the target. World directions on a throttle relative to the bot's facing, kept on purpose (it makes zBozo orbit now and then)
 
 #Fields of the player variable botHook: the only bot values core rules read.
 #Bot code sets them; a human's botHook is null, so every field reads 0.

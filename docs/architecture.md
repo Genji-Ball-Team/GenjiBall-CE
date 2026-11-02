@@ -34,7 +34,8 @@ This is a map of the game logic for contributors. It assumes you know roughly wh
 | `features/tournament.opy` | Round counting, breaks, tournament-only restrictions |
 | `features/anti-orbit.opy` | AntiOrbit pressure/heat system |
 | `features/tracing.opy` | Tracing mode |
-| `features/bot-zbozo.opy` | The zBozo practice bot's AI |
+| `features/bot-presets.opy` | Bot spawn, setup and presets (the numbers and shot table of each bot) |
+| `features/bots.opy` | The bot move library: brain, shots, dashes, camera, movement, jumping (see [bots.md](bots.md)) |
 | `features/abilities.opy` | Custom abilities (super jump, switch target, blink, crit slash) |
 | `features/sandbox.opy` | Sandbox practice tools |
 | `features/abilities-experimental.opy` | A disabled crit-slash rule (last only because it was last in v1.3.2; it has no order constraint) |
@@ -192,7 +193,7 @@ The three chamber rules (`x`, `y`, `z`) each flip a different axis, so they can 
 
 ### Free to move
 
-With the constraints above kept, these have no order dependency: `features/duels`, `features/tournament`, `features/bot-zbozo`, `features/sandbox`, `features/abilities-experimental`, the rest of `ui/hud` and `ui/effects`, the rest of `maps/restrictions`, the rest of `features/abilities`, and every `def` that's only called with `Call Subroutine`.
+With the constraints above kept, these have no order dependency: `features/duels`, `features/tournament`, `features/bot-presets`, `features/bots`, `features/sandbox`, `features/abilities-experimental`, the rest of `ui/hud` and `ui/effects`, the rest of `maps/restrictions`, the rest of `features/abilities`, and every `def` that's only called with `Call Subroutine`.
 
 ## Settings and presets
 
