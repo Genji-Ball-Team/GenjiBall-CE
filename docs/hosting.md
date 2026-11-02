@@ -44,25 +44,25 @@ These appear in the custom game under **Settings → Workshop → Settings**, gr
 
 ### Presets decide most settings
 
-`00 - Preset` is the most important setting. **Every preset except Custom overwrites** the Ball, Arena, Player (mobility, dash and dash hit) and Match settings with fixed values, and turns *15 - Ball Feel* off. If you change "max speed" and nothing happens, that's why. Set the preset to **Custom** to use your own values.
+`00 - Preset` is the most important setting. It starts on **Custom**, which uses your values for every setting; untouched, Custom plays the same as Standard. **Every other preset overwrites** the Ball, Arena, Player (mobility, dash and dash hit) and Match settings with fixed values, and turns *15 - Ball Feel* off. If you pick a preset, change "max speed" and nothing happens, that's why: go back to **Custom** to use your own values.
 
 <!-- settings: 00 - Preset -->
 | Setting | Default | Range | What it does |
 |---|---|---|---|
-| preset | Default | Default / Tournament / Tournament+ / Rapid / v1 / v7 / Experimental / Custom | Which ruleset to play. See the table below |
+| preset | Custom | Standard / Tournament / Tournament+ / Rapid / v1 / v7 / Experimental / Custom | Which ruleset to play. See the table below |
 
-| Preset | What it's for | Differences from Default |
+| Preset | What it's for | Differences from Standard |
 |---|---|---|
-| **Default** | Standard casual play | none |
+| **Standard** | Standard casual play (called Default before v1.3.4) | none |
 | **Tournament** | The current tournament ruleset | Tournament mode on, anti-ghost off, AntiOrbit off, AntiOrbit and basic anti-orbit tuning at their defaults |
 | **Tournament+** | Candidate for future tournaments | Tournament mode on, anti-ghost = steer, AntiOrbit on (radius 14, pressure 2), AntiOrbit and basic anti-orbit tuning at their defaults |
 | **Rapid** | Workshop Expanse-style: fast and bouncy | water = flood, motion = rapid, bounce pads on, mobility = balanced |
 | **v1** | Dry Workshop Island, as in the early versions | water = none |
 | **v7** | v7-style (partial) | water = flood, bounce pads on, mobility = sluggish |
 | **Experimental** | Playtesting new rebound physics. Not tournament-safe | physics = experimental, anti-ghost off, AntiOrbit on (radius 14, pressure 2), AntiOrbit and basic anti-orbit tuning at their defaults |
-| **Custom** | Everything manual | uses your values for every setting |
+| **Custom** | Everything manual. The default | uses your values for every setting. With every setting at its default, it plays the same as Standard |
 
-What "Default" forces (all non-Custom presets start from this):
+What "Standard" forces (all non-Custom presets start from this):
 match length 15 min, tournament off, 30 rounds, breaks on every 10 rounds for 60 s, ball spawn countdown 5 s, ball respawn delay 2 s, round win pause 2 s, ball start speed 60, max speed 400, acceleration 25, motion modern, physics original, custom ball feel off, water moderate, bounce pads off, center exclusion size 3.5, arena radius 0 (the map's), bounce pad strength 30, distance 12, range 2.75 and cooldown 3 s, mobility agile, dash cooldown 3.04 s, dash hit knockdown 1 s and knockdown cooldown 0.6 s.
 
 Settings **not** touched by any preset: everything in *50 - Features*, *80 - Visual*, *90 - Debug*, water ledge fix, network resync, double sens and double sens %, and tracing view angle. The "custom ... %" mobility sliders are never forced either, but no preset picks mobility = custom, so they only apply with Preset = Custom. Anti-ghost, AntiOrbit and the rest of *60 - Competitive* are only forced by the presets listed above. The AntiOrbit speed, timer, min timer and sleep and the three basic anti-orbit settings are forced together, to their defaults.
@@ -88,7 +88,7 @@ Settings **not** touched by any preset: everything in *50 - Features*, *80 - Vis
 
 ### 15 - Ball Feel
 
-The numbers behind how the ball flies, hits and deflects. Every default is the v1.3.2 value. The sliders only apply with **custom ball feel** on, and every preset except Custom turns it off, so Default, Tournament and Tournament+ always play like v1.3.2.
+The numbers behind how the ball flies, hits and deflects. Every default is the v1.3.2 value. The sliders only apply with **custom ball feel** on, and every preset except Custom turns it off, so Standard, Tournament and Tournament+ always play like v1.3.2.
 
 <!-- settings: 15 - Ball Feel -->
 | Setting | Default | Range | What it does |
