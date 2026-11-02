@@ -60,7 +60,8 @@ globalvar tracingPoints 67
 globalvar antiOrbitMode 75
 globalvar antiOrbitRadius 76
 globalvar antiOrbitPressureRate 77
-globalvar bozo_Bot 78
+#The bot dropdown: which BotPreset to spawn (NONE: no bot)
+globalvar botSetting 78
 globalvar sandboxState 90
 globalvar ballPhysicsMode 97
 globalvar experimentalState 98

@@ -39,6 +39,8 @@ rule "Tournament - no orbit abusing":
     @Event eachPlayer
     @Condition tournamentMode == true
     @Condition antiOrbitMode == false
+    #Bots are exempt
+    @Condition eventPlayer.isDummy() == false
     @Condition eventPlayer == target
     #@Condition (angleBetweenVectors(ballDirection, directionTowards(ballPosition, eventPlayer.getEyePosition())) < 100 and angleBetweenVectors(ballDirection, directionTowards(ballPosition, eventPlayer.getEyePosition())) > -100) == true
     @Condition ballIsOut == true

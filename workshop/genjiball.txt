@@ -129,7 +129,7 @@ variables {
         75: antiOrbitMode
         76: antiOrbitRadius
         77: antiOrbitPressureRate
-        78: bozo_Bot
+        78: botSetting
         90: sandboxState
         97: ballPhysicsMode
         98: experimentalState
@@ -238,8 +238,8 @@ rule ("Settings - Workshop settings") {
         Set Global Variable(setballspawncountdownoriginal, Workshop Setting Integer(Custom String("40 - Match"), Custom String("ball spawn countdown"), 5, 1, 30, 6));
         "One entry per RoundTiming field (config/constants.opy), in that order."
         Set Global Variable(roundTimings, Array(Workshop Setting Integer(Custom String("40 - Match"), Custom String("ball respawn delay"), 2, 1, 10, 7), Workshop Setting Integer(Custom String("40 - Match"), Custom String("round win pause"), 2, 0, 10, 8)));
-        "50 - Features: casual/gameplay add-ons. Presets leave these manual. The rest are in addOnSettings below."
-        Set Global Variable(bozo_Bot, Workshop Setting Toggle(Custom String("50 - Features"), Custom String("bot"), False, 1));
+        "50 - Features: casual/gameplay add-ons. Presets leave these manual. The rest are in addOnSettings below.\nOne option per BotPreset, in that order"
+        Set Global Variable(botSetting, Workshop Setting Combo(Custom String("50 - Features"), Custom String("bot"), 0, Array(Custom String("none"), Custom String("zBozo")), 1));
         "60 - Competitive: competitive test systems. Tournament, Tournament+ and Experimental force them."
         Set Global Variable(antiOrbitMode, Workshop Setting Toggle(Custom String("60 - Competitive"), Custom String("AntiOrbit"), False, 0));
         Set Global Variable(antiOrbitRadius, Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("AntiOrbit radius"), 14, 10, 20, 1));
@@ -312,8 +312,9 @@ rule ("Settings - Workshop settings") {
         Else If(Compare(Global.waterLevel, ==, 3));
             Set Global Variable(waterLevel, -0.5);
         End;
-        If(Global.bozo_Bot);
-            Set Global Variable(bozo_Bot, 1);
+        "Tournament presets and duels play without a bot (duels can't queue or skip one)"
+        If(Or(Or(Compare(Global.presetMode, ==, 1), Compare(Global.presetMode, ==, 2)), Value In Array(Global.addOnSettings, 5)));
+            Set Global Variable(botSetting, 0);
     }
 }
 
@@ -2451,6 +2452,8 @@ rule ("Tournament - no orbit abusing") {
     conditions {
         Global.tournamentMode == True;
         Global.antiOrbitMode == False;
+        "Bots are exempt"
+        Is Dummy Bot(Event Player) == False;
         Event Player == Global.target;
         "@Condition (angleBetweenVectors(ballDirection, directionTowards(ballPosition, eventPlayer.getEyePosition())) < 100 and angleBetweenVectors(ballDirection, directionTowards(ballPosition, eventPlayer.getEyePosition())) > -100) == true"
         Global.ballIsOut == True;
@@ -2475,6 +2478,8 @@ rule ("AntiOrbit - no orbit abusing") {
     }
     conditions {
         Global.antiOrbitMode == True;
+        "Bots are exempt"
+        Is Dummy Bot(Event Player) == False;
         Event Player == Global.target;
         Global.ballIsOut == True;
         Is Alive(Event Player) == True;
@@ -2507,6 +2512,8 @@ rule ("AntiOrbit - track pressure") {
     }
     conditions {
         Global.antiOrbitMode == True;
+        "Bots are exempt"
+        Is Dummy Bot(Event Player) == False;
         Is Alive(Event Player) == True;
         Global.ballIsOut == True;
         Event Player == Global.target;
@@ -2588,7 +2595,8 @@ rule ("Tracing mode - gained") {
     conditions {
         Value In Array(Global.addOnSettings, 3) == True;
         Event Player == Global.target;
-        Angle Between Vectors(Facing Direction Of(Event Player), Direction Towards(Eye Position(Event Player), Global.ballPosition)) <= Value In Array(Global.addOnSettings, 10);
+        "Bots are exempt: they always count as tracing"
+        Or(Is Dummy Bot(Event Player), Compare(Angle Between Vectors(Facing Direction Of(Event Player), Direction Towards(Eye Position(Event Player), Global.ballPosition)), <=, Value In Array(Global.addOnSettings, 10))) == True;
     }
     actions {
         "@Condition eventPlayer.isInViewAngle(ballPosition, 70) == true"
@@ -2607,6 +2615,7 @@ rule ("Tracing mode - lost") {
     conditions {
         Value In Array(Global.addOnSettings, 3) == True;
         Event Player == Global.target;
+        Is Dummy Bot(Event Player) == False;
         Angle Between Vectors(Facing Direction Of(Event Player), Direction Towards(Eye Position(Event Player), Global.ballPosition)) > Value In Array(Global.addOnSettings, 10);
     }
     actions {
@@ -2620,16 +2629,11 @@ rule ("Bots - spawn") {
         Ongoing - Global;
     }
     conditions {
-        "Currently only able to decide between 0 or 1 (false/true) bots"
-        Global.bozo_Bot > 0;
+        "One bot, the preset picked in \"50 - Features > bot\""
+        Global.botSetting != 0;
     }
     actions {
-        While(Compare(Global.bozo_Bot, >, 0));
-            Modify Global Variable(bozo_Bot, Subtract, 1);
-            Create Dummy Bot(Hero(Genji), All Teams, Add(12, Global.bozo_Bot), Null, Host Player);
-            Wait(0.1, Ignore Condition);
-        End;
-        Set Global Variable(bozo_Bot, True);
+        Create Dummy Bot(Hero(Genji), All Teams, 12, Null, Host Player);
     }
 }
 
@@ -2640,13 +2644,12 @@ rule ("Bots - setup") {
         All;
     }
     conditions {
-        Global.bozo_Bot == True;
+        Global.botSetting != 0;
         Is Dummy Bot(Event Player) == True;
         First Of((Event Player).botHook) == 0;
     }
     actions {
-        Start Forcing Dummy Bot Name(Event Player, Custom String("zSh4d0Ws bozo"));
-        Set Player Variable At Index(Event Player, botHook, 0, 1);
+        Set Player Variable At Index(Event Player, botHook, 0, Global.botSetting);
         Call Subroutine(botLoadPreset);
         Set Player Variable(Event Player, botState, Array(0, -1, 0, Null, Null, False, Null, 0, 0));
         Set Player Variable At Index(Event Player, botHook, 1, 1);
@@ -2663,6 +2666,7 @@ rule ("Bots - load preset") {
     actions {
         "zBozo, named after zSh4d0W: random shots, edash and ghost dash, odd walking"
         If(Compare(First Of((Event Player).botHook), ==, 1));
+            Start Forcing Dummy Bot Name(Event Player, Custom String("[BOT] zBozo"));
             "edash, ghost dash; camera between ball and target at 1000, spins near the ball; roams;\n50 % double jumps, 3-7 s after a single, 5-15 s after a double"
             Set Player Variable(Event Player, botTuning, Array(0.1, 0, 0, 0, True, 0, 0, 0, 10000, 35, 10, 80, 18, 8, 30, 100, True, True, 0, 1000, True, 0, 50, 3, 7, 5, 15));
             "Dash ready: 11 % at a random player, else a random direction. Dash down: away from everyone"

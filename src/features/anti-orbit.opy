@@ -3,6 +3,8 @@
 rule "AntiOrbit - no orbit abusing":
     @Event eachPlayer
     @Condition antiOrbitMode == true
+    #Bots are exempt
+    @Condition eventPlayer.isDummy() == false
     @Condition eventPlayer == target
     @Condition ballIsOut == true
     @Condition eventPlayer.isAlive() == true
@@ -33,6 +35,8 @@ rule "AntiOrbit - no orbit abusing":
 rule "AntiOrbit - track pressure":
     @Event eachPlayer
     @Condition antiOrbitMode == true
+    #Bots are exempt
+    @Condition eventPlayer.isDummy() == false
     @Condition eventPlayer.isAlive() == true
     @Condition ballIsOut == true
     @Condition eventPlayer == target

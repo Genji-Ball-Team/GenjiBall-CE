@@ -77,7 +77,8 @@ rule "Settings - Workshop settings":
         createWorkshopSettingInt("40 - Match", "round win pause", 2, 0, 10, 8)
     ]
     #50 - Features: casual/gameplay add-ons. Presets leave these manual. The rest are in addOnSettings below.
-    bozo_Bot = createWorkshopSettingBool("50 - Features", "bot", false, 1)
+    #One option per BotPreset, in that order
+    botSetting = createWorkshopSettingEnum("50 - Features", "bot", 0, ["none", "zBozo"], 1)
     #60 - Competitive: competitive test systems. Tournament, Tournament+ and Experimental force them.
     antiOrbitMode = createWorkshopSettingBool("60 - Competitive", "AntiOrbit", false)
     antiOrbitRadius = createWorkshopSettingInt("60 - Competitive", "AntiOrbit radius", 14, 10, 20, 1)
@@ -186,5 +187,6 @@ rule "Settings - Workshop settings":
         waterLevel = -26
     elif waterLevel == Water.FLOOD:
         waterLevel = -0.5
-    if bozo_Bot:
-        bozo_Bot = 1
+    #Tournament presets and duels play without a bot (duels can't queue or skip one)
+    if presetMode == Preset.TOURNAMENT or presetMode == Preset.TOURNAMENT_PLUS or addOnSettings[AddOnSetting.DUELS]:
+        botSetting = BotPreset.NONE

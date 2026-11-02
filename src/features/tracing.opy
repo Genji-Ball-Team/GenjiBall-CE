@@ -4,7 +4,8 @@ rule "Tracing mode - gained":
     @Event eachPlayer
     @Condition addOnSettings[AddOnSetting.TRACING_MODE] == true
     @Condition eventPlayer == target
-    @Condition angleBetweenVectors(eventPlayer.getFacingDirection(), directionTowards(eventPlayer.getEyePosition(), ballPosition)) <= addOnSettings[AddOnSetting.TRACING_ANGLE]
+    #Bots are exempt: they always count as tracing
+    @Condition (eventPlayer.isDummy() or angleBetweenVectors(eventPlayer.getFacingDirection(), directionTowards(eventPlayer.getEyePosition(), ballPosition)) <= addOnSettings[AddOnSetting.TRACING_ANGLE]) == true
     
     #@Condition eventPlayer.isInViewAngle(ballPosition, 70) == true
     eventPlayer.clearStatusEffect(Status.BURNING)
@@ -16,6 +17,7 @@ rule "Tracing mode - lost":
     @Event eachPlayer
     @Condition addOnSettings[AddOnSetting.TRACING_MODE] == true
     @Condition eventPlayer == target
+    @Condition eventPlayer.isDummy() == false
     @Condition angleBetweenVectors(eventPlayer.getFacingDirection(), directionTowards(eventPlayer.getEyePosition(), ballPosition)) > addOnSettings[AddOnSetting.TRACING_ANGLE]
     
     #@Condition eventPlayer.isInViewAngle(ballPosition, 70) == false

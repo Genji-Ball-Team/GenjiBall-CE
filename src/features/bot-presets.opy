@@ -3,24 +3,19 @@
 #and add one: docs/bots.md.
 
 rule "Bots - spawn":
-    #Currently only able to decide between 0 or 1 (false/true) bots
-    @Condition bozo_Bot > 0
+    #One bot, the preset picked in "50 - Features > bot"
+    @Condition botSetting != BotPreset.NONE
 
-    while bozo_Bot > 0:
-        bozo_Bot--
-        createDummy(Hero.GENJI, Team.ALL, 12 + bozo_Bot, null, hostPlayer)
-        wait(0.1)
-    bozo_Bot = true
+    createDummy(Hero.GENJI, Team.ALL, 12, null, hostPlayer)
 
 
 rule "Bots - setup":
     @Event eachPlayer
-    @Condition bozo_Bot == true
+    @Condition botSetting != BotPreset.NONE
     @Condition eventPlayer.isDummy() == true
     @Condition eventPlayer.botHook[BotHook.PRESET] == BotPreset.NONE
 
-    eventPlayer.startForcingName("zSh4d0Ws bozo")
-    eventPlayer.botHook[BotHook.PRESET] = BotPreset.ZBOZO
+    eventPlayer.botHook[BotHook.PRESET] = botSetting
     botLoadPreset()
     eventPlayer.botState = [0, -1, 0, null, null, false, null, BotIntent.SAFE, BotFacing.CAMERA]
     eventPlayer.botHook[BotHook.DEFLECT] = BotDeflect.PRESS
@@ -33,6 +28,7 @@ def botLoadPreset():
 
     #zBozo, named after zSh4d0W: random shots, edash and ghost dash, odd walking
     if eventPlayer.botHook[BotHook.PRESET] == BotPreset.ZBOZO:
+        eventPlayer.startForcingName("[BOT] zBozo")
         #In BotTuning order: near 0.1 * speed + 0; no reaction delay; dies at the cap, no other miss; pressed on contact;
         #aim rate 10000, error 35° below speed 80 and 10° from it; off map 18 m, edge 8 m, enemy far 30 m, fast ball 100;
         #edash, ghost dash; camera between ball and target at 1000, spins near the ball; roams;

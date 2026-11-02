@@ -65,7 +65,7 @@ These appear in the custom game under **Settings → Workshop → Settings**, gr
 What "Standard" forces (all non-Custom presets start from this):
 match length 15 min, tournament off, 30 rounds, breaks on every 10 rounds for 60 s, ball spawn countdown 5 s, ball respawn delay 2 s, round win pause 2 s, ball start speed 60, max speed 400, acceleration 25, motion modern, physics original, custom ball feel off, water moderate, bounce pads off, center exclusion size 3.5, arena radius 0 (the map's), bounce pad strength 30, distance 12, range 2.75 and cooldown 3 s, mobility agile, dash cooldown 3.04 s, dash hit knockdown 1 s and knockdown cooldown 0.6 s.
 
-Settings **not** touched by any preset: everything in *50 - Features*, *80 - Visual*, *90 - Debug*, water ledge fix, network resync, double sens and double sens %, and tracing view angle. The "custom ... %" mobility sliders are never forced either, but no preset picks mobility = custom, so they only apply with Preset = Custom. Anti-ghost, AntiOrbit and the rest of *60 - Competitive* are only forced by the presets listed above. The AntiOrbit speed, timer, min timer and sleep and the three basic anti-orbit settings are forced together, to their defaults.
+Settings **not** touched by any preset: everything in *50 - Features* (except that Tournament and Tournament+ turn the bot off), *80 - Visual*, *90 - Debug*, water ledge fix, network resync, double sens and double sens %, and tracing view angle. The "custom ... %" mobility sliders are never forced either, but no preset picks mobility = custom, so they only apply with Preset = Custom. Anti-ghost, AntiOrbit and the rest of *60 - Competitive* are only forced by the presets listed above. The AntiOrbit speed, timer, min timer and sleep and the three basic anti-orbit settings are forced together, to their defaults.
 
 ### 10 - Ball
 
@@ -156,7 +156,7 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 | Setting | Default | Range | What it does |
 |---|---|---|---|
 | custom abilities | off | | Each player picks one extra ability. See [playing.md](playing.md#custom-abilities) |
-| bot | off | | Adds the "zSh4d0Ws bozo" practice bot |
+| bot | none | none / zBozo | Adds a practice bot, named `[BOT] <bot>`. Off with the Tournament presets and with duels. See [Bot](playing.md#bot) |
 | duels | off | | 1v1 at a time, with a queue |
 | endless mode | off | | The ball doesn't reset after a kill |
 | Sandbox mode | off | | Practice tool for the host. See [Sandbox](#sandbox-mode) |
