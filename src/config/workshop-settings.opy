@@ -77,8 +77,14 @@ rule "Settings - Workshop settings":
         createWorkshopSettingInt("40 - Match", "round win pause", 2, 0, 10, 8)
     ]
     #50 - Features: casual/gameplay add-ons. Presets leave these manual. The rest are in addOnSettings below.
-    #One option per BotPreset, in that order
-    botSetting = createWorkshopSettingEnum("50 - Features", "bot", 0, ["none", "zBozo", "firebuss", "lucybuss", "azertybuss"], 1)
+    #One entry per BotSetting field (config/constants.opy), in that order.
+    #bot: one option per BotPreset. Monx spot: one per MonxSpot. Monx shots: one per MonxShots
+    botSettings = [
+        createWorkshopSettingEnum("50 - Features", "bot", 0, ["none", "zBozo", "firebuss", "lucybuss", "azertybuss", "Monx (ball machine)"], 1),
+        createWorkshopSettingEnum("50 - Features", "Monx spot", 0, ["original", "opposite", "side", "other side", "close"], 5),
+        createWorkshopSettingEnum("50 - Features", "Monx shots", 0, ["random floor", "long bounce", "at the player", "mix"], 6),
+        createWorkshopSettingInt("50 - Features", "Monx ball speed", 0, 0, 800, 7)
+    ]
     #60 - Competitive: competitive test systems. Tournament, Tournament+ and Experimental force them.
     antiOrbitMode = createWorkshopSettingBool("60 - Competitive", "AntiOrbit", false)
     antiOrbitRadius = createWorkshopSettingInt("60 - Competitive", "AntiOrbit radius", 14, 10, 20, 1)
@@ -189,4 +195,4 @@ rule "Settings - Workshop settings":
         waterLevel = -0.5
     #Tournament presets and duels play without a bot (duels can't queue or skip one)
     if presetMode == Preset.TOURNAMENT or presetMode == Preset.TOURNAMENT_PLUS or addOnSettings[AddOnSetting.DUELS]:
-        botSetting = BotPreset.NONE
+        botSettings[BotSetting.PRESET] = BotPreset.NONE
