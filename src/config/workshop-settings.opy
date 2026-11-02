@@ -78,12 +78,17 @@ rule "Settings - Workshop settings":
     ]
     #50 - Features: casual/gameplay add-ons. Presets leave these manual. The rest are in addOnSettings below.
     #One entry per BotSetting field (config/constants.opy), in that order.
-    #bot: one option per BotPreset. Monx spot: one per MonxSpot. Monx shots: one per MonxShots
+    #bot: one option per BotPreset. Monx spot: one per MonxSpot. Monx shots: one per MonxShots.
+    #My bot: one option per entry of the preset lists in botMixParts
     botSettings = [
-        createWorkshopSettingEnum("50 - Features", "bot", 0, ["none", "zBozo", "firebuss", "lucybuss", "azertybuss", "Monx (ball machine)"], 1),
+        createWorkshopSettingEnum("50 - Features", "bot", 0, ["none", "zBozo", "firebuss", "lucybuss", "azertybuss", "Monx (ball machine)", "My bot"], 1),
         createWorkshopSettingEnum("50 - Features", "Monx spot", 0, ["original", "opposite", "side", "other side", "close"], 5),
         createWorkshopSettingEnum("50 - Features", "Monx shots", 0, ["random floor", "long bounce", "at the player", "mix"], 6),
-        createWorkshopSettingInt("50 - Features", "Monx ball speed", 0, 0, 800, 7)
+        createWorkshopSettingInt("50 - Features", "Monx ball speed", 0, 0, 800, 7),
+        createWorkshopSettingEnum("50 - Features", "My bot shots", 0, ["zBozo", "lucybuss", "azertybuss", "firebuss", "Monx"], 8),
+        createWorkshopSettingEnum("50 - Features", "My bot movement", 0, ["zBozo", "lucybuss", "azertybuss", "firebuss", "stand still"], 9),
+        createWorkshopSettingEnum("50 - Features", "My bot after shot", 0, ["none", "zBozo", "lucybuss", "azertybuss", "firebuss"], 10),
+        createWorkshopSettingEnum("50 - Features", "My bot deflect", 0, ["perfect", "zBozo", "lucybuss", "firebuss"], 11)
     ]
     #60 - Competitive: competitive test systems. Tournament, Tournament+ and Experimental force them.
     antiOrbitMode = createWorkshopSettingBool("60 - Competitive", "AntiOrbit", false)
