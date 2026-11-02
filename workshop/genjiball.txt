@@ -2684,7 +2684,7 @@ rule ("Bots - load preset") {
             "50 % double jumps, 1-2 s after either;\nno dash guard, safe dash, brad shot, punish or jump before impact (the circling numbers are unused);\nback to the middle past 30 m; no fast reaction; ace dash 30 %; no dash away"
             Set Player Variable(Event Player, botTuning, Array(0.1, 0, 0, 0, True, 110, 30, 0, 10000, 35, 10, 80, 18, 8, 30, 100, True, True, 0, 1000, 2, 0, 50, 1, 2, 1, 2, 0, False, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 30, 0));
             "Off the map: down. Else 60 %: up while everyone is far (half of that), else down. Else zBozo's table, its 11 % scaled to the 40 % left"
-            Set Player Variable(Event Player, botShots, Array(Array(4, 0, 100, 0), Array(7, 1, 30, 0), Array(0, 0, 60, 0), Array(1, 3, 64, 1), Array(1, 8, 100, 2), Array(0, 9, 100, 0)));
+            Set Player Variable(Event Player, botShots, Array(Array(4, 0, 100, 0), Array(9, 1, 30, 0), Array(0, 0, 60, 0), Array(1, 3, 64, 1), Array(1, 8, 100, 2), Array(0, 9, 100, 0)));
         "azertybuss, by gybbus: floor bounces with a human delay, dashes away after a shot, strafes and hops"
         Else If(Compare(First Of((Event Player).botHook), ==, 4));
             Start Forcing Dummy Bot Name(Event Player, Custom String("[BOT] azertybuss"));
@@ -2832,7 +2832,7 @@ rule ("Bots - check condition") {
     actions {
         "Sets botState PASSED for the condition of botState ROW"
         If(True);
-            Skip(Value In Array(Array(20, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), First Of(Value In Array((Event Player).botState, 4))))));
+            Skip(Value In Array(Array(22, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 10), First Of(Value In Array((Event Player).botState, 4))))));
         //__label_switch_2_0__:
         Set Player Variable At Index(Event Player, botState, 5, True);
         Else;
@@ -2858,9 +2858,12 @@ rule ("Bots - check condition") {
         Set Player Variable At Index(Event Player, botState, 5, And(Compare(Value In Array((Event Player).botState, 3), !=, Null), Compare(Distance Between(Event Player, Value In Array((Event Player).botState, 3)), >, Value In Array((Event Player).botTuning, 14))));
         Else;
         //__label_switch_2_8__:
-        Set Player Variable At Index(Event Player, botState, 5, Compare(Global.ballSpeed, >=, Value In Array((Event Player).botTuning, 15)));
+        Set Player Variable At Index(Event Player, botState, 5, Is True For All(Remove From Array(All Living Players(All Teams), Event Player), Compare(Distance Between(Event Player, Current Array Element), >, Value In Array((Event Player).botTuning, 14))));
         Else;
         //__label_switch_2_9__:
+        Set Player Variable At Index(Event Player, botState, 5, Compare(Global.ballSpeed, >=, Value In Array((Event Player).botTuning, 15)));
+        Else;
+        //__label_switch_2_10__:
         Set Player Variable At Index(Event Player, botState, 5, And(And(And(And(And(Is Alive(Value In Array((Event Player).botState, 3)), Compare(Distance Between(Eye Position(Event Player), Global.ballPosition), >=, 3)), Compare(Distance Between(Eye Position(Event Player), Global.ballPosition), <=, 12)), Compare(Absolute Value(Subtract(Angle Between Vectors(Global.ballDirection, Direction Towards(Global.ballPosition, Eye Position(Event Player))), 90)), <, 30)), Compare(Absolute Value(Subtract(Angle Between Vectors(Direction Towards(Eye Position(Event Player), Global.ballPosition), Direction Towards(Eye Position(Event Player), Eye Position(Value In Array((Event Player).botState, 3)))), 90)), >, 75)), Compare(Distance Between(Event Player, Value In Array((Event Player).botState, 3)), <=, 15)));
         Else;
         //__label_switch_2_default__:
@@ -2876,7 +2879,7 @@ rule ("Bots - aim shot") {
     actions {
         "Sets botState AIM, a world direction, for the shot of botState ROW. Shots that need the enemy\nonly appear after a row that catches NO_ENEMY"
         If(True);
-            Skip(Value In Array(Array(32, 0, 2, 4, 7, 10, 12, 14, 20, 22, 24, 26, 28, 30), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), Value In Array(Value In Array((Event Player).botState, 4), 1)))));
+            Skip(Value In Array(Array(36, 0, 2, 4, 7, 14, 16, 18, 24, 26, 28, 30, 32, 34), Add(1, Index Of Array Value(Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), Value In Array(Value In Array((Event Player).botState, 4), 1)))));
         //__label_switch_3_0__:
         Set Player Variable At Index(Event Player, botState, 6, Down);
         Else;
@@ -2888,6 +2891,11 @@ rule ("Bots - aim shot") {
         Call Subroutine(botAimError);
         Else;
         //__label_switch_3_3__:
+        "Nobody else alive: down"
+        If(Compare(Count Of(Remove From Array(All Living Players(All Teams), Event Player)), ==, 0));
+            Set Player Variable At Index(Event Player, botState, 6, Down);
+            Else;
+        End;
         Set Player Variable At Index(Event Player, botState, 6, Direction Towards(Eye Position(Event Player), Eye Position(Random Value In Array(Remove From Array(All Living Players(All Teams), Event Player)))));
         Call Subroutine(botAimError);
         Else;
@@ -3127,6 +3135,8 @@ rule ("Bots - ace dash") {
         Set Facing(Event Player, Evaluate Once(Facing Direction Of(Global.target)), To World);
         Start Facing(Event Player, Evaluate Once(Facing Direction Of(Global.target)), 10000, To World, Direction and Turn Rate);
         Wait(0.05, Ignore Condition);
+        "The brain took over: the ball came to the bot meanwhile"
+        Abort If(Or(Or(Compare(Value In Array((Event Player).botState, 8), !=, 4), Compare(Global.target, ==, Event Player)), Is Dead(Event Player)));
         Press Button(Event Player, Button(Ability 1));
         Wait(0.05, Ignore Condition);
         Wait Until(Or(Not(Is Using Ability 1(Event Player)), Is Dead(Event Player)), 1);

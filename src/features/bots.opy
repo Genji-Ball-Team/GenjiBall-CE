@@ -165,6 +165,9 @@ def botCheckCondition():
         case BotCondition.ENEMY_FAR:
             eventPlayer.botState[BotField.PASSED] = eventPlayer.botState[BotField.ENEMY] != null and distance(eventPlayer, eventPlayer.botState[BotField.ENEMY]) > eventPlayer.botTuning[BotTuning.ENEMY_FAR]
             break
+        case BotCondition.ALL_FAR:
+            eventPlayer.botState[BotField.PASSED] = all([distance(eventPlayer, x) > eventPlayer.botTuning[BotTuning.ENEMY_FAR] for x in getLivingPlayers(Team.ALL).exclude(eventPlayer)])
+            break
         case BotCondition.BALL_FAST:
             eventPlayer.botState[BotField.PASSED] = ballSpeed >= eventPlayer.botTuning[BotTuning.BALL_FAST]
             break
@@ -190,6 +193,10 @@ def botAimShot():
             botAimError()
             break
         case BotShot.AT_ANYONE:
+            #Nobody else alive: down
+            if len(getLivingPlayers(Team.ALL).exclude(eventPlayer)) == 0:
+                eventPlayer.botState[BotField.AIM] = Vector.DOWN
+                break
             eventPlayer.botState[BotField.AIM] = directionTowards(eventPlayer.getEyePosition(), random.choice(getLivingPlayers(Team.ALL).exclude(eventPlayer)).getEyePosition())
             botAimError()
             break
@@ -372,6 +379,9 @@ rule "Bots - ace dash":
     eventPlayer.setFacing(evalOnce(target.getFacingDirection()), Relativity.TO_WORLD)
     eventPlayer.startFacing(evalOnce(target.getFacingDirection()), 10000)
     wait(0.05)
+    #The brain took over: the ball came to the bot meanwhile
+    if eventPlayer.botState[BotField.FACING] != BotFacing.ACE or target == eventPlayer or eventPlayer.isDead():
+        return
     eventPlayer.forceButtonPress(Button.ABILITY_1)
     wait(0.05)
     waitUntil(not eventPlayer.isUsingAbility1() or eventPlayer.isDead(), 1)

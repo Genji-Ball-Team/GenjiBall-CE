@@ -112,6 +112,7 @@ enum BotCondition:
     AIR_NEAR_EDGE       #the bot is in the air and past EDGE on x or z
     ENEMY_FAR           #the enemy is more than ENEMY_FAR away
     BALL_FAST           #ballSpeed is at least BALL_FAST
+    ALL_FAR             #every other living player, bots too, is more than ENEMY_FAR away (also true when there's nobody)
     ORBIT_LINE          #the ball is coming round the bot in an orbit, with the enemy close and in line (firebuss's brad shot)
 
 #Where a shot table row sends the ball (botAimShot in features/bots.opy)
@@ -119,7 +120,7 @@ enum BotShot:
     DOWN
     UP
     AT_ENEMY            #the enemy's eyes, within the aim error
-    AT_ANYONE           #a random other living player's eyes, within the aim error
+    AT_ANYONE           #a random other living player's eyes, within the aim error (down when there's nobody)
     FLOOR_BEHIND_ENEMY  #the floor 6 m behind the enemy, seen from the bot
     CORNER_NEAR_ENEMY   #the arena corner (OFF_MAP) nearest the enemy
     WALL_NEAR_ENEMY     #the arena side (OFF_MAP) nearest the enemy

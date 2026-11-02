@@ -92,13 +92,13 @@ By gybbus. Its down/up shots, then zBozo's table for the rest:
 | Condition | Shot | Chance | Intent |
 |---|---|---|---|
 | `ME_OFF_MAP` | `DOWN` | 100 | `SAFE` |
-| `ENEMY_FAR` | `UP` | 30 | `SAFE` |
+| `ALL_FAR` | `UP` | 30 | `SAFE` |
 | `ALWAYS` | `DOWN` | 60 | `SAFE` |
 | `I_CAN_DASH` | `AT_ANYONE` | 64 | `AT_ENEMY` |
 | `I_CAN_DASH` | `RANDOM` | 100 | `RISKY` |
 | `ALWAYS` | `AWAY` | 100 | `SAFE` |
 
-60 % of balls go down, or half of those up while the enemy is over 30 m away. zBozo's rows get the roll's last 40, so its 1 in 9 at a player is 4 of those (10 %). Off the map it always shoots down; the original let 10 % of balls over speed 90 through to the other rows.
+60 % of balls go down, or half of those up while every other player is over 30 m away. zBozo's rows get the roll's last 40, so its 1 in 9 at a player is 4 of those (10 %). Off the map it always shoots down; the original let 10 % of balls over speed 90 through to the other rows.
 
 Its other moves:
 

@@ -80,7 +80,7 @@ def botLoadPreset():
         #Off the map: down. Else 60 %: up while everyone is far (half of that), else down. Else zBozo's table, its 11 % scaled to the 40 % left
         eventPlayer.botShots = [
             [BotCondition.ME_OFF_MAP, BotShot.DOWN, 100, BotIntent.SAFE],
-            [BotCondition.ENEMY_FAR, BotShot.UP, 30, BotIntent.SAFE],
+            [BotCondition.ALL_FAR, BotShot.UP, 30, BotIntent.SAFE],
             [BotCondition.ALWAYS, BotShot.DOWN, 60, BotIntent.SAFE],
             [BotCondition.I_CAN_DASH, BotShot.AT_ANYONE, 64, BotIntent.AT_ENEMY],
             [BotCondition.I_CAN_DASH, BotShot.RANDOM, 100, BotIntent.RISKY],
