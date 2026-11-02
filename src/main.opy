@@ -40,7 +40,8 @@
 #!include "features/anti-orbit.opy"
 #ORDER: after core/collision (collision reads last tick's tracingPoints).
 #!include "features/tracing.opy"
-#!include "features/bot-zbozo.opy"
+#!include "features/bot-presets.opy"
+#!include "features/bots.opy"
 #ORDER: after core/collision ("2. Target switch" overrides a same-tick deflect).
 #!include "features/abilities.opy"
 #!include "features/sandbox.opy"
