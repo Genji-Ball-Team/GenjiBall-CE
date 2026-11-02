@@ -95,6 +95,7 @@ playervar orbitPenalty 23
 playervar orbitTimer 24
 playervar orbitHeat 25
 playervar kills 26
+playervar botHook 27
 
 #Subroutine names
 

@@ -62,11 +62,13 @@ rule "Controls - Shorten deflect length":
     @Condition eventPlayer.isUsingUltimate() == false
     
     wait(ballFeel[BallFeel.DEFLECT_WINDOW])
-    if eventPlayer.isDummy():
-        if botState[BotField.WILL_EDASH] == true or botState[BotField.WILL_GHOST_DASH] == true:
-            eventPlayer.forceButtonPress(Button.ABILITY_1)
-            botState[BotField.WILL_GHOST_DASH] = false
-            botState[BotField.WILL_EDASH] = false
+    #Bots only: botHook is null for humans
+    if eventPlayer.botHook[BotHook.DASH_WANTED]:
+        if eventPlayer.botHook[BotHook.DASH_DIRECTION]:
+            eventPlayer.setFacing(eventPlayer.botHook[BotHook.DASH_DIRECTION], Relativity.TO_WORLD)
+        eventPlayer.forceButtonPress(Button.ABILITY_1)
+        eventPlayer.botHook[BotHook.DASH_WANTED] = false
+        eventPlayer.botHook[BotHook.DASH_DIRECTION] = null
     eventPlayer.setAbility2Enabled(false)
     eventPlayer.setAbility1Enabled(false)
     eventPlayer.canDeflect = false
