@@ -104,6 +104,12 @@ rule "Bots - incoming ball":
     waitUntil(target != eventPlayer or eventPlayer.isDead() or ballIsOut == false, 99999)
     if eventPlayer.isDead() or ballIsOut == false or botBallIsStale:
         return
+    #After shot: a ball machine sets the speed it sends the ball at
+    if eventPlayer.botTuning[BotTuning.MACHINE_SPEED] > 0 and prevTarget == eventPlayer:
+        ballSpeed = min(ballSpeedCap, eventPlayer.botTuning[BotTuning.MACHINE_SPEED])
+        #Astro moves the ball by ballDirection's length, which the deflect set from the old speed
+        if ballMotion == BallMotion.ASTRO:
+            ballDirection = normalize(ballDirection) * ballSpeed
     #After shot: safe dash, sideways toward the middle, after a shot at the enemy
     if eventPlayer.botTuning[BotTuning.SAFE_DASH] and eventPlayer.botState[BotField.INTENT] == BotIntent.AT_ENEMY and prevTarget == eventPlayer and eventPlayer.botState[BotField.ENEMY].isAlive() and not eventPlayer.isUsingAbility1() and eventPlayer.canDash and not eventPlayer.dashOnCooldown:
         #Horizontal direction to the enemy, turned 90°, toward the side nearer the middle
@@ -229,6 +235,12 @@ def botAimShot():
             break
         case BotShot.STEEP_BOUNCE:
             eventPlayer.botState[BotField.AIM] = directionFromAngles(horizontalAngleOfDirection(eventPlayer.getFacingDirection()) + random.randint(-110, 110), random.randint(-85, -45))
+            break
+        case BotShot.FLOOR_TO_MIDDLE:
+            eventPlayer.botState[BotField.AIM] = directionFromAngles(horizontalAngleOfDirection(directionTowards(eventPlayer.getPosition(), vect(circleCenter.x, eventPlayer.getPosition().y, circleCenter.z))) + random.uniform(-45, 45), random.uniform(-90, -45))
+            break
+        case BotShot.LONG_TO_MIDDLE:
+            eventPlayer.botState[BotField.AIM] = directionFromAngles(horizontalAngleOfDirection(directionTowards(eventPlayer.getPosition(), vect(circleCenter.x, eventPlayer.getPosition().y, circleCenter.z))) + random.uniform(-20, 20), random.uniform(-25, -10))
             break
 
 
@@ -531,6 +543,21 @@ rule "Bots - strafing":
         loop()
 
 
+rule "Bots - pinned":
+    #Forced to its spot, again every 1.25 s, so a teleport (the final duel) doesn't move it for long
+    @Event eachPlayer
+    @Condition eventPlayer.botHook[BotHook.PRESET] != BotPreset.NONE
+    @Condition eventPlayer.botTuning[BotTuning.MOVEMENT] == BotMovement.PINNED
+    @Condition eventPlayer.isAlive() == true
+
+    #25 m, or less in an arena smaller than 27 m so the edge rules leave it alone, and at least
+    #1.5 m past the centre's off-limits size so "Map restrictions - put out center" does too
+    eventPlayer.startForcingPosition(circleCenter + eventPlayer.botTuning[BotTuning.PIN_SPOT] * max((CenterOffLimitsSize + 1.5) / magnitude(eventPlayer.botTuning[BotTuning.PIN_SPOT]), min(25, SphereSize - 2)), false)
+    wait(1.25)
+    if ruleCondition:
+        loop()
+
+
 rule "Bots - jump before impact":
     #As the ball comes in: IMPACT_JUMP % of the time, and always near the edge, so a shot can go under the map
     @Event eachPlayer
@@ -553,6 +580,7 @@ rule "Bots - jump before impact":
 rule "Bots - jumping":
     @Event eachPlayer
     @Condition eventPlayer.botHook[BotHook.PRESET] != BotPreset.NONE
+    @Condition eventPlayer.botTuning[BotTuning.JUMP_WAIT_MAX] > 0
     @Condition ballIsOut == true
 
     eventPlayer.forceButtonPress(Button.JUMP)

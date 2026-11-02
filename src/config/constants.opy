@@ -130,6 +130,8 @@ enum BotShot:
     RANDOM_DOWN         #up to 60° off the bot's facing, 25-55° below the horizon (as azertybuss writes it)
     SHALLOW_BOUNCE      #up to 110° off the bot's facing, 15-40° below the horizon (as azertybuss writes it)
     STEEP_BOUNCE        #up to 110° off the bot's facing, 45-85° below the horizon (as azertybuss writes it)
+    FLOOR_TO_MIDDLE     #up to 45° off the way to the middle, 45-90° below the horizon (Monx's floor shot)
+    LONG_TO_MIDDLE      #up to 20° off the way to the middle, 10-25° below the horizon: a long bounce
 
 #What a shot was meant to do, read by after-shot moves
 enum BotIntent:
@@ -180,6 +182,8 @@ enum BotTuning:
     REACTION_FAST_MAX
     ACE_CHANCE          #% chance of an ace dash: a dash along where the ball's target looks, as the ball reaches them; 0 = off
     DASH_AWAY           #% chance to dash sideways after a shot, always after an AT_ENEMY one; 0 = off
+    PIN_SPOT            #PINNED movement: where it's pinned, from circleCenter, times 25 m (less in a small arena); null when not pinned
+    MACHINE_SPEED       #ballSpeed after each of its own deflects (capped at the max speed); 0 = off
 
 #botTuning[BotTuning.CAMERA]
 enum BotCamera:
@@ -197,6 +201,7 @@ enum BotMovement:
     ROAM            #zBozo: walks to the ball's target, or to a random spot when it is the target. World directions on a throttle relative to the bot's facing, kept on purpose (it makes zBozo orbit now and then)
     CIRCLE          #firebuss: strafes round the nearest human, keeping CIRCLE_NEAR to CIRCLE_FAR m, with short pauses
     STRAFE          #azertybuss: strafes, walks and stops at random like a player, wherever the others are
+    PINNED          #Monx: forced to PIN_SPOT, again every 1.25 s. No walking or jumping
 
 #Fields of the player variable botHook: the only bot values core rules read.
 #Bot code sets them; a human's botHook is null, so every field reads 0.
@@ -208,12 +213,35 @@ enum BotHook:
     DASH_DIRECTION  #world direction to face for that dash; null keeps the bot's facing. Cleared with DASH_WANTED
 
 #botHook[BotHook.PRESET]
+#Entries of the global botSettings ("50 - Features")
+enum BotSetting:
+    PRESET              #BotPreset
+    MONX_SPOT           #MonxSpot
+    MONX_SHOTS          #MonxShots
+    MONX_SPEED          #ballSpeed after Monx's deflects; 0 = off
+
+#botSettings[BotSetting.MONX_SPOT]: where Monx is pinned (the Monx branch of botLoadPreset)
+enum MonxSpot:
+    ORIGINAL            #25 m out, 1.5 m up, where gybbus's Monx stood
+    OPPOSITE
+    SIDE
+    OTHER_SIDE
+    CLOSE               #12 m out on the floor, on the original side
+
+#botSettings[BotSetting.MONX_SHOTS]: Monx's shot table (the Monx branch of botLoadPreset)
+enum MonxShots:
+    RANDOM_FLOOR        #FLOOR_TO_MIDDLE, the original
+    LONG_BOUNCE         #LONG_TO_MIDDLE
+    AT_PLAYER           #AT_ANYONE, with no aim error
+    MIX                 #40 % floor, 30 % long bounce, 30 % at a player
+
 enum BotPreset:
     NONE
     ZBOZO
     FIREBUSS
     LUCYBUSS
     AZERTYBUSS
+    MONX
 
 #botHook[BotHook.DEFLECT]
 enum BotDeflect:

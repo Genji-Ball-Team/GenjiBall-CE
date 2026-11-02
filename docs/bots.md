@@ -134,6 +134,25 @@ Its other moves:
 
 No edash and no ghost dash, as in the original (its ghost dash was never triggered).
 
+### Monx
+
+By gybbus: a ball machine for positioning and shot-reading drills. Its settings are in "50 - Features" (see [hosting.md](hosting.md#50---features)).
+
+- **Pinned** (`MOVEMENT` `PINNED`): `Bots - pinned` forces it to `PIN_SPOT` and does it again every 1.25 s, which also puts it back after the final duel teleport. "Monx spot" picks the spot: 25 m from the middle and 1.5 m up, like the original, on four sides, or 12 m out on the floor. In an arena under 27 m it stands at the radius minus 2 m, and the close spot stays at least 1.5 m outside the middle's off-limits area. No walking, jumping or dashing.
+- **Never misses**: deflect pressed on contact, and `MISS_AT_CAP` off, so not even at the speed cap.
+- **Shots** ("Monx shots"), no aim error:
+
+| Option | Rows |
+|---|---|
+| random floor | `ALWAYS` `FLOOR_TO_MIDDLE` 100 |
+| long bounce | `ALWAYS` `LONG_TO_MIDDLE` 100 |
+| at the player | `ALWAYS` `AT_ANYONE` 100 |
+| mix | `FLOOR_TO_MIDDLE` 40, `LONG_TO_MIDDLE` 70, `AT_ANYONE` 100 |
+
+`FLOOR_TO_MIDDLE` goes up to 45° either side of the way to the middle, 45–90° down. The original looked at a new random spot every 1.25 s, 44–90° down and always to one side of the middle (+x and +z), and the ball went wherever it looked. Here each ball rolls its own shot, centred on the middle, so it works from every spot. `LONG_TO_MIDDLE` goes up to 20° off the way to the middle, 10–25° down.
+
+- **Ball speed** (`MACHINE_SPEED`, "Monx ball speed"): after each of its deflects, ballSpeed is set to this, up to the max speed. Ball speed is one global value, so it's set again every time. In Astro motion the ball's velocity gets the new speed too. The ball speeds up as usual after that. 0 leaves the usual speed-up alone.
+
 ## Adding things
 
 - **A condition**: add a `BotCondition` entry, then a `case` in `botCheckCondition` that sets `botState[PASSED]`. Put any number it needs in `BotTuning` rather than in the code.
