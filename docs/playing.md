@@ -93,7 +93,11 @@ When you're the target and a wall blocks your view of the ball, a heart icon sho
 
 ### Bot
 
-Adds one practice bot, **"zSh4d0Ws bozo"**. It deflects, dashes and jumps. It's good for testing or solo practice.
+The host can add one practice bot, named **`[BOT] <bot>`**. It's good for testing or solo practice.
+
+- **zBozo** (named after zSh4d0W): deflects almost every ball, shoots in random directions or now and then at a player, edashes and ghost dashes, and walks and jumps around.
+
+The bot isn't held to tracing mode or anti-orbit, and it isn't listed on the kill tracker (knocking it out still counts for you). It scores round wins like anyone else. There's no bot in the Tournament presets or with duels on.
 
 ### Anti-orbit
 
