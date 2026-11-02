@@ -84,15 +84,14 @@ rule "Active game - final duel":
 
 rule "Active game - check for last player surviving":
     @Condition isGameInProgress() == true
-    #Not counting a player who joined mid-round and sits out hidden (core/lobby.opy)
-    @Condition len(getLivingPlayers(Team.ALL).filter(lambda player: player.hasMoved)) == 1
+    @Condition getNumberOfLivingPlayers(Team.ALL) == 1
     @Condition IsEnoughPlayersToStart == true
     @Condition addOnSettings[AddOnSetting.DUELS] == false
     
     IsInFinalDuel = false
     #Cleared by startRound once the next round is under way.
     RoundSetupPending = true
-    getLivingPlayers(Team.ALL).filter(lambda player: player.hasMoved).addToScore(1)
+    getLivingPlayers(Team.ALL).addToScore(1)
     wait(0.25)
     if (getMatchTime() == 0 or TieBreakerActive) and not tournamentMode:
         #If there is alredy a tiebreaker, then the tiebreaker has ended.
@@ -111,7 +110,7 @@ rule "Active game - check for last player surviving":
                 enableGamemodeCompletion()
     stopChasing(ballSpawnCountdown)
     stopChasing(getAllPlayers().bouncePadCooldown)
-    bigMessage(getAllPlayers(), "{0} has won the round".format(getLivingPlayers(Team.ALL).filter(lambda player: player.hasMoved)[0]))
+    bigMessage(getAllPlayers(), "{0} has won the round".format(getLivingPlayers(Team.ALL)[0]))
     wait(roundTimings[RoundTiming.WIN_PAUSE])
     if addOnSettings[AddOnSetting.DUELS]:
         goto lbl_0
@@ -129,8 +128,7 @@ rule "Active game - check for last player surviving":
 
 
 rule "Active game - all players dead":
-    #Not counting a player who joined mid-round and sits out hidden (core/lobby.opy)
-    @Condition len(getLivingPlayers(Team.ALL).filter(lambda player: player.hasMoved)) == 0
+    @Condition getNumberOfLivingPlayers(Team.ALL) == 0
     @Condition isGameInProgress() == true
     @Condition TieBreakerActive == false
     @Condition addOnSettings[AddOnSetting.DUELS] == false
