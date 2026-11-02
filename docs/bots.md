@@ -24,11 +24,11 @@ The parts of a bot:
 
 - **Brain** (`Bots - incoming ball`): runs once for each ball sent at the bot.
   1. Rolls whether to miss (`MISS_SPEED`, `MISS_CHANCE`), and one shot roll from 0 to 99 for the whole ball.
-  2. Waits until the ball is near: `NEAR_FACTOR × ballSpeed + NEAR_OFFSET` metres. Then waits a reaction delay between `REACTION_MIN` and `REACTION_MAX`.
+  2. Waits until the ball is near: `NEAR_FACTOR × ballSpeed + NEAR_OFFSET` metres. Then waits a reaction delay between `REACTION_MIN` and `REACTION_MAX`, or `REACTION_FAST_MIN` to `REACTION_FAST_MAX` from ballSpeed `BALL_FAST` on.
   3. Picks the first row of the shot table whose chance is over the roll and whose condition holds, then turns to aim (`AIM_RATE`).
   4. If `EARLY_LEAD` is set, presses deflect that many seconds before contact (at most one tick less than a deflect lasts).
-  5. After the deflect, a safe dash (after a shot at the enemy) or maybe a ghost dash.
-- **Facing owner** (`botState[FACING]`): `CAMERA`, `AIM`, `DASH` or `PUNISH`. Only the owner turns the bot. The camera and the spin only run while it's `CAMERA`. The brain takes over from `PUNISH` when it aims.
+  5. After the deflect, a safe dash (after a shot at the enemy), a dash away (`DASH_AWAY`) or maybe a ghost dash.
+- **Facing owner** (`botState[FACING]`): `CAMERA`, `AIM`, `DASH`, `PUNISH` or `ACE`. Only the owner turns the bot. The camera and the spin only run while it's `CAMERA`. The brain takes over from `PUNISH` when it aims.
 - **Dashes**: `botDash` asks the core for a dash (`DASH_WANTED`) and faces its direction. `Bots - edash` dashes into the ball, or at the next player while they deflect or dash. A dash asked for after the deflect ends is dropped.
 - **Camera, movement, jumping**: run on their own, from the preset's numbers.
 - **Reset** (`Bots - reset`): on spawn and whenever the ball is gone. It clears the dash and aim and marks the brain's ball stale, so a brain still waiting stops.
@@ -84,6 +84,55 @@ Its other moves, all from the library:
 - **Jumps**: a double jump as the ball comes in (`IMPACT_JUMP` 60 %, always past `EDGE`, so a shot can go under the map), and random jumps every 1–3.5 s, 40 % of them double.
 
 Left out on purpose: firebuss's **anti-stun**, which cleared its own knockdown and stun. With it, a dash hit couldn't knock the bot down. Without it, the bot plays by the same rules as everyone else. Its random jumps now only run while the ball is out, like zBozo's.
+
+### lucybuss
+
+By gybbus. Its down/up shots, then zBozo's table for the rest:
+
+| Condition | Shot | Chance | Intent |
+|---|---|---|---|
+| `ME_OFF_MAP` | `DOWN` | 100 | `SAFE` |
+| `ENEMY_FAR` | `UP` | 30 | `SAFE` |
+| `ALWAYS` | `DOWN` | 60 | `SAFE` |
+| `I_CAN_DASH` | `AT_ANYONE` | 64 | `AT_ENEMY` |
+| `I_CAN_DASH` | `RANDOM` | 100 | `RISKY` |
+| `ALWAYS` | `AWAY` | 100 | `SAFE` |
+
+60 % of balls go down, or half of those up while the enemy is over 30 m away. zBozo's rows get the roll's last 40, so its 1 in 9 at a player is 4 of those (10 %). Off the map it always shoots down; the original let 10 % of balls over speed 90 through to the other rows.
+
+Its other moves:
+
+- **Misses** 30 % of balls from speed 110 (`MISS_SPEED`, `MISS_CHANCE`), and dies at the cap.
+- **Ace dash** (`ACE_CHANCE` 30): when the ball reaches a player within 10 m of it (within 0.3 × ballSpeed of their eyes), it dashes along where that player looks.
+- **Down or up near the ball** (`SPIN_NEAR_BALL` `DOWN_UP`): while the ball is near and its dash is down, it looks down, or half the time up while every other player is over 30 m away.
+- Edash and ghost dash, the camera between ball and target, and zBozo's walking with the middle 30 m away (`WALK_EDGE`). Random jumps every 1–2 s, half of them double.
+
+The original had no rule that faced the ghost dash, so it went where the bot was looking. Here it uses the library's ghost dash, like zBozo's.
+
+### azertybuss
+
+By gybbus. Floor shots after a human reaction delay (0.03–0.12 s, 0.01–0.04 s from speed 100):
+
+| Condition | Shot | Chance | Intent |
+|---|---|---|---|
+| `ME_OFF_MAP` | `DOWN` | 100 | `SAFE` |
+| `BALL_FAST` | `RANDOM_DOWN` | 70 | `SAFE` |
+| `BALL_FAST` | `AT_ANYONE` | 75 | `AT_ENEMY` |
+| `BALL_FAST` | `SHALLOW_BOUNCE` | 87 | `RISKY` |
+| `BALL_FAST` | `STEEP_BOUNCE` | 100 | `RISKY` |
+| `ALWAYS` | `AT_ANYONE` | 15 | `AT_ENEMY` |
+| `ALWAYS` | `SHALLOW_BOUNCE` | 57 | `RISKY` |
+| `ALWAYS` | `STEEP_BOUNCE` | 100 | `RISKY` |
+
+The original rolled again for each step: 70 % down at speed 100+, then 15 % at a player, then a coin flip between a shallow and a steep bounce. The fast rows give the same split from one roll. "Off the map" is past 20.5 m, where the original checked for the water. Its aim error at a player was up to 1.5 m; here it's 6°, about that at 15 m.
+
+Its other moves:
+
+- **Dash away** (`DASH_AWAY` 55): after a shot, it dashes sideways (70–120° off its aim). Always after a shot at a player. If that would take it past `WALK_EDGE` (15 m), it dashes toward a spot near the middle.
+- **Strafing** (`MOVEMENT` `STRAFE`): stops 15 % of the time, strafes 35 %, walks forward or back 25 %, diagonally 25 %. Back toward the middle past 15 m.
+- **Human camera** at 175–350°/s, and jumps all the time the ball is out: 80 % double.
+
+No edash and no ghost dash, as in the original (its ghost dash was never triggered).
 
 ## Adding things
 

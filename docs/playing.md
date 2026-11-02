@@ -97,6 +97,8 @@ The host can add one practice bot, named **`[BOT] <bot>`**. It's good for testin
 
 - **zBozo** (named after zSh4d0W): deflects almost every ball, shoots in random directions or now and then at a player, edashes and ghost dashes, and walks and jumps around.
 - **firebuss** (by gybbus): plays like a person. It shoots at you when your dash is down and dashes out of the way, otherwise sends the ball at the floor behind you, a corner or a wall, or under the map from the edge. It circles you, jumps as the ball comes, and at high speed can dash in so an orbiting ball goes into your face. It won't dash while you're close with your dash ready. It can be knocked down like anyone else.
+- **lucybuss** (by gybbus): mostly shoots the ball straight down, or up when you're far away, and otherwise plays like zBozo. It misses about a third of balls from speed 110, and now and then dashes past you as the ball reaches you.
+- **azertybuss** (by gybbus): takes a human moment to react, then sends most balls into the floor, now and then at a player, and dashes sideways after its shots. It strafes and hops around like a player.
 
 The bot isn't held to tracing mode or anti-orbit, and it isn't listed on the kill tracker (knocking it out still counts for you). It scores round wins like anyone else. There's no bot in the Tournament presets or with duels on.
 

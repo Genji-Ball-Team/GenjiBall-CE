@@ -84,7 +84,7 @@ enum BotField:
     INTENT          #BotIntent of the shot, for the after-shot part
     FACING          #BotFacing: which part may write the bot's facing
     MOVE_ENEMY      #CIRCLE movement: the nearest living human, picked again on every step
-    MOVE_DIR        #CIRCLE movement: horizontal direction to MOVE_ENEMY
+    MOVE_DIR        #movement: CIRCLE's horizontal direction to MOVE_ENEMY, STRAFE's roll
 
 #Which part owns a bot's facing (botState[BotField.FACING]), so no two rules turn the bot at once
 enum BotFacing:
@@ -92,6 +92,7 @@ enum BotFacing:
     AIM             #the brain, from the moment it aims at a ball until the ball leaves
     DASH            #a dash is planned: facing its direction until the dash is pressed
     PUNISH          #"Bots - punish" looks at the nearest player; the brain may take over
+    ACE             #"Bots - ace dash" faces where the ball's target looks, until its dash ends
 
 #Columns of a shot table row (botShots): the first row whose condition holds and whose chance passes wins
 enum BotShotColumn:
@@ -140,7 +141,7 @@ enum BotTuning:
     NEAR_FACTOR         #the ball counts as near within NEAR_FACTOR * ballSpeed + NEAR_OFFSET m of the bot's eyes
     NEAR_OFFSET
     REACTION_MIN        #seconds the bot waits after the ball is near, before it aims
-    REACTION_MAX
+    REACTION_MAX        #0 = no delay
     MISS_AT_CAP         #true: dies when the ball is at the speed cap
     MISS_SPEED          #from this ballSpeed on, the bot misses MISS_CHANCE % of balls (rolled once per ball)
     MISS_CHANCE
@@ -157,7 +158,7 @@ enum BotTuning:
     GHOST_DASH          #true: ghost dash when the shot goes straight at the next player
     CAMERA              #BotCamera
     CAMERA_RATE         #turn rate of the camera, degrees per second
-    SPIN_NEAR_BALL      #true: spins at random while the ball is near and the bot's dash is down
+    SPIN_NEAR_BALL      #BotSpin: what the bot does while the ball is near and its dash is down
     MOVEMENT            #BotMovement
     JUMP_DOUBLE         #% of jumps that are double jumps
     JUMP_WAIT_MIN       #seconds between single jumps
@@ -173,17 +174,28 @@ enum BotTuning:
     IMPACT_OFFSET
     CIRCLE_NEAR         #CIRCLE movement: backs off from the enemy closer than this (m)
     CIRCLE_FAR          #closes in on the enemy farther than this (m)
-    CIRCLE_EDGE         #walks back to the middle past this far from it on x or z (m)
+    WALK_EDGE           #walks back to the middle past this far from it on x or z (m); DASH_AWAY stays inside it
+    REACTION_FAST_MIN   #the reaction delay from ballSpeed BALL_FAST on (REACTION_FAST_MAX 0 = REACTION_MIN to REACTION_MAX)
+    REACTION_FAST_MAX
+    ACE_CHANCE          #% chance of an ace dash: a dash along where the ball's target looks, as the ball reaches them; 0 = off
+    DASH_AWAY           #% chance to dash sideways after a shot, always after an AT_ENEMY one; 0 = off
 
 #botTuning[BotTuning.CAMERA]
 enum BotCamera:
     BETWEEN         #looks between the ball and its target
     HUMAN           #looks at the ball (or the nearest human between balls) with a little noise, turning at CAMERA_RATE / 2 to CAMERA_RATE
 
+#botTuning[BotTuning.SPIN_NEAR_BALL]
+enum BotSpin:
+    NONE
+    RANDOM          #zBozo: looks around at random
+    DOWN_UP         #lucybuss: looks straight down, or half the time up while every other player is over ENEMY_FAR away
+
 #botTuning[BotTuning.MOVEMENT]
 enum BotMovement:
     ROAM            #zBozo: walks to the ball's target, or to a random spot when it is the target. World directions on a throttle relative to the bot's facing, kept on purpose (it makes zBozo orbit now and then)
     CIRCLE          #firebuss: strafes round the nearest human, keeping CIRCLE_NEAR to CIRCLE_FAR m, with short pauses
+    STRAFE          #azertybuss: strafes, walks and stops at random like a player, wherever the others are
 
 #Fields of the player variable botHook: the only bot values core rules read.
 #Bot code sets them; a human's botHook is null, so every field reads 0.
@@ -199,6 +211,8 @@ enum BotPreset:
     NONE
     ZBOZO
     FIREBUSS
+    LUCYBUSS
+    AZERTYBUSS
 
 #botHook[BotHook.DEFLECT]
 enum BotDeflect:

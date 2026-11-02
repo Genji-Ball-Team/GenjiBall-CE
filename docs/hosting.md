@@ -156,7 +156,7 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 | Setting | Default | Range | What it does |
 |---|---|---|---|
 | custom abilities | off | | Each player picks one extra ability. See [playing.md](playing.md#custom-abilities) |
-| bot | none | none / zBozo / firebuss | Adds a practice bot, named `[BOT] <bot>`. Off with the Tournament presets and with duels. See [Bot](playing.md#bot) |
+| bot | none | none / zBozo / firebuss / lucybuss / azertybuss | Adds a practice bot, named `[BOT] <bot>`. Off with the Tournament presets and with duels. See [Bot](playing.md#bot) |
 | duels | off | | 1v1 at a time, with a queue |
 | endless mode | off | | The ball doesn't reset after a kill |
 | Sandbox mode | off | | Practice tool for the host. See [Sandbox](#sandbox-mode) |
