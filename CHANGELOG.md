@@ -4,6 +4,7 @@ Notable changes to Genji Ball CE. Add a line under **Unreleased** in your PR. It
 
 ## Unreleased
 
+- Presets: the preset starts on **Custom**, so a host's setting changes take effect without picking Custom first (hosts kept asking why changing settings did nothing). Untouched, Custom plays the same as before. The `Default` preset is renamed **Standard**, same values; `Preset.DEFAULT` is now `Preset.STANDARD` (same index). No preset numbers change. When `v1.3.3R` is rebased onto this, ranked keeps Standard as its preset and the ranked log's `preset` value becomes `Standard`, so the parser must accept it first.
 - Network resync, ported from v1.3.3R (Genji Ball vTec's "Hack: Fix BallPosition network sync"): a new rule, `Ball Physics - network resync`, restarts the ball's direction chase 20 times a second while the ball is out (Original physics, Modern or Rapid motion), so every player's copy of the ball stays in step with the server and it no longer seems to pass through an orbiting player. On by default, and hosts can turn it off with "10 - Ball > network resync" (no preset forces it). Ball feel change. The vTec join sit-out from v1.3.3R is not ported.
 - Dependabot opens one PR a month for the CI actions (`.github/dependabot.yml`). OverPy gets security updates only: a new compiler version is bumped by hand and checked in a custom game.
 - `AGENTS.md` lists the other ranked repos (genjiball-ranked, genjiball-host-tool) and how to work across them.

@@ -193,8 +193,8 @@ rule ("Settings - Workshop settings") {
         Ongoing - Global;
     }
     actions {
-        "- Experimental is a curated playtest ruleset for rebound physics and\ncompetitive fixes, while still allowing manual bot/feature testing.\n00 - Preset: ruleset identity. Custom is last and has no runtime overrides."
-        Set Global Variable(presetMode, Workshop Setting Combo(Custom String("00 - Preset"), Custom String("preset"), 0, Array(Custom String("Default"), Custom String("Tournament"), Custom String("Tournament+"), Custom String("Rapid\n~Workshop Expanse"), Custom String("v1"), Custom String("v7"), Custom String("Experimental"), Custom String("Custom")), 0));
+        "- Experimental is a curated playtest ruleset for rebound physics and\ncompetitive fixes, while still allowing manual bot/feature testing.\n00 - Preset: ruleset identity. Custom is last, the default, and has no runtime overrides."
+        Set Global Variable(presetMode, Workshop Setting Combo(Custom String("00 - Preset"), Custom String("preset"), 7, Array(Custom String("Standard"), Custom String("Tournament"), Custom String("Tournament+"), Custom String("Rapid\n~Workshop Expanse"), Custom String("v1"), Custom String("v7"), Custom String("Experimental"), Custom String("Custom")), 0));
         "10 - Ball: core ball tuning is preset-controlled unless Preset is Custom."
         Set Global Variable(ballSpawnSpeed, Workshop Setting Integer(Custom String("10 - Ball"), Custom String("start speed"), 60, 0, 200, 0));
         Set Global Variable(ballSpeedCap, Workshop Setting Integer(Custom String("10 - Ball"), Custom String("max speed"), 400, 60, 800, 1));

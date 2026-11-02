@@ -3,8 +3,8 @@
 rule "Settings - Workshop settings":
     #- Experimental is a curated playtest ruleset for rebound physics and
     #competitive fixes, while still allowing manual bot/feature testing.
-    #00 - Preset: ruleset identity. Custom is last and has no runtime overrides.
-    presetMode = createWorkshopSettingEnum("00 - Preset", "preset", 0, ["Default", "Tournament", "Tournament+", "Rapid\n~Workshop Expanse", "v1", "v7", "Experimental", "Custom"])
+    #00 - Preset: ruleset identity. Custom is last, the default, and has no runtime overrides.
+    presetMode = createWorkshopSettingEnum("00 - Preset", "preset", 7, ["Standard", "Tournament", "Tournament+", "Rapid\n~Workshop Expanse", "v1", "v7", "Experimental", "Custom"])
     #10 - Ball: core ball tuning is preset-controlled unless Preset is Custom.
     ballSpawnSpeed = createWorkshopSettingInt("10 - Ball", "start speed", 60, 0, 200)
     ballSpeedCap = createWorkshopSettingInt("10 - Ball", "max speed", 400, 60, 800, 1)
@@ -126,7 +126,7 @@ rule "Settings - Workshop settings":
     if presetMode != Preset.CUSTOM:
         presetRow = [
             #match, tourn, rounds, breaks, every, length, start, max, accel, motion,               physics,                  feel,  water,          pads,  mobility,          anti-ghost,      AntiOrbit, radius, pressure, countdown, respawn, win pause, orbit spd, orbit t, min t,  sleep,  basic r, basic spd, basic t, dash cd, knockdown, knock cd, center, radius, pad str, pad dist, pad range, pad cd
-            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     false, Water.MODERATE, false, Mobility.AGILE,    MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         MANUAL,    MANUAL,  MANUAL, MANUAL, MANUAL, MANUAL,    MANUAL,  3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Default
+            [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     false, Water.MODERATE, false, Mobility.AGILE,    MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         MANUAL,    MANUAL,  MANUAL, MANUAL, MANUAL, MANUAL,    MANUAL,  3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Standard
             [900,   true,  30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     false, Water.MODERATE, false, Mobility.AGILE,    AntiGhost.OFF,   false,     MANUAL, MANUAL,   5,         2,       2,         80,        7.5,     5.5,   5,      20,      80,        7.5,     3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Tournament
             [900,   true,  30,     true,   10,    60,     60,    400, 0.25,  BallMotion.MODERN,    BallPhysics.ORIGINAL,     false, Water.MODERATE, false, Mobility.AGILE,    AntiGhost.STEER, true,      14,     0.02,   5,         2,       2,         80,        7.5,     5.5,   5,      20,      80,        7.5,     3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Tournament+
             [900,   false, 30,     true,   10,    60,     60,    400, 0.25,  BallMotion.RAPID,     BallPhysics.ORIGINAL,     false, Water.FLOOD,    true,  Mobility.BALANCED, MANUAL,          MANUAL,    MANUAL, MANUAL,   5,         2,       2,         MANUAL,    MANUAL,  MANUAL, MANUAL, MANUAL, MANUAL,    MANUAL,  3.04,    1,         0.6,      3.5,    0,      30,      12,       2.75,      3],    #Rapid

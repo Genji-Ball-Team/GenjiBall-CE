@@ -5,7 +5,7 @@
 
 #presetMode ("00 - Preset > preset")
 enum Preset:
-    DEFAULT
+    STANDARD    #"Default" before v1.3.4
     TOURNAMENT
     TOURNAMENT_PLUS
     RAPID
