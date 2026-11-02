@@ -78,6 +78,25 @@ enum BotField:
     WILL_EDASH
     GHOST_DASHING
 
+#Fields of the player variable botHook: the only bot values core rules read.
+#Bot code sets them; a human's botHook is null, so every field reads 0.
+enum BotHook:
+    PRESET          #BotPreset, NONE for humans
+    DEFLECT         #BotDeflect, read by "Collision - collision sub" on contact
+    MISS_AT_CAP     #true: the bot dies when the ball is at the speed cap, whatever DEFLECT says
+    DASH_WANTED     #true: "Controls - Shorten deflect length" presses dash at the end of the deflect, then clears it
+
+#botHook[BotHook.PRESET]
+enum BotPreset:
+    NONE
+    ZBOZO
+
+#botHook[BotHook.DEFLECT]
+enum BotDeflect:
+    NONE            #no forced press: the bot deflects (or not) with its own presses, like a human
+    PRESS           #deflect is pressed for the bot on contact
+    MISS            #the bot dies on contact
+
 #ballMotion ("10 - Ball > motion")
 enum BallMotion:
     MODERN

@@ -47,10 +47,13 @@ rule "Collision - collision check":
 def collisionTarget():
     @Name "Collision - collision sub"
     
+    #Bots: botHook (BotHook in config/constants.opy) is null for humans, so this does nothing for them
     if ballSpeedCap == ballSpeed:
-        if bozo_Bot and target.isDummy():
+        if target.botHook[BotHook.MISS_AT_CAP]:
             goto lbl_0
-    if bozo_Bot and target.isDummy():
+    if target.botHook[BotHook.DEFLECT] == BotDeflect.MISS:
+        goto lbl_0
+    if target.botHook[BotHook.DEFLECT] == BotDeflect.PRESS:
         target.forceButtonPress(Button.ABILITY_2)
     if target.isUsingAbility1():
         goto lbl_1

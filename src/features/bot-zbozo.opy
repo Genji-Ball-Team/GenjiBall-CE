@@ -17,6 +17,22 @@ rule "zBozo - name":
     @Condition eventPlayer.isDummy() == true
     
     eventPlayer.startForcingName("zSh4d0Ws bozo")
+    #Values core rules read (BotHook in config/constants.opy): deflect pressed on contact, dies at the speed cap
+    eventPlayer.botHook[BotHook.PRESET] = BotPreset.ZBOZO
+    eventPlayer.botHook[BotHook.DEFLECT] = BotDeflect.PRESS
+    eventPlayer.botHook[BotHook.MISS_AT_CAP] = true
+    eventPlayer.botHook[BotHook.DASH_WANTED] = false
+
+
+rule "zBozo - dash pressed":
+    @Event eachPlayer
+    @Condition bozo_Bot == true
+    @Condition eventPlayer.isDummy() == true
+    @Condition eventPlayer.botHook[BotHook.DASH_WANTED] == false
+
+    #"Controls - Shorten deflect length" pressed dash and cleared DASH_WANTED, or the edash was given up
+    botState[BotField.WILL_GHOST_DASH] = false
+    botState[BotField.WILL_EDASH] = false
 
 
 rule "zBozo - face target while deflecting":
@@ -54,6 +70,7 @@ rule "zBozo - face target while deflecting":
         #botState[BotField.WILL_EDASH] = true
         #bigMessage(getAllPlayers(), "EDASH")
         if distance(eventPlayer.getEyePosition(), ballPosition) < ballSpeed:
+            eventPlayer.botHook[BotHook.DASH_WANTED] = true
             botState[BotField.WILL_GHOST_DASH] = true
     wait(0.3)
     if ruleCondition:
@@ -112,21 +129,25 @@ rule "zBozo - Edash when needed":
     waitUntil(eventPlayer != target and (target.isUsingAbility1() or target.isUsingAbility2()), 0.25)
     if eventPlayer == target:
         if angleBetweenVectors(ballDirection, directionTowards(ballPosition, eventPlayer.getEyePosition())) < 20:
+            eventPlayer.botHook[BotHook.DASH_WANTED] = true
             botState[BotField.WILL_EDASH] = true
             eventPlayer.setFacing(evalOnce(directionTowards(eventPlayer.getEyePosition(), ballPosition)), Relativity.TO_WORLD)
             eventPlayer.startFacing(evalOnce(directionTowards(eventPlayer.getEyePosition(), ballPosition)), 10000)
             #bigMessage(getAllPlayers(), "EDASHING")
             waitUntil(eventPlayer.isHoldingButton(Button.ABILITY_1) or eventPlayer.isDead(), 1)
             botState[BotField.WILL_EDASH] = false
+            eventPlayer.botHook[BotHook.DASH_WANTED] = botState[BotField.WILL_GHOST_DASH]
     elif eventPlayer == prevTarget:
         if target.isUsingAbility1() or target.isUsingAbility2():
             if angleBetweenVectors(ballDirection, directionTowards(ballPosition, target.getEyePosition())) < 20:
+                eventPlayer.botHook[BotHook.DASH_WANTED] = true
                 botState[BotField.WILL_EDASH] = true
                 eventPlayer.setFacing(evalOnce(directionTowards(eventPlayer.getEyePosition(), ballPosition)), Relativity.TO_WORLD)
                 eventPlayer.startFacing(evalOnce(directionTowards(eventPlayer.getEyePosition(), ballPosition)), 10000)
                 #bigMessage(getAllPlayers(), "EDASHING")
                 waitUntil(eventPlayer.isHoldingButton(Button.ABILITY_1) or eventPlayer.isDead(), 1)
                 botState[BotField.WILL_EDASH] = false
+                eventPlayer.botHook[BotHook.DASH_WANTED] = botState[BotField.WILL_GHOST_DASH]
 
 
 rule "zBozo - Jumping":
