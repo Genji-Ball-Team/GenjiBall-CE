@@ -78,7 +78,7 @@ rule "Settings - Workshop settings":
     ]
     #50 - Features: casual/gameplay add-ons. Presets leave these manual. The rest are in addOnSettings below.
     #One option per BotPreset, in that order
-    botSetting = createWorkshopSettingEnum("50 - Features", "bot", 0, ["none", "zBozo"], 1)
+    botSetting = createWorkshopSettingEnum("50 - Features", "bot", 0, ["none", "zBozo", "firebuss"], 1)
     #60 - Competitive: competitive test systems. Tournament, Tournament+ and Experimental force them.
     antiOrbitMode = createWorkshopSettingBool("60 - Competitive", "AntiOrbit", false)
     antiOrbitRadius = createWorkshopSettingInt("60 - Competitive", "AntiOrbit radius", 14, 10, 20, 1)

@@ -83,12 +83,15 @@ enum BotField:
     AIM             #world direction the shot goes to
     INTENT          #BotIntent of the shot, for the after-shot part
     FACING          #BotFacing: which part may write the bot's facing
+    MOVE_ENEMY      #CIRCLE movement: the nearest living human, picked again on every step
+    MOVE_DIR        #CIRCLE movement: horizontal direction to MOVE_ENEMY
 
 #Which part owns a bot's facing (botState[BotField.FACING]), so no two rules turn the bot at once
 enum BotFacing:
     CAMERA          #the camera part: looking around, between balls
     AIM             #the brain, from the moment it aims at a ball until the ball leaves
     DASH            #a dash is planned: facing its direction until the dash is pressed
+    PUNISH          #"Bots - punish" looks at the nearest player; the brain may take over
 
 #Columns of a shot table row (botShots): the first row whose condition holds and whose chance passes wins
 enum BotShotColumn:
@@ -161,14 +164,26 @@ enum BotTuning:
     JUMP_WAIT_MAX
     DOUBLE_WAIT_MIN     #seconds after a double jump
     DOUBLE_WAIT_MAX
+    DASH_GUARD          #m: drops the end-of-deflect dash while another player this close has their dash ready; 0 = off
+    SAFE_DASH           #true: after an AT_ENEMY shot, dashes sideways toward the middle
+    BRAD_SPEED          #from this ballSpeed on, the brad shot (ORBIT_LINE: dash at the enemy so the ball goes into their face); 0 = off
+    PUNISH_SPEED        #after a human deflects a ball this fast, the bot turns to the nearest player; 0 = off
+    IMPACT_JUMP         #% chance to double jump as the ball comes in (always near the EDGE); 0 = off
+    IMPACT_FACTOR       #the ball comes in within IMPACT_FACTOR * ballSpeed + IMPACT_OFFSET m of the bot's eyes
+    IMPACT_OFFSET
+    CIRCLE_NEAR         #CIRCLE movement: backs off from the enemy closer than this (m)
+    CIRCLE_FAR          #closes in on the enemy farther than this (m)
+    CIRCLE_EDGE         #walks back to the middle past this far from it on x or z (m)
 
 #botTuning[BotTuning.CAMERA]
 enum BotCamera:
     BETWEEN         #looks between the ball and its target
+    HUMAN           #looks at the ball (or the nearest human between balls) with a little noise, turning at CAMERA_RATE / 2 to CAMERA_RATE
 
 #botTuning[BotTuning.MOVEMENT]
 enum BotMovement:
     ROAM            #zBozo: walks to the ball's target, or to a random spot when it is the target. World directions on a throttle relative to the bot's facing, kept on purpose (it makes zBozo orbit now and then)
+    CIRCLE          #firebuss: strafes round the nearest human, keeping CIRCLE_NEAR to CIRCLE_FAR m, with short pauses
 
 #Fields of the player variable botHook: the only bot values core rules read.
 #Bot code sets them; a human's botHook is null, so every field reads 0.
@@ -183,6 +198,7 @@ enum BotHook:
 enum BotPreset:
     NONE
     ZBOZO
+    FIREBUSS
 
 #botHook[BotHook.DEFLECT]
 enum BotDeflect:
