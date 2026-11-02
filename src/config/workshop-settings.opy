@@ -109,7 +109,8 @@ rule "Settings - Workshop settings":
         createWorkshopSettingInt("80 - Visual", "tracing view angle", 45, 5, 180, 2),
         createWorkshopSettingBool("80 - Visual", "red-green colorblind filter", false, 4),
         createWorkshopSettingBool("80 - Visual", "watermark", false, 5),
-        createWorkshopSettingBool("20 - Arena", "water ledge fix", false, 8)
+        createWorkshopSettingBool("20 - Arena", "water ledge fix", false, 8),
+        createWorkshopSettingBool("10 - Ball", "network resync", true, 12)
     ]
     #Presets: one row per preset, in Preset order, one column per forced setting
     #(PresetColumn in config/constants.opy). MANUAL keeps the host's value.

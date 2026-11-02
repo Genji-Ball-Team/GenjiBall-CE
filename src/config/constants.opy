@@ -195,6 +195,7 @@ enum AddOnSetting:
     COLORBLIND      #"80 - Visual > red-green colorblind filter", blue/yellow target and bounce pad visuals
     WATERMARK       #"80 - Visual > watermark", the original-author credit
     WATER_LEDGE_FIX #"20 - Arena > water ledge fix", limits the under-ledge push to near the island
+    NETWORK_RESYNC  #"10 - Ball > network resync", resends the ball's direction 20 times a second (on by default)
 
 #antiGhostMode ("10 - Ball > anti-ghost correction")
 enum AntiGhost:

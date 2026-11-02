@@ -65,7 +65,7 @@ These appear in the custom game under **Settings → Workshop → Settings**, gr
 What "Default" forces (all non-Custom presets start from this):
 match length 15 min, tournament off, 30 rounds, breaks on every 10 rounds for 60 s, ball spawn countdown 5 s, ball respawn delay 2 s, round win pause 2 s, ball start speed 60, max speed 400, acceleration 25, motion modern, physics original, custom ball feel off, water moderate, bounce pads off, center exclusion size 3.5, arena radius 0 (the map's), bounce pad strength 30, distance 12, range 2.75 and cooldown 3 s, mobility agile, dash cooldown 3.04 s, dash hit knockdown 1 s and knockdown cooldown 0.6 s.
 
-Settings **not** touched by any preset: everything in *50 - Features*, *80 - Visual*, *90 - Debug*, water ledge fix, double sens and double sens %, and tracing view angle. The "custom ... %" mobility sliders are never forced either, but no preset picks mobility = custom, so they only apply with Preset = Custom. Anti-ghost, AntiOrbit and the rest of *60 - Competitive* are only forced by the presets listed above. The AntiOrbit speed, timer, min timer and sleep and the three basic anti-orbit settings are forced together, to their defaults.
+Settings **not** touched by any preset: everything in *50 - Features*, *80 - Visual*, *90 - Debug*, water ledge fix, network resync, double sens and double sens %, and tracing view angle. The "custom ... %" mobility sliders are never forced either, but no preset picks mobility = custom, so they only apply with Preset = Custom. Anti-ghost, AntiOrbit and the rest of *60 - Competitive* are only forced by the presets listed above. The AntiOrbit speed, timer, min timer and sleep and the three basic anti-orbit settings are forced together, to their defaults.
 
 ### 10 - Ball
 
@@ -84,6 +84,7 @@ Settings **not** touched by any preset: everything in *50 - Features*, *80 - Vis
 | exp homing hold ms | 40 | 0–250 | How long homing stays at that reduced strength |
 | exp homing ramp ms | 240 | 25–1000 | How long it takes to ramp back to full homing |
 | exp surface homing % | 70 | 20–100 | Homing strength right after bouncing off a wall or floor |
+| network resync | on | | While the ball is out, resends its direction to every player 20 times a second, so the ball doesn't seem to pass through an orbiting player on their screen. Original physics with modern or rapid motion only. No preset forces it |
 
 ### 15 - Ball Feel
 
