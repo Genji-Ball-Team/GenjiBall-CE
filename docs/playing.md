@@ -97,7 +97,7 @@ The host can add one practice bot, named **`[BOT] <bot>`**. It's good for testin
 
 - **zBozo** (named after zSh4d0W): deflects almost every ball, shoots in random directions or now and then at a player, edashes and ghost dashes, and walks and jumps around.
 
-The bot isn't held to tracing mode or anti-orbit, and it doesn't count for the kill tracker. There's no bot in the Tournament presets or with duels on.
+The bot isn't held to tracing mode or anti-orbit, and it isn't listed on the kill tracker (knocking it out still counts for you). It scores round wins like anyone else. There's no bot in the Tournament presets or with duels on.
 
 ### Anti-orbit
 
