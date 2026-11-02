@@ -85,6 +85,7 @@ enum BotHook:
     DEFLECT         #BotDeflect, read by "Collision - collision sub" on contact
     MISS_AT_CAP     #true: the bot dies when the ball is at the speed cap, whatever DEFLECT says
     DASH_WANTED     #true: "Controls - Shorten deflect length" presses dash at the end of the deflect, then clears it
+    DASH_DIRECTION  #world direction to face for that dash; null keeps the bot's facing. Cleared with DASH_WANTED
 
 #botHook[BotHook.PRESET]
 enum BotPreset:
