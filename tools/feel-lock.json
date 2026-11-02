@@ -910,6 +910,7 @@
         "        Ongoing - Global;",
         "    }",
         "    conditions {",
+        "        Value In Array(Global.addOnSettings, 14) == True;",
         "        Global.ballIsOut == True;",
         "        Global.ballPhysicsMode == 0;",
         "        Or(Compare(Global.ballMotion, ==, 0), Compare(Global.ballMotion, ==, 1)) == True;",

@@ -107,6 +107,7 @@ def startAstroBall():
 
 
 rule "Ball Physics - network resync":
+    @Condition addOnSettings[AddOnSetting.NETWORK_RESYNC] == true
     @Condition ballIsOut == true
     @Condition ballPhysicsMode == BallPhysics.ORIGINAL
     @Condition (ballMotion == BallMotion.MODERN or ballMotion == BallMotion.RAPID) == true

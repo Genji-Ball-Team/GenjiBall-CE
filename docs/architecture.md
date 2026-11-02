@@ -112,7 +112,7 @@ Both call `collisionTarget()`. That checks whether the target is deflecting (`is
 - `Ball Physics - chamber x/y/z collision`: axis-aligned walls for Workshop Chamber.
 - `Ball Physics - water`: flattens the ball's vertical direction when it dips below `waterLevel` outside the island.
 
-**Network resync** (`Ball Physics - network resync`): while the ball is out with original physics and modern or rapid motion, it restarts the `ballDirection` chase 20 times a second, so every client's copy of the ball stays in step with the server (ported from vTec, as in `v1.3.3R`). It is always on and has no setting.
+**Network resync** (`Ball Physics - network resync`): while the ball is out with original physics and modern or rapid motion, it restarts the `ballDirection` chase 20 times a second, so every client's copy of the ball stays in step with the server (ported from vTec, as in `v1.3.3R`). It is on by default; the host can turn it off with "network resync" (`AddOnSetting.NETWORK_RESYNC`).
 
 **Anti-ghost** only applies to modern motion. It temporarily raises `ballDirectionRate` to 4 when the ball is near the target but not converging.
 
