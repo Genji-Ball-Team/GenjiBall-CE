@@ -156,13 +156,17 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 | Setting | Default | Range | What it does |
 |---|---|---|---|
 | custom abilities | off | | Each player picks one extra ability. See [playing.md](playing.md#custom-abilities) |
-| bot | none | none / zBozo / firebuss / lucybuss / azertybuss / Monx (ball machine) | Adds a practice bot, named `[BOT] <bot>`. Off with the Tournament presets and with duels. See [Bot](playing.md#bot) |
+| bot | none | none / zBozo / firebuss / lucybuss / azertybuss / Monx (ball machine) / My bot | Adds a practice bot, named `[BOT] <bot>`. Off with the Tournament presets and with duels. See [Bot](playing.md#bot) |
 | duels | off | | 1v1 at a time, with a queue |
 | endless mode | off | | The ball doesn't reset after a kill |
 | Sandbox mode | off | | Practice tool for the host. See [Sandbox](#sandbox-mode) |
 | Monx spot | original | original / opposite / side / other side / close | Where the Monx bot is pinned: 25 m from the middle and 1.5 m up (less in an arena under 27 m), on the original side, the opposite one or either side between. Close is 12 m out on the floor. See [Bot](playing.md#bot) |
 | Monx shots | random floor | random floor / long bounce / at the player / mix | What Monx shoots: steeply into the floor toward the middle (the original), a long low bounce toward the middle, straight at a player, or a mix of the three |
 | Monx ball speed | 0 | 0–800 | The ball speed after each Monx deflect, up to the max speed. 0 keeps the usual speed-up |
+| My bot shots | zBozo | zBozo / lucybuss / azertybuss / firebuss / Monx | With bot = My bot: whose shot table, aim, reaction and camera it uses. Monx follows "Monx shots" and "Monx ball speed". See [docs/bots.md](bots.md#my-bot) |
+| My bot movement | zBozo | zBozo / lucybuss / azertybuss / firebuss / stand still | Whose walking and jumping it uses. Stand still doesn't walk or jump |
+| My bot after shot | none | none / zBozo / lucybuss / azertybuss / firebuss | Whose dashes and other moves around its shots it uses: edash, ghost dash, safe dash, dash away, ace dash, dash guard, brad shot, punish |
+| My bot deflect | perfect | perfect / zBozo / lucybuss / firebuss | Whose misses it has: never (perfect), dies at the speed cap (zBozo), 30 % from speed 110 (lucybuss), or firebuss's early deflect |
 
 ### 60 - Competitive
 

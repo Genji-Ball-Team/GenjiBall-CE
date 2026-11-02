@@ -202,6 +202,7 @@ enum BotMovement:
     CIRCLE          #firebuss: strafes round the nearest human, keeping CIRCLE_NEAR to CIRCLE_FAR m, with short pauses
     STRAFE          #azertybuss: strafes, walks and stops at random like a player, wherever the others are
     PINNED          #Monx: forced to PIN_SPOT, again every 1.25 s. No walking or jumping
+    STILL           #My bot's "stand still": no walking
 
 #Fields of the player variable botHook: the only bot values core rules read.
 #Bot code sets them; a human's botHook is null, so every field reads 0.
@@ -219,6 +220,17 @@ enum BotSetting:
     MONX_SPOT           #MonxSpot
     MONX_SHOTS          #MonxShots
     MONX_SPEED          #ballSpeed after Monx's deflects; 0 = off
+    MY_SHOTS            #My bot: the preset its shots, camera and aim come from
+    MY_MOVEMENT         #the preset its walking and jumping come from, or stand still
+    MY_AFTER_SHOT       #the preset its dashes and other moves come from, or none
+    MY_DEFLECT          #the preset its misses and early deflect come from, or perfect
+
+#Which My bot part a BotTuning field comes from (botMixParts)
+enum BotPart:
+    SHOTS
+    MOVEMENT
+    AFTER_SHOT
+    DEFLECT
 
 #botSettings[BotSetting.MONX_SPOT]: where Monx is pinned (the Monx branch of botLoadPreset)
 enum MonxSpot:
@@ -242,6 +254,7 @@ enum BotPreset:
     LUCYBUSS
     AZERTYBUSS
     MONX
+    MY_BOT              #mixed from the others' parts by botMixParts
 
 #botHook[BotHook.DEFLECT]
 enum BotDeflect:

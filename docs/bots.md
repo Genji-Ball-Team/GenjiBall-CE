@@ -18,7 +18,7 @@ Everything else lives in the bot's own player variables, so any number of bots c
 - `botState` (`BotField`): working values. The ball id the brain is on, the shot roll, the nearest enemy, the chosen row, the aim and intent, and which part owns the facing.
 - `botTuning` (`BotTuning`): the preset's numbers.
 - `botShots`: the preset's shot table.
-- `botLoop`: a loop counter.
+- `botLoop`: a loop counter, and My bot's part list while `botMixParts` builds it.
 
 The parts of a bot:
 
@@ -153,14 +153,29 @@ By gybbus: a ball machine for positioning and shot-reading drills. Its settings 
 
 - **Ball speed** (`MACHINE_SPEED`, "Monx ball speed"): after each of its deflects, ballSpeed is set to this, up to the max speed. Ball speed is one global value, so it's set again every time. In Astro motion the ball's velocity gets the new speed too. The ball speeds up as usual after that. 0 leaves the usual speed-up alone.
 
+### My bot
+
+Built by the host from four parts of the others, picked in "50 - Features > My bot ...". `botMixParts` loads each part's preset and keeps that part's `BotTuning` fields (`BotPart`), shots last so its shot table stays. Each part keeps the numbers of the preset it comes from.
+
+| Part | Options | `BotTuning` fields |
+|---|---|---|
+| Shots | zBozo, lucybuss, azertybuss, firebuss, Monx | Shot table, `NEAR_*`, `REACTION_*`, `AIM_*`, `OFF_MAP`, `EDGE`, `ENEMY_FAR`, `BALL_FAST`, `CAMERA`, `CAMERA_RATE`, `SPIN_NEAR_BALL`, `MACHINE_SPEED` |
+| Movement | zBozo, lucybuss, azertybuss, firebuss, stand still | `MOVEMENT`, `JUMP_*`, `DOUBLE_WAIT_*`, `IMPACT_*`, `CIRCLE_*`, `WALK_EDGE`, `PIN_SPOT` |
+| After shot | none, zBozo, lucybuss, azertybuss, firebuss | `EDASH`, `GHOST_DASH`, `DASH_GUARD`, `SAFE_DASH`, `BRAD_SPEED`, `PUNISH_SPEED`, `ACE_CHANCE`, `DASH_AWAY` |
+| Deflect | perfect, zBozo, lucybuss, firebuss | `MISS_AT_CAP`, `MISS_SPEED`, `MISS_CHANCE`, `EARLY_LEAD` |
+
+Perfect, none and stand still take Monx's fields, and stand still turns Monx's `PINNED` into `STILL`: it doesn't walk or jump. Monx shots follow "Monx shots" and "Monx ball speed".
+
+Parts only talk through the hand-off values (`botState` `INTENT`, `botHook`), so any mix runs, but some play worse than the originals. For example firebuss's shot at the player expects its safe dash after it, and azertybuss's dash away stays inside the movement part's `WALK_EDGE`.
+
 ## Adding things
 
 - **A condition**: add a `BotCondition` entry, then a `case` in `botCheckCondition` that sets `botState[PASSED]`. Put any number it needs in `BotTuning` rather than in the code.
 - **A shot**: add a `BotShot` entry, then a `case` in `botAimShot` that sets `botState[AIM]` to a world direction. Call `botAimError` after it if the shot should miss by the preset's aim error.
 - **A move** (camera, movement, dash): add a rule in `bots.opy` that checks `botHook[PRESET] != NONE` and a `BotTuning` switch. If it turns the bot, it must only run while `botState[FACING]` is its owner. If it dashes, set `botHook[DASH_DIRECTION]` and call `botDash`.
-- **A preset**: add a `BotPreset` entry and a branch in `botLoadPreset` that sets `botTuning` (every `BotTuning` field, in order) and `botShots`.
+- **A preset**: add a `BotPreset` entry and a branch in `botLoadPreset` that sets `botTuning` (every `BotTuning` field, in order) and `botShots`. To offer it in My bot, add it to the lists in `botMixParts` and the "My bot ..." options.
 
-New `BotTuning` fields go at the end, and every preset needs a value for them.
+New `BotTuning` fields go at the end, and every preset needs a value for them. Give the field a part in `botMixParts`'s list too.
 
 ## Limits
 

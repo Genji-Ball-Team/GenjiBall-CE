@@ -16,11 +16,55 @@ rule "Bots - setup":
     @Condition eventPlayer.botHook[BotHook.PRESET] == BotPreset.NONE
 
     eventPlayer.botHook[BotHook.PRESET] = botSettings[BotSetting.PRESET]
-    botLoadPreset()
+    if eventPlayer.botHook[BotHook.PRESET] == BotPreset.MY_BOT:
+        botMixParts()
+    else:
+        botLoadPreset()
     eventPlayer.botState = [0, -1, 0, null, null, false, null, BotIntent.SAFE, BotFacing.CAMERA, null, null]
     eventPlayer.botHook[BotHook.DEFLECT] = BotDeflect.PRESS
     eventPlayer.botHook[BotHook.MISS_AT_CAP] = eventPlayer.botTuning[BotTuning.MISS_AT_CAP]
     eventPlayer.botHook[BotHook.DASH_WANTED] = false
+
+
+def botMixParts():
+    @Name "Bots - mix parts"
+    #My bot: loads each part's preset and keeps that part's BotTuning fields, the shots part last
+    #so its shot table stays. botState and botLoop are free until "Bots - setup" sets them.
+
+    #The part each BotTuning field comes from, in BotTuning order
+    eventPlayer.botLoop = [
+        BotPart.SHOTS, BotPart.SHOTS, BotPart.SHOTS, BotPart.SHOTS,
+        BotPart.DEFLECT, BotPart.DEFLECT, BotPart.DEFLECT, BotPart.DEFLECT,
+        BotPart.SHOTS, BotPart.SHOTS, BotPart.SHOTS, BotPart.SHOTS,
+        BotPart.SHOTS, BotPart.SHOTS, BotPart.SHOTS, BotPart.SHOTS,
+        BotPart.AFTER_SHOT, BotPart.AFTER_SHOT, BotPart.SHOTS, BotPart.SHOTS, BotPart.SHOTS, BotPart.MOVEMENT,
+        BotPart.MOVEMENT, BotPart.MOVEMENT, BotPart.MOVEMENT, BotPart.MOVEMENT, BotPart.MOVEMENT,
+        BotPart.AFTER_SHOT, BotPart.AFTER_SHOT, BotPart.AFTER_SHOT, BotPart.AFTER_SHOT,
+        BotPart.MOVEMENT, BotPart.MOVEMENT, BotPart.MOVEMENT,
+        BotPart.MOVEMENT, BotPart.MOVEMENT, BotPart.MOVEMENT,
+        BotPart.SHOTS, BotPart.SHOTS, BotPart.AFTER_SHOT, BotPart.AFTER_SHOT,
+        BotPart.MOVEMENT, BotPart.SHOTS
+    ]
+    #Deflect: perfect is Monx's (never misses)
+    eventPlayer.botHook[BotHook.PRESET] = [BotPreset.MONX, BotPreset.ZBOZO, BotPreset.LUCYBUSS, BotPreset.FIREBUSS][botSettings[BotSetting.MY_DEFLECT]]
+    botLoadPreset()
+    eventPlayer.botState = eventPlayer.botTuning
+    #Movement: stand still takes Monx's (no jumps), then doesn't walk
+    eventPlayer.botHook[BotHook.PRESET] = [BotPreset.ZBOZO, BotPreset.LUCYBUSS, BotPreset.AZERTYBUSS, BotPreset.FIREBUSS, BotPreset.MONX][botSettings[BotSetting.MY_MOVEMENT]]
+    botLoadPreset()
+    eventPlayer.botState = [eventPlayer.botTuning[__currentArrayIndex__] if x == BotPart.MOVEMENT else eventPlayer.botState[__currentArrayIndex__] for x in eventPlayer.botLoop]
+    #After shot: none is Monx's (no moves)
+    eventPlayer.botHook[BotHook.PRESET] = [BotPreset.MONX, BotPreset.ZBOZO, BotPreset.LUCYBUSS, BotPreset.AZERTYBUSS, BotPreset.FIREBUSS][botSettings[BotSetting.MY_AFTER_SHOT]]
+    botLoadPreset()
+    eventPlayer.botState = [eventPlayer.botTuning[__currentArrayIndex__] if x == BotPart.AFTER_SHOT else eventPlayer.botState[__currentArrayIndex__] for x in eventPlayer.botLoop]
+    #Shots, with the camera and aim: Monx's follow "Monx shots"
+    eventPlayer.botHook[BotHook.PRESET] = [BotPreset.ZBOZO, BotPreset.LUCYBUSS, BotPreset.AZERTYBUSS, BotPreset.FIREBUSS, BotPreset.MONX][botSettings[BotSetting.MY_SHOTS]]
+    botLoadPreset()
+    eventPlayer.botTuning = [eventPlayer.botTuning[__currentArrayIndex__] if x == BotPart.SHOTS else eventPlayer.botState[__currentArrayIndex__] for x in eventPlayer.botLoop]
+    if eventPlayer.botTuning[BotTuning.MOVEMENT] == BotMovement.PINNED:
+        eventPlayer.botTuning[BotTuning.MOVEMENT] = BotMovement.STILL
+    eventPlayer.botHook[BotHook.PRESET] = BotPreset.MY_BOT
+    eventPlayer.startForcingName("[BOT] My bot")
 
 
 def botLoadPreset():

@@ -194,6 +194,7 @@ subroutines {
     25: botAimShot
     26: botAimError
     27: botDash
+    28: botMixParts
 }
 
 //Strict optimizations enabled
@@ -238,8 +239,8 @@ rule ("Settings - Workshop settings") {
         Set Global Variable(setballspawncountdownoriginal, Workshop Setting Integer(Custom String("40 - Match"), Custom String("ball spawn countdown"), 5, 1, 30, 6));
         "One entry per RoundTiming field (config/constants.opy), in that order."
         Set Global Variable(roundTimings, Array(Workshop Setting Integer(Custom String("40 - Match"), Custom String("ball respawn delay"), 2, 1, 10, 7), Workshop Setting Integer(Custom String("40 - Match"), Custom String("round win pause"), 2, 0, 10, 8)));
-        "One entry per BotSetting field (config/constants.opy), in that order.\nbot: one option per BotPreset. Monx spot: one per MonxSpot. Monx shots: one per MonxShots"
-        Set Global Variable(botSettings, Array(Workshop Setting Combo(Custom String("50 - Features"), Custom String("bot"), 0, Array(Custom String("none"), Custom String("zBozo"), Custom String("firebuss"), Custom String("lucybuss"), Custom String("azertybuss"), Custom String("Monx (ball machine)")), 1), Workshop Setting Combo(Custom String("50 - Features"), Custom String("Monx spot"), 0, Array(Custom String("original"), Custom String("opposite"), Custom String("side"), Custom String("other side"), Custom String("close")), 5), Workshop Setting Combo(Custom String("50 - Features"), Custom String("Monx shots"), 0, Array(Custom String("random floor"), Custom String("long bounce"), Custom String("at the player"), Custom String("mix")), 6), Workshop Setting Integer(Custom String("50 - Features"), Custom String("Monx ball speed"), 0, 0, 800, 7)));
+        "One entry per BotSetting field (config/constants.opy), in that order.\nbot: one option per BotPreset. Monx spot: one per MonxSpot. Monx shots: one per MonxShots.\nMy bot: one option per entry of the preset lists in botMixParts"
+        Set Global Variable(botSettings, Array(Workshop Setting Combo(Custom String("50 - Features"), Custom String("bot"), 0, Array(Custom String("none"), Custom String("zBozo"), Custom String("firebuss"), Custom String("lucybuss"), Custom String("azertybuss"), Custom String("Monx (ball machine)"), Custom String("My bot")), 1), Workshop Setting Combo(Custom String("50 - Features"), Custom String("Monx spot"), 0, Array(Custom String("original"), Custom String("opposite"), Custom String("side"), Custom String("other side"), Custom String("close")), 5), Workshop Setting Combo(Custom String("50 - Features"), Custom String("Monx shots"), 0, Array(Custom String("random floor"), Custom String("long bounce"), Custom String("at the player"), Custom String("mix")), 6), Workshop Setting Integer(Custom String("50 - Features"), Custom String("Monx ball speed"), 0, 0, 800, 7), Workshop Setting Combo(Custom String("50 - Features"), Custom String("My bot shots"), 0, Array(Custom String("zBozo"), Custom String("lucybuss"), Custom String("azertybuss"), Custom String("firebuss"), Custom String("Monx")), 8), Workshop Setting Combo(Custom String("50 - Features"), Custom String("My bot movement"), 0, Array(Custom String("zBozo"), Custom String("lucybuss"), Custom String("azertybuss"), Custom String("firebuss"), Custom String("stand still")), 9), Workshop Setting Combo(Custom String("50 - Features"), Custom String("My bot after shot"), 0, Array(Custom String("none"), Custom String("zBozo"), Custom String("lucybuss"), Custom String("azertybuss"), Custom String("firebuss")), 10), Workshop Setting Combo(Custom String("50 - Features"), Custom String("My bot deflect"), 0, Array(Custom String("perfect"), Custom String("zBozo"), Custom String("lucybuss"), Custom String("firebuss")), 11)));
         "60 - Competitive: competitive test systems. Tournament, Tournament+ and Experimental force them."
         Set Global Variable(antiOrbitMode, Workshop Setting Toggle(Custom String("60 - Competitive"), Custom String("AntiOrbit"), False, 0));
         Set Global Variable(antiOrbitRadius, Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("AntiOrbit radius"), 14, 10, 20, 1));
@@ -2650,11 +2651,47 @@ rule ("Bots - setup") {
     }
     actions {
         Set Player Variable At Index(Event Player, botHook, 0, First Of(Global.botSettings));
-        Call Subroutine(botLoadPreset);
+        If(Compare(First Of((Event Player).botHook), ==, 6));
+            Call Subroutine(botMixParts);
+        Else;
+            Call Subroutine(botLoadPreset);
+        End;
         Set Player Variable(Event Player, botState, Array(0, -1, 0, Null, Null, False, Null, 0, 0, Null, Null));
         Set Player Variable At Index(Event Player, botHook, 1, 1);
         Set Player Variable At Index(Event Player, botHook, 2, Value In Array((Event Player).botTuning, 4));
         Set Player Variable At Index(Event Player, botHook, 3, False);
+    }
+}
+
+rule ("Bots - mix parts") {
+    event {
+        Subroutine;
+        botMixParts;
+    }
+    actions {
+        "My bot: loads each part's preset and keeps that part's BotTuning fields, the shots part last\nso its shot table stays. botState and botLoop are free until \"Bots - setup\" sets them.\nThe part each BotTuning field comes from, in BotTuning order"
+        Set Player Variable(Event Player, botLoop, Array(0, 0, 0, 0, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 0, 0, 2, 2, 1, 0));
+        "Deflect: perfect is Monx's (never misses)"
+        Set Player Variable At Index(Event Player, botHook, 0, Value In Array(Array(5, 1, 3, 2), Value In Array(Global.botSettings, 7)));
+        Call Subroutine(botLoadPreset);
+        Set Player Variable(Event Player, botState, (Event Player).botTuning);
+        "Movement: stand still takes Monx's (no jumps), then doesn't walk"
+        Set Player Variable At Index(Event Player, botHook, 0, Value In Array(Array(1, 3, 4, 2, 5), Value In Array(Global.botSettings, 5)));
+        Call Subroutine(botLoadPreset);
+        Set Player Variable(Event Player, botState, Mapped Array((Event Player).botLoop, If-Then-Else(Compare(Current Array Element, ==, 1), Value In Array((Event Player).botTuning, Current Array Index), Value In Array((Event Player).botState, Current Array Index))));
+        "After shot: none is Monx's (no moves)"
+        Set Player Variable At Index(Event Player, botHook, 0, Value In Array(Array(5, 1, 3, 4, 2), Value In Array(Global.botSettings, 6)));
+        Call Subroutine(botLoadPreset);
+        Set Player Variable(Event Player, botState, Mapped Array((Event Player).botLoop, If-Then-Else(Compare(Current Array Element, ==, 2), Value In Array((Event Player).botTuning, Current Array Index), Value In Array((Event Player).botState, Current Array Index))));
+        "Shots, with the camera and aim: Monx's follow \"Monx shots\""
+        Set Player Variable At Index(Event Player, botHook, 0, Value In Array(Array(1, 3, 4, 2, 5), Value In Array(Global.botSettings, 4)));
+        Call Subroutine(botLoadPreset);
+        Set Player Variable(Event Player, botTuning, Mapped Array((Event Player).botLoop, If-Then-Else(Compare(Current Array Element, ==, 0), Value In Array((Event Player).botTuning, Current Array Index), Value In Array((Event Player).botState, Current Array Index))));
+        If(Compare(Value In Array((Event Player).botTuning, 21), ==, 3));
+            Set Player Variable At Index(Event Player, botTuning, 21, 4);
+        End;
+        Set Player Variable At Index(Event Player, botHook, 0, 6);
+        Start Forcing Dummy Bot Name(Event Player, Custom String("[BOT] My bot"));
     }
 }
 
