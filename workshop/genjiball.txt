@@ -2798,6 +2798,10 @@ rule ("Bots - incoming ball") {
         "After shot: a ball machine sets the speed it sends the ball at"
         If(And(Compare(Value In Array((Event Player).botTuning, 42), >, 0), Compare(Global.prevTarget, ==, Event Player)));
             Set Global Variable(ballSpeed, Min(Global.ballSpeedCap, Value In Array((Event Player).botTuning, 42)));
+            "Astro moves the ball by ballDirection's length, which the deflect set from the old speed"
+            If(Compare(Global.ballMotion, ==, 2));
+                Set Global Variable(ballDirection, Multiply(Normalize(Global.ballDirection), Global.ballSpeed));
+            End;
         End;
         "After shot: safe dash, sideways toward the middle, after a shot at the enemy"
         If(And(And(And(And(And(And(Value In Array((Event Player).botTuning, 28), Compare(Value In Array((Event Player).botState, 7), ==, 1)), Compare(Global.prevTarget, ==, Event Player)), Is Alive(Value In Array((Event Player).botState, 3))), Not(Is Using Ability 1(Event Player))), (Event Player).canDash), Not((Event Player).dashOnCooldown)));
@@ -3355,8 +3359,8 @@ rule ("Bots - pinned") {
         Is Alive(Event Player) == True;
     }
     actions {
-        "25 m, or less in an arena smaller than 27 m so the edge rules leave it alone"
-        Start Forcing Player Position(Event Player, Add(Global.circleCenter, Multiply(Value In Array((Event Player).botTuning, 41), Min(25, Subtract(Global.SphereSize, 2)))), False);
+        "25 m, or less in an arena smaller than 27 m so the edge rules leave it alone, and at least\n1.5 m past the centre's off-limits size so \"Map restrictions - put out center\" does too"
+        Start Forcing Player Position(Event Player, Add(Global.circleCenter, Multiply(Value In Array((Event Player).botTuning, 41), Max(Divide(Add(Global.CenterOffLimitsSize, 1.5), Magnitude Of(Value In Array((Event Player).botTuning, 41))), Min(25, Subtract(Global.SphereSize, 2))))), False);
         Wait(1.25, Ignore Condition);
         Loop If Condition Is True;
     }

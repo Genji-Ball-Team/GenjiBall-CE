@@ -138,7 +138,7 @@ No edash and no ghost dash, as in the original (its ghost dash was never trigger
 
 By gybbus: a ball machine for positioning and shot-reading drills. Its settings are in "50 - Features" (see [hosting.md](hosting.md#50---features)).
 
-- **Pinned** (`MOVEMENT` `PINNED`): `Bots - pinned` forces it to `PIN_SPOT` and does it again every 1.25 s, which also puts it back after the final duel teleport. "Monx spot" picks the spot: 25 m from the middle and 1.5 m up, like the original, on four sides, or 12 m out on the floor. In an arena under 27 m it stands at the radius minus 2 m. No walking, jumping or dashing.
+- **Pinned** (`MOVEMENT` `PINNED`): `Bots - pinned` forces it to `PIN_SPOT` and does it again every 1.25 s, which also puts it back after the final duel teleport. "Monx spot" picks the spot: 25 m from the middle and 1.5 m up, like the original, on four sides, or 12 m out on the floor. In an arena under 27 m it stands at the radius minus 2 m, and the close spot stays at least 1.5 m outside the middle's off-limits area. No walking, jumping or dashing.
 - **Never misses**: deflect pressed on contact, and `MISS_AT_CAP` off, so not even at the speed cap.
 - **Shots** ("Monx shots"), no aim error:
 
@@ -151,7 +151,7 @@ By gybbus: a ball machine for positioning and shot-reading drills. Its settings 
 
 `FLOOR_TO_MIDDLE` goes up to 45° either side of the way to the middle, 45–90° down. The original looked at a new random spot every 1.25 s, 44–90° down and always to one side of the middle (+x and +z), and the ball went wherever it looked. Here each ball rolls its own shot, centred on the middle, so it works from every spot. `LONG_TO_MIDDLE` goes up to 20° off the way to the middle, 10–25° down.
 
-- **Ball speed** (`MACHINE_SPEED`, "Monx ball speed"): after each of its deflects, ballSpeed is set to this, up to the max speed. Ball speed is one global value, so it's set again every time. The ball speeds up as usual after that. 0 leaves the usual speed-up alone.
+- **Ball speed** (`MACHINE_SPEED`, "Monx ball speed"): after each of its deflects, ballSpeed is set to this, up to the max speed. Ball speed is one global value, so it's set again every time. In Astro motion the ball's velocity gets the new speed too. The ball speeds up as usual after that. 0 leaves the usual speed-up alone.
 
 ## Adding things
 

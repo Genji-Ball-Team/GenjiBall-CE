@@ -107,6 +107,9 @@ rule "Bots - incoming ball":
     #After shot: a ball machine sets the speed it sends the ball at
     if eventPlayer.botTuning[BotTuning.MACHINE_SPEED] > 0 and prevTarget == eventPlayer:
         ballSpeed = min(ballSpeedCap, eventPlayer.botTuning[BotTuning.MACHINE_SPEED])
+        #Astro moves the ball by ballDirection's length, which the deflect set from the old speed
+        if ballMotion == BallMotion.ASTRO:
+            ballDirection = normalize(ballDirection) * ballSpeed
     #After shot: safe dash, sideways toward the middle, after a shot at the enemy
     if eventPlayer.botTuning[BotTuning.SAFE_DASH] and eventPlayer.botState[BotField.INTENT] == BotIntent.AT_ENEMY and prevTarget == eventPlayer and eventPlayer.botState[BotField.ENEMY].isAlive() and not eventPlayer.isUsingAbility1() and eventPlayer.canDash and not eventPlayer.dashOnCooldown:
         #Horizontal direction to the enemy, turned 90°, toward the side nearer the middle
@@ -547,8 +550,9 @@ rule "Bots - pinned":
     @Condition eventPlayer.botTuning[BotTuning.MOVEMENT] == BotMovement.PINNED
     @Condition eventPlayer.isAlive() == true
 
-    #25 m, or less in an arena smaller than 27 m so the edge rules leave it alone
-    eventPlayer.startForcingPosition(circleCenter + eventPlayer.botTuning[BotTuning.PIN_SPOT] * min(25, SphereSize - 2), false)
+    #25 m, or less in an arena smaller than 27 m so the edge rules leave it alone, and at least
+    #1.5 m past the centre's off-limits size so "Map restrictions - put out center" does too
+    eventPlayer.startForcingPosition(circleCenter + eventPlayer.botTuning[BotTuning.PIN_SPOT] * max((CenterOffLimitsSize + 1.5) / magnitude(eventPlayer.botTuning[BotTuning.PIN_SPOT]), min(25, SphereSize - 2)), false)
     wait(1.25)
     if ruleCondition:
         loop()
