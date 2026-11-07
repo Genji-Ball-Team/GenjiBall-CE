@@ -156,7 +156,7 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 | Setting | Default | Range | What it does |
 |---|---|---|---|
 | custom abilities | off | | Each player picks one extra ability. See [playing.md](playing.md#custom-abilities) |
-| bot | none | none / zBozo / firebuss / lucybuss / azertybuss / Monx (ball machine) / My bot | Adds a practice bot, named `[BOT] <bot>`. Off with the Tournament presets and with duels. See [Bot](playing.md#bot) |
+| bot | none | none / zBozo / firebuss / lucybuss / azertybuss / Monx (ball machine) / My bot | Adds a practice bot, named `[BOT] <bot>`. Off with the Tournament presets, duels and 1v1. See [Bot](playing.md#bot) |
 | duels | off | | 1v1 at a time, with a queue |
 | endless mode | off | | The ball doesn't reset after a kill |
 | Sandbox mode | off | | Practice tool for the host. See [Sandbox](#sandbox-mode) |
@@ -167,7 +167,7 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 | My bot movement | zBozo | zBozo / lucybuss / azertybuss / firebuss / stand still | Whose walking and jumping it uses. Stand still doesn't walk or jump |
 | My bot after shot | none | none / zBozo / lucybuss / azertybuss / firebuss | Whose dashes and other moves around its shots it uses: edash, ghost dash, safe dash, dash away, ace dash, dash guard, brad shot, punish |
 | My bot deflect | perfect | perfect / zBozo / lucybuss / firebuss | Whose misses it has: never (perfect), dies at the speed cap (zBozo), 30 % from speed 110 (lucybuss), or firebuss's early deflect |
-| 1v1 | off | | Duels in sets: first to "1v1 first to" round wins, and the winner stays on. Turns duels on. Off with tournament mode, endless mode or Sandbox mode. See [playing.md](playing.md#1v1) |
+| 1v1 | off | | Sets of first to "1v1 first to" round wins, and the winner stays on. With duels on too, 1v1 plays. Off with tournament mode, endless mode or Sandbox mode. See [playing.md](playing.md#1v1) |
 | 1v1 first to | 15 | 1–50 | Round wins that take a set |
 | 1v1 point countdown | 3 | 1–10 s | Ball countdown between the points of a set. A new set uses "ball spawn countdown". The freeze at the start of a point shrinks with it (0.9 s at 3 s) |
 | 1v1 point pause | 1 | 0–10 s | Pause after a point. A set win uses "round win pause" |

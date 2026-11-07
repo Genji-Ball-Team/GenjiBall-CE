@@ -317,19 +317,20 @@ rule ("Settings - Workshop settings") {
         Else If(Compare(Global.waterLevel, ==, 3));
             Set Global Variable(waterLevel, -0.5);
         End;
-        "1v1 runs on duels. Tournament mode, endless mode and Sandbox mode turn it off."
+        "Tournament mode, endless mode and Sandbox mode turn 1v1 off"
         If(Or(Or(Global.tournamentMode, Value In Array(Global.addOnSettings, 6)), Value In Array(Global.addOnSettings, 7)));
             Set Global Variable At Index(addOnSettings, 15, False);
         End;
+        "Duels and 1v1 both queue the players who wait. With both on, 1v1 plays (the duel-only rules check 1v1 is off)."
+        Set Global Variable At Index(addOnSettings, 20, Or(Value In Array(Global.addOnSettings, 5), Value In Array(Global.addOnSettings, 15)));
         If(Value In Array(Global.addOnSettings, 15));
-            Set Global Variable At Index(addOnSettings, 5, True);
             "0 = no timer: \"1v1 - no timer\" pauses the match time \"match length\" starts"
             If(Compare(Value In Array(Global.addOnSettings, 19), >, 0));
                 Set Global Variable(matchTime, Multiply(Value In Array(Global.addOnSettings, 19), 60));
             End;
         End;
-        "Tournament presets and duels play without a bot (duels can't queue or skip one)"
-        If(Or(Or(Compare(Global.presetMode, ==, 1), Compare(Global.presetMode, ==, 2)), Value In Array(Global.addOnSettings, 5)));
+        "Tournament presets, duels and 1v1 play without a bot (the queue can't hold or skip one)"
+        If(Or(Or(Compare(Global.presetMode, ==, 1), Compare(Global.presetMode, ==, 2)), Value In Array(Global.addOnSettings, 20)));
             Set Global Variable At Index(botSettings, 0, 0);
     }
 }
@@ -1282,7 +1283,7 @@ rule ("Active game - final duel") {
         Count Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved)) == 2;
         Global.IsEnoughPlayersToStart == True;
         Global.IsInFinalDuel == False;
-        Value In Array(Global.addOnSettings, 5) == False;
+        Value In Array(Global.addOnSettings, 20) == False;
         Value In Array(Global.addOnSettings, 6) == False;
         Current Game Mode == Game Mode(Deathmatch);
     }
@@ -1301,7 +1302,7 @@ rule ("Active game - check for last player surviving") {
         Is Game In Progress == True;
         Number Of Living Players(All Teams) == 1;
         Global.IsEnoughPlayersToStart == True;
-        Value In Array(Global.addOnSettings, 5) == False;
+        Value In Array(Global.addOnSettings, 20) == False;
     }
     actions {
         Set Global Variable(IsInFinalDuel, False);
@@ -1328,7 +1329,7 @@ rule ("Active game - check for last player surviving") {
         Stop Chasing Player Variable(All Players(All Teams), bouncePadCooldown);
         Big Message(All Players(All Teams), Custom String("{0} has won the round", First Of(All Living Players(All Teams))));
         Wait(Value In Array(Global.roundTimings, 1), Ignore Condition);
-        Skip If(Value In Array(Global.addOnSettings, 5), 8);
+        Skip If(Value In Array(Global.addOnSettings, 20), 8);
         If(Not(Global.TieBreakerActive));
             Resurrect(All Dead Players(All Teams));
         Else;
@@ -1352,7 +1353,7 @@ rule ("Active game - all players dead") {
         Number Of Living Players(All Teams) == 0;
         Is Game In Progress == True;
         Global.TieBreakerActive == False;
-        Value In Array(Global.addOnSettings, 5) == False;
+        Value In Array(Global.addOnSettings, 20) == False;
     }
     actions {
         Set Global Variable(IsInFinalDuel, False);
@@ -1443,10 +1444,10 @@ rule ("Duels - Queue HUD") {
     }
     conditions {
         Value In Array(Global.addOnSettings, 5) == True;
+        Value In Array(Global.addOnSettings, 15) == False;
     }
     actions {
-        "A 1v1 player who just lost a point is queued until the next point, but isn't waiting"
-        Create HUD Text(If-Then-Else(And(Is Dead(Event Player), Not(Array Contains(First Of(Global.oneVOneState), Event Player))), Event Player, Null), Null, If-Then-Else(Value In Array(Global.addOnSettings, 15), Custom String("You fight in {0} sets.", Add(Index Of Array Value(Global.duelQueue, Event Player), 1)), Custom String("You fight in {0} rounds.", Add(Index Of Array Value(Global.duelQueue, Event Player), 1))), Null, Top, -1, Null, Color(Purple), Null, Visible To and String, Default Visibility);
+        Create HUD Text(If-Then-Else(Is Dead(Event Player), Event Player, Null), Null, Custom String("You fight in {0} rounds.", Add(Index Of Array Value(Global.duelQueue, Event Player), 1)), Null, Top, -1, Null, Color(Purple), Null, Visible To and String, Default Visibility);
     }
 }
 
@@ -1455,7 +1456,7 @@ rule ("Duels - kill players when more than two alive") {
         Ongoing - Global;
     }
     conditions {
-        Value In Array(Global.addOnSettings, 5) == True;
+        Value In Array(Global.addOnSettings, 20) == True;
         Is Game In Progress == False;
         "Nothing starts a duel on an unsupported map, so don't kill anyone for one"
         Value In Array(Global.mapRow, 1) != 0;
@@ -1473,7 +1474,7 @@ rule ("Duels - start game") {
         Ongoing - Global;
     }
     conditions {
-        Value In Array(Global.addOnSettings, 5) == True;
+        Value In Array(Global.addOnSettings, 20) == True;
         Is Game In Progress == True;
         "No duel on an unsupported map, like no round (Wait for more players)"
         Value In Array(Global.mapRow, 1) != 0;
@@ -1492,6 +1493,7 @@ rule ("Duels - not enough players alive") {
     }
     conditions {
         Value In Array(Global.addOnSettings, 5) == True;
+        Value In Array(Global.addOnSettings, 15) == False;
         Is Game In Progress == True;
         Number Of Living Players(All Teams) < 2;
         Count Of(Global.duelQueue) > 0;
@@ -1499,16 +1501,12 @@ rule ("Duels - not enough players alive") {
     actions {
         Call Subroutine(deleteBall);
         Stop Chasing Global Variable(ballSpawnCountdown);
-        If(Value In Array(Global.addOnSettings, 15));
-            Call Subroutine(oneVOneRoundEnd);
-        Else;
-            If(Is Alive(First Of(All Living Players(All Teams))));
-                Modify Player Score(All Living Players(All Teams), 1);
-                Big Message(All Players(All Teams), Custom String("{0} wins, congrats!", First Of(All Living Players(All Teams))));
-                Wait(Value In Array(Global.roundTimings, 1), Ignore Condition);
-            End;
-            Resurrect(First Of(Global.duelQueue));
+        If(Is Alive(First Of(All Living Players(All Teams))));
+            Modify Player Score(All Living Players(All Teams), 1);
+            Big Message(All Players(All Teams), Custom String("{0} wins, congrats!", First Of(All Living Players(All Teams))));
+            Wait(Value In Array(Global.roundTimings, 1), Ignore Condition);
         End;
+        Resurrect(First Of(Global.duelQueue));
         Wait(0.5, Ignore Condition);
         Loop If Condition Is True;
     }
@@ -1521,7 +1519,7 @@ rule ("Duels - queue dead player") {
         All;
     }
     conditions {
-        Value In Array(Global.addOnSettings, 5) == True;
+        Value In Array(Global.addOnSettings, 20) == True;
     }
     actions {
         Modify Global Variable(duelQueue, Append To Array, Event Player);
@@ -1536,7 +1534,7 @@ rule ("Duels - remove living player from queue") {
     }
     conditions {
         Is Alive(Event Player) == True;
-        Value In Array(Global.addOnSettings, 5) == True;
+        Value In Array(Global.addOnSettings, 20) == True;
     }
     actions {
         Modify Global Variable(duelQueue, Remove From Array By Value, Event Player);
@@ -1550,10 +1548,44 @@ rule ("Duels - remove leaving player from queue") {
         All;
     }
     conditions {
-        Value In Array(Global.addOnSettings, 5) == True;
+        Value In Array(Global.addOnSettings, 20) == True;
     }
     actions {
         Modify Global Variable(duelQueue, Remove From Array By Value, Event Player);
+    }
+}
+
+rule ("1v1 - queue HUD") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Value In Array(Global.addOnSettings, 15) == True;
+    }
+    actions {
+        "A player who just lost a point is queued until the next point, but isn't waiting"
+        Create HUD Text(If-Then-Else(And(Is Dead(Event Player), Not(Array Contains(First Of(Global.oneVOneState), Event Player))), Event Player, Null), Null, Custom String("You fight in {0} sets.", Add(Index Of Array Value(Global.duelQueue, Event Player), 1)), Null, Top, -1, Null, Color(Purple), Null, Visible To and String, Default Visibility);
+    }
+}
+
+rule ("1v1 - round end") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Value In Array(Global.addOnSettings, 15) == True;
+        Is Game In Progress == True;
+        Number Of Living Players(All Teams) < 2;
+        Count Of(Global.duelQueue) > 0;
+    }
+    actions {
+        Call Subroutine(deleteBall);
+        Stop Chasing Global Variable(ballSpawnCountdown);
+        Call Subroutine(oneVOneRoundEnd);
+        Wait(0.5, Ignore Condition);
+        Loop If Condition Is True;
     }
 }
 
@@ -1630,7 +1662,7 @@ rule ("1v1 - player left") {
     }
     conditions {
         Value In Array(Global.addOnSettings, 15) == True;
-        "With players waiting, \"Duels - not enough players alive\" ends the set"
+        "With players waiting, \"1v1 - round end\" ends the set"
         Count Of(Global.duelQueue) == 0;
     }
     actions {

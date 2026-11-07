@@ -75,7 +75,7 @@ rule "Active game - final duel":
     @Condition len(getLivingPlayers(Team.ALL).filter(lambda player: player.hasMoved)) == 2
     @Condition IsEnoughPlayersToStart == true
     @Condition IsInFinalDuel == false
-    @Condition addOnSettings[AddOnSetting.DUELS] == false
+    @Condition addOnSettings[AddOnSetting.QUEUE_MODE] == false
     @Condition addOnSettings[AddOnSetting.ENDLESS] == false
     @Condition getCurrentGamemode() == Gamemode.FFA
     
@@ -89,7 +89,7 @@ rule "Active game - check for last player surviving":
     @Condition isGameInProgress() == true
     @Condition getNumberOfLivingPlayers(Team.ALL) == 1
     @Condition IsEnoughPlayersToStart == true
-    @Condition addOnSettings[AddOnSetting.DUELS] == false
+    @Condition addOnSettings[AddOnSetting.QUEUE_MODE] == false
     
     IsInFinalDuel = false
     #Cleared by startRound once the next round is under way.
@@ -115,7 +115,7 @@ rule "Active game - check for last player surviving":
     stopChasing(getAllPlayers().bouncePadCooldown)
     bigMessage(getAllPlayers(), "{0} has won the round".format(getLivingPlayers(Team.ALL)[0]))
     wait(roundTimings[RoundTiming.WIN_PAUSE])
-    if addOnSettings[AddOnSetting.DUELS]:
+    if addOnSettings[AddOnSetting.QUEUE_MODE]:
         goto lbl_0
     if not TieBreakerActive:
         getDeadPlayers(Team.ALL).resurrect()
@@ -134,7 +134,7 @@ rule "Active game - all players dead":
     @Condition getNumberOfLivingPlayers(Team.ALL) == 0
     @Condition isGameInProgress() == true
     @Condition TieBreakerActive == false
-    @Condition addOnSettings[AddOnSetting.DUELS] == false
+    @Condition addOnSettings[AddOnSetting.QUEUE_MODE] == false
     
     IsInFinalDuel = false
     if ballIsOut == false:

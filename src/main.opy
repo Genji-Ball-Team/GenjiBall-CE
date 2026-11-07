@@ -29,6 +29,7 @@
 #ORDER: before core/collision and core/ball-physics ("spawn ball" sets the ball before collision/physics see it).
 #!include "core/round-flow.opy"
 #!include "features/duels.opy"
+#!include "features/one-v-one.opy"
 #ORDER: before core/ball-physics, features/tracing and features/abilities. A deflect must redirect the ball before bounces, tracing and target switch.
 #!include "core/collision.opy"
 #ORDER: after core/collision. Bounce rule order inside this file decides same-tick bounces.

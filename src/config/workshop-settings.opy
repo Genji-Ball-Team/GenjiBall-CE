@@ -203,14 +203,15 @@ rule "Settings - Workshop settings":
         waterLevel = -26
     elif waterLevel == Water.FLOOD:
         waterLevel = -0.5
-    #1v1 runs on duels. Tournament mode, endless mode and Sandbox mode turn it off.
+    #Tournament mode, endless mode and Sandbox mode turn 1v1 off
     if tournamentMode or addOnSettings[AddOnSetting.ENDLESS] or addOnSettings[AddOnSetting.SANDBOX]:
         addOnSettings[AddOnSetting.ONE_V_ONE] = false
+    #Duels and 1v1 both queue the players who wait. With both on, 1v1 plays (the duel-only rules check 1v1 is off).
+    addOnSettings[AddOnSetting.QUEUE_MODE] = addOnSettings[AddOnSetting.DUELS] or addOnSettings[AddOnSetting.ONE_V_ONE]
     if addOnSettings[AddOnSetting.ONE_V_ONE]:
-        addOnSettings[AddOnSetting.DUELS] = true
         #0 = no timer: "1v1 - no timer" pauses the match time "match length" starts
         if addOnSettings[AddOnSetting.ONE_V_ONE_MATCH_LENGTH] > 0:
             matchTime = addOnSettings[AddOnSetting.ONE_V_ONE_MATCH_LENGTH] * 60
-    #Tournament presets and duels play without a bot (duels can't queue or skip one)
-    if presetMode == Preset.TOURNAMENT or presetMode == Preset.TOURNAMENT_PLUS or addOnSettings[AddOnSetting.DUELS]:
+    #Tournament presets, duels and 1v1 play without a bot (the queue can't hold or skip one)
+    if presetMode == Preset.TOURNAMENT or presetMode == Preset.TOURNAMENT_PLUS or addOnSettings[AddOnSetting.QUEUE_MODE]:
         botSettings[BotSetting.PRESET] = BotPreset.NONE

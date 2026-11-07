@@ -81,7 +81,7 @@ Only two players fight at a time. Everyone else waits in a queue, in the order t
 
 ### 1v1
 
-Duels in sets (the "1v1" setting). Every round you win is a point, and the first to 15 ("1v1 first to") takes the set and stays on. The loser goes to the end of the queue and the next player comes in at 0–0. Leaving mid-set loses it.
+Its own mode (the "1v1" setting), with the same queue as duels: everyone else waits dead and spectating. Every round you win is a point, and the first to 15 ("1v1 first to") takes the set and stays on. The loser goes to the end of the queue and the next player comes in at 0–0. Leaving mid-set loses it.
 
 - The ball goes to each player in turn, point by point. The first point of a set goes to a random player.
 - Between points, both players go back to their sides, with a shorter countdown ("1v1 point countdown") and freeze than at the start of a set.
@@ -111,7 +111,7 @@ The host can add one practice bot, named **`[BOT] <bot>`**. It's good for testin
 - **My bot**: built by the host from parts of the others: whose shots, movement, moves after a shot and deflect it uses ("My bot ..." settings).
 - **azertybuss** (by gybbus): takes a human moment to react, then sends most balls into the floor, now and then at a player, and dashes sideways after its shots. It strafes and hops around like a player.
 
-The bot isn't held to tracing mode or anti-orbit, and it isn't listed on the kill tracker (knocking it out still counts for you). It scores round wins like anyone else. There's no bot in the Tournament presets or with duels on.
+The bot isn't held to tracing mode or anti-orbit, and it isn't listed on the kill tracker (knocking it out still counts for you). It scores round wins like anyone else. There's no bot in the Tournament presets, or with duels or 1v1 on.
 
 ### Anti-orbit
 
