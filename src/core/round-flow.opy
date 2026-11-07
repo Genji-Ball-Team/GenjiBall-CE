@@ -4,8 +4,6 @@ def startRound():
     @Name "Active game - start round"
     
     RoundSetupPending = true
-    if addOnSettings[AddOnSetting.SANDBOX] == true:
-        waitUntil(hostPlayer.isHoldingButton(Button.ULTIMATE) and hostPlayer.isHoldingButton(Button.RELOAD), 99999)
     randomTarget()
     chaseAtRate(ballSpawnCountdown, 0, 1)
     RoundInProgress = true
@@ -13,10 +11,7 @@ def startRound():
     #New rounds should start with dash available again.
     #This only resets the custom dash cooldown flag; it does not alter dash/deflect timing mid-round.
     getAllPlayers().dashOnCooldown = false
-    resetOrbitRoundState()
-    chaseAtRate(getAllPlayers().bouncePadCooldown, 0, 1)
     ballSpawnCountdown = setballspawncountdown
-    getLivingPlayers(Team.ALL).bouncePadCooldown = bouncePadConfig[BouncePadField.COOLDOWN] - 1
 
 
 rule "Active game - spawn ball":
@@ -24,14 +19,9 @@ rule "Active game - spawn ball":
     @Condition ballIsOut == false
     @Condition target.isAlive() == true
     
-    if addOnSettings[AddOnSetting.SANDBOX] == true:
-        ballPosition = sandboxState[SandboxField.BALL_POSITION]
-        ballDirection = directionTowards(sandboxState[SandboxField.BALL_POSITION], sandboxState[SandboxField.BALL_DIRECTION])
-        ballSpeed = sandboxState[SandboxField.BALL_SPEED]
-    else:
-        ballPosition = circleCenter
-        ballDirection = directionTowards(ballPosition, target.getEyePosition())
-        ballSpeed = min(ballSpawnSpeed, ballSpeed)
+    ballPosition = circleCenter
+    ballDirection = directionTowards(ballPosition, target.getEyePosition())
+    ballSpeed = min(ballSpawnSpeed, ballSpeed)
     async(startBall, AsyncBehavior.RESTART)
 
 
@@ -45,18 +35,11 @@ def setupFinal():
     lbl_0:
     randomTarget()
     stopChasing(ballSpawnCountdown)
-    if addOnSettings[AddOnSetting.SANDBOX] == true:
-        waitUntil(hostPlayer.isHoldingButton(Button.ULTIMATE) and hostPlayer.isHoldingButton(Button.RELOAD), 99999)
     IsInFinalDuel = true
     RoundSetupPending = false
     chaseAtRate(ballSpawnCountdown, 0, 1)
-    getLivingPlayers(Team.ALL).bouncePadCooldown = bouncePadConfig[BouncePadField.COOLDOWN] - 1
-    if isIsland:
-        getLivingPlayers(Team.ALL).filter(lambda player: player.hasMoved)[0].startForcingPosition(circleCenter + vect(-15, 0, 0), false)
-        getLivingPlayers(Team.ALL).filter(lambda player: player.hasMoved)[1].startForcingPosition(circleCenter + vect(15, 0, 0), false)
-    else:
-        getLivingPlayers(Team.ALL).filter(lambda player: player.hasMoved)[0].startForcingPosition(circleCenter + Vector.RIGHT * (SphereSize / 1.5), false)
-        getLivingPlayers(Team.ALL).filter(lambda player: player.hasMoved)[1].startForcingPosition(circleCenter + Vector.LEFT * (SphereSize / 1.5), false)
+    getLivingPlayers(Team.ALL).filter(lambda player: player.hasMoved)[0].startForcingPosition(circleCenter + vect(-15, 0, 0), false)
+    getLivingPlayers(Team.ALL).filter(lambda player: player.hasMoved)[1].startForcingPosition(circleCenter + vect(15, 0, 0), false)
     getLivingPlayers(Team.ALL).setStatusEffect(null, Status.ROOTED, 1.5)
     wait(0)
     getLivingPlayers(Team.ALL)[0].setFacing(directionTowards(getLivingPlayers(Team.ALL).filter(lambda player: player.hasMoved)[0].getPosition(), circleCenter), Relativity.TO_WORLD)
@@ -72,8 +55,6 @@ rule "Active game - final duel":
     @Condition len(getLivingPlayers(Team.ALL).filter(lambda player: player.hasMoved)) == 2
     @Condition IsEnoughPlayersToStart == true
     @Condition IsInFinalDuel == false
-    @Condition addOnSettings[AddOnSetting.DUELS] == false
-    @Condition addOnSettings[AddOnSetting.ENDLESS] == false
     @Condition getCurrentGamemode() == Gamemode.FFA
     
     wait(0.016, Wait.ABORT_WHEN_FALSE)
@@ -86,7 +67,6 @@ rule "Active game - check for last player surviving":
     @Condition isGameInProgress() == true
     @Condition getNumberOfLivingPlayers(Team.ALL) == 1
     @Condition IsEnoughPlayersToStart == true
-    @Condition addOnSettings[AddOnSetting.DUELS] == false
     
     IsInFinalDuel = false
     #Cleared by startRound once the next round is under way.
@@ -109,11 +89,8 @@ rule "Active game - check for last player surviving":
                 enableMusic()
                 enableGamemodeCompletion()
     stopChasing(ballSpawnCountdown)
-    stopChasing(getAllPlayers().bouncePadCooldown)
     bigMessage(getAllPlayers(), "{0} has won the round".format(getLivingPlayers(Team.ALL)[0]))
     wait(roundTimings[RoundTiming.WIN_PAUSE])
-    if addOnSettings[AddOnSetting.DUELS]:
-        goto lbl_0
     if not TieBreakerActive:
         getDeadPlayers(Team.ALL).resurrect()
     else:
@@ -123,7 +100,6 @@ rule "Active game - check for last player surviving":
         (getDeadPlayers(Team.ALL).filter(lambda player: player.getScore() == HighestScore)).resurrect()
         wait(0.25)
         bigMessage(getAllPlayers(), "tiebreaker!")
-    lbl_0:
     startRound()
 
 
@@ -131,7 +107,6 @@ rule "Active game - all players dead":
     @Condition getNumberOfLivingPlayers(Team.ALL) == 0
     @Condition isGameInProgress() == true
     @Condition TieBreakerActive == false
-    @Condition addOnSettings[AddOnSetting.DUELS] == false
     
     IsInFinalDuel = false
     if ballIsOut == false:
@@ -141,15 +116,13 @@ rule "Active game - all players dead":
     RoundInProgress = false
     stopChasing(ballSpawnCountdown)
     getDeadPlayers(Team.ALL).resurrect()
-    stopChasing(getAllPlayers().bouncePadCooldown)
-    getAllPlayers().bouncePadCooldown = bouncePadConfig[BouncePadField.COOLDOWN]
     ballSpawnCountdown = setballspawncountdown
     wait(1)
     if ruleCondition:
         loop()
     wait(2)
     #Skip if the round has already restarted, or is about to: by the lobby (not enough players), the final duel (two players)
-    #or a round win (including its win pause and the host wait in Sandbox).
+    #or a round win (including its win pause).
     if not IsEnoughPlayersToStart or IsInFinalDuel or RoundInProgress or RoundSetupPending:
         return
     stopChasing(ballSpawnCountdown)
@@ -170,11 +143,7 @@ rule "Active game - end game":
 def randomTarget():
     @Name "Active game - target random player"
     
-    if addOnSettings[AddOnSetting.SANDBOX] == true:
-        target = hostPlayer
-        goto lbl_0
     target = random.choice(getLivingPlayers(Team.ALL).filter(lambda player: player.hasMoved and prevTarget != player))
-    lbl_0:
     wait(0.1)
 
 

@@ -38,15 +38,14 @@ rule "Tournament - forbid dashing into the water":
 rule "Tournament - no orbit abusing":
     @Event eachPlayer
     @Condition tournamentMode == true
-    @Condition antiOrbitMode == false
     @Condition eventPlayer == target
     #@Condition (angleBetweenVectors(ballDirection, directionTowards(ballPosition, eventPlayer.getEyePosition())) < 100 and angleBetweenVectors(ballDirection, directionTowards(ballPosition, eventPlayer.getEyePosition())) > -100) == true
     @Condition ballIsOut == true
-    @Condition distance(eventPlayer.getEyePosition(), ballPosition) < competitiveSettings[CompetitiveSetting.BASIC_ORBIT_RADIUS]
-    @Condition ballSpeed < competitiveSettings[CompetitiveSetting.BASIC_ORBIT_SPEED]
+    @Condition distance(eventPlayer.getEyePosition(), ballPosition) < BASIC_ORBIT_RADIUS
+    @Condition ballSpeed < BASIC_ORBIT_SPEED
     
     #smallMessage(getAllPlayers(), "Orbit start")
-    wait(competitiveSettings[CompetitiveSetting.BASIC_ORBIT_TIMER], Wait.ABORT_WHEN_FALSE)
+    wait(BASIC_ORBIT_TIMER, Wait.ABORT_WHEN_FALSE)
     if not ruleCondition:
         return
     #smallMessage(getAllPlayers(), "...still orbiting...")

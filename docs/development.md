@@ -56,7 +56,7 @@ The settings tables in [hosting.md](hosting.md#workshop-settings) are generated 
 1. `npm run build`
 2. Open `workshop/genjiball.txt`, select all, and copy.
 3. In a new custom game lobby: **Settings → Import**, top right. Importing on top of an existing game can fail with "Categories and names of Workshop Settings may not be blank…"; create a new custom game instead.
-4. Useful settings for testing: `50 - Features > bot` for someone to hit the ball at, `90 - Debug > debug HUD`, and `50 - Features > Sandbox mode` for repeatable ball spawns.
+4. Useful settings for testing: `90 - Debug > debug HUD` and `70 - Ranked > ranked debug HUD`. The ranked code has no bot or sandbox: test with a second player.
 
 ## OverPy quick reference
 
@@ -99,8 +99,8 @@ The full language reference is in the [OverPy README](https://github.com/Zezomby
 
 ### Macros and enums
 
-- `#!define NAME value` is a macro: OverPy pastes `value` wherever `NAME` appears, before compiling. It costs nothing at runtime, but each use compiles to its own copy of the code. `MANUAL` and `BALL_FEEL_DEFAULTS` in `src/config/constants.opy` are examples.
-- `enum` gives names to numbers: the first entry is 0, the next 1, and so on. `Preset.CUSTOM` compiles to the same number as before, so swapping a magic number for an enum doesn't change the compiled code. Enums index the packed arrays: `ballFeel[BallFeel.HIT_RADIUS]`.
+- `#!define NAME value` is a macro: OverPy pastes `value` wherever `NAME` appears, before compiling. It costs nothing at runtime, but each use compiles to its own copy of the code. `BALL_FEEL_DEFAULTS` and `ISLAND_CENTER` in `src/config/constants.opy` are examples.
+- `enum` gives names to numbers: the first entry is 0, the next 1, and so on. `Preset.TOURNAMENT` compiles to the same number as before, so swapping a magic number for an enum doesn't change the compiled code. Enums index the packed arrays: `ballFeel[BallFeel.HIT_RADIUS]`.
 - **A macro is the wrong tool when the copies matter.** A Workshop setting is the classic case: every copy of `createWorkshopSetting*` is a separate reference, and each setting may only be referenced once (see [When you add a setting](architecture.md#settings-and-presets)). A long macro used in many places also costs elements each time.
 
 ### Chased variables
