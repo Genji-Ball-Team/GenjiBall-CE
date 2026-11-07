@@ -20,6 +20,8 @@ globalvar roundsUntilBreakInit 14
 globalvar breaksEnabled 15
 globalvar roundTimings 16
 globalvar presetMode 17
+#1v1: the running set (OneVOneField)
+globalvar oneVOneState 18
 globalvar duelQueue 19
 globalvar ballPosition 20
 globalvar ballDirection 21
@@ -101,6 +103,8 @@ playervar botState 28
 playervar botTuning 29
 playervar botShots 30
 playervar botLoop 31
+#1v1: round wins in the current set
+playervar setPoints 32
 
 #Subroutine names
 
@@ -130,6 +134,8 @@ subroutine botAimShot 25
 subroutine botAimError 26
 subroutine botDash 27
 subroutine botMixParts 28
+subroutine oneVOneServe 29
+subroutine oneVOneRoundEnd 30
 
 #Activated extensions. Every one is used; OverPy refuses to compile when they cost more points than the Workshop has.
 

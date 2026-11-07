@@ -89,6 +89,7 @@ variables {
         15: breaksEnabled
         16: roundTimings
         17: presetMode
+        18: oneVOneState
         19: duelQueue
         20: ballPosition
         21: ballDirection
@@ -166,6 +167,7 @@ variables {
         29: botTuning
         30: botShots
         31: botLoop
+        32: setPoints
 }
 
 subroutines {
@@ -195,6 +197,8 @@ subroutines {
     26: botAimError
     27: botDash
     28: botMixParts
+    29: oneVOneServe
+    30: oneVOneRoundEnd
 }
 
 //Strict optimizations enabled
@@ -248,7 +252,7 @@ rule ("Settings - Workshop settings") {
         "One entry per CompetitiveSetting field (config/constants.opy), in that order."
         Set Global Variable(competitiveSettings, Array(Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("AntiOrbit speed"), 80, 10, 400, 3), Workshop Setting Real(Custom String("60 - Competitive"), Custom String("AntiOrbit timer"), 7.5, 1, 30, 4), Workshop Setting Real(Custom String("60 - Competitive"), Custom String("AntiOrbit min timer"), 5.5, 1, 30, 5), Workshop Setting Real(Custom String("60 - Competitive"), Custom String("AntiOrbit sleep"), 5, 0, 10, 6), Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("basic anti-orbit radius"), 20, 5, 40, 7), Workshop Setting Integer(Custom String("60 - Competitive"), Custom String("basic anti-orbit speed"), 80, 10, 400, 8), Workshop Setting Real(Custom String("60 - Competitive"), Custom String("basic anti-orbit timer"), 7.5, 1, 30, 9)));
         "Add-ons no preset forces, in one array.\nOne entry per AddOnSetting field (config/constants.opy), in that order.\nEach setting may only be read once, so read them here and nowhere else."
-        Set Global Variable(addOnSettings, Array(Workshop Setting Toggle(Custom String("30 - Player"), Custom String("double sens"), False, 7), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("x-ray"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("tracing mode"), False, 1), Workshop Setting Toggle(Custom String("90 - Debug"), Custom String("debug HUD"), False, 0), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("duels"), False, 2), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("endless mode"), False, 3), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("Sandbox mode"), False, 4), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("kill tracker"), False, 3), Workshop Setting Integer(Custom String("30 - Player"), Custom String("double sens %"), 275, 100, 500, 8), Workshop Setting Integer(Custom String("80 - Visual"), Custom String("tracing view angle"), 45, 5, 180, 2), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("red-green colorblind filter"), False, 4), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("watermark"), False, 5), Workshop Setting Toggle(Custom String("20 - Arena"), Custom String("water ledge fix"), False, 8), Workshop Setting Toggle(Custom String("10 - Ball"), Custom String("network resync"), True, 12)));
+        Set Global Variable(addOnSettings, Array(Workshop Setting Toggle(Custom String("30 - Player"), Custom String("double sens"), False, 7), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("custom abilities"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("x-ray"), False, 0), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("tracing mode"), False, 1), Workshop Setting Toggle(Custom String("90 - Debug"), Custom String("debug HUD"), False, 0), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("duels"), False, 2), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("endless mode"), False, 3), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("Sandbox mode"), False, 4), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("kill tracker"), False, 3), Workshop Setting Integer(Custom String("30 - Player"), Custom String("double sens %"), 275, 100, 500, 8), Workshop Setting Integer(Custom String("80 - Visual"), Custom String("tracing view angle"), 45, 5, 180, 2), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("red-green colorblind filter"), False, 4), Workshop Setting Toggle(Custom String("80 - Visual"), Custom String("watermark"), False, 5), Workshop Setting Toggle(Custom String("20 - Arena"), Custom String("water ledge fix"), False, 8), Workshop Setting Toggle(Custom String("10 - Ball"), Custom String("network resync"), True, 12), Workshop Setting Toggle(Custom String("50 - Features"), Custom String("1v1"), False, 12), Workshop Setting Integer(Custom String("50 - Features"), Custom String("1v1 first to"), 15, 1, 50, 13), Workshop Setting Integer(Custom String("50 - Features"), Custom String("1v1 point countdown"), 2, 1, 10, 14), Workshop Setting Integer(Custom String("50 - Features"), Custom String("1v1 point pause"), 1, 0, 10, 15), Workshop Setting Integer(Custom String("50 - Features"), Custom String("1v1 match length"), 0, 0, 60, 16)));
         "v7: v7-style preset shell. Deeper v7 parity remains deferred.\nExperimental: curated rebound-physics test ruleset, not tournament-safe yet.\nThe bot setting stays manual so Bot + Experimental can be tested together."
         If(Compare(Global.presetMode, !=, 7));
             Set Global Variable(presetRow, Value In Array(Array(Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, False, 0, False, 0, -1, -1, -1, -1, 5, 2, 2, -1, -1, -1, -1, -1, -1, -1, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, False, 0, False, 0, 0, False, -1, -1, 5, 2, 2, 80, 7.5, 5.5, 5, 20, 80, 7.5, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, True, 30, True, 10, 60, 60, 400, 0.25, 0, 0, False, 0, False, 0, 2, True, 14, 0.02, 5, 2, 2, 80, 7.5, 5.5, 5, 20, 80, 7.5, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 1, 0, False, 3, True, 1, -1, -1, -1, -1, 5, 2, 2, -1, -1, -1, -1, -1, -1, -1, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, False, 1, False, 0, -1, -1, -1, -1, 5, 2, 2, -1, -1, -1, -1, -1, -1, -1, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 0, False, 3, True, 2, -1, -1, -1, -1, 5, 2, 2, -1, -1, -1, -1, -1, -1, -1, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3), Array(900, False, 30, True, 10, 60, 60, 400, 0.25, 0, 2, False, 0, False, 0, 0, True, 14, 0.02, 5, 2, 2, 80, 7.5, 5.5, 5, 20, 80, 7.5, 3.04, 1, 0.6, 3.5, 0, 30, 12, 2.75, 3)), Global.presetMode));
@@ -313,8 +317,20 @@ rule ("Settings - Workshop settings") {
         Else If(Compare(Global.waterLevel, ==, 3));
             Set Global Variable(waterLevel, -0.5);
         End;
-        "Tournament presets and duels play without a bot (duels can't queue or skip one)"
-        If(Or(Or(Compare(Global.presetMode, ==, 1), Compare(Global.presetMode, ==, 2)), Value In Array(Global.addOnSettings, 5)));
+        "Tournament mode, endless mode and Sandbox mode turn 1v1 off"
+        If(Or(Or(Global.tournamentMode, Value In Array(Global.addOnSettings, 6)), Value In Array(Global.addOnSettings, 7)));
+            Set Global Variable At Index(addOnSettings, 15, False);
+        End;
+        "Duels and 1v1 both queue the players who wait. With both on, 1v1 plays (the duel-only rules check 1v1 is off)."
+        Set Global Variable At Index(addOnSettings, 20, Or(Value In Array(Global.addOnSettings, 5), Value In Array(Global.addOnSettings, 15)));
+        If(Value In Array(Global.addOnSettings, 15));
+            "0 = no timer: \"1v1 - no timer\" pauses the match time \"match length\" starts"
+            If(Compare(Value In Array(Global.addOnSettings, 19), >, 0));
+                Set Global Variable(matchTime, Multiply(Value In Array(Global.addOnSettings, 19), 60));
+            End;
+        End;
+        "Tournament presets, duels and 1v1 play without a bot (the queue can't hold or skip one)"
+        If(Or(Or(Compare(Global.presetMode, ==, 1), Compare(Global.presetMode, ==, 2)), Value In Array(Global.addOnSettings, 20)));
             Set Global Variable At Index(botSettings, 0, 0);
     }
 }
@@ -425,6 +441,8 @@ rule ("Initialization - global variables") {
         "One entry per ExperimentalField (config/constants.opy). The incoming direction is set when the ball spawns."
         Set Global Variable(experimentalState, Array(999, Global.ballDirectionRate, Null, First Of(Global.experimentalTuning)));
         Set Global Variable(duelQueue, Empty Array);
+        "One entry per OneVOneField (config/constants.opy)"
+        Set Global Variable(oneVOneState, Array(Empty Array, Null, False, False));
         Set Global Variable(killLeaderboardSortedPlayers, Empty Array);
         "Sandbox spawn point, aim point and speed, plus the editor state (SandboxField in config/constants.opy)"
         Set Global Variable(sandboxState, Array(Global.ballPosition, Add(Global.ballPosition, Up), Global.ballSpeed, 1, 1, 1));
@@ -1226,6 +1244,9 @@ rule ("Subroutine - setup duel") {
         Call Subroutine(deleteBall);
         //lbl_0:
         Call Subroutine(randomTarget);
+        If(Value In Array(Global.addOnSettings, 15));
+            Call Subroutine(oneVOneServe);
+        End;
         Stop Chasing Global Variable(ballSpawnCountdown);
         If(Compare(Value In Array(Global.addOnSettings, 7), ==, True));
             Wait Until(And(Is Button Held(Host Player, Button(Ultimate)), Is Button Held(Host Player, Button(Reload))), 99999);
@@ -1241,7 +1262,8 @@ rule ("Subroutine - setup duel") {
             Start Forcing Player Position(First Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved)), Add(Global.circleCenter, Multiply(Right, Divide(Global.SphereSize, 1.5))), False);
             Start Forcing Player Position(Value In Array(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved), 1), Add(Global.circleCenter, Multiply(Left, Divide(Global.SphereSize, 1.5))), False);
         End;
-        Set Status(All Living Players(All Teams), Null, Rooted, 1.5);
+        "1v1 shortens the freeze along with a shorter ball countdown. Duels and the final duel keep DUEL_FREEZE."
+        Set Status(All Living Players(All Teams), Null, Rooted, If-Then-Else(Value In Array(Global.addOnSettings, 15), Divide(Multiply(1.5, Min(Global.ballSpawnCountdown, 2)), 2), 1.5));
         Wait(0, Ignore Condition);
         Set Facing(First Of(All Living Players(All Teams)), Direction Towards(Position Of(First Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved))), Global.circleCenter), To World);
         Set Facing(Value In Array(All Living Players(All Teams), 1), Direction Towards(Position Of(Value In Array(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved), 1)), Global.circleCenter), To World);
@@ -1261,7 +1283,7 @@ rule ("Active game - final duel") {
         Count Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved)) == 2;
         Global.IsEnoughPlayersToStart == True;
         Global.IsInFinalDuel == False;
-        Value In Array(Global.addOnSettings, 5) == False;
+        Value In Array(Global.addOnSettings, 20) == False;
         Value In Array(Global.addOnSettings, 6) == False;
         Current Game Mode == Game Mode(Deathmatch);
     }
@@ -1280,7 +1302,7 @@ rule ("Active game - check for last player surviving") {
         Is Game In Progress == True;
         Number Of Living Players(All Teams) == 1;
         Global.IsEnoughPlayersToStart == True;
-        Value In Array(Global.addOnSettings, 5) == False;
+        Value In Array(Global.addOnSettings, 20) == False;
     }
     actions {
         Set Global Variable(IsInFinalDuel, False);
@@ -1307,7 +1329,7 @@ rule ("Active game - check for last player surviving") {
         Stop Chasing Player Variable(All Players(All Teams), bouncePadCooldown);
         Big Message(All Players(All Teams), Custom String("{0} has won the round", First Of(All Living Players(All Teams))));
         Wait(Value In Array(Global.roundTimings, 1), Ignore Condition);
-        Skip If(Value In Array(Global.addOnSettings, 5), 8);
+        Skip If(Value In Array(Global.addOnSettings, 20), 8);
         If(Not(Global.TieBreakerActive));
             Resurrect(All Dead Players(All Teams));
         Else;
@@ -1331,7 +1353,7 @@ rule ("Active game - all players dead") {
         Number Of Living Players(All Teams) == 0;
         Is Game In Progress == True;
         Global.TieBreakerActive == False;
-        Value In Array(Global.addOnSettings, 5) == False;
+        Value In Array(Global.addOnSettings, 20) == False;
     }
     actions {
         Set Global Variable(IsInFinalDuel, False);
@@ -1407,6 +1429,7 @@ rule ("Duels - Global HUD") {
     }
     conditions {
         Value In Array(Global.addOnSettings, 5) == True;
+        Value In Array(Global.addOnSettings, 15) == False;
     }
     actions {
         Create HUD Text(All Players(All Teams), Null, Null, Custom String("current duel: {0} vs. {1}", First Of(All Living Players(All Teams)), Value In Array(All Living Players(All Teams), 1)), Top, -1, Null, Null, Color(Purple), Visible To and String, Default Visibility);
@@ -1421,6 +1444,7 @@ rule ("Duels - Queue HUD") {
     }
     conditions {
         Value In Array(Global.addOnSettings, 5) == True;
+        Value In Array(Global.addOnSettings, 15) == False;
     }
     actions {
         Create HUD Text(If-Then-Else(Is Dead(Event Player), Event Player, Null), Null, Custom String("You fight in {0} rounds.", Add(Index Of Array Value(Global.duelQueue, Event Player), 1)), Null, Top, -1, Null, Color(Purple), Null, Visible To and String, Default Visibility);
@@ -1432,7 +1456,7 @@ rule ("Duels - kill players when more than two alive") {
         Ongoing - Global;
     }
     conditions {
-        Value In Array(Global.addOnSettings, 5) == True;
+        Value In Array(Global.addOnSettings, 20) == True;
         Is Game In Progress == False;
         "Nothing starts a duel on an unsupported map, so don't kill anyone for one"
         Value In Array(Global.mapRow, 1) != 0;
@@ -1450,7 +1474,7 @@ rule ("Duels - start game") {
         Ongoing - Global;
     }
     conditions {
-        Value In Array(Global.addOnSettings, 5) == True;
+        Value In Array(Global.addOnSettings, 20) == True;
         Is Game In Progress == True;
         "No duel on an unsupported map, like no round (Wait for more players)"
         Value In Array(Global.mapRow, 1) != 0;
@@ -1469,6 +1493,7 @@ rule ("Duels - not enough players alive") {
     }
     conditions {
         Value In Array(Global.addOnSettings, 5) == True;
+        Value In Array(Global.addOnSettings, 15) == False;
         Is Game In Progress == True;
         Number Of Living Players(All Teams) < 2;
         Count Of(Global.duelQueue) > 0;
@@ -1494,7 +1519,7 @@ rule ("Duels - queue dead player") {
         All;
     }
     conditions {
-        Value In Array(Global.addOnSettings, 5) == True;
+        Value In Array(Global.addOnSettings, 20) == True;
     }
     actions {
         Modify Global Variable(duelQueue, Append To Array, Event Player);
@@ -1509,7 +1534,7 @@ rule ("Duels - remove living player from queue") {
     }
     conditions {
         Is Alive(Event Player) == True;
-        Value In Array(Global.addOnSettings, 5) == True;
+        Value In Array(Global.addOnSettings, 20) == True;
     }
     actions {
         Modify Global Variable(duelQueue, Remove From Array By Value, Event Player);
@@ -1523,10 +1548,171 @@ rule ("Duels - remove leaving player from queue") {
         All;
     }
     conditions {
-        Value In Array(Global.addOnSettings, 5) == True;
+        Value In Array(Global.addOnSettings, 20) == True;
     }
     actions {
         Modify Global Variable(duelQueue, Remove From Array By Value, Event Player);
+    }
+}
+
+rule ("1v1 - queue HUD") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Value In Array(Global.addOnSettings, 15) == True;
+    }
+    actions {
+        "A player who just lost a point is queued until the next point, but isn't waiting"
+        Create HUD Text(If-Then-Else(And(Is Dead(Event Player), Not(Array Contains(First Of(Global.oneVOneState), Event Player))), Event Player, Null), Null, Custom String("You fight in {0} sets.", Add(Index Of Array Value(Global.duelQueue, Event Player), 1)), Null, Top, -1, Null, Color(Purple), Null, Visible To and String, Default Visibility);
+    }
+}
+
+rule ("1v1 - round end") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Value In Array(Global.addOnSettings, 15) == True;
+        Is Game In Progress == True;
+        Number Of Living Players(All Teams) < 2;
+        Count Of(Global.duelQueue) > 0;
+    }
+    actions {
+        Call Subroutine(deleteBall);
+        Stop Chasing Global Variable(ballSpawnCountdown);
+        Call Subroutine(oneVOneRoundEnd);
+        Wait(0.5, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("1v1 - serve") {
+    event {
+        Subroutine;
+        oneVOneServe;
+    }
+    actions {
+        "Not the two players of the running set: a new set starts, and randomTarget's pick serves first"
+        If(Compare(Count Of(Filtered Array(All Living Players(All Teams), And((Current Array Element).hasMoved, Array Contains(First Of(Global.oneVOneState), Current Array Element)))), <, 2));
+            Set Global Variable At Index(oneVOneState, 0, Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved));
+            Set Player Variable(All Players(All Teams), setPoints, 0);
+        Else If(Array Contains(All Living Players(All Teams), Value In Array(Global.oneVOneState, 1)));
+            Set Global Variable(target, Value In Array(Global.oneVOneState, 1));
+        End;
+        "The other player serves next point"
+        Set Global Variable At Index(oneVOneState, 1, First Of(Remove From Array(First Of(Global.oneVOneState), Global.target)));
+    }
+}
+
+rule ("1v1 - round end") {
+    event {
+        Subroutine;
+        oneVOneRoundEnd;
+    }
+    actions {
+        Abort If(Value In Array(Global.oneVOneState, 3));
+        "The survivor is a player of the set: the other one died (a point) or left (the set)"
+        If(Array Contains(First Of(Global.oneVOneState), First Of(All Living Players(All Teams))));
+            If(Compare(Count Of(Filtered Array(First Of(Global.oneVOneState), Array Contains(All Players(All Teams), Current Array Element))), ==, 2));
+                Modify Player Variable(First Of(All Living Players(All Teams)), setPoints, Add, 1);
+                If(Compare((First Of(All Living Players(All Teams))).setPoints, <, Value In Array(Global.addOnSettings, 16)));
+                    Big Message(All Players(All Teams), Custom String("{0} {1} - {2}", First Of(First Of(Global.oneVOneState)), (First Of(First Of(Global.oneVOneState))).setPoints, Custom String("{0} {1}", (Value In Array(First Of(Global.oneVOneState), 1)).setPoints, Value In Array(First Of(Global.oneVOneState), 1))));
+                    Wait(Value In Array(Global.addOnSettings, 18), Ignore Condition);
+                    "Next point: the loser comes back (\"Duels - start game\" sets it up)"
+                    Set Global Variable(ballSpawnCountdown, Value In Array(Global.addOnSettings, 17));
+                    Resurrect(Filtered Array(First Of(Global.oneVOneState), Is Dead(Current Array Element)));
+                    Abort;
+                End;
+            End;
+            Modify Player Score(First Of(All Living Players(All Teams)), 1);
+            Big Message(All Players(All Teams), Custom String("{0} wins the set, congrats!", First Of(All Living Players(All Teams))));
+            Wait(Value In Array(Global.roundTimings, 1), Ignore Condition);
+        End;
+        "Next set: the loser stays in the queue, the queue head comes in. The countdown is \"ball respawn delay\" (deleteBall), as in duels."
+        Set Global Variable At Index(oneVOneState, 0, Empty Array);
+        Set Global Variable At Index(oneVOneState, 1, Null);
+        If(Value In Array(Global.oneVOneState, 2));
+            Set Global Variable(HighestScore, Score Of(Last Of(Sorted Array(All Players(All Teams), Score Of(Current Array Element)))));
+            If(Compare(Count Of(Filtered Array(All Players(All Teams), Compare(Score Of(Current Array Element), ==, Global.HighestScore))), ==, 1));
+                Set Global Variable At Index(oneVOneState, 3, True);
+                Enable Built-In Game Mode Music;
+                Enable Built-In Game Mode Completion;
+                Abort;
+            End;
+            "Tied on sets won: a tiebreaker set between tied players only"
+            Big Message(All Players(All Teams), Custom String("tiebreaker set!"));
+            Kill(Filtered Array(All Living Players(All Teams), Compare(Score Of(Current Array Element), !=, Global.HighestScore)), Null);
+            Wait(0.25, Ignore Condition);
+            Resurrect(Array Slice(Filtered Array(Global.duelQueue, Compare(Score Of(Current Array Element), ==, Global.HighestScore)), 0, Subtract(2, Number Of Living Players(All Teams))));
+            Abort;
+        End;
+        Resurrect(First Of(Global.duelQueue));
+    }
+}
+
+rule ("1v1 - player left") {
+    event {
+        Player Left Match;
+        All;
+        All;
+    }
+    conditions {
+        Value In Array(Global.addOnSettings, 15) == True;
+        "With players waiting, \"1v1 - round end\" ends the set"
+        Count Of(Global.duelQueue) == 0;
+    }
+    actions {
+        Call Subroutine(deleteBall);
+        Stop Chasing Global Variable(ballSpawnCountdown);
+        Call Subroutine(oneVOneRoundEnd);
+    }
+}
+
+rule ("1v1 - set HUD") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Value In Array(Global.addOnSettings, 15) == True;
+    }
+    actions {
+        Create HUD Text(If-Then-Else(Compare(Count Of(First Of(Global.oneVOneState)), ==, 2), All Players(All Teams), Null), Null, Null, Custom String("{0} {1} - {2}", First Of(First Of(Global.oneVOneState)), (First Of(First Of(Global.oneVOneState))).setPoints, Custom String("{0} {1} | first to {2}", (Value In Array(First Of(Global.oneVOneState), 1)).setPoints, Value In Array(First Of(Global.oneVOneState), 1), Value In Array(Global.addOnSettings, 16))), Top, -1, Null, Null, Color(Purple), Visible To and String, Default Visibility);
+        Create HUD Text(If-Then-Else(Compare(Count Of(Filtered Array(Global.duelQueue, Not(Array Contains(First Of(Global.oneVOneState), Current Array Element)))), >, 0), All Players(All Teams), Null), Null, Null, Custom String("next: {0}", First Of(Filtered Array(Global.duelQueue, Not(Array Contains(First Of(Global.oneVOneState), Current Array Element))))), Top, -0.5, Null, Null, Color(Purple), Visible To and String, Default Visibility);
+    }
+}
+
+rule ("1v1 - no timer") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Value In Array(Global.addOnSettings, 15) == True;
+        Value In Array(Global.addOnSettings, 19) == 0;
+        Is Game In Progress == True;
+    }
+    actions {
+        "After \"Initialization - Match length\" sets the match time"
+        Wait(0.25, Ignore Condition);
+        Pause Match Time;
+    }
+}
+
+rule ("1v1 - time up") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Value In Array(Global.addOnSettings, 15) == True;
+        Value In Array(Global.addOnSettings, 19) > 0;
+        Is Game In Progress == True;
+        Match Time == 0;
+    }
+    actions {
+        Set Global Variable At Index(oneVOneState, 2, True);
+        Big Message(All Players(All Teams), Custom String("time's up: last set"));
     }
 }
 

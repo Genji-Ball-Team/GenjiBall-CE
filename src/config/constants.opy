@@ -380,6 +380,23 @@ enum AddOnSetting:
     WATERMARK       #"80 - Visual > watermark", the original-author credit
     WATER_LEDGE_FIX #"20 - Arena > water ledge fix", limits the under-ledge push to near the island
     NETWORK_RESYNC  #"10 - Ball > network resync", resends the ball's direction 20 times a second (on by default)
+    ONE_V_ONE       #"50 - Features > 1v1", sets of first to ONE_V_ONE_FIRST_TO round wins, the winner stays (features/one-v-one.opy)
+    ONE_V_ONE_FIRST_TO  #"50 - Features > 1v1 first to", round wins that take a set
+    ONE_V_ONE_COUNTDOWN #"50 - Features > 1v1 point countdown", ball countdown between points of a set
+    ONE_V_ONE_PAUSE     #"50 - Features > 1v1 point pause", pause after a point that doesn't end the set
+    ONE_V_ONE_MATCH_LENGTH  #"50 - Features > 1v1 match length", minutes; 0 = no timer
+    QUEUE_MODE      #Not a setting: duels or 1v1 is on, so players wait dead in duelQueue and the FFA round rules are off. Set in "Settings - Workshop settings"
+
+#Fields of oneVOneState, the running 1v1 set (features/one-v-one.opy)
+enum OneVOneField:
+    PLAYERS         #the two players of the set, [] between sets
+    SERVE           #the player the ball goes to first next point, null = random (first point of a set)
+    TIME_UP         #true once the 1v1 match length ran out: the set is finished, then the match ends
+    OVER            #true once a time up ended the match: no more sets
+
+#1v1: the duel freeze (ROOTED in setupFinal) is DUEL_FREEZE at a DUEL_FREEZE_COUNTDOWN s ball countdown or more (duels count down "ball respawn delay", 2 s), and shrinks with a shorter one
+#!define DUEL_FREEZE 1.5
+#!define DUEL_FREEZE_COUNTDOWN 2
 
 #antiGhostMode ("10 - Ball > anti-ghost correction")
 enum AntiGhost:

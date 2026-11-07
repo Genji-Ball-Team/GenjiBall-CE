@@ -122,7 +122,12 @@ rule "Settings - Workshop settings":
         createWorkshopSettingBool("80 - Visual", "red-green colorblind filter", false, 4),
         createWorkshopSettingBool("80 - Visual", "watermark", false, 5),
         createWorkshopSettingBool("20 - Arena", "water ledge fix", false, 8),
-        createWorkshopSettingBool("10 - Ball", "network resync", true, 12)
+        createWorkshopSettingBool("10 - Ball", "network resync", true, 12),
+        createWorkshopSettingBool("50 - Features", "1v1", false, 12),
+        createWorkshopSettingInt("50 - Features", "1v1 first to", 15, 1, 50, 13),
+        createWorkshopSettingInt("50 - Features", "1v1 point countdown", 2, 1, 10, 14),
+        createWorkshopSettingInt("50 - Features", "1v1 point pause", 1, 0, 10, 15),
+        createWorkshopSettingInt("50 - Features", "1v1 match length", 0, 0, 60, 16)
     ]
     #Presets: one row per preset, in Preset order, one column per forced setting
     #(PresetColumn in config/constants.opy). MANUAL keeps the host's value.
@@ -198,6 +203,15 @@ rule "Settings - Workshop settings":
         waterLevel = -26
     elif waterLevel == Water.FLOOD:
         waterLevel = -0.5
-    #Tournament presets and duels play without a bot (duels can't queue or skip one)
-    if presetMode == Preset.TOURNAMENT or presetMode == Preset.TOURNAMENT_PLUS or addOnSettings[AddOnSetting.DUELS]:
+    #Tournament mode, endless mode and Sandbox mode turn 1v1 off
+    if tournamentMode or addOnSettings[AddOnSetting.ENDLESS] or addOnSettings[AddOnSetting.SANDBOX]:
+        addOnSettings[AddOnSetting.ONE_V_ONE] = false
+    #Duels and 1v1 both queue the players who wait. With both on, 1v1 plays (the duel-only rules check 1v1 is off).
+    addOnSettings[AddOnSetting.QUEUE_MODE] = addOnSettings[AddOnSetting.DUELS] or addOnSettings[AddOnSetting.ONE_V_ONE]
+    if addOnSettings[AddOnSetting.ONE_V_ONE]:
+        #0 = no timer: "1v1 - no timer" pauses the match time "match length" starts
+        if addOnSettings[AddOnSetting.ONE_V_ONE_MATCH_LENGTH] > 0:
+            matchTime = addOnSettings[AddOnSetting.ONE_V_ONE_MATCH_LENGTH] * 60
+    #Tournament presets, duels and 1v1 play without a bot (the queue can't hold or skip one)
+    if presetMode == Preset.TOURNAMENT or presetMode == Preset.TOURNAMENT_PLUS or addOnSettings[AddOnSetting.QUEUE_MODE]:
         botSettings[BotSetting.PRESET] = BotPreset.NONE
