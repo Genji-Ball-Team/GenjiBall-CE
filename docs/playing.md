@@ -79,6 +79,15 @@ Cooldowns reset when a round ends and when the final duel starts.
 
 Only two players fight at a time. Everyone else waits in a queue, in the order they died, and the winner stays on. The top of the screen shows the current duel, and dead players see how many rounds until their turn.
 
+### 1v1
+
+Duels in sets (the "1v1" setting). Every round you win is a point, and the first to 15 ("1v1 first to") takes the set and stays on. The loser goes to the end of the queue and the next player comes in at 0–0. Leaving mid-set loses it.
+
+- The ball goes to each player in turn, point by point. The first point of a set goes to a random player.
+- Between points, both players go back to their sides, with a shorter countdown ("1v1 point countdown") and freeze than at the start of a set.
+- The top of the screen shows the set score and who's next. The scoreboard counts sets won.
+- With a "1v1 match length", the set that's running when time runs out is finished, and the most sets won wins. Players tied on sets won play a tiebreaker set.
+
 ### Endless mode
 
 When someone dies, the ball keeps flying and goes after the player it's heading toward. The final-duel setup is skipped.

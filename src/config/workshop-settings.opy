@@ -122,7 +122,12 @@ rule "Settings - Workshop settings":
         createWorkshopSettingBool("80 - Visual", "red-green colorblind filter", false, 4),
         createWorkshopSettingBool("80 - Visual", "watermark", false, 5),
         createWorkshopSettingBool("20 - Arena", "water ledge fix", false, 8),
-        createWorkshopSettingBool("10 - Ball", "network resync", true, 12)
+        createWorkshopSettingBool("10 - Ball", "network resync", true, 12),
+        createWorkshopSettingBool("50 - Features", "1v1", false, 12),
+        createWorkshopSettingInt("50 - Features", "1v1 first to", 15, 1, 50, 13),
+        createWorkshopSettingInt("50 - Features", "1v1 point countdown", 3, 1, 10, 14),
+        createWorkshopSettingInt("50 - Features", "1v1 point pause", 1, 0, 10, 15),
+        createWorkshopSettingInt("50 - Features", "1v1 match length", 0, 0, 60, 16)
     ]
     #Presets: one row per preset, in Preset order, one column per forced setting
     #(PresetColumn in config/constants.opy). MANUAL keeps the host's value.
@@ -198,6 +203,14 @@ rule "Settings - Workshop settings":
         waterLevel = -26
     elif waterLevel == Water.FLOOD:
         waterLevel = -0.5
+    #1v1 runs on duels. Tournament mode, endless mode and Sandbox mode turn it off.
+    if tournamentMode or addOnSettings[AddOnSetting.ENDLESS] or addOnSettings[AddOnSetting.SANDBOX]:
+        addOnSettings[AddOnSetting.ONE_V_ONE] = false
+    if addOnSettings[AddOnSetting.ONE_V_ONE]:
+        addOnSettings[AddOnSetting.DUELS] = true
+        #0 = no timer: "1v1 - no timer" pauses the match time "match length" starts
+        if addOnSettings[AddOnSetting.ONE_V_ONE_MATCH_LENGTH] > 0:
+            matchTime = addOnSettings[AddOnSetting.ONE_V_ONE_MATCH_LENGTH] * 60
     #Tournament presets and duels play without a bot (duels can't queue or skip one)
     if presetMode == Preset.TOURNAMENT or presetMode == Preset.TOURNAMENT_PLUS or addOnSettings[AddOnSetting.DUELS]:
         botSettings[BotSetting.PRESET] = BotPreset.NONE

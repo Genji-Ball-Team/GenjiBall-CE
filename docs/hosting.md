@@ -167,6 +167,11 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 | My bot movement | zBozo | zBozo / lucybuss / azertybuss / firebuss / stand still | Whose walking and jumping it uses. Stand still doesn't walk or jump |
 | My bot after shot | none | none / zBozo / lucybuss / azertybuss / firebuss | Whose dashes and other moves around its shots it uses: edash, ghost dash, safe dash, dash away, ace dash, dash guard, brad shot, punish |
 | My bot deflect | perfect | perfect / zBozo / lucybuss / firebuss | Whose misses it has: never (perfect), dies at the speed cap (zBozo), 30 % from speed 110 (lucybuss), or firebuss's early deflect |
+| 1v1 | off | | Duels in sets: first to "1v1 first to" round wins, and the winner stays on. Turns duels on. Off with tournament mode, endless mode or Sandbox mode. See [playing.md](playing.md#1v1) |
+| 1v1 first to | 15 | 1–50 | Round wins that take a set |
+| 1v1 point countdown | 3 | 1–10 s | Ball countdown between the points of a set. A new set uses "ball spawn countdown". The freeze at the start of a point shrinks with it (0.9 s at 3 s) |
+| 1v1 point pause | 1 | 0–10 s | Pause after a point. A set win uses "round win pause" |
+| 1v1 match length | 0 | 0–60 min | **0**: no timer, sets go on until the lobby ends. Otherwise replaces "match length": when time runs out, the current set is finished and the most sets won wins. A tie gets a tiebreaker set |
 
 ### 60 - Competitive
 

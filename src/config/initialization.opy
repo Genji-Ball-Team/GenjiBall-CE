@@ -67,6 +67,8 @@ rule "Initialization - global variables":
     #One entry per ExperimentalField (config/constants.opy). The incoming direction is set when the ball spawns.
     experimentalState = [999, ballDirectionRate, null, experimentalTuning[ExperimentalTuning.REBOUND_MIN]]
     duelQueue = []
+    #One entry per OneVOneField (config/constants.opy)
+    oneVOneState = [[], null, false, false]
     killLeaderboardSortedPlayers = []
     #Sandbox spawn point, aim point and speed, plus the editor state (SandboxField in config/constants.opy)
     sandboxState = [ballPosition, ballPosition + Vector.UP, ballSpeed, 1, 1, 1]
