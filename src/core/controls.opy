@@ -62,11 +62,6 @@ rule "Controls - Shorten deflect length":
     @Condition eventPlayer.isUsingUltimate() == false
     
     wait(ballFeel[BallFeel.DEFLECT_WINDOW])
-    if eventPlayer.isDummy():
-        if botState[BotField.WILL_EDASH] == true or botState[BotField.WILL_GHOST_DASH] == true:
-            eventPlayer.forceButtonPress(Button.ABILITY_1)
-            botState[BotField.WILL_GHOST_DASH] = false
-            botState[BotField.WILL_EDASH] = false
     eventPlayer.setAbility2Enabled(false)
     eventPlayer.setAbility1Enabled(false)
     eventPlayer.canDeflect = false
@@ -181,7 +176,6 @@ rule "Controls - toggle anti rubberbanding (melee)":
 rule "Controls - double sens toggle":
     @Event eachPlayer
     @Condition addOnSettings[AddOnSetting.DOUBLE_SENS] == true
-    @Condition addOnSettings[AddOnSetting.ABILITIES] == false
     @Condition eventPlayer.isDummy() == false
     @Condition eventPlayer.isAlive() == true
     @Condition eventPlayer.isHoldingButton(Button.ULTIMATE) == true
@@ -201,7 +195,7 @@ rule "Controls - double sens toggle":
 rule "Controls - double sens reset when disabled":
     @Event eachPlayer
     @Condition eventPlayer.sensHigh == true
-    @Condition (addOnSettings[AddOnSetting.DOUBLE_SENS] == false or addOnSettings[AddOnSetting.ABILITIES] == true) == true
+    @Condition addOnSettings[AddOnSetting.DOUBLE_SENS] == false
     
     eventPlayer.sensHigh = false
     eventPlayer.setAimSpeed(100)
@@ -211,7 +205,6 @@ rule "Controls - Simple HUD (Interact)":
     @Event eachPlayer
     @Condition eventPlayer.isHoldingButton(Button.INTERACT) == true
     @Condition eventPlayer.isAlive() == true
-    @Condition addOnSettings[AddOnSetting.SANDBOX] == false
     
     if eventPlayer.simpleHUD == SimpleHud.ZEN:
         eventPlayer.simpleHUD = SimpleHud.OFF
@@ -243,16 +236,3 @@ rule "Controls - Simple HUD (Interact)":
             smallMessage(eventPlayer, "simple HUD: off")
     wait(0.1)
 
-
-rule "Controls - Bounce when near a pad":
-    @Event eachPlayer
-    @Condition len(bouncePads) > 0
-    @Condition any([distance(eventPlayer.getPosition(), pad) <= bouncePadConfig[BouncePadField.RANGE] for pad in bouncePads])
-    @Condition eventPlayer.bouncePadCooldown == 0
-    @Condition eventPlayer.isAlive() == true
-    @Condition eventPlayer.isHoldingButton(Button.JUMP) == true
-    @Condition bouncePadToggle == true
-    
-    eventPlayer.applyImpulse(Vector.UP, bouncePadConfig[BouncePadField.STRENGTH], Relativity.TO_WORLD, Impulse.CANCEL_CONTRARY_MOTION)
-    eventPlayer.bouncePadCooldown = bouncePadConfig[BouncePadField.COOLDOWN]
-    playEffect(getAllPlayers(), DynamicEffect.RING_EXPLOSION_SOUND, Color.WHITE, sorted(bouncePads, lambda pad: distance(eventPlayer.getPosition(), pad))[0], 25)

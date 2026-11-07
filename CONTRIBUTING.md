@@ -32,7 +32,7 @@ For editing, [VS Code](https://code.visualstudio.com/) with the **OverPy** exten
    ```
 2. **Edit the OverPy source** in `src/`. Don't edit `workshop/genjiball.txt` by hand, because it's regenerated on every build. The folders are `config/` (settings, presets, variables, named constants), `core/` (controls timing, round flow, collision, ball physics), `maps/`, `features/` and `ui/`. [docs/architecture.md](docs/architecture.md#source-layout) explains which file holds what.
 3. **Build:** `npm run build`
-4. **Test in-game.** Paste `workshop/genjiball.txt` into a custom game and try it. A second player, or the bot (`50 - Features > bot`), makes testing much easier.
+4. **Test in-game.** Paste `workshop/genjiball.txt` into a custom game and try it. A second player makes testing much easier (the ranked code has no bot).
 5. **Commit both** your `src/` changes and the rebuilt `workshop/genjiball.txt`.
 6. **Open a pull request** against `main` (GitHub's default) and fill in the template.
 

@@ -1,10 +1,10 @@
 # Genji Ball CE documentation
 
 **Players**
-- [How to play](playing.md): rules, controls, optional modes
+- [How to play](playing.md): rules, controls, tournament mode
 
 **Hosts**
-- [Hosting a game](hosting.md): importing the code, maps, every Workshop setting, presets, sandbox
+- [Hosting a game](hosting.md): importing the code, maps, every Workshop setting, presets
 - [Release notes](releases/): what changed in each version, for hosts and players
 
 **Contributors**

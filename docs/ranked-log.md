@@ -88,7 +88,7 @@ Which players are in a round:
 |---|---|---|
 | `GBR` | `format`, `gameVersion`, `matchKey`, `build` | First line of every match, before `MATCH_START`. `format` is the [format version](#versions) (`2`), `gameVersion` the release (`1.3.3R`). `matchKey` is 12 random digits picked at match start, the same in every [copy of the match](#one-match-in-several-files). Treat it as text, not a number. `build` is the [build id](#build-id) of the game code that wrote the log, 8 lower-case hex digits (`3fa9c07b`); treat it as text, as it can be all digits. Logs from before it was added have no `build`: the server stores none. |
 | `TOURNEY` | `lobbyKey`, `roundLimit` | Only in a [tourney match](#tourney-matches), as the line right after `GBR`. `lobbyKey` is the server's id for the tourney lobby, from the `TOURNEY - generated` rule: digits, treat it as text (it may start with `0`). `roundLimit` is the number of rounds the match lasts. A ranked match has no `TOURNEY` line. |
-| `MATCH_START` | `map`, `preset`, `feel`, `addOns` | Match start. `map` is our own code, not the map's name (which the Workshop translates): `workshop-island-night`, or `other`. `preset` is the Preset setting as named in `docs/hosting.md` (`Default`, …). `feel` is `1` if any ball or player feel toggle is on, else `0`: custom ball feel, water ledge fix, tracing mode, anti-ghost correction (not off) or AntiOrbit. `addOns` lists the gameplay add-ons that are on, comma-separated (`duels`, `endless`, `sandbox`, `abilities`), empty when none. |
+| `MATCH_START` | `map`, `preset`, `feel`, `addOns` | Match start. `map` is our own code, not the map's name (which the Workshop translates): `workshop-island-night`, or `other`. `preset` is the Preset setting as named in `docs/hosting.md` (`Default`, …). `feel` is `1` if any ball or player feel toggle is on, else `0`. `addOns` lists the gameplay add-ons that are on, comma-separated (`duels`, `endless`, `sandbox`, `abilities`), empty when none. The ranked code has had no feel toggles or add-ons since they were removed from `v1.3.3R`, so it always logs `0` and an empty `addOns`; older logs can have others. |
 | `JOIN` | `id`, `name`, `host` | A player joins a slot, or is already in one at `MATCH_START`. `host` is `1` for the lobby host, empty for everyone else. |
 | `LEAVE` | `id` | A player leaves the lobby or moves to spectator. |
 | `ROUND_START` | `round`, `ids` | A round starts. `ids` lists everyone in the round, comma-separated (`1,2,3,4,5`). |
@@ -127,7 +127,7 @@ With the rule on:
 - The match logs `TOURNEY` right after `GBR`, before `MATCH_START`, so every [copy of the match](#one-match-in-several-files) has it.
 - There's no match timer and no timed tiebreaker: the match lasts `roundLimit` rounds. Every `ROUND_START` counts toward the limit, restarts included: a round that ends `NONE` (everyone died) or `ABORT` uses up one of them. Everyone dying only happens when something is bugged, and then it's the host's call what to do.
 - After the `ROUND_END` of round `roundLimit`, the match ends with `MATCH_END` `ROUNDS`. A file that ends before it is an incomplete match, as for a ranked match.
-- The lobby plays the **Tournament** preset instead of Default (tournament mode on, its basic anti-orbit and water rule, no feel toggle). The rule's `roundLimit` replaces the "tournament rounds" setting.
+- The lobby plays the **Tournament** preset instead of Default (tournament mode on, with its basic anti-orbit and water rule). The rule's `roundLimit` replaces the "tournament rounds" setting.
 - Everything else is logged as in a ranked match, and the same [unranked](#unranked-matches) checks apply, with Tournament as the preset to have.
 
 **Final standings.** At the end of a tourney match the game shows a final standings panel to everyone (GenjiBall-CE#145), and the host takes the lobby's verify screenshot of it. It shows the tourney's name, the lobby's label and the `matchKey` from `GBR` (the same 12 digits), so an admin can match the screenshot to the log. Its numbers are the ones the server counts from the log:
@@ -151,9 +151,9 @@ The warning is at the top center of everyone's screen, "UNRANKED: this match won
 | `MAP` | The map isn't Workshop Island Night. |
 | `MODE` | The mode isn't free-for-all. |
 | `PRESET` | The Preset isn't `Default` in a ranked match, or isn't `Tournament` in a [tourney match](#tourney-matches). |
-| `FEEL` | A ball or player feel toggle is on. |
-| `ADD_ON` | A gameplay add-on is on: duels, endless, sandbox or custom abilities. |
-| `BOT` | A dummy bot (Zbozo) is in the match. Logged when it joins, or at `MATCH_START` if it's already there. |
+| `FEEL` | A ball or player feel toggle is on. Not logged since those toggles were removed, but older logs can have it. |
+| `ADD_ON` | A gameplay add-on is on: duels, endless, sandbox or custom abilities. Not logged since those add-ons were removed, but older logs can have it. |
+| `BOT` | A dummy bot is in the match. Logged when it joins, or at `MATCH_START` if it's already there. |
 
 With ranked logging turned off in the Workshop settings (`70 - Ranked > ranked logging`), the game logs nothing at all (so there's no logging cost), and the in-game warning ("ranked logging is off") is the only sign. The host tool ignores files without a `GBR` line.
 

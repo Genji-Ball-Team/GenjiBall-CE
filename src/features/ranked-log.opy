@@ -5,14 +5,6 @@
 #A player in rankedPlayers who isn't in a slot any more and has no LEAVE yet
 #!define rankedLeaver (rankedPlayers.filter(lambda player: player != -1 and player not in getAllPlayers())[0])
 
-#Any setting that changes how the ball or a player moves, controls or deflects (MATCH_START feel, UNRANKED FEEL)
-#!define RANKED_FEEL_ON (ballFeel[BallFeel.CUSTOM] or addOnSettings[AddOnSetting.WATER_LEDGE_FIX] or addOnSettings[AddOnSetting.TRACING_MODE] or antiGhostMode != AntiGhost.OFF or antiOrbitMode)
-
-#Adds an add-on's name to the comma-separated list in TEXT when its setting is on
-#!define appendRankedAddOn(setting, name) if addOnSettings[setting]:\
-    rankedState[RankedField.TEXT] = "{0}{1}{2}".format(rankedState[RankedField.TEXT], "," if rankedState[RankedField.TEXT] != "" else "", name)
-
-
 #Gives every spawned player without an id the next id, and logs their JOIN.
 #Called at MATCH_START for the players already there, then for each player who joins.
 #Only once spawned: an AI bot logged the moment it took a slot had no name yet ("Entity 84").
@@ -44,20 +36,11 @@ rule "Ranked log - MATCH_START":
     #Tourney: right after GBR, so every copy of the match has it. roundLimit is the one the match plays (totalRounds).
     if TOURNEY_ON:
         logToInspector("TOURNEY|{0}|{1}|{2}".format(getTotalTimeElapsed(), rankedState[RankedField.TOURNEY][TourneyField.LOBBY_KEY], totalRounds))
-    #feel (docs/ranked-log.md) and addOns, kept in COUNT and TEXT for UNRANKED FEEL and ADD_ON below.
-    #Both are free until the first ROUND_START.
-    rankedState[RankedField.COUNT] = 1 if RANKED_FEEL_ON else 0
-    #addOns: the gameplay add-ons that are on, comma-separated
-    rankedState[RankedField.TEXT] = "duels" if addOnSettings[AddOnSetting.DUELS] else ""
-    appendRankedAddOn(AddOnSetting.ENDLESS, "endless")
-    appendRankedAddOn(AddOnSetting.SANDBOX, "sandbox")
-    appendRankedAddOn(AddOnSetting.ABILITIES, "abilities")
-    logToInspector("MATCH_START|{0}|{1}|{2}|{3}|{4}".format(
+    #feel is always 0 and addOns always empty (docs/ranked-log.md): this build has no feel settings or gameplay add-ons
+    logToInspector("MATCH_START|{0}|{1}|{2}|0|".format(
         getTotalTimeElapsed(),
         "workshop-island-night" if __getCurrentMap__() == Map.WORKSHOP_ISLAND_NIGHT else "other",
-        PRESET_LOG_NAMES[presetMode],
-        rankedState[RankedField.COUNT],
-        rankedState[RankedField.TEXT]
+        PRESET_LOG_NAMES[presetMode]
     ))
     #UNRANKED: one line per reason, and the warning lists them (docs/ranked-log.md, "Unranked matches")
     rankedState[RankedField.UNRANKED] = []
@@ -72,17 +55,12 @@ rule "Ranked log - MATCH_START":
     if presetMode != (Preset.TOURNAMENT if TOURNEY_ON else Preset.DEFAULT):
         rankedState[RankedField.REASON] = UnrankedReason.PRESET
         logRankedUnranked()
-    if rankedState[RankedField.COUNT]:
-        rankedState[RankedField.REASON] = UnrankedReason.FEEL
-        logRankedUnranked()
-    if rankedState[RankedField.TEXT] != "":
-        rankedState[RankedField.REASON] = UnrankedReason.ADD_ON
-        logRankedUnranked()
     logRankedJoins()
     rankedState[RankedField.STARTED] = true
 
 
-#UNRANKED reasons in UnrankedReason order: the logged code, and the warning text
+#UNRANKED reasons in UnrankedReason order: the logged code, and the warning text.
+#FEEL and ADD_ON are never logged any more (no such settings), and stay so BOT keeps its index.
 #!define UNRANKED_CODES ["MAP", "MODE", "PRESET", "FEEL", "ADD_ON", "BOT"]
 #!define UNRANKED_TEXTS ["not on Workshop Island Night", "not free-for-all", "the preset isn't {0}".format("Tournament" if TOURNEY_ON else "Default"), "a ball or player feel setting is on", "a gameplay add-on is on", "a bot joined"]
 
@@ -97,7 +75,7 @@ def logRankedUnranked():
     rankedState[RankedField.UNRANKED].append(rankedState[RankedField.REASON])
 
 
-#Zbozo or any other dummy bot, as soon as it's in the match
+#Any dummy bot, as soon as it's in the match
 rule "Ranked log - UNRANKED BOT":
     @Event eachPlayer
     @Condition rankedState[RankedField.STARTED] == true
@@ -116,7 +94,7 @@ rule "Ranked log - unranked warning":
 
 
 #"70 - Ranked > ranked debug HUD": the ranked log's state for the host, to check logging works
-#without the Workshop Inspector open. Bottom of the left side, away from the kill tracker.
+#without the Workshop Inspector open. Bottom of the left side.
 rule "Ranked log - debug HUD":
     @Condition rankedState[RankedField.DEBUG_HUD] == true
 
@@ -227,8 +205,7 @@ rule "Ranked log - KILL":
 
 #A deflect. "Collision - collision sub" is feel-locked, so this rule watches prevTarget instead:
 #every deflect sets it to the deflector, who is never the one before (the next target excludes them),
-#and "Collision - delete ball sub" clears it when the ball goes. Only Endless and custom abilities
-#(unranked add-ons) can give the same deflector twice in a row, and then the second deflect isn't logged.
+#and "Collision - delete ball sub" clears it when the ball goes.
 #After core/collision, so in the deflect's tick ballSpeed and target are already the new ones.
 rule "Ranked log - DEFLECT":
     @Condition rankedState[RankedField.STARTED] == true
