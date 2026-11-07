@@ -169,7 +169,7 @@ The numbers behind how the ball flies, hits and deflects. Every default is the v
 | My bot deflect | perfect | perfect / zBozo / lucybuss / firebuss | Whose misses it has: never (perfect), dies at the speed cap (zBozo), 30 % from speed 110 (lucybuss), or firebuss's early deflect |
 | 1v1 | off | | Sets of first to "1v1 first to" round wins, and the winner stays on. With duels on too, 1v1 plays. Off with tournament mode, endless mode or Sandbox mode. See [playing.md](playing.md#1v1) |
 | 1v1 first to | 15 | 1–50 | Round wins that take a set |
-| 1v1 point countdown | 3 | 1–10 s | Ball countdown between the points of a set. A new set uses "ball spawn countdown". The freeze at the start of a point shrinks with it (0.9 s at 3 s) |
+| 1v1 point countdown | 2 | 1–10 s | Ball countdown between the points of a set. A new set uses "ball respawn delay", as duels do. Below 2 s the freeze at the start of a point shrinks with it (0.75 s at 1 s) |
 | 1v1 point pause | 1 | 0–10 s | Pause after a point. A set win uses "round win pause" |
 | 1v1 match length | 0 | 0–60 min | **0**: no timer, sets go on until the lobby ends. Otherwise replaces "match length": when time runs out, the current set is finished and the most sets won wins. A tie gets a tiebreaker set |
 

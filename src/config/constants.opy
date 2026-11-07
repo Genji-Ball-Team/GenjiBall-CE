@@ -394,9 +394,9 @@ enum OneVOneField:
     TIME_UP         #true once the 1v1 match length ran out: the set is finished, then the match ends
     OVER            #true once a time up ended the match: no more sets
 
-#1v1: the duel freeze (ROOTED in setupFinal) is DUEL_FREEZE at a DUEL_FREEZE_COUNTDOWN s ball countdown and shrinks with a shorter countdown
+#1v1: the duel freeze (ROOTED in setupFinal) is DUEL_FREEZE at a DUEL_FREEZE_COUNTDOWN s ball countdown or more (duels count down "ball respawn delay", 2 s), and shrinks with a shorter one
 #!define DUEL_FREEZE 1.5
-#!define DUEL_FREEZE_COUNTDOWN 5
+#!define DUEL_FREEZE_COUNTDOWN 2
 
 #antiGhostMode ("10 - Ball > anti-ghost correction")
 enum AntiGhost:

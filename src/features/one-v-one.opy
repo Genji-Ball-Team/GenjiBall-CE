@@ -57,10 +57,9 @@ def oneVOneRoundEnd():
         getLivingPlayers(Team.ALL)[0].addToScore(1)
         bigMessage(getAllPlayers(), "{0} wins the set, congrats!".format(getLivingPlayers(Team.ALL)[0]))
         wait(roundTimings[RoundTiming.WIN_PAUSE])
-    #Next set: the loser stays in the queue, the queue head comes in
+    #Next set: the loser stays in the queue, the queue head comes in. The countdown is "ball respawn delay" (deleteBall), as in duels.
     oneVOneState[OneVOneField.PLAYERS] = []
     oneVOneState[OneVOneField.SERVE] = null
-    ballSpawnCountdown = setballspawncountdown
     if oneVOneState[OneVOneField.TIME_UP]:
         HighestScore = sorted(getAllPlayers(), lambda player: player.getScore()).last().getScore()
         if len(getAllPlayers().filter(lambda player: player.getScore() == HighestScore)) == 1:

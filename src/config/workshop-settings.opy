@@ -125,7 +125,7 @@ rule "Settings - Workshop settings":
         createWorkshopSettingBool("10 - Ball", "network resync", true, 12),
         createWorkshopSettingBool("50 - Features", "1v1", false, 12),
         createWorkshopSettingInt("50 - Features", "1v1 first to", 15, 1, 50, 13),
-        createWorkshopSettingInt("50 - Features", "1v1 point countdown", 3, 1, 10, 14),
+        createWorkshopSettingInt("50 - Features", "1v1 point countdown", 2, 1, 10, 14),
         createWorkshopSettingInt("50 - Features", "1v1 point pause", 1, 0, 10, 15),
         createWorkshopSettingInt("50 - Features", "1v1 match length", 0, 0, 60, 16)
     ]

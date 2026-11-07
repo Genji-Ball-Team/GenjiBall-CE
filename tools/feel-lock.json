@@ -326,7 +326,7 @@
         "            Start Forcing Player Position(Value In Array(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved), 1), Add(Global.circleCenter, Multiply(Left, Divide(Global.SphereSize, 1.5))), False);",
         "        End;",
         "        \"1v1 shortens the freeze along with a shorter ball countdown. Duels and the final duel keep DUEL_FREEZE.\"",
-        "        Set Status(All Living Players(All Teams), Null, Rooted, If-Then-Else(Value In Array(Global.addOnSettings, 15), Divide(Multiply(1.5, Min(Global.ballSpawnCountdown, 5)), 5), 1.5));",
+        "        Set Status(All Living Players(All Teams), Null, Rooted, If-Then-Else(Value In Array(Global.addOnSettings, 15), Divide(Multiply(1.5, Min(Global.ballSpawnCountdown, 2)), 2), 1.5));",
         "        Wait(0, Ignore Condition);",
         "        Set Facing(First Of(All Living Players(All Teams)), Direction Towards(Position Of(First Of(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved))), Global.circleCenter), To World);",
         "        Set Facing(Value In Array(All Living Players(All Teams), 1), Direction Towards(Position Of(Value In Array(Filtered Array(All Living Players(All Teams), (Current Array Element).hasMoved), 1)), Global.circleCenter), To World);",
