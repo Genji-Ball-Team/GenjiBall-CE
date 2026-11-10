@@ -136,6 +136,16 @@ A host who sits out never plays a **tiebreaker**. The game decides whether there
 
 **Which host.** `id` is the id of whoever is the host when the line is logged. `host` in `JOIN` is `1` for the player who is the host when that `JOIN` is logged, and isn't updated later. A player who only becomes the host afterwards (while the lobby owner spectates, say) keeps an empty `host`, and their `SIT_OUT` lines carry their own id. When the host changes, the sit-out of the player who was the host ends with no line: that's their `LEAVE`, or for a player who stood in as host while staying in their slot, the moment the host changes back. A reader that wants the lobby owner's sit-out, like the host tool, follows `SIT_OUT` only for ids whose `JOIN` has `host` `1`, and treats each of those as ended at that id's `LEAVE`.
 
+## Lobby bot
+
+In a ranked lobby a bot, **[BOT] Genji Bot**, joins when one player would otherwise be alone: the only player, or the only one besides a host who [sits out](#host-sit-out). It leaves before the next round once a second player can play, and at once when no one plays. Never in a tourney.
+
+The bot isn't in the log. It gets no `JOIN` and no id, and a round that starts with it in never opens: a round between one player and the bot has no `ROUND_START`, `ELIM`, `DEFLECT` or `ROUND_END`, even if the bot dies and leaves during it while players who joined play on. A `KILL` where the bot dies or kills isn't logged; the player's other deaths are, as any `KILL` outside a round.
+
+The match isn't [unranked](#unranked-matches) by the bot: the rounds without it are rated as usual. A match in which every round was played with the bot has no rated round, so there's nothing to rate: the server rejects its upload (`too_few_players`), as any match without a rated round.
+
+A round with the bot isn't the host's first round either: the host plays the bot as long as it's in, and [sits out](#host-sit-out) from the round after the first one without it.
+
 ## Tourney matches
 
 A tourney is a set of ranked lobbies played at a set time, each with an assigned host. The server schedules them (genjiball-ranked "Admin: schedule tourneys, lobbies and hosts"), and the host tool builds the lobby's **tourney code**: the ranked code plus the `TOURNEY - generated` rule (GenjiBall-CE#143) filled in with the lobby's values from the server. Without that rule, or with it off, the match is a ranked match, exactly as before.
@@ -162,7 +172,7 @@ The panel counts per player id, so it lists the players in a slot at the end, an
 
 The game decides when a lobby isn't a ranked setup, shows the warning in game and logs `UNRANKED` with the reason. The server rejects every match with an `UNRANKED` line, even if the host uploads it.
 
-The warning is at the top center of everyone's screen, "UNRANKED: this match won't count", with the reasons under it in words. The reasons are checked at `MATCH_START`, except `BOT`, which is checked whenever a player is in the match.
+The warning is at the top center of everyone's screen, "UNRANKED: this match won't count", with the reasons under it in words. The reasons are checked at `MATCH_START`.
 
 | Reason | When |
 |---|---|
@@ -171,7 +181,7 @@ The warning is at the top center of everyone's screen, "UNRANKED: this match won
 | `PRESET` | The Preset isn't `Default` in a ranked match, or isn't `Tournament` in a [tourney match](#tourney-matches). |
 | `FEEL` | A ball or player feel toggle is on. Not logged since those toggles were removed, but older logs can have it. |
 | `ADD_ON` | A gameplay add-on is on: duels, endless, sandbox or custom abilities. Not logged since those add-ons were removed, but older logs can have it. |
-| `BOT` | A dummy bot is in the match. Logged when it joins, or at `MATCH_START` if it's already there. |
+| `BOT` | A dummy bot is in the match. Not logged since the [lobby bot](#lobby-bot), the only dummy a ranked lobby has, but older logs can have it. |
 
 With ranked logging turned off in the Workshop settings (`70 - Ranked > ranked logging`), the game logs nothing at all (so there's no logging cost), and the in-game warning ("ranked logging is off") is the only sign. The host tool ignores files without a `GBR` line.
 
@@ -211,6 +221,7 @@ The parser rejects a match whose version it doesn't know, with a clear error.
 | 2 | [Tourney matches](#tourney-matches): the `TOURNEY` line and `MATCH_END` `ROUNDS`. A format 1 parser would skip `TOURNEY` and rate a tourney as a ranked match. The game writes `2` for every match, ranked ones too; a format 2 parser reads a format 1 match as a ranked match. |
 | 2 (same version) | The `build` field at the end of `GBR` ([build id](#build-id)). A field added at the end of a line, so it needs no new version: older parsers ignore it, and a parser reading a log without it stores no build. |
 | 2 (same version) | The `SIT_OUT` line ([host sit-out](#host-sit-out)). A new event type: older parsers ignore it, and a host sitting out is never in a `ROUND_START`, so they rate the match the same. |
+| 2 (same version) | The [lobby bot](#lobby-bot) and no more `UNRANKED` `BOT`. No new line: the bot is left out, and the rounds it plays aren't opened. |
 
 The server has to accept a version before the game writes it: it goes live first, then the game is released. A field added at the end of a line (like `build`) needs no such ordering: the old server keeps working, and it only starts storing the field once it's updated.
 
