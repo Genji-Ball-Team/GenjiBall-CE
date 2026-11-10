@@ -11,8 +11,23 @@ rule "Check for <2 players":
     stopChasing(ballSpawnCountdown)
     deleteBall()
     RoundInProgress = false
-    RoundSetupPending = false
+    #RoundSetupPending is left as it is: during a round win pause the round win still decides the tiebreaker or the
+    #end of the match after the pause, and starts the next round if enough players are back (core/round-flow.opy)
     bigMessage(getAllPlayers(), "Waiting for players")
+
+
+#A tiebreaker player left during a tiebreaker round and the lobby stopped: the tie is decided again at once, so the
+#match ends (time is up) and TieBreakerActive is never left set while the lobby waits. A tie needs two tiebreaker
+#players, who both count as playing, so it can't survive a stopped lobby. Only outside a round win pause and the
+#tiebreaker's setup (RoundSetupPending): there the round win decides, after the host's latest sit-out press, and
+#rechecks after each of its waits (core/round-flow.opy). Right after "Check for <2 players", in the same tick.
+rule "Tiebreaker ends when the lobby stops":
+    @Condition isGameInProgress() == true
+    @Condition TieBreakerActive == true
+    @Condition IsEnoughPlayersToStart == false
+    @Condition RoundSetupPending == false
+
+    decideTiebreaker()
 
 
 rule "Wait for more players":
@@ -22,6 +37,9 @@ rule "Wait for more players":
     @Condition getCurrentGamemode() == Gamemode.FFA
     #No arena on an unsupported map (maps/arenas.opy)
     @Condition MAP_UNSUPPORTED == false
+    #Not during a round win pause: the round win starts the next round itself after it, or clears this when
+    #too few players are left
+    @Condition RoundSetupPending == false
     
     #The host's latest sit-out choice counts from this round. If it leaves too few players, keep waiting
     applyHostSitOut()

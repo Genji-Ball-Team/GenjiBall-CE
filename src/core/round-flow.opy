@@ -5,6 +5,12 @@ def startRound():
     
     RoundSetupPending = true
     randomTarget()
+    #A tiebreaker: a tied player may have left during the wait. Decided again; with no tie left the match ends
+    #(time is up) and no round starts. RoundSetupPending stays set, so nothing else starts one.
+    if TieBreakerActive:
+        decideTiebreaker()
+        if not TieBreakerActive:
+            return
     chaseAtRate(ballSpawnCountdown, 0, 1)
     RoundInProgress = true
     RoundSetupPending = false
@@ -88,9 +94,9 @@ rule "Active game - check for last player surviving":
     stopChasing(ballSpawnCountdown)
     bigMessage(getAllPlayers(), "{0} has won the round".format(getLivingPlayers(Team.ALL)[0]))
     wait(roundTimings[RoundTiming.WIN_PAUSE])
-    #The lobby stopped and "Wait for more players" already started the next round during the win pause: nothing to do here
-    if not RoundSetupPending and IsEnoughPlayersToStart:
-        return
+    #RoundSetupPending stays set through the whole pause, even if the lobby stops ("Check for <2 players" leaves it):
+    #"Wait for more players" and "end game" wait for this rule, so the next round and the end of the match are decided
+    #only here, once.
     #A press of the sit-out button during the win pause counts for the next round. If the host now sits out and
     #too few players are left, no round: "Check for <2 players" stops the lobby (it may only see it next tick)
     applyHostSitOut()
@@ -100,11 +106,17 @@ rule "Active game - check for last player surviving":
         decideTiebreaker()
         if getMatchTime() == 0 and not TieBreakerActive:
             return
-    #No round from here: the lobby stopped during the win pause ("Check for <2 players" clears RoundSetupPending), or
-    #is about to. Bring back the players while it waits
-    if not RoundSetupPending or playingPlayers <= 1:
+    #No round from here: too few players. The lobby stopped during the win pause, or is about to. Bring back the
+    #players while it waits; "Wait for more players" starts the next round. No tie is possible with one player.
+    if playingPlayers <= 1:
+        RoundSetupPending = false
         resurrectForRound()
         return
+    #The lobby stopped during the win pause and enough players are back: start it again here, as "Wait for more
+    #players" would. In the same tick as bringing players back, so the lobby is never "enough players" with one alive.
+    if not IsEnoughPlayersToStart:
+        bigMessage(getAllPlayers(), "Let's begin!")
+        IsEnoughPlayersToStart = true
     if not TieBreakerActive:
         resurrectForRound()
     else:
@@ -113,6 +125,11 @@ rule "Active game - check for last player surviving":
         #During tiebreaker, only revive the people who have the same score as the highest score, but a host who sits out.
         (getDeadPlayers(Team.ALL).filter(lambda player: player.getScore() == HighestScore and not sitsOut(player))).resurrect()
         wait(0.25)
+        #A tied player may have left during the wait: decided again. With no tie left the match ends (time is up)
+        #and no round starts; RoundSetupPending stays set, so nothing else starts one.
+        decideTiebreaker()
+        if not TieBreakerActive:
+            return
         bigMessage(getAllPlayers(), "tiebreaker!")
     startRound()
 
@@ -173,7 +190,9 @@ rule "Active game - end game":
     @Condition TieBreakerActive == false
     @Condition tournamentMode == false
     @Condition getCurrentGamemode() == Gamemode.FFA
-    
+    #Not during a round win pause, even with the lobby stopped: the round win decides the end of the match after it
+    @Condition RoundSetupPending == false
+
     enableMusic()
     enableGamemodeCompletion()
 
