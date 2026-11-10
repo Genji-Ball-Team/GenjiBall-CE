@@ -8,6 +8,7 @@ globalvar RoundInProgress 3
 globalvar IsEnoughPlayersToStart 4
 globalvar IsInFinalDuel 5
 #True while the next round or duel is on its way (a round win pause), so the all-dead rule doesn't start a second one.
+#Kept through a round win pause even if the lobby stops: "Wait for more players" and "end game" wait for it.
 globalvar RoundSetupPending 6
 globalvar HighestScore 7
 globalvar TieBreakerActive 8

@@ -557,8 +557,23 @@ rule ("Check for <2 players") {
         Stop Chasing Global Variable(ballSpawnCountdown);
         Call Subroutine(deleteBall);
         Set Global Variable(RoundInProgress, False);
-        Set Global Variable(RoundSetupPending, False);
+        "RoundSetupPending is left as it is: during a round win pause the round win still decides the tiebreaker or the\nend of the match after the pause, and starts the next round if enough players are back (core/round-flow.opy)"
         Big Message(All Players(All Teams), Custom String("Waiting for players"));
+    }
+}
+
+rule ("Tiebreaker ends when the lobby stops") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Is Game In Progress == True;
+        Global.TieBreakerActive == True;
+        Global.IsEnoughPlayersToStart == False;
+        Global.RoundSetupPending == False;
+    }
+    actions {
+        Call Subroutine(decideTiebreaker);
     }
 }
 
@@ -573,6 +588,8 @@ rule ("Wait for more players") {
         Current Game Mode == Game Mode(Deathmatch);
         "No arena on an unsupported map (maps/arenas.opy)"
         Current Map == Map(Workshop Island Night);
+        "Not during a round win pause: the round win starts the next round itself after it, or clears this when\ntoo few players are left"
+        Global.RoundSetupPending == False;
     }
     actions {
         "The host's latest sit-out choice counts from this round. If it leaves too few players, keep waiting"
@@ -950,6 +967,11 @@ rule ("Active game - start round") {
     actions {
         Set Global Variable(RoundSetupPending, True);
         Call Subroutine(randomTarget);
+        "A tiebreaker: a tied player may have left during the wait. Decided again; with no tie left the match ends\n(time is up) and no round starts. RoundSetupPending stays set, so nothing else starts one."
+        If(Global.TieBreakerActive);
+            Call Subroutine(decideTiebreaker);
+            Abort If(Not(Global.TieBreakerActive));
+        End;
         Chase Global Variable At Rate(ballSpawnCountdown, 0, 1, Destination and Rate);
         Set Global Variable(RoundInProgress, True);
         Set Global Variable(RoundSetupPending, False);
@@ -1053,19 +1075,23 @@ rule ("Active game - check for last player surviving") {
         Stop Chasing Global Variable(ballSpawnCountdown);
         Big Message(All Players(All Teams), Custom String("{0} has won the round", First Of(All Living Players(All Teams))));
         Wait(Value In Array(Global.roundTimings, 1), Ignore Condition);
-        "The lobby stopped and \"Wait for more players\" already started the next round during the win pause: nothing to do here"
-        Abort If(And(Not(Global.RoundSetupPending), Global.IsEnoughPlayersToStart));
-        "A press of the sit-out button during the win pause counts for the next round. If the host now sits out and\ntoo few players are left, no round: \"Check for <2 players\" stops the lobby (it may only see it next tick)"
+        "only here, once.\nA press of the sit-out button during the win pause counts for the next round. If the host now sits out and\ntoo few players are left, no round: \"Check for <2 players\" stops the lobby (it may only see it next tick)"
         Call Subroutine(applyHostSitOut);
         "Tiebreaker or end of match, once per round end, among the players of the next round. If there is already a\ntiebreaker, it has ended. A match that ends here starts no round and brings nobody back."
         If(And(Or(Compare(Match Time, ==, 0), Global.TieBreakerActive), Not(Global.tournamentMode)));
             Call Subroutine(decideTiebreaker);
             Abort If(And(Compare(Match Time, ==, 0), Not(Global.TieBreakerActive)));
         End;
-        "No round from here: the lobby stopped during the win pause (\"Check for <2 players\" clears RoundSetupPending), or\nis about to. Bring back the players while it waits"
-        If(Or(Not(Global.RoundSetupPending), Compare(Subtract(Number Of Players(All Teams), If-Then-Else(And(Value In Array(Global.rankedState, 21), Array Contains(All Players(All Teams), Host Player)), 1, 0)), <=, 1)));
+        "No round from here: too few players. The lobby stopped during the win pause, or is about to. Bring back the\nplayers while it waits; \"Wait for more players\" starts the next round. No tie is possible with one player."
+        If(Compare(Subtract(Number Of Players(All Teams), If-Then-Else(And(Value In Array(Global.rankedState, 21), Array Contains(All Players(All Teams), Host Player)), 1, 0)), <=, 1));
+            Set Global Variable(RoundSetupPending, False);
             Call Subroutine(resurrectForRound);
             Abort;
+        End;
+        "The lobby stopped during the win pause and enough players are back: start it again here, as \"Wait for more\nplayers\" would. In the same tick as bringing players back, so the lobby is never \"enough players\" with one alive."
+        If(Not(Global.IsEnoughPlayersToStart));
+            Big Message(All Players(All Teams), Custom String("Let's begin!"));
+            Set Global Variable(IsEnoughPlayersToStart, True);
         End;
         If(Not(Global.TieBreakerActive));
             Call Subroutine(resurrectForRound);
@@ -1075,6 +1101,9 @@ rule ("Active game - check for last player surviving") {
             "During tiebreaker, only revive the people who have the same score as the highest score, but a host who sits out."
             Resurrect(Filtered Array(All Dead Players(All Teams), And(Compare(Score Of(Current Array Element), ==, Global.HighestScore), Not(And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21))))));
             Wait(0.25, Ignore Condition);
+            "A tied player may have left during the wait: decided again. With no tie left the match ends (time is up)\nand no round starts; RoundSetupPending stays set, so nothing else starts one."
+            Call Subroutine(decideTiebreaker);
+            Abort If(Not(Global.TieBreakerActive));
             Big Message(All Players(All Teams), Custom String("tiebreaker!"));
         End;
         Call Subroutine(startRound);
@@ -1144,6 +1173,8 @@ rule ("Active game - end game") {
         Global.TieBreakerActive == False;
         Global.tournamentMode == False;
         Current Game Mode == Game Mode(Deathmatch);
+        "Not during a round win pause, even with the lobby stopped: the round win decides the end of the match after it"
+        Global.RoundSetupPending == False;
     }
     actions {
         Enable Built-In Game Mode Music;
@@ -1828,7 +1859,7 @@ rule ("Ranked log - MATCH_START") {
         "matchKey: 12 random digits, so the server can tell repeated copies of this match apart from other matches.\nKept for a tourney's final standings. Format 2 for every match, ranked ones too."
         Set Global Variable At Index(rankedState, 17, Custom String("{0}{1}", Random Integer(100000, 999999), Random Integer(100000, 999999)));
         "The build id is the last field, so an older parser ignores it (docs/ranked-log.md, \"Build id\")."
-        Log To Inspector(Custom String("GBR|{0}|2|1.3.3R|{1}|4e58c51f", Total Time Elapsed, Value In Array(Global.rankedState, 17)));
+        Log To Inspector(Custom String("GBR|{0}|2|1.3.3R|{1}|1f594b88", Total Time Elapsed, Value In Array(Global.rankedState, 17)));
         "Tourney: right after GBR, so every copy of the match has it. roundLimit is the one the match plays (totalRounds)."
         If(Compare(First Of(Value In Array(Global.rankedState, 16)), ==, True));
             Log To Inspector(Custom String("TOURNEY|{0}|{1}|{2}", Total Time Elapsed, Value In Array(Value In Array(Global.rankedState, 16), 1), Global.totalRounds));
