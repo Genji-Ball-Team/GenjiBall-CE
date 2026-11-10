@@ -33,6 +33,8 @@ This branch (`v1.3.3R`) is the ranked version. The code is already set up for a 
 
 The code shows the leaderboard's top 10 in the lobby: a tag over each of them with their place and rating (`#1 | 2074`), and a top 10 list on the right. Other players in a rank tier get the tier's name as their tag. They come from the host tool, which builds the code with the region's current tiers and top 10 ([rank-tags.md](rank-tags.md)); the code in this repo has no players, so it shows no tags.
 
+**Sitting out.** You play the first round, then sit out: you stay in your slot, dead, and the lobby plays without you. Press **Crouch + Interact** to play again from the next round, and again to sit out from the next round; the HUD on the left says which. Pressing it during the pause after a round win counts for the round right after. While the lobby waits for players, it takes effect at once. You don't count as a player while you sit out, so with you and one other player the lobby waits for more. You never play a tiebreaker while you sit out: if time runs out with you tied for the top score with one player, there's no tiebreaker and the match ends. The tie is decided at the end of the pause after the round win, so pressing the button in that pause puts you in or out of it. The host tool turns its AFK on while you sit out. If the host leaves, the new host plays until they press it. In a tourney lobby you play from the start, and the button still works.
+
 Anything else makes the match unranked, and the game says so at the top of the screen ("UNRANKED: this match won't count", with the reason): see [Unranked matches](ranked-log.md#unranked-matches). The data center is your choice (the v1.3.2 RANKED code forced Netherlands; this one doesn't).
 
 ### Tourney lobbies

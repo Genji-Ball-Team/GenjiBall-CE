@@ -73,34 +73,66 @@ rule "Active game - check for last player surviving":
     RoundSetupPending = true
     getLivingPlayers(Team.ALL).addToScore(1)
     wait(0.25)
+    #The host's sit-out takes effect between rounds, after the ranked log's ROUND_END. With too few players
+    #left, "Check for <2 players" stops the lobby during the win pause
+    applyHostSitOut()
+    #The tie is decided after the win pause. Until then, a tie with the host playing or sitting out stops "all players
+    #dead" and "end game" from ending the match during the pause (the winner leaves). Never ends a match or tiebreaker
     if (getMatchTime() == 0 or TieBreakerActive) and not tournamentMode:
-        #If there is alredy a tiebreaker, then the tiebreaker has ended.
-        #if TieBreakerActive:
-        #break
-        #__end__()
         HighestScore = sorted(getAllPlayers(), lambda player: player.getScore()).last().getScore()
-        #Check if there is more than 1 person with the highest score
         if len(getAllPlayers().filter(lambda player: player.getScore() == HighestScore)) > 1:
-            #There is more than 1, activate tie breaker
             TieBreakerActive = true
-        else:
-            TieBreakerActive = false
-            if getMatchTime() == 0:
-                enableMusic()
-                enableGamemodeCompletion()
+        HighestScore = sorted(tiebreakerPlayers, lambda player: player.getScore()).last().getScore()
+        if len(tiebreakerPlayers.filter(lambda player: player.getScore() == HighestScore)) > 1:
+            TieBreakerActive = true
     stopChasing(ballSpawnCountdown)
     bigMessage(getAllPlayers(), "{0} has won the round".format(getLivingPlayers(Team.ALL)[0]))
     wait(roundTimings[RoundTiming.WIN_PAUSE])
+    #The lobby stopped and "Wait for more players" already started the next round during the win pause: nothing to do here
+    if not RoundSetupPending and IsEnoughPlayersToStart:
+        return
+    #A press of the sit-out button during the win pause counts for the next round. If the host now sits out and
+    #too few players are left, no round: "Check for <2 players" stops the lobby (it may only see it next tick)
+    applyHostSitOut()
+    #Tiebreaker or end of match, once per round end, among the players of the next round. If there is already a
+    #tiebreaker, it has ended. A match that ends here starts no round and brings nobody back.
+    if (getMatchTime() == 0 or TieBreakerActive) and not tournamentMode:
+        decideTiebreaker()
+        if getMatchTime() == 0 and not TieBreakerActive:
+            return
+    #No round from here: the lobby stopped during the win pause ("Check for <2 players" clears RoundSetupPending), or
+    #is about to. Bring back the players while it waits
+    if not RoundSetupPending or playingPlayers <= 1:
+        resurrectForRound()
+        return
     if not TieBreakerActive:
-        getDeadPlayers(Team.ALL).resurrect()
+        resurrectForRound()
     else:
-        #Kill anyone alive who doesn't have the highest score.
-        kill(getLivingPlayers(Team.ALL).filter(lambda player: player.getScore() != HighestScore))
-        #During tiebreaker, only revive the people who have the same score as the highest score.
-        (getDeadPlayers(Team.ALL).filter(lambda player: player.getScore() == HighestScore)).resurrect()
+        #Kill anyone alive who doesn't have the highest score, and a host who sits out.
+        kill(getLivingPlayers(Team.ALL).filter(lambda player: player.getScore() != HighestScore or sitsOut(player)))
+        #During tiebreaker, only revive the people who have the same score as the highest score, but a host who sits out.
+        (getDeadPlayers(Team.ALL).filter(lambda player: player.getScore() == HighestScore and not sitsOut(player))).resurrect()
         wait(0.25)
         bigMessage(getAllPlayers(), "tiebreaker!")
     startRound()
+
+
+#Tiebreaker or end of match, once time is up (not in tournament mode), after the round win pause. Decided among
+#tiebreakerPlayers: a host who sits out never plays a tiebreaker, so a tie with them alone isn't one, and their score
+#doesn't set HighestScore. With nobody left to decide among, there's no tie.
+def decideTiebreaker():
+    @Name "Active game - decide tiebreaker"
+
+    HighestScore = sorted(tiebreakerPlayers, lambda player: player.getScore()).last().getScore()
+    #Check if there is more than 1 person with the highest score
+    if len(tiebreakerPlayers.filter(lambda player: player.getScore() == HighestScore)) > 1:
+        #There is more than 1, activate tie breaker
+        TieBreakerActive = true
+    else:
+        TieBreakerActive = false
+        if getMatchTime() == 0:
+            enableMusic()
+            enableGamemodeCompletion()
 
 
 rule "Active game - all players dead":
@@ -115,7 +147,7 @@ rule "Active game - all players dead":
     lbl_0:
     RoundInProgress = false
     stopChasing(ballSpawnCountdown)
-    getDeadPlayers(Team.ALL).resurrect()
+    resurrectForRound()
     ballSpawnCountdown = setballspawncountdown
     wait(1)
     if ruleCondition:
@@ -124,6 +156,12 @@ rule "Active game - all players dead":
     #Skip if the round has already restarted, or is about to: by the lobby (not enough players), the final duel (two players)
     #or a round win (including its win pause).
     if not IsEnoughPlayersToStart or IsInFinalDuel or RoundInProgress or RoundSetupPending:
+        return
+    #The host's sit-out takes effect here, after the ranked log's ROUND_END NONE, so a press during the pause counts.
+    #If the host now sits out and too few players are left, no round: "Check for <2 players" stops the lobby
+    applyHostSitOut()
+    resurrectForRound()
+    if playingPlayers <= 1:
         return
     stopChasing(ballSpawnCountdown)
     startRound()

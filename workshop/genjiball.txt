@@ -148,9 +148,12 @@ subroutines {
     14: stopBall
     15: startModernBall
     20: simpleIslandSideCollision
+    122: decideTiebreaker
+    123: resurrectForRound
     124: logRankedJoins
     125: logRankedRoundAbort
     126: logRankedUnranked
+    127: applyHostSitOut
 }
 
 //Strict optimizations enabled
@@ -544,7 +547,8 @@ rule ("Check for <2 players") {
     }
     conditions {
         Is Game In Progress == True;
-        Number Of Players(All Teams) == 1;
+        "A host who sits out doesn't count (features/host-sit-out.opy): with one other player, the lobby waits"
+        Subtract(Number Of Players(All Teams), If-Then-Else(And(Value In Array(Global.rankedState, 21), Array Contains(All Players(All Teams), Host Player)), 1, 0)) <= 1;
         Current Game Mode == Game Mode(Deathmatch);
     }
     actions {
@@ -564,15 +568,20 @@ rule ("Wait for more players") {
     }
     conditions {
         Is Game In Progress == True;
-        Number Of Players(All Teams) > 1;
+        Subtract(Number Of Players(All Teams), If-Then-Else(And(Value In Array(Global.rankedState, 21), Array Contains(All Players(All Teams), Host Player)), 1, 0)) > 1;
         Global.IsEnoughPlayersToStart == False;
         Current Game Mode == Game Mode(Deathmatch);
         "No arena on an unsupported map (maps/arenas.opy)"
         Current Map == Map(Workshop Island Night);
     }
     actions {
+        "The host's latest sit-out choice counts from this round. If it leaves too few players, keep waiting"
+        Call Subroutine(applyHostSitOut);
+        Abort If(Compare(Subtract(Number Of Players(All Teams), If-Then-Else(And(Value In Array(Global.rankedState, 21), Array Contains(All Players(All Teams), Host Player)), 1, 0)), <=, 1));
         Big Message(All Players(All Teams), Custom String("Let's begin!"));
         Set Global Variable(IsEnoughPlayersToStart, True);
+        "Players who lost the round before the lobby stopped can still be dead (the host sat out during the win pause)"
+        Call Subroutine(resurrectForRound);
         Call Subroutine(startRound);
     }
 }
@@ -893,6 +902,8 @@ rule ("Controls - Simple HUD (Interact)") {
     conditions {
         Is Button Held(Event Player, Button(Interact)) == True;
         Is Alive(Event Player) == True;
+        "Crouch + Interact is the host's sit-out button (features/host-sit-out.opy)"
+        Is Button Held(Event Player, Button(Crouch)) == False;
     }
     actions {
         If(Compare((Event Player).simpleHUD, ==, 2));
@@ -1026,35 +1037,68 @@ rule ("Active game - check for last player surviving") {
         Set Global Variable(RoundSetupPending, True);
         Modify Player Score(All Living Players(All Teams), 1);
         Wait(0.25, Ignore Condition);
+        "The host's sit-out takes effect between rounds, after the ranked log's ROUND_END. With too few players\nleft, \"Check for <2 players\" stops the lobby during the win pause"
+        Call Subroutine(applyHostSitOut);
+        "The tie is decided after the win pause. Until then, a tie with the host playing or sitting out stops \"all players\ndead\" and \"end game\" from ending the match during the pause (the winner leaves). Never ends a match or tiebreaker"
         If(And(Or(Compare(Match Time, ==, 0), Global.TieBreakerActive), Not(Global.tournamentMode)));
-            "If there is alredy a tiebreaker, then the tiebreaker has ended.\nif TieBreakerActive:\nbreak\n__end__()"
             Set Global Variable(HighestScore, Score Of(Last Of(Sorted Array(All Players(All Teams), Score Of(Current Array Element)))));
-            "Check if there is more than 1 person with the highest score"
             If(Compare(Count Of(Filtered Array(All Players(All Teams), Compare(Score Of(Current Array Element), ==, Global.HighestScore))), >, 1));
-                "There is more than 1, activate tie breaker"
                 Set Global Variable(TieBreakerActive, True);
-            Else;
-                Set Global Variable(TieBreakerActive, False);
-                If(Compare(Match Time, ==, 0));
-                    Enable Built-In Game Mode Music;
-                    Enable Built-In Game Mode Completion;
-                End;
+            End;
+            Set Global Variable(HighestScore, Score Of(Last Of(Sorted Array(Filtered Array(All Players(All Teams), Not(And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21)))), Score Of(Current Array Element)))));
+            If(Compare(Count Of(Filtered Array(Filtered Array(All Players(All Teams), Not(And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21)))), Compare(Score Of(Current Array Element), ==, Global.HighestScore))), >, 1));
+                Set Global Variable(TieBreakerActive, True);
             End;
         End;
         Stop Chasing Global Variable(ballSpawnCountdown);
         Big Message(All Players(All Teams), Custom String("{0} has won the round", First Of(All Living Players(All Teams))));
         Wait(Value In Array(Global.roundTimings, 1), Ignore Condition);
+        "The lobby stopped and \"Wait for more players\" already started the next round during the win pause: nothing to do here"
+        Abort If(And(Not(Global.RoundSetupPending), Global.IsEnoughPlayersToStart));
+        "A press of the sit-out button during the win pause counts for the next round. If the host now sits out and\ntoo few players are left, no round: \"Check for <2 players\" stops the lobby (it may only see it next tick)"
+        Call Subroutine(applyHostSitOut);
+        "Tiebreaker or end of match, once per round end, among the players of the next round. If there is already a\ntiebreaker, it has ended. A match that ends here starts no round and brings nobody back."
+        If(And(Or(Compare(Match Time, ==, 0), Global.TieBreakerActive), Not(Global.tournamentMode)));
+            Call Subroutine(decideTiebreaker);
+            Abort If(And(Compare(Match Time, ==, 0), Not(Global.TieBreakerActive)));
+        End;
+        "No round from here: the lobby stopped during the win pause (\"Check for <2 players\" clears RoundSetupPending), or\nis about to. Bring back the players while it waits"
+        If(Or(Not(Global.RoundSetupPending), Compare(Subtract(Number Of Players(All Teams), If-Then-Else(And(Value In Array(Global.rankedState, 21), Array Contains(All Players(All Teams), Host Player)), 1, 0)), <=, 1)));
+            Call Subroutine(resurrectForRound);
+            Abort;
+        End;
         If(Not(Global.TieBreakerActive));
-            Resurrect(All Dead Players(All Teams));
+            Call Subroutine(resurrectForRound);
         Else;
-            "Kill anyone alive who doesn't have the highest score."
-            Kill(Filtered Array(All Living Players(All Teams), Compare(Score Of(Current Array Element), !=, Global.HighestScore)), Null);
-            "During tiebreaker, only revive the people who have the same score as the highest score."
-            Resurrect(Filtered Array(All Dead Players(All Teams), Compare(Score Of(Current Array Element), ==, Global.HighestScore)));
+            "Kill anyone alive who doesn't have the highest score, and a host who sits out."
+            Kill(Filtered Array(All Living Players(All Teams), Or(Compare(Score Of(Current Array Element), !=, Global.HighestScore), And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21)))), Null);
+            "During tiebreaker, only revive the people who have the same score as the highest score, but a host who sits out."
+            Resurrect(Filtered Array(All Dead Players(All Teams), And(Compare(Score Of(Current Array Element), ==, Global.HighestScore), Not(And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21))))));
             Wait(0.25, Ignore Condition);
             Big Message(All Players(All Teams), Custom String("tiebreaker!"));
         End;
         Call Subroutine(startRound);
+    }
+}
+
+rule ("Active game - decide tiebreaker") {
+    event {
+        Subroutine;
+        decideTiebreaker;
+    }
+    actions {
+        Set Global Variable(HighestScore, Score Of(Last Of(Sorted Array(Filtered Array(All Players(All Teams), Not(And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21)))), Score Of(Current Array Element)))));
+        "Check if there is more than 1 person with the highest score"
+        If(Compare(Count Of(Filtered Array(Filtered Array(All Players(All Teams), Not(And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21)))), Compare(Score Of(Current Array Element), ==, Global.HighestScore))), >, 1));
+            "There is more than 1, activate tie breaker"
+            Set Global Variable(TieBreakerActive, True);
+        Else;
+            Set Global Variable(TieBreakerActive, False);
+            If(Compare(Match Time, ==, 0));
+                Enable Built-In Game Mode Music;
+                Enable Built-In Game Mode Completion;
+            End;
+        End;
     }
 }
 
@@ -1074,13 +1118,17 @@ rule ("Active game - all players dead") {
         //lbl_0:
         Set Global Variable(RoundInProgress, False);
         Stop Chasing Global Variable(ballSpawnCountdown);
-        Resurrect(All Dead Players(All Teams));
+        Call Subroutine(resurrectForRound);
         Set Global Variable(ballSpawnCountdown, Global.setballspawncountdown);
         Wait(1, Ignore Condition);
         Loop If Condition Is True;
         Wait(2, Ignore Condition);
         "Skip if the round has already restarted, or is about to: by the lobby (not enough players), the final duel (two players)\nor a round win (including its win pause)."
         Abort If(Or(Or(Or(Not(Global.IsEnoughPlayersToStart), Global.IsInFinalDuel), Global.RoundInProgress), Global.RoundSetupPending));
+        "The host's sit-out takes effect here, after the ranked log's ROUND_END NONE, so a press during the pause counts.\nIf the host now sits out and too few players are left, no round: \"Check for <2 players\" stops the lobby"
+        Call Subroutine(applyHostSitOut);
+        Call Subroutine(resurrectForRound);
+        Abort If(Compare(Subtract(Number Of Players(All Teams), If-Then-Else(And(Value In Array(Global.rankedState, 21), Array Contains(All Players(All Teams), Host Player)), 1, 0)), <=, 1));
         Stop Chasing Global Variable(ballSpawnCountdown);
         Call Subroutine(startRound);
     }
@@ -1780,7 +1828,7 @@ rule ("Ranked log - MATCH_START") {
         "matchKey: 12 random digits, so the server can tell repeated copies of this match apart from other matches.\nKept for a tourney's final standings. Format 2 for every match, ranked ones too."
         Set Global Variable At Index(rankedState, 17, Custom String("{0}{1}", Random Integer(100000, 999999), Random Integer(100000, 999999)));
         "The build id is the last field, so an older parser ignores it (docs/ranked-log.md, \"Build id\")."
-        Log To Inspector(Custom String("GBR|{0}|2|1.3.3R|{1}|479015a8", Total Time Elapsed, Value In Array(Global.rankedState, 17)));
+        Log To Inspector(Custom String("GBR|{0}|2|1.3.3R|{1}|4e58c51f", Total Time Elapsed, Value In Array(Global.rankedState, 17)));
         "Tourney: right after GBR, so every copy of the match has it. roundLimit is the one the match plays (totalRounds)."
         If(Compare(First Of(Value In Array(Global.rankedState, 16)), ==, True));
             Log To Inspector(Custom String("TOURNEY|{0}|{1}|{2}", Total Time Elapsed, Value In Array(Value In Array(Global.rankedState, 16), 1), Global.totalRounds));
@@ -2068,6 +2116,120 @@ rule ("Ranked log - MATCH_END ROUNDS") {
         Log To Inspector(Custom String("MATCH_END|{0}|ROUNDS", Total Time Elapsed));
         Set Global Variable At Index(rankedState, 6, False);
         Set Global Variable At Index(rankedState, 18, True);
+    }
+}
+
+rule ("Host sit-out - bring back players") {
+    event {
+        Subroutine;
+        resurrectForRound;
+    }
+    actions {
+        Resurrect(Filtered Array(All Dead Players(All Teams), Not(And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21)))));
+        If(And(Value In Array(Global.rankedState, 21), Is Alive(Host Player)));
+            Kill(Host Player, Null);
+        End;
+    }
+}
+
+rule ("Host sit-out - take effect") {
+    event {
+        Subroutine;
+        applyHostSitOut;
+    }
+    actions {
+        Abort If(Compare(Value In Array(Global.rankedState, 21), ==, Value In Array(Global.rankedState, 20)));
+        Set Global Variable At Index(rankedState, 21, Value In Array(Global.rankedState, 20));
+        If(And(Value In Array(Global.rankedState, 6), Array Contains(Global.rankedPlayers, Host Player)));
+            Log To Inspector(Custom String("SIT_OUT|{0}|{1}|{2}", Total Time Elapsed, Index Of Array Value(Global.rankedPlayers, Host Player), If-Then-Else(Value In Array(Global.rankedState, 21), 1, 0)));
+        End;
+    }
+}
+
+rule ("Host sit-out - from round 2") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Value In Array(Global.rankedState, 23) == False;
+        Is Game In Progress == True;
+        Global.IsEnoughPlayersToStart == True;
+        Global.RoundInProgress == True;
+    }
+    actions {
+        Set Global Variable At Index(rankedState, 23, True);
+        Set Global Variable At Index(rankedState, 22, Host Player);
+        If(Compare(First Of(Value In Array(Global.rankedState, 16)), !=, True));
+            Set Global Variable At Index(rankedState, 20, True);
+    }
+}
+
+rule ("Host sit-out - new host") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Value In Array(Global.rankedState, 23) == True;
+        Host Player != Value In Array(Global.rankedState, 22);
+    }
+    actions {
+        Set Global Variable At Index(rankedState, 22, Host Player);
+        Set Global Variable At Index(rankedState, 20, False);
+        Set Global Variable At Index(rankedState, 21, False);
+    }
+}
+
+rule ("Host sit-out - button") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Event Player == Host Player;
+        Is Button Held(Event Player, Button(Crouch)) == True;
+        Is Button Held(Event Player, Button(Interact)) == True;
+    }
+    actions {
+        Set Global Variable At Index(rankedState, 20, Not(Value In Array(Global.rankedState, 20)));
+        Set Global Variable At Index(rankedState, 22, Host Player);
+        "Pressed before the first round: their choice, not the default"
+        Set Global Variable At Index(rankedState, 23, True);
+        Small Message(Event Player, If-Then-Else(Value In Array(Global.rankedState, 20), Custom String("sitting out from the next round"), Custom String("playing from the next round")));
+        Play Effect(Event Player, Brigitte Repair Pack Armor Sound, Color(White), Event Player, 10);
+        If(And(Is Game In Progress, Not(Global.IsEnoughPlayersToStart)));
+            Call Subroutine(applyHostSitOut);
+            If(And(Not(Value In Array(Global.rankedState, 21)), Is Dead(Event Player)));
+                Resurrect(Event Player);
+            End;
+        End;
+        Wait Until(Not(Is Button Held(Event Player, Button(Interact))), 99999);
+    }
+}
+
+rule ("Host sit-out - stay out while waiting") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Value In Array(Global.rankedState, 21) == True;
+        Is Game In Progress == True;
+        Global.IsEnoughPlayersToStart == False;
+        Is Alive(Host Player) == True;
+    }
+    actions {
+        Kill(Host Player, Null);
+    }
+}
+
+rule ("Host sit-out - HUD") {
+    event {
+        Ongoing - Global;
+    }
+    actions {
+        "Entity creation fail protection"
+        Wait(1, Ignore Condition);
+        Create HUD Text(If-Then-Else(Or(Or(Compare((Host Player).simpleHUD, ==, 0), Value In Array(Global.rankedState, 21)), Value In Array(Global.rankedState, 20)), Host Player, Null), Null, Custom String("{0} [{1} + {2}]", If-Then-Else(And(Value In Array(Global.rankedState, 21), Value In Array(Global.rankedState, 20)), Custom String("sitting out: play"), If-Then-Else(Value In Array(Global.rankedState, 20), Custom String("sitting out from the next round: keep playing"), If-Then-Else(Value In Array(Global.rankedState, 21), Custom String("playing from the next round: keep sitting out"), Custom String("sit out")))), Input Binding String(Button(Crouch)), Input Binding String(Button(Interact))), Null, Left, 0, Null, If-Then-Else(Value In Array(Global.rankedState, 21), Color(Orange), Color(White)), Null, Visible To String and Color, Default Visibility);
     }
 }
 

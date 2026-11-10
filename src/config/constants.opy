@@ -91,6 +91,10 @@ enum RankedField:
     MATCH_KEY   #this match's matchKey from GBR, 12 digits as text
     ENDED       #tourney: MATCH_END ROUNDS is logged, the final standings are up
     STANDINGS   #tourney: the players on the final standings, best first
+    SIT_OUT_WISH    #the host's choice, switched with Crouch + Interact: sit out from the next round (features/host-sit-out.opy)
+    SITTING_OUT     #the host sits out now: not brought back for rounds, not counted as a player (playingPlayers)
+    SIT_OUT_HOST    #the hostPlayer the two above belong to. A new host starts playing
+    SIT_OUT_READY   #the first round has started, so the default (sit out from round 2) is set
 
 #Fields of rankedState[TOURNEY], the tourney rule's values (docs/tourney-rule.md), in the rule's order
 enum TourneyField:
@@ -143,6 +147,13 @@ enum RankTagField:
     COLOR       #the tag's and the list line's colour
     GUIDE       #the entry's line in the top 10 list, empty for a rank tier
     NAMES       #the player names in this entry start here
+
+#Players a round can use (core/lobby.opy): everyone in a slot but a host who sits out (features/host-sit-out.opy)
+#!define playingPlayers (getNumberOfPlayers(Team.ALL) - (1 if rankedState[RankedField.SITTING_OUT] and hostPlayer in getAllPlayers() else 0))
+#True for the host while they sit out: not brought back for a round, never in a tiebreaker
+#!define sitsOut(player) (player == hostPlayer and rankedState[RankedField.SITTING_OUT])
+#The players a tiebreaker is decided among and played by: everyone in a slot but a host who sits out
+#!define tiebreakerPlayers getAllPlayers().filter(lambda player: not sitsOut(player))
 
 #FFA slots a lobby can have: one rank tag each
 #!define FFA_SLOTS 12
