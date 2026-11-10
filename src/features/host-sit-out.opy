@@ -8,10 +8,18 @@
 
 #Brings back the players for the next round: everyone dead but a host who sits out. A host who starts
 #sitting out right after winning is still alive, and is killed so the round starts without them.
+#The lobby bot (features/lobby-bot.opy) leaves here at the latest once two players can play without it, so no
+#round starts with it then. No wait: it's killed first, so even if it's only gone next tick it isn't brought back
+#here or picked as the target (randomTarget() picks a living player).
 def resurrectForRound():
     @Name "Host sit-out - bring back players"
 
-    getDeadPlayers(Team.ALL).filter(lambda player: not sitsOut(player)).resurrect()
+    if lobbyBotIn and humansPlaying > 1:
+        kill(getAllPlayers().filter(lambda player: player.isDummy()), null)
+        destroyAllDummies()
+        getDeadPlayers(Team.ALL).filter(lambda player: not sitsOut(player) and not player.isDummy()).resurrect()
+    else:
+        getDeadPlayers(Team.ALL).filter(lambda player: not sitsOut(player)).resurrect()
     if rankedState[RankedField.SITTING_OUT] and hostPlayer.isAlive():
         kill(hostPlayer, null)
 
@@ -27,13 +35,17 @@ def applyHostSitOut():
         logToInspector("SIT_OUT|{0}|{1}|{2}".format(getTotalTimeElapsed(), rankedPlayers.index(hostPlayer), 1 if rankedState[RankedField.SITTING_OUT] else 0))
 
 
-#A ranked match: the host sits out from round 2. Set as the first round starts, so the host plays it.
+#A ranked match: the host sits out from round 2. Set as the first round without the lobby bot starts, so the host plays it.
 #A tourney's host plays until they press the button.
 rule "Host sit-out - from round 2":
     @Condition rankedState[RankedField.SIT_OUT_READY] == false
     @Condition isGameInProgress() == true
     @Condition IsEnoughPlayersToStart == true
     @Condition RoundInProgress == true
+    #A lobby bot round isn't the first round: a host alone with it keeps playing. From the latch (botRound), so a
+    #bot round stays one after the bot leaves during it; startRound() sets it before it clears RoundSetupPending
+    @Condition botRound == false
+    @Condition RoundSetupPending == false
 
     rankedState[RankedField.SIT_OUT_READY] = true
     rankedState[RankedField.SIT_OUT_HOST] = hostPlayer

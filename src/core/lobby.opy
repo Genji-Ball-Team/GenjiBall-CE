@@ -13,6 +13,8 @@ rule "Check for <2 players":
     RoundInProgress = false
     #RoundSetupPending is left as it is: during a round win pause the round win still decides the tiebreaker or the
     #end of the match after the pause, and starts the next round if enough players are back (core/round-flow.opy)
+    #The next round is decided again when it starts (startRound()). Here so no stale lobby bot round outlives the lobby
+    rankedState[RankedField.BOT_ROUND] = false
     bigMessage(getAllPlayers(), "Waiting for players")
 
 

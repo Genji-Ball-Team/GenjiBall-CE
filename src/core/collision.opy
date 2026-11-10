@@ -47,6 +47,13 @@ rule "Collision - collision check":
 def collisionTarget():
     @Name "Collision - collision sub"
     
+    #The lobby bot (features/lobby-bot.opy) deflects as the ball reaches it, or misses: always at the max speed,
+    #and LOBBY_BOT_MISS_CHANCE % of the time from LOBBY_BOT_MISS_SPEED. A human is never a dummy, so nothing changes for them.
+    if target.isDummy():
+        if ballSpeed == ballSpeedCap or (ballSpeed >= LOBBY_BOT_MISS_SPEED and random.randint(0, 99) < LOBBY_BOT_MISS_CHANCE):
+            deflectFail()
+            return
+        target.forceButtonPress(Button.ABILITY_2)
     #Only a dash or deflect sends the ball back
     if not (target.isUsingAbility1() or target.isUsingAbility2()):
         deflectFail()

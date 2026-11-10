@@ -8,12 +8,13 @@
 #Gives every spawned player without an id the next id, and logs their JOIN.
 #Called at MATCH_START for the players already there, then for each player who joins.
 #Only once spawned: an AI bot logged the moment it took a slot had no name yet ("Entity 84").
+#Never the lobby bot (features/lobby-bot.opy), the only dummy: it isn't in the log.
 #host: 1 for the lobby host, so the server can drop them from the rounds they're AFK in (host tool button).
 def logRankedJoins():
     @Name "Ranked log - JOIN"
 
-    while any([player not in rankedPlayers and player.hasSpawned() for player in getAllPlayers()]):
-        rankedPlayers.append(getAllPlayers().filter(lambda player: player not in rankedPlayers and player.hasSpawned())[0])
+    while any([player not in rankedPlayers and player.hasSpawned() and not player.isDummy() for player in getAllPlayers()]):
+        rankedPlayers.append(getAllPlayers().filter(lambda player: player not in rankedPlayers and player.hasSpawned() and not player.isDummy())[0])
         logToInspector("JOIN|{0}|{1}|{2}|{3}".format(getTotalTimeElapsed(), len(rankedPlayers) - 1, rankedPlayers.last(), 1 if rankedPlayers.last() == hostPlayer else ""))
         #Their wins and kills count from this JOIN, as the server counts them per id
         rankedPlayers.last().tourneyStats = [0, 0]
@@ -60,7 +61,8 @@ rule "Ranked log - MATCH_START":
 
 
 #UNRANKED reasons in UnrankedReason order: the logged code, and the warning text.
-#FEEL and ADD_ON are never logged any more (no such settings), and stay so BOT keeps its index.
+#FEEL, ADD_ON and BOT are never logged any more (no such settings, and the lobby bot isn't in the log), and stay
+#so the codes keep their index.
 #!define UNRANKED_CODES ["MAP", "MODE", "PRESET", "FEEL", "ADD_ON", "BOT"]
 #!define UNRANKED_TEXTS ["not on Workshop Island Night", "not free-for-all", "the preset isn't {0}".format("Tournament" if TOURNEY_ON else "Default"), "a ball or player feel setting is on", "a gameplay add-on is on", "a bot joined"]
 
@@ -73,16 +75,6 @@ def logRankedUnranked():
     logToInspector("UNRANKED|{0}|{1}".format(getTotalTimeElapsed(), UNRANKED_CODES[rankedState[RankedField.REASON]]))
     rankedState[RankedField.UNRANKED_TEXT] = "{0}{1}{2}".format(rankedState[RankedField.UNRANKED_TEXT], ", " if len(rankedState[RankedField.UNRANKED]) > 0 else "", UNRANKED_TEXTS[rankedState[RankedField.REASON]])
     rankedState[RankedField.UNRANKED].append(rankedState[RankedField.REASON])
-
-
-#Any dummy bot, as soon as it's in the match
-rule "Ranked log - UNRANKED BOT":
-    @Event eachPlayer
-    @Condition rankedState[RankedField.STARTED] == true
-    @Condition eventPlayer.isDummy() == true
-
-    rankedState[RankedField.REASON] = UnrankedReason.BOT
-    logRankedUnranked()
 
 
 #The warning, top center, for everyone: above the "map isn't supported" text, away from the ball and the top 10 list.
@@ -114,6 +106,7 @@ rule "Ranked log - player joins":
     @Condition rankedState[RankedField.STARTED] == true
     @Condition (eventPlayer in rankedPlayers) == false
     @Condition eventPlayer.hasSpawned() == true
+    @Condition eventPlayer.isDummy() == false
 
     logRankedJoins()
 
@@ -142,6 +135,9 @@ rule "Ranked log - LEAVE":
 #RoundSetupPending and at least two players are alive. Not at the final duel: that's the same round, still open.
 #Not after a tourney's last round: with a short round win pause the round flow starts another one before
 #"Ranked log - MATCH_END ROUNDS" has waited.
+#Never a lobby bot round (botRound, latched as the round starts: features/lobby-bot.opy), even once the bot has left
+#during it, and never with the bot in. One player and the bot isn't a ranked round. The bot leaves before the next
+#round once a second player can play, and that round opens.
 rule "Ranked log - ROUND_START":
     @Condition rankedState[RankedField.STARTED] == true
     @Condition rankedState[RankedField.IN_ROUND] == false
@@ -151,6 +147,8 @@ rule "Ranked log - ROUND_START":
     @Condition RoundSetupPending == false
     @Condition (RoundInProgress or IsInFinalDuel) == true
     @Condition getNumberOfLivingPlayers(Team.ALL) > 1
+    @Condition botRound == false
+    @Condition lobbyBotIn == false
 
     #Everyone alive needs an id before it's listed
     logRankedJoins()
@@ -187,9 +185,12 @@ rule "Ranked log - ELIM":
 
 #Any death, in or out of a round, like v1.3.2 RANKED's "Match Log": names first, then the ids.
 #attacker is empty for none or the player themself, as in ELIM. victimId is empty for a player without an id yet.
+#Not when the lobby bot dies or kills (features/lobby-bot.opy): it isn't in the log.
 rule "Ranked log - KILL":
     @Event playerDied
     @Condition rankedState[RankedField.STARTED] == true
+    @Condition eventPlayer.isDummy() == false
+    @Condition (attacker != null and attacker.isDummy()) == false
 
     logToInspector("KILL|{0}|{1}|{2}|{3}|{4}".format(
         getTotalTimeElapsed(),

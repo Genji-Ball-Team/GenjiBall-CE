@@ -130,6 +130,7 @@ variables {
         12: sensHigh
         124: rankTier
         125: tourneyStats
+        126: lobbyBot
 }
 
 subroutines {
@@ -148,6 +149,7 @@ subroutines {
     14: stopBall
     15: startModernBall
     20: simpleIslandSideCollision
+    121: lobbyBotLeavesForGood
     122: decideTiebreaker
     123: resurrectForRound
     124: logRankedJoins
@@ -257,6 +259,8 @@ rule ("Tourney - final standings") {
         "Time for the screenshot, then the match ends as in \"Tournament - game ends after 0 Rounds left\""
         Wait(30, Ignore Condition);
         Set Match Time(0);
+        "Never in a tourney, but every match end goes through it (features/lobby-bot.opy)"
+        Call Subroutine(lobbyBotLeavesForGood);
         Enable Built-In Game Mode Completion;
     }
 }
@@ -557,7 +561,8 @@ rule ("Check for <2 players") {
         Stop Chasing Global Variable(ballSpawnCountdown);
         Call Subroutine(deleteBall);
         Set Global Variable(RoundInProgress, False);
-        "RoundSetupPending is left as it is: during a round win pause the round win still decides the tiebreaker or the\nend of the match after the pause, and starts the next round if enough players are back (core/round-flow.opy)"
+        "end of the match after the pause, and starts the next round if enough players are back (core/round-flow.opy)\nThe next round is decided again when it starts (startRound()). Here so no stale lobby bot round outlives the lobby"
+        Set Global Variable At Index(rankedState, 24, False);
         Big Message(All Players(All Teams), Custom String("Waiting for players"));
     }
 }
@@ -708,6 +713,12 @@ rule ("Controls - Shorten deflect length") {
     }
     actions {
         Wait(Value In Array(Global.ballFeel, 7), Ignore Condition);
+        "The lobby bot dashes as its deflect ends, before the dash is disabled: an edash, or at a ball coming\nstraight back (features/lobby-bot.opy). Humans never have these flags."
+        If(And(Is Dummy Bot(Event Player), Or(Value In Array((Event Player).lobbyBot, 1), First Of((Event Player).lobbyBot))));
+            Press Button(Event Player, Button(Ability 1));
+            Set Player Variable At Index(Event Player, lobbyBot, 0, False);
+            Set Player Variable At Index(Event Player, lobbyBot, 1, False);
+        End;
         Set Ability 2 Enabled(Event Player, False);
         Set Ability 1 Enabled(Event Player, False);
         Set Player Variable(Event Player, canDeflect, False);
@@ -966,6 +977,8 @@ rule ("Active game - start round") {
     }
     actions {
         Set Global Variable(RoundSetupPending, True);
+        "with a second player the bot is on its way out (resurrectForRound() or a tiebreaker killed it) and doesn't play,\neven if it's only gone next tick."
+        Set Global Variable At Index(rankedState, 24, And(Is True For Any(All Players(All Teams), Is Dummy Bot(Current Array Element)), Compare(Subtract(Subtract(Number Of Players(All Teams), If-Then-Else(And(Value In Array(Global.rankedState, 21), Array Contains(All Players(All Teams), Host Player)), 1, 0)), If-Then-Else(Is True For Any(All Players(All Teams), Is Dummy Bot(Current Array Element)), 1, 0)), <=, 1)));
         Call Subroutine(randomTarget);
         "A tiebreaker: a tied player may have left during the wait. Decided again; with no tie left the match ends\n(time is up) and no round starts. RoundSetupPending stays set, so nothing else starts one."
         If(Global.TieBreakerActive);
@@ -1057,7 +1070,10 @@ rule ("Active game - check for last player surviving") {
         Set Global Variable(IsInFinalDuel, False);
         "Cleared by startRound once the next round is under way."
         Set Global Variable(RoundSetupPending, True);
-        Modify Player Score(All Living Players(All Teams), 1);
+        "A lobby bot round (features/lobby-bot.opy) doesn't count: no score for anyone. From the latch, not lobbyBotIn: the\nbot may already have left, dead, for a player who joined during the round"
+        If(Compare(Value In Array(Global.rankedState, 24), !=, True));
+            Modify Player Score(All Living Players(All Teams), 1);
+        End;
         Wait(0.25, Ignore Condition);
         "The host's sit-out takes effect between rounds, after the ranked log's ROUND_END. With too few players\nleft, \"Check for <2 players\" stops the lobby during the win pause"
         Call Subroutine(applyHostSitOut);
@@ -1067,8 +1083,8 @@ rule ("Active game - check for last player surviving") {
             If(Compare(Count Of(Filtered Array(All Players(All Teams), Compare(Score Of(Current Array Element), ==, Global.HighestScore))), >, 1));
                 Set Global Variable(TieBreakerActive, True);
             End;
-            Set Global Variable(HighestScore, Score Of(Last Of(Sorted Array(Filtered Array(All Players(All Teams), Not(And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21)))), Score Of(Current Array Element)))));
-            If(Compare(Count Of(Filtered Array(Filtered Array(All Players(All Teams), Not(And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21)))), Compare(Score Of(Current Array Element), ==, Global.HighestScore))), >, 1));
+            Set Global Variable(HighestScore, Score Of(Last Of(Sorted Array(Filtered Array(All Players(All Teams), Not(Or(And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21)), Is Dummy Bot(Current Array Element)))), Score Of(Current Array Element)))));
+            If(Compare(Count Of(Filtered Array(Filtered Array(All Players(All Teams), Not(Or(And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21)), Is Dummy Bot(Current Array Element)))), Compare(Score Of(Current Array Element), ==, Global.HighestScore))), >, 1));
                 Set Global Variable(TieBreakerActive, True);
             End;
         End;
@@ -1096,10 +1112,10 @@ rule ("Active game - check for last player surviving") {
         If(Not(Global.TieBreakerActive));
             Call Subroutine(resurrectForRound);
         Else;
-            "Kill anyone alive who doesn't have the highest score, and a host who sits out."
-            Kill(Filtered Array(All Living Players(All Teams), Or(Compare(Score Of(Current Array Element), !=, Global.HighestScore), And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21)))), Null);
-            "During tiebreaker, only revive the people who have the same score as the highest score, but a host who sits out."
-            Resurrect(Filtered Array(All Dead Players(All Teams), And(Compare(Score Of(Current Array Element), ==, Global.HighestScore), Not(And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21))))));
+            "Kill anyone alive who doesn't have the highest score, and a host who sits out or the lobby bot (not tiebreakerPlayers)."
+            Kill(Filtered Array(All Living Players(All Teams), Or(Or(Compare(Score Of(Current Array Element), !=, Global.HighestScore), And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21))), Is Dummy Bot(Current Array Element))), Null);
+            "During tiebreaker, only revive the people who have the same score as the highest score, but a host who sits out or the lobby bot."
+            Resurrect(Filtered Array(All Dead Players(All Teams), And(And(Compare(Score Of(Current Array Element), ==, Global.HighestScore), Not(And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21)))), Not(Is Dummy Bot(Current Array Element)))));
             Wait(0.25, Ignore Condition);
             "A tied player may have left during the wait: decided again. With no tie left the match ends (time is up)\nand no round starts; RoundSetupPending stays set, so nothing else starts one."
             Call Subroutine(decideTiebreaker);
@@ -1116,14 +1132,16 @@ rule ("Active game - decide tiebreaker") {
         decideTiebreaker;
     }
     actions {
-        Set Global Variable(HighestScore, Score Of(Last Of(Sorted Array(Filtered Array(All Players(All Teams), Not(And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21)))), Score Of(Current Array Element)))));
+        Set Global Variable(HighestScore, Score Of(Last Of(Sorted Array(Filtered Array(All Players(All Teams), Not(Or(And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21)), Is Dummy Bot(Current Array Element)))), Score Of(Current Array Element)))));
         "Check if there is more than 1 person with the highest score"
-        If(Compare(Count Of(Filtered Array(Filtered Array(All Players(All Teams), Not(And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21)))), Compare(Score Of(Current Array Element), ==, Global.HighestScore))), >, 1));
+        If(Compare(Count Of(Filtered Array(Filtered Array(All Players(All Teams), Not(Or(And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21)), Is Dummy Bot(Current Array Element)))), Compare(Score Of(Current Array Element), ==, Global.HighestScore))), >, 1));
             "There is more than 1, activate tie breaker"
             Set Global Variable(TieBreakerActive, True);
         Else;
             Set Global Variable(TieBreakerActive, False);
             If(Compare(Match Time, ==, 0));
+                "The lobby bot is never on the end screen"
+                Call Subroutine(lobbyBotLeavesForGood);
                 Enable Built-In Game Mode Music;
                 Enable Built-In Game Mode Completion;
             End;
@@ -1177,6 +1195,8 @@ rule ("Active game - end game") {
         Global.RoundSetupPending == False;
     }
     actions {
+        "The lobby bot is never on the end screen"
+        Call Subroutine(lobbyBotLeavesForGood);
         Enable Built-In Game Mode Music;
         Enable Built-In Game Mode Completion;
     }
@@ -1269,6 +1289,14 @@ rule ("Collision - collision sub") {
         collisionTarget;
     }
     actions {
+        "The lobby bot (features/lobby-bot.opy) deflects as the ball reaches it, or misses: always at the max speed,\nand LOBBY_BOT_MISS_CHANCE % of the time from LOBBY_BOT_MISS_SPEED. A human is never a dummy, so nothing changes for them."
+        If(Is Dummy Bot(Global.target));
+            If(Or(Compare(Global.ballSpeed, ==, Global.ballSpeedCap), And(Compare(Global.ballSpeed, >=, 150), Compare(Random Integer(0, 99), <, 25))));
+                Call Subroutine(deflectFail);
+                Abort;
+            End;
+            Press Button(Global.target, Button(Ability 2));
+        End;
         "Only a dash or deflect sends the ball back"
         If(Not(Or(Is Using Ability 1(Global.target), Is Using Ability 2(Global.target))));
             Call Subroutine(deflectFail);
@@ -1760,6 +1788,8 @@ rule ("Tournament - game ends after 0 Rounds left") {
     actions {
         Wait(1, Ignore Condition);
         Set Match Time(0);
+        "The lobby bot is never on the end screen (features/lobby-bot.opy)"
+        Call Subroutine(lobbyBotLeavesForGood);
         Enable Built-In Game Mode Completion;
     }
 }
@@ -1833,8 +1863,8 @@ rule ("Ranked log - JOIN") {
         logRankedJoins;
     }
     actions {
-        While(Is True For Any(All Players(All Teams), And(Not(Array Contains(Global.rankedPlayers, Current Array Element)), Has Spawned(Current Array Element))));
-            Modify Global Variable(rankedPlayers, Append To Array, First Of(Filtered Array(All Players(All Teams), And(Not(Array Contains(Global.rankedPlayers, Current Array Element)), Has Spawned(Current Array Element)))));
+        While(Is True For Any(All Players(All Teams), And(And(Not(Array Contains(Global.rankedPlayers, Current Array Element)), Has Spawned(Current Array Element)), Not(Is Dummy Bot(Current Array Element)))));
+            Modify Global Variable(rankedPlayers, Append To Array, First Of(Filtered Array(All Players(All Teams), And(And(Not(Array Contains(Global.rankedPlayers, Current Array Element)), Has Spawned(Current Array Element)), Not(Is Dummy Bot(Current Array Element))))));
             Log To Inspector(Custom String("JOIN|{0}|{1}|{2}", Total Time Elapsed, Subtract(Count Of(Global.rankedPlayers), 1), Custom String("{0}|{1}", Last Of(Global.rankedPlayers), If-Then-Else(Compare(Last Of(Global.rankedPlayers), ==, Host Player), 1, Custom String("")))));
             "Their wins and kills count from this JOIN, as the server counts them per id"
             Set Player Variable(Last Of(Global.rankedPlayers), tourneyStats, Array(0, 0));
@@ -1859,7 +1889,7 @@ rule ("Ranked log - MATCH_START") {
         "matchKey: 12 random digits, so the server can tell repeated copies of this match apart from other matches.\nKept for a tourney's final standings. Format 2 for every match, ranked ones too."
         Set Global Variable At Index(rankedState, 17, Custom String("{0}{1}", Random Integer(100000, 999999), Random Integer(100000, 999999)));
         "The build id is the last field, so an older parser ignores it (docs/ranked-log.md, \"Build id\")."
-        Log To Inspector(Custom String("GBR|{0}|2|1.3.3R|{1}|1f594b88", Total Time Elapsed, Value In Array(Global.rankedState, 17)));
+        Log To Inspector(Custom String("GBR|{0}|2|1.3.3R|{1}|8eef561b", Total Time Elapsed, Value In Array(Global.rankedState, 17)));
         "Tourney: right after GBR, so every copy of the match has it. roundLimit is the one the match plays (totalRounds)."
         If(Compare(First Of(Value In Array(Global.rankedState, 16)), ==, True));
             Log To Inspector(Custom String("TOURNEY|{0}|{1}|{2}", Total Time Elapsed, Value In Array(Value In Array(Global.rankedState, 16), 1), Global.totalRounds));
@@ -1900,22 +1930,6 @@ rule ("Ranked log - UNRANKED") {
     }
 }
 
-rule ("Ranked log - UNRANKED BOT") {
-    event {
-        Ongoing - Each Player;
-        All;
-        All;
-    }
-    conditions {
-        Value In Array(Global.rankedState, 6) == True;
-        Is Dummy Bot(Event Player) == True;
-    }
-    actions {
-        Set Global Variable At Index(rankedState, 15, 5);
-        Call Subroutine(logRankedUnranked);
-    }
-}
-
 rule ("Ranked log - unranked warning") {
     event {
         Ongoing - Global;
@@ -1949,6 +1963,7 @@ rule ("Ranked log - player joins") {
         Value In Array(Global.rankedState, 6) == True;
         Array Contains(Global.rankedPlayers, Event Player) == False;
         Has Spawned(Event Player) == True;
+        Is Dummy Bot(Event Player) == False;
     }
     actions {
         Call Subroutine(logRankedJoins);
@@ -1988,6 +2003,8 @@ rule ("Ranked log - ROUND_START") {
         Global.RoundSetupPending == False;
         Or(Global.RoundInProgress, Global.IsInFinalDuel) == True;
         Number Of Living Players(All Teams) > 1;
+        Value In Array(Global.rankedState, 24) != True;
+        Is True For Any(All Players(All Teams), Is Dummy Bot(Current Array Element)) == False;
     }
     actions {
         "Everyone alive needs an id before it's listed"
@@ -2031,6 +2048,8 @@ rule ("Ranked log - KILL") {
     }
     conditions {
         Value In Array(Global.rankedState, 6) == True;
+        Is Dummy Bot(Event Player) == False;
+        And(Compare(Attacker, !=, Null), Is Dummy Bot(Attacker)) == False;
     }
     actions {
         Log To Inspector(Custom String("KILL|{0}|{1}|{2}", Total Time Elapsed, If-Then-Else(And(Compare(Attacker, !=, Event Player), Compare(Attacker, !=, Null)), Attacker, Custom String("")), Custom String("{0}|{1}|{2}", Event Player, If-Then-Else(And(Compare(Attacker, !=, Event Player), Array Contains(Global.rankedPlayers, Attacker)), Index Of Array Value(Global.rankedPlayers, Attacker), Custom String("")), If-Then-Else(Array Contains(Global.rankedPlayers, Event Player), Index Of Array Value(Global.rankedPlayers, Event Player), Custom String("")))));
@@ -2156,7 +2175,13 @@ rule ("Host sit-out - bring back players") {
         resurrectForRound;
     }
     actions {
-        Resurrect(Filtered Array(All Dead Players(All Teams), Not(And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21)))));
+        If(And(Is True For Any(All Players(All Teams), Is Dummy Bot(Current Array Element)), Compare(Subtract(Subtract(Number Of Players(All Teams), If-Then-Else(And(Value In Array(Global.rankedState, 21), Array Contains(All Players(All Teams), Host Player)), 1, 0)), If-Then-Else(Is True For Any(All Players(All Teams), Is Dummy Bot(Current Array Element)), 1, 0)), >, 1)));
+            Kill(Filtered Array(All Players(All Teams), Is Dummy Bot(Current Array Element)), Null);
+            Destroy All Dummy Bots;
+            Resurrect(Filtered Array(All Dead Players(All Teams), Not(Or(And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21)), Is Dummy Bot(Current Array Element)))));
+        Else;
+            Resurrect(Filtered Array(All Dead Players(All Teams), Not(And(Compare(Current Array Element, ==, Host Player), Value In Array(Global.rankedState, 21)))));
+        End;
         If(And(Value In Array(Global.rankedState, 21), Is Alive(Host Player)));
             Kill(Host Player, Null);
         End;
@@ -2186,6 +2211,9 @@ rule ("Host sit-out - from round 2") {
         Is Game In Progress == True;
         Global.IsEnoughPlayersToStart == True;
         Global.RoundInProgress == True;
+        "A lobby bot round isn't the first round: a host alone with it keeps playing. From the latch (botRound), so a\nbot round stays one after the bot leaves during it; startRound() sets it before it clears RoundSetupPending"
+        Value In Array(Global.rankedState, 24) != True;
+        Global.RoundSetupPending == False;
     }
     actions {
         Set Global Variable At Index(rankedState, 23, True);
@@ -2261,6 +2289,323 @@ rule ("Host sit-out - HUD") {
         "Entity creation fail protection"
         Wait(1, Ignore Condition);
         Create HUD Text(If-Then-Else(Or(Or(Compare((Host Player).simpleHUD, ==, 0), Value In Array(Global.rankedState, 21)), Value In Array(Global.rankedState, 20)), Host Player, Null), Null, Custom String("{0} [{1} + {2}]", If-Then-Else(And(Value In Array(Global.rankedState, 21), Value In Array(Global.rankedState, 20)), Custom String("sitting out: play"), If-Then-Else(Value In Array(Global.rankedState, 20), Custom String("sitting out from the next round: keep playing"), If-Then-Else(Value In Array(Global.rankedState, 21), Custom String("playing from the next round: keep sitting out"), Custom String("sit out")))), Input Binding String(Button(Crouch)), Input Binding String(Button(Interact))), Null, Left, 0, Null, If-Then-Else(Value In Array(Global.rankedState, 21), Color(Orange), Color(White)), Null, Visible To String and Color, Default Visibility);
+    }
+}
+
+rule ("Lobby bot - join") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Is Game In Progress == True;
+        First Of(Value In Array(Global.rankedState, 16)) != True;
+        "No round on an unsupported map (maps/arenas.opy)"
+        Current Map == Map(Workshop Island Night);
+        Is True For Any(All Players(All Teams), Is Dummy Bot(Current Array Element)) == False;
+        Subtract(Subtract(Number Of Players(All Teams), If-Then-Else(And(Value In Array(Global.rankedState, 21), Array Contains(All Players(All Teams), Host Player)), 1, 0)), If-Then-Else(Is True For Any(All Players(All Teams), Is Dummy Bot(Current Array Element)), 1, 0)) == 1;
+        "Not once the match is ending"
+        Value In Array(Global.rankedState, 25) == False;
+    }
+    actions {
+        Create Dummy Bot(Hero(Genji), All Teams, -1, Null, Null);
+    }
+}
+
+rule ("Lobby bot - leave") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Is True For Any(All Players(All Teams), Is Dummy Bot(Current Array Element)) == True;
+        Or(Or(Compare(Subtract(Subtract(Number Of Players(All Teams), If-Then-Else(And(Value In Array(Global.rankedState, 21), Array Contains(All Players(All Teams), Host Player)), 1, 0)), If-Then-Else(Is True For Any(All Players(All Teams), Is Dummy Bot(Current Array Element)), 1, 0)), ==, 0), Compare(First Of(Value In Array(Global.rankedState, 16)), ==, True)), Value In Array(Global.rankedState, 25)) == True;
+    }
+    actions {
+        Destroy All Dummy Bots;
+    }
+}
+
+rule ("Lobby bot - leave for a second player") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Is True For Any(All Players(All Teams), Is Dummy Bot(Current Array Element)) == True;
+        Subtract(Subtract(Number Of Players(All Teams), If-Then-Else(And(Value In Array(Global.rankedState, 21), Array Contains(All Players(All Teams), Host Player)), 1, 0)), If-Then-Else(Is True For Any(All Players(All Teams), Is Dummy Bot(Current Array Element)), 1, 0)) > 1;
+        And(Global.IsEnoughPlayersToStart, Is True For Any(All Living Players(All Teams), Is Dummy Bot(Current Array Element))) == False;
+    }
+    actions {
+        Kill(Filtered Array(All Players(All Teams), Is Dummy Bot(Current Array Element)), Null);
+        Destroy All Dummy Bots;
+    }
+}
+
+rule ("Lobby bot - leave for the end of the match") {
+    event {
+        Subroutine;
+        lobbyBotLeavesForGood;
+    }
+    actions {
+        Set Global Variable At Index(rankedState, 25, True);
+        If(Is True For Any(All Players(All Teams), Is Dummy Bot(Current Array Element)));
+            Destroy All Dummy Bots;
+            Wait Until(Not(Is True For Any(All Players(All Teams), Is Dummy Bot(Current Array Element))), 1);
+        End;
+    }
+}
+
+rule ("Lobby bot - name") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Dummy Bot(Event Player) == True;
+    }
+    actions {
+        Set Player Variable(Event Player, lobbyBot, Empty Array);
+        Start Forcing Dummy Bot Name(Event Player, Custom String("[BOT] Genji Bot"));
+    }
+}
+
+rule ("Lobby bot - EMP death effect") {
+    event {
+        Player Died;
+        All;
+        All;
+    }
+    conditions {
+        Is Dummy Bot(Event Player) == True;
+    }
+    actions {
+        Play Effect(All Players(All Teams), Sombra EMP Explosion Effect, Color(Purple), Position Of(Event Player), 15);
+        Play Effect(All Players(All Teams), Sombra EMP Explosion Sound, Color(White), Position Of(Event Player), 200);
+        Play Effect(All Players(All Teams), Ring Explosion, Color(Purple), Position Of(Event Player), 30);
+        Play Effect(All Players(All Teams), Ring Explosion, Color(Violet), Add(Position Of(Event Player), Up), 20);
+        Wait(0.15, Ignore Condition);
+        Play Effect(All Players(All Teams), Ring Explosion, Color(Purple), Position Of(Event Player), 45);
+    }
+}
+
+rule ("Lobby bot - face the ball") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Dummy Bot(Event Player) == True;
+        Distance Between(Eye Position(Event Player), Global.ballPosition) >= Multiply(2, Divide(Global.ballSpeed, 20));
+        Is Alive(Event Player) == True;
+        Value In Array((Event Player).lobbyBot, 2) != True;
+        Is Using Ability 1(Event Player) == False;
+        Is Using Ability 2(Event Player) == False;
+        Has Status(Event Player, Stunned) == False;
+    }
+    actions {
+        Start Facing(Event Player, Direction Towards(Eye Position(Event Player), Divide(Add(Global.ballPosition, Eye Position(Global.target)), 2)), 1000, To World, Direction and Turn Rate);
+    }
+}
+
+rule ("Lobby bot - edash when needed") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Dummy Bot(Event Player) == True;
+        Global.ballIsOut == True;
+        Is Using Ability 2(Event Player) == True;
+    }
+    actions {
+        Wait Until(And(Compare(Event Player, !=, Global.target), Or(Is Using Ability 1(Global.target), Is Using Ability 2(Global.target))), 0.25);
+        If(Compare(Event Player, ==, Global.target));
+            If(Compare(Angle Between Vectors(Global.ballDirection, Direction Towards(Global.ballPosition, Eye Position(Event Player))), <, 20));
+                Set Player Variable At Index(Event Player, lobbyBot, 1, True);
+                Set Facing(Event Player, Evaluate Once(Direction Towards(Eye Position(Event Player), Global.ballPosition)), To World);
+                Start Facing(Event Player, Evaluate Once(Direction Towards(Eye Position(Event Player), Global.ballPosition)), 10000, To World, Direction and Turn Rate);
+                Wait Until(Or(Is Button Held(Event Player, Button(Ability 1)), Is Dead(Event Player)), 1);
+                Set Player Variable At Index(Event Player, lobbyBot, 1, False);
+            End;
+        Else If(Compare(Event Player, ==, Global.prevTarget));
+            If(Or(Is Using Ability 1(Global.target), Is Using Ability 2(Global.target)));
+                If(Compare(Angle Between Vectors(Global.ballDirection, Direction Towards(Global.ballPosition, Eye Position(Global.target))), <, 20));
+                    Set Player Variable At Index(Event Player, lobbyBot, 1, True);
+                    Set Facing(Event Player, Evaluate Once(Direction Towards(Eye Position(Event Player), Global.ballPosition)), To World);
+                    Start Facing(Event Player, Evaluate Once(Direction Towards(Eye Position(Event Player), Global.ballPosition)), 10000, To World, Direction and Turn Rate);
+                    Wait Until(Or(Is Button Held(Event Player, Button(Ability 1)), Is Dead(Event Player)), 1);
+                    Set Player Variable At Index(Event Player, lobbyBot, 1, False);
+    }
+}
+
+rule ("Lobby bot - jumping") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Dummy Bot(Event Player) == True;
+        Global.ballIsOut == True;
+    }
+    actions {
+        If(Compare(Random Value In Array(Array(1, 2)), ==, 2));
+            Press Button(Event Player, Button(Jump));
+            Wait(0.35, Ignore Condition);
+            Press Button(Event Player, Button(Jump));
+            Wait(Random Integer(1, 2), Ignore Condition);
+        Else;
+            Press Button(Event Player, Button(Jump));
+            Wait(Random Integer(1, 2), Ignore Condition);
+        End;
+        Loop;
+    }
+}
+
+rule ("Lobby bot - movement") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Game In Progress == True;
+        Is Dummy Bot(Event Player) == True;
+        Is Alive(Event Player) == True;
+    }
+    actions {
+        If(Or(Or(Or(Compare(X Component Of(Position Of(Event Player)), >, 30), Compare(X Component Of(Position Of(Event Player)), <, -30)), Compare(Z Component Of(Position Of(Event Player)), >, 30)), Compare(Z Component Of(Position Of(Event Player)), <, -30)));
+            Stop Throttle In Direction(Event Player);
+            Start Throttle In Direction(Event Player, Direction Towards(Position Of(Event Player), Vector(0, 0, 0)), 1, To World, Replace existing throttle, None);
+            Wait(Random Real(1, 1.5), Ignore Condition);
+            Loop If Condition Is True;
+        End;
+        If(Compare(Event Player, !=, Global.target));
+            Start Throttle In Direction(Event Player, Direction Towards(Position Of(Event Player), Global.target), 0.8, To Player, Replace existing throttle, None);
+            Wait(Random Real(0.5, 3), Ignore Condition);
+            Loop If Condition Is True;
+        Else;
+            Start Throttle In Direction(Event Player, Direction Towards(Position Of(Event Player), Vector(Random Real(-15, 15), 0, Random Real(-15, 15))), 0.8, To Player, Replace existing throttle, None);
+            Wait(Random Real(0.5, 3), Ignore Condition);
+            Loop If Condition Is True;
+    }
+}
+
+rule ("Lobby bot - aim the deflect") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Distance Between(Eye Position(Event Player), Global.ballPosition) <= Multiply(2, Divide(Global.ballSpeed, 20));
+        Global.target == Event Player;
+        Is Dummy Bot(Event Player) == True;
+        Global.ballIsOut == True;
+        Is Alive(Event Player) == True;
+        Is Using Ability 1(Event Player) == False;
+        Is Using Ability 2(Event Player) == False;
+        Has Status(Event Player, Stunned) == False;
+        Value In Array((Event Player).lobbyBot, 2) != True;
+    }
+    actions {
+        If(And(Or(Or(Or(Compare(X Component Of(Position Of(Event Player)), >, 18), Compare(X Component Of(Position Of(Event Player)), <, -18)), Compare(Z Component Of(Position Of(Event Player)), >, 18)), Compare(Z Component Of(Position Of(Event Player)), <, -18)), Or(Compare(Global.ballSpeed, <=, 90), Compare(Random Integer(0, 99), <, 90))));
+            Start Facing(Event Player, Down, 10000, To World, Direction and Turn Rate);
+        Else If(Compare(Random Integer(0, 99), <, 60));
+            If(And(Compare(Random Integer(0, 1), ==, 0), Is True For All(Remove From Array(All Living Players(All Teams), Event Player), Compare(Distance Between(Position Of(Event Player), Position Of(Current Array Element)), >, 30))));
+                Start Facing(Event Player, Up, 10000, To World, Direction and Turn Rate);
+            Else;
+                Start Facing(Event Player, Down, 10000, To World, Direction and Turn Rate);
+            End;
+        Else;
+            If(Compare((Event Player).canDash, ==, True));
+                If(Compare(Random Integer(0, 8), ==, 0));
+                    If(Compare(Global.ballSpeed, <, 80));
+                        Start Facing(Event Player, Direction From Angles(Add(Horizontal Angle From Direction(Direction Towards(Eye Position(Event Player), Eye Position(Evaluate Once(Random Value In Array(Remove From Array(All Living Players(All Teams), Event Player)))))), Evaluate Once(Random Integer(-35, 35))), Evaluate Once(Random Integer(-35, 35))), 10000, To World, Direction and Turn Rate);
+                    Else;
+                        Start Facing(Event Player, Direction From Angles(Add(Horizontal Angle From Direction(Direction Towards(Eye Position(Event Player), Eye Position(Evaluate Once(Random Value In Array(Remove From Array(All Living Players(All Teams), Event Player)))))), Evaluate Once(Random Integer(-10, 10))), Evaluate Once(Random Integer(-10, 10))), 10000, To World, Direction and Turn Rate);
+                    End;
+                Else;
+                    Start Facing(Event Player, Vector(Random Integer(-360, 360), Random Integer(-360, 360), Random Integer(-360, 360)), 10000, To World, Direction and Turn Rate);
+                End;
+            Else;
+                If(Compare(Random Integer(0, 1), ==, 0));
+                    Start Facing(Event Player, Direction From Angles(Add(Horizontal Angle From Direction(Direction Towards(Eye Position(Event Player), Eye Position(First Of(Sorted Array(Filtered Array(All Living Players(All Teams), And(Has Spawned(Current Array Element), Compare(Current Array Element, !=, Event Player))), Angle Between Vectors(Facing Direction Of(Event Player), Subtract(Current Array Element, Eye Position(Event Player)))))))), Evaluate Once(Random Integer(-90, -45))), Evaluate Once(Random Integer(-90, 90))), 10000, To World, Direction and Turn Rate);
+                Else;
+                    Start Facing(Event Player, Direction From Angles(Add(Horizontal Angle From Direction(Direction Towards(Eye Position(Event Player), Eye Position(First Of(Sorted Array(Filtered Array(All Living Players(All Teams), And(Has Spawned(Current Array Element), Compare(Current Array Element, !=, Event Player))), Angle Between Vectors(Facing Direction Of(Event Player), Subtract(Current Array Element, Eye Position(Event Player)))))))), Evaluate Once(Random Integer(45, 90))), Evaluate Once(Random Integer(-90, 90))), 10000, To World, Direction and Turn Rate);
+                End;
+                Wait(0, Ignore Condition);
+                Loop If(Is True For Any(Remove From Array(All Living Players(All Teams), Event Player), Is In View Angle(Event Player, Eye Position(Current Array Element), 30)));
+            End;
+        End;
+        Wait Until(Or(Compare(Global.target, !=, Event Player), Is Dead(Event Player)), 99999);
+        If(Compare(Angle Between Vectors(Multiply(Global.ballDirection, -1), Direction Towards(Global.target, Global.ballPosition)), <, 20));
+            If(Compare(Distance Between(Eye Position(Event Player), Global.ballPosition), <, Global.ballSpeed));
+                Set Player Variable At Index(Event Player, lobbyBot, 0, True);
+            End;
+        End;
+        Wait(0.3, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Lobby bot - face up or down near the ball") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Distance Between(Eye Position(Event Player), Global.ballPosition) <= Multiply(2, Divide(Global.ballSpeed, 20));
+        Is Dummy Bot(Event Player) == True;
+        Global.ballIsOut == True;
+        Is Alive(Event Player) == True;
+        Value In Array((Event Player).lobbyBot, 2) != True;
+        Ability Cooldown(Event Player, Button(Ability 1)) != 0;
+    }
+    actions {
+        If(And(Compare(Random Integer(0, 1), ==, 0), Is True For All(Remove From Array(All Living Players(All Teams), Event Player), Compare(Distance Between(Position Of(Event Player), Position Of(Current Array Element)), >, 30))));
+            Start Facing(Event Player, Up, 10000, To World, Direction and Turn Rate);
+        Else;
+            Start Facing(Event Player, Down, 10000, To World, Direction and Turn Rate);
+        End;
+        Wait(0.3, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+
+rule ("Lobby bot - ace dash") {
+    event {
+        Ongoing - Each Player;
+        All;
+        All;
+    }
+    conditions {
+        Is Dummy Bot(Event Player) == True;
+        Global.ballIsOut == True;
+        Global.target != Event Player;
+        Is Alive(Event Player) == True;
+        Ability Cooldown(Event Player, Button(Ability 1)) == 0;
+        Is Using Ability 1(Event Player) == False;
+        Is Using Ability 2(Event Player) == False;
+        Has Status(Event Player, Stunned) == False;
+        Value In Array((Event Player).lobbyBot, 2) != True;
+        Distance Between(Position Of(Event Player), Position Of(Global.target)) <= 10;
+        Distance Between(Eye Position(Global.target), Global.ballPosition) <= Multiply(Global.ballSpeed, 0.3);
+    }
+    actions {
+        If(Compare(Random Integer(0, 99), <, 30));
+            Set Player Variable At Index(Event Player, lobbyBot, 2, True);
+            Set Facing(Event Player, Evaluate Once(Facing Direction Of(Global.target)), To World);
+            Start Facing(Event Player, Evaluate Once(Facing Direction Of(Global.target)), 10000, To World, Direction and Turn Rate);
+            Wait(0.05, Ignore Condition);
+            Press Button(Event Player, Button(Ability 1));
+            Wait(0.05, Ignore Condition);
+            Wait Until(Or(Not(Is Using Ability 1(Event Player)), Is Dead(Event Player)), 1);
+            Set Player Variable At Index(Event Player, lobbyBot, 2, False);
+        Else;
+            Wait Until(Or(Compare(Global.target, ==, Event Player), Is Dead(Event Player)), 5);
     }
 }
 
