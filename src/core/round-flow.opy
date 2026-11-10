@@ -4,6 +4,11 @@ def startRound():
     @Name "Active game - start round"
     
     RoundSetupPending = true
+    #Latched here, before the wait, and kept for the whole round: a lobby bot round (features/lobby-bot.opy) gives
+    #no score and is never opened in the ranked log, even if the bot leaves during it. One player and the bot only:
+    #with a second player the bot is on its way out (resurrectForRound() or a tiebreaker killed it) and doesn't play,
+    #even if it's only gone next tick.
+    rankedState[RankedField.BOT_ROUND] = lobbyBotIn and humansPlaying <= 1
     randomTarget()
     #A tiebreaker: a tied player may have left during the wait. Decided again; with no tie left the match ends
     #(time is up) and no round starts. RoundSetupPending stays set, so nothing else starts one.
@@ -77,7 +82,10 @@ rule "Active game - check for last player surviving":
     IsInFinalDuel = false
     #Cleared by startRound once the next round is under way.
     RoundSetupPending = true
-    getLivingPlayers(Team.ALL).addToScore(1)
+    #A lobby bot round (features/lobby-bot.opy) doesn't count: no score for anyone. From the latch, not lobbyBotIn: the
+    #bot may already have left, dead, for a player who joined during the round
+    if not botRound:
+        getLivingPlayers(Team.ALL).addToScore(1)
     wait(0.25)
     #The host's sit-out takes effect between rounds, after the ranked log's ROUND_END. With too few players
     #left, "Check for <2 players" stops the lobby during the win pause
@@ -120,10 +128,10 @@ rule "Active game - check for last player surviving":
     if not TieBreakerActive:
         resurrectForRound()
     else:
-        #Kill anyone alive who doesn't have the highest score, and a host who sits out.
-        kill(getLivingPlayers(Team.ALL).filter(lambda player: player.getScore() != HighestScore or sitsOut(player)))
-        #During tiebreaker, only revive the people who have the same score as the highest score, but a host who sits out.
-        (getDeadPlayers(Team.ALL).filter(lambda player: player.getScore() == HighestScore and not sitsOut(player))).resurrect()
+        #Kill anyone alive who doesn't have the highest score, and a host who sits out or the lobby bot (not tiebreakerPlayers).
+        kill(getLivingPlayers(Team.ALL).filter(lambda player: player.getScore() != HighestScore or sitsOut(player) or player.isDummy()))
+        #During tiebreaker, only revive the people who have the same score as the highest score, but a host who sits out or the lobby bot.
+        (getDeadPlayers(Team.ALL).filter(lambda player: player.getScore() == HighestScore and not sitsOut(player) and not player.isDummy())).resurrect()
         wait(0.25)
         #A tied player may have left during the wait: decided again. With no tie left the match ends (time is up)
         #and no round starts; RoundSetupPending stays set, so nothing else starts one.
@@ -148,6 +156,8 @@ def decideTiebreaker():
     else:
         TieBreakerActive = false
         if getMatchTime() == 0:
+            #The lobby bot is never on the end screen
+            lobbyBotLeavesForGood()
             enableMusic()
             enableGamemodeCompletion()
 
@@ -193,6 +203,8 @@ rule "Active game - end game":
     #Not during a round win pause, even with the lobby stopped: the round win decides the end of the match after it
     @Condition RoundSetupPending == false
 
+    #The lobby bot is never on the end screen
+    lobbyBotLeavesForGood()
     enableMusic()
     enableGamemodeCompletion()
 

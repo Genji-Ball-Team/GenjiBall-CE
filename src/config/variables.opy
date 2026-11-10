@@ -72,6 +72,8 @@ playervar sensHigh 12
 playervar rankTier 124
 #Ranked log: the player's round wins and kills since their JOIN (TourneyStat), for a tourney's final standings
 playervar tourneyStats 125
+#The lobby bot only (features/lobby-bot.opy): its LobbyBot flags
+playervar lobbyBot 126
 
 #Subroutine names
 
@@ -97,6 +99,7 @@ subroutine logRankedUnranked 126
 subroutine applyHostSitOut 127
 subroutine resurrectForRound 123
 subroutine decideTiebreaker 122
+subroutine lobbyBotLeavesForGood 121
 
 #Activated extensions. Every one is used; OverPy refuses to compile when they cost more points than the Workshop has.
 

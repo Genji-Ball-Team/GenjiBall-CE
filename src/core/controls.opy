@@ -62,6 +62,12 @@ rule "Controls - Shorten deflect length":
     @Condition eventPlayer.isUsingUltimate() == false
     
     wait(ballFeel[BallFeel.DEFLECT_WINDOW])
+    #The lobby bot dashes as its deflect ends, before the dash is disabled: an edash, or at a ball coming
+    #straight back (features/lobby-bot.opy). Humans never have these flags.
+    if eventPlayer.isDummy() and (eventPlayer.lobbyBot[LobbyBot.EDASH] or eventPlayer.lobbyBot[LobbyBot.DASH_BACK]):
+        eventPlayer.forceButtonPress(Button.ABILITY_1)
+        eventPlayer.lobbyBot[LobbyBot.DASH_BACK] = false
+        eventPlayer.lobbyBot[LobbyBot.EDASH] = false
     eventPlayer.setAbility2Enabled(false)
     eventPlayer.setAbility1Enabled(false)
     eventPlayer.canDeflect = false

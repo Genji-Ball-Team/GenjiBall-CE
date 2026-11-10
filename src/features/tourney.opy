@@ -67,4 +67,6 @@ rule "Tourney - final standings":
     #Time for the screenshot, then the match ends as in "Tournament - game ends after 0 Rounds left"
     wait(TOURNEY_STANDINGS_TIME)
     setMatchTime(0)
+    #Never in a tourney, but every match end goes through it (features/lobby-bot.opy)
+    lobbyBotLeavesForGood()
     enableGamemodeCompletion()

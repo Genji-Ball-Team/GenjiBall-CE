@@ -95,6 +95,9 @@ enum RankedField:
     SITTING_OUT     #the host sits out now: not brought back for rounds, not counted as a player (playingPlayers)
     SIT_OUT_HOST    #the hostPlayer the two above belong to. A new host starts playing
     SIT_OUT_READY   #the first round has started, so the default (sit out from round 2) is set
+    BOT_ROUND       #the round that started last is a lobby bot round (one player and the bot, features/lobby-bot.opy):
+                    #no score, never opened in the ranked log. Latched by startRound(), cleared when the lobby stops
+    BOT_GONE        #the match is ending: the lobby bot left for good and can't join again (features/lobby-bot.opy)
 
 #Fields of rankedState[TOURNEY], the tourney rule's values (docs/tourney-rule.md), in the rule's order
 enum TourneyField:
@@ -139,7 +142,7 @@ enum UnrankedReason:
     PRESET
     FEEL
     ADD_ON
-    BOT
+    BOT     #a dummy bot in the match. Not logged since the lobby bot (features/lobby-bot.opy), kept so the codes keep their index
 
 #Fields of an entry in rankTags ("RANKS - generated", docs/rank-tags.md)
 enum RankTagField:
@@ -148,12 +151,30 @@ enum RankTagField:
     GUIDE       #the entry's line in the top 10 list, empty for a rank tier
     NAMES       #the player names in this entry start here
 
-#Players a round can use (core/lobby.opy): everyone in a slot but a host who sits out (features/host-sit-out.opy)
+#Players a round can use (core/lobby.opy): everyone in a slot but a host who sits out (features/host-sit-out.opy).
+#The lobby bot counts: with it, one player has a round to play
 #!define playingPlayers (getNumberOfPlayers(Team.ALL) - (1 if rankedState[RankedField.SITTING_OUT] and hostPlayer in getAllPlayers() else 0))
 #True for the host while they sit out: not brought back for a round, never in a tiebreaker
 #!define sitsOut(player) (player == hostPlayer and rankedState[RankedField.SITTING_OUT])
-#The players a tiebreaker is decided among and played by: everyone in a slot but a host who sits out
-#!define tiebreakerPlayers getAllPlayers().filter(lambda player: not sitsOut(player))
+#The players a tiebreaker is decided among and played by: everyone in a slot but a host who sits out and the lobby bot
+#!define tiebreakerPlayers getAllPlayers().filter(lambda player: not sitsOut(player) and not player.isDummy())
+
+#The lobby bot (features/lobby-bot.opy), the only dummy in a ranked lobby: it plays when one player would be alone
+#!define lobbyBotIn any([player.isDummy() for player in getAllPlayers()])
+#playingPlayers without the lobby bot. The bot comes when this is 1 and leaves when it isn't
+#!define humansPlaying (playingPlayers - (1 if lobbyBotIn else 0))
+#The current round is a lobby bot round (RankedField.BOT_ROUND): decided once, as it starts. Use this, not
+#lobbyBotIn, for anything about the round: the bot can leave during it (dead, once a second player can play)
+#!define botRound (rankedState[RankedField.BOT_ROUND] == true)
+#From this ballSpeed the bot misses LOBBY_BOT_MISS_CHANCE % of its deflects. At the max speed it always misses
+#!define LOBBY_BOT_MISS_SPEED 150
+#!define LOBBY_BOT_MISS_CHANCE 25
+
+#The lobby bot's eventPlayer.lobbyBot: what it's about to do
+enum LobbyBot:
+    DASH_BACK   #dash at the end of its deflect: the ball is coming straight back at it
+    EDASH       #dash at the end of its deflect, at the ball (an edash)
+    ACE_DASH    #dashing after the target to take the ball off them: its facing rules wait
 
 #FFA slots a lobby can have: one rank tag each
 #!define FFA_SLOTS 12

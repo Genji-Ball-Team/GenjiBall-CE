@@ -6,6 +6,8 @@ rule "Tournament - game ends after 0 Rounds left":
     
     wait(1)
     setMatchTime(0)
+    #The lobby bot is never on the end screen (features/lobby-bot.opy)
+    lobbyBotLeavesForGood()
     enableGamemodeCompletion()
 
 

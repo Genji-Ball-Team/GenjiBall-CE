@@ -18,7 +18,7 @@ Stay alive longest to win the round. Each round won is worth 1 point.
 5. **Final duel.** When only two players are left, both are placed on opposite sides of the arena and frozen for 1.5 seconds. Then it's a 1v1.
 6. **Round won.** The last player alive gets a point. Everyone respawns and the next round starts.
 
-Players who join mid-round sit out (dead, spectating) until the next round. In ranked, the host plays the first round and then sits out until they press Crouch + Interact, so the lobby doesn't wait on them.
+Players who join mid-round sit out (dead, spectating) until the next round. In ranked, the host plays the first round and then sits out until they press Crouch + Interact, so the lobby doesn't wait on them. A player alone in a ranked lobby plays **[BOT] Genji Bot** until someone else can play; those rounds don't count, and no one gets a point for them.
 
 ### Dash-hitting
 

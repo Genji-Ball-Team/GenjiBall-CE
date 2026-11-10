@@ -11,7 +11,7 @@ This is a map of the game logic for contributors. It assumes you know roughly wh
 | `config/` | Custom game settings, variables, Workshop settings and presets, initial values |
 | `core/` | Controls timing, lobby and round flow, collision, ball physics. Needs a maintainer's review ([CODEOWNERS](../.github/CODEOWNERS)); most of it is [feel-locked](development.md#feel-lock) |
 | `maps/` | Arena setup and map restrictions (boundaries, Workshop Island water and edges) |
-| `features/` | Tournament mode, tourneys, the ranked log, the host sit-out and rank tags |
+| `features/` | Tournament mode, tourneys, the ranked log, the host sit-out, the lobby bot and rank tags |
 | `ui/` | HUD text and visual effects |
 
 | File | Contents |
@@ -34,6 +34,7 @@ This is a map of the game logic for contributors. It assumes you know roughly wh
 | `features/tournament.opy` | Round counting, breaks, tournament-only restrictions, basic anti-orbit |
 | `features/ranked-log.opy` | `v1.3.3R` only: the ranked log ([format](ranked-log.md)) |
 | `features/host-sit-out.opy` | `v1.3.3R` only: the host sits out from round 2 (Crouch + Interact to play), `applyHostSitOut()` and `resurrectForRound()` for the round flow ([Host sit-out](ranked-log.md#host-sit-out)) |
+| `features/lobby-bot.opy` | `v1.3.3R` only: the lobby bot, [BOT] Genji Bot, which plays a player who'd be alone and isn't in the ranked log ([Lobby bot](ranked-log.md#lobby-bot)). Its deflect and end-of-deflect dash are dummy-only branches in `core/collision.opy` and `core/controls.opy` |
 | `features/rank-tags.opy` | `v1.3.3R` only: rank tags and the top 10 list, with the generated rule `RANKS - generated` ([rank-tags.md](rank-tags.md)) |
 
 The file table is in include order. When you add a file, include it in `main.opy` at the place its rules need to run, and add it here.
@@ -226,4 +227,4 @@ How to read these:
 - **Player rank** (rank-outline placeholders) isn't on `main`. The code is kept on the `feature/player-rank` branch. Its player variable slots (19–22) are free.
 - **Tombstone** (name-based removal of specific players) isn't on `main`. The code is kept on the `feature/tombstone` branch.
 - **Teams** (Team Deathmatch support) isn't on `main`. It lives on the `v1.3.3T` variant branch. Global variable slots 71–74 and 108 and subroutine slot 18 belong to `v1.3.3T` and are unused on `main`. Keep them that way, or merging `main` into `v1.3.3T` gives two variables the same slot.
-- **Ranked** (event logging and rank tags) isn't on `main`. It lives on the `v1.3.3R` variant branch. Global variable slots 124–127 and player variable slots 124–127 are reserved for `v1.3.3R` and unused on `main`, for the same reason. Ranked state should be packed into as few of them as possible (one array if it fits). On `v1.3.3R`, global 124 is `rankedState`, 125 `rankedPlayers` and 126 `rankedRound` (the ranked log), 127 `rankTags` (rank tags), player 124 is `rankTier`, player 125 `tourneyStats` (a tourney's final standings), and subroutine slots from 124 up are its own. Player slots 126 and 127 held the rank glow, which was removed. `v1.3.3R` also leaves out the settings, presets and features a ranked or tourney lobby doesn't use, but never renumbers: the slots they used on `main` stay empty.
+- **Ranked** (event logging and rank tags) isn't on `main`. It lives on the `v1.3.3R` variant branch. Global variable slots 124–127 and player variable slots 124–127 are reserved for `v1.3.3R` and unused on `main`, for the same reason. Ranked state should be packed into as few of them as possible (one array if it fits). On `v1.3.3R`, global 124 is `rankedState`, 125 `rankedPlayers` and 126 `rankedRound` (the ranked log), 127 `rankTags` (rank tags), player 124 is `rankTier`, player 125 `tourneyStats` (a tourney's final standings), and subroutine slots from 121 up are its own. Player slot 126 is `lobbyBot` (the lobby bot); 127 held the rank glow, which was removed. `v1.3.3R` also leaves out the settings, presets and features a ranked or tourney lobby doesn't use, but never renumbers: the slots they used on `main` stay empty.
