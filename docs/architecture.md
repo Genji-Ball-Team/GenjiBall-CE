@@ -11,7 +11,7 @@ This is a map of the game logic for contributors. It assumes you know roughly wh
 | `config/` | Custom game settings, variables, Workshop settings and presets, initial values |
 | `core/` | Controls timing, lobby and round flow, collision, ball physics. Needs a maintainer's review ([CODEOWNERS](../.github/CODEOWNERS)); most of it is [feel-locked](development.md#feel-lock) |
 | `maps/` | Arena setup and map restrictions (boundaries, Workshop Island water and edges) |
-| `features/` | Tournament mode, tourneys, the ranked log and rank tags |
+| `features/` | Tournament mode, tourneys, the ranked log, the host sit-out and rank tags |
 | `ui/` | HUD text and visual effects |
 
 | File | Contents |
@@ -33,6 +33,7 @@ This is a map of the game logic for contributors. It assumes you know roughly wh
 | `maps/restrictions.opy` | Center exclusion zone, arena boundary, Workshop Island water and edges |
 | `features/tournament.opy` | Round counting, breaks, tournament-only restrictions, basic anti-orbit |
 | `features/ranked-log.opy` | `v1.3.3R` only: the ranked log ([format](ranked-log.md)) |
+| `features/host-sit-out.opy` | `v1.3.3R` only: the host sits out from round 2 (Crouch + Interact to play), `applyHostSitOut()` and `resurrectForRound()` for the round flow ([Host sit-out](ranked-log.md#host-sit-out)) |
 | `features/rank-tags.opy` | `v1.3.3R` only: rank tags and the top 10 list, with the generated rule `RANKS - generated` ([rank-tags.md](rank-tags.md)) |
 
 The file table is in include order. When you add a file, include it in `main.opy` at the place its rules need to run, and add it here.
@@ -56,7 +57,7 @@ The file table is in include order. When you add a file, include it in `main.opy
                                        randomTarget(), respawn in 2s │
        │                                                            │
        ▼  2 players left → setupFinal() (final duel)                │
-       ▼  1 player left  → +1 score, maybe tiebreaker, resurrect ───┘
+       ▼  1 player left  → +1 score, maybe tiebreaker, resurrectForRound()
 ```
 
 The numbers are fixed: `ballFeel` (hit radius, speed per deflect) and `roundTimings` (ball respawn delay) are set in `config/workshop-settings.opy`.

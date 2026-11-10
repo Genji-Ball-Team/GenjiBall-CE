@@ -7,7 +7,7 @@
 #
 #Folders: config/ (settings, variables, named constants), core/ (controls, round flow,
 #collision, ball physics; feel-locked, see CONTRIBUTING.md), maps/ (arena
-#setup and restrictions), features/ (tournament, ranked log, rank tags, tourney), ui/ (HUD, effects).
+#setup and restrictions), features/ (tournament, ranked log, host sit-out, rank tags, tourney), ui/ (HUD, effects).
 
 #The build id for the GBR log line. tools/build-id.mjs hashes src/ and the build replaces this line, so it never needs bumping by hand.
 #!define BUILD_ID "dev"
@@ -42,4 +42,5 @@
 #!include "maps/restrictions.opy"
 #!include "features/tournament.opy"
 #!include "features/ranked-log.opy"
+#!include "features/host-sit-out.opy"
 #!include "features/rank-tags.opy"

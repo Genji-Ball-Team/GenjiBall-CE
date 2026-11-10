@@ -93,6 +93,9 @@ subroutine simpleIslandSideCollision 20
 subroutine logRankedJoins 124
 subroutine logRankedRoundAbort 125
 subroutine logRankedUnranked 126
+subroutine applyHostSitOut 127
+subroutine resurrectForRound 123
+subroutine decideTiebreaker 122
 
 #Activated extensions. Every one is used; OverPy refuses to compile when they cost more points than the Workshop has.
 

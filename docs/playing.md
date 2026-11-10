@@ -18,7 +18,7 @@ Stay alive longest to win the round. Each round won is worth 1 point.
 5. **Final duel.** When only two players are left, both are placed on opposite sides of the arena and frozen for 1.5 seconds. Then it's a 1v1.
 6. **Round won.** The last player alive gets a point. Everyone respawns and the next round starts.
 
-Players who join mid-round sit out (dead, spectating) until the next round.
+Players who join mid-round sit out (dead, spectating) until the next round. In ranked, the host plays the first round and then sits out until they press Crouch + Interact, so the lobby doesn't wait on them.
 
 ### Dash-hitting
 
@@ -34,6 +34,7 @@ You can also hit the ball by **dashing into it**. It redirects the same way, but
 | **Interact** (tap) | Simple HUD: hides the Discord/controls text |
 | **Interact** (hold) | Zen mode: hides the hero HUD and shows big Dash/Deflect ready indicators |
 | **Melee** | Toggle anti-rubberbanding (see below) |
+| **Crouch + Interact** | Host only, ranked: sit out from the next round, or play again (see above) |
 | **Ultimate** | Toggle double sensitivity (on by default in ranked, off in v1.3.3 unless the host enabled it) |
 
 Quick melee, primary fire shurikens and Dragonblade are disabled.
@@ -51,6 +52,6 @@ On a laggy connection, pressing an ability button can make the server and your c
 
 ## Tiebreakers and the end of the match
 
-The match lasts 15 minutes. When time runs out, the current round finishes. If two or more players are tied for the highest score, only they come back for a **tiebreaker** round, and it repeats until there's a single winner.
+The match lasts 15 minutes. When time runs out, the current round finishes. If two or more players are tied for the highest score, only they come back for a **tiebreaker** round, and it repeats until there's a single winner. In ranked, a host who sits out never plays a tiebreaker and doesn't count for the tie.
 
 In **tournament mode** there's no timer. The match ends after 30 rounds (a tourney sets its own), with a 60 s break every 10. If you're the target and keep a slow ball (under 80) within 20 m of you for 7.5 s instead of deflecting it, you're put to sleep (basic anti-orbit). See [hosting.md](hosting.md#00---preset).

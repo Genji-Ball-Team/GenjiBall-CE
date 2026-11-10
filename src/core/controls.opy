@@ -205,6 +205,8 @@ rule "Controls - Simple HUD (Interact)":
     @Event eachPlayer
     @Condition eventPlayer.isHoldingButton(Button.INTERACT) == true
     @Condition eventPlayer.isAlive() == true
+    #Crouch + Interact is the host's sit-out button (features/host-sit-out.opy)
+    @Condition eventPlayer.isHoldingButton(Button.CROUCH) == false
     
     if eventPlayer.simpleHUD == SimpleHud.ZEN:
         eventPlayer.simpleHUD = SimpleHud.OFF
