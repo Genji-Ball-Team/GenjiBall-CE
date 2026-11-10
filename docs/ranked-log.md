@@ -74,7 +74,7 @@ A **round** is one round of play, from `ROUND_START` to `ROUND_END`. Rounds are 
 
 Which players are in a round:
 
-- **In the round:** the players listed in `ROUND_START`, every player alive when the round starts. In a tiebreaker, only the tied players are alive, so only they are listed.
+- **In the round:** the players listed in `ROUND_START`, every player alive when the round starts. In a tiebreaker, only the tied players are alive, so only they are listed (never a host who [sits out](#host-sit-out)).
 - **Eliminated:** each gets one `ELIM`, in the order they went out.
 - **Left:** a player who leaves during the round gets a `LEAVE` and no `ELIM`. The server drops them from that round: no rating change for them, the others are rated on their order without them. Leaving is normal and is never punished.
 - **Joined:** a player who joins during a round isn't in it. They play from the next round.
@@ -89,13 +89,14 @@ Which players are in a round:
 | `GBR` | `format`, `gameVersion`, `matchKey`, `build` | First line of every match, before `MATCH_START`. `format` is the [format version](#versions) (`2`), `gameVersion` the release (`1.3.3R`). `matchKey` is 12 random digits picked at match start, the same in every [copy of the match](#one-match-in-several-files). Treat it as text, not a number. `build` is the [build id](#build-id) of the game code that wrote the log, 8 lower-case hex digits (`3fa9c07b`); treat it as text, as it can be all digits. Logs from before it was added have no `build`: the server stores none. |
 | `TOURNEY` | `lobbyKey`, `roundLimit` | Only in a [tourney match](#tourney-matches), as the line right after `GBR`. `lobbyKey` is the server's id for the tourney lobby, from the `TOURNEY - generated` rule: digits, treat it as text (it may start with `0`). `roundLimit` is the number of rounds the match lasts. A ranked match has no `TOURNEY` line. |
 | `MATCH_START` | `map`, `preset`, `feel`, `addOns` | Match start. `map` is our own code, not the map's name (which the Workshop translates): `workshop-island-night`, or `other`. `preset` is the Preset setting as named in `docs/hosting.md` (`Default`, …). `feel` is `1` if any ball or player feel toggle is on, else `0`. `addOns` lists the gameplay add-ons that are on, comma-separated (`duels`, `endless`, `sandbox`, `abilities`), empty when none. The ranked code has had no feel toggles or add-ons since they were removed from `v1.3.3R`, so it always logs `0` and an empty `addOns`; older logs can have others. |
-| `JOIN` | `id`, `name`, `host` | A player joins a slot, or is already in one at `MATCH_START`. `host` is `1` for the lobby host, empty for everyone else. |
+| `JOIN` | `id`, `name`, `host` | A player joins a slot, or is already in one at `MATCH_START`. `host` is `1` for the lobby host, empty for everyone else. It's set when the `JOIN` is logged and never updated: a player who becomes the host later keeps an empty `host` ([which host](#host-sit-out)). |
 | `LEAVE` | `id` | A player leaves the lobby or moves to spectator. |
 | `ROUND_START` | `round`, `ids` | A round starts. `ids` lists everyone in the round, comma-separated (`1,2,3,4,5`). |
 | `ELIM` | `round`, `id`, `killer`, `place` | A player in the round is eliminated: hit by the ball, fell, or anything else. `killer` is the player whose deflect sent the ball, empty when there is none or it's the player themselves. `place` is their finishing place: the number of players still alive after them, plus 1 (the first of 5 out gets `5`). A place can be skipped when someone left the round. |
 | `ROUND_END` | `round`, `winner`, `result` | A round ends. `result` is `WIN` (one player left, `winner` is their id), `NONE` (everyone died, `winner` empty, the round restarts) or `ABORT` (the round was stopped before anyone won, `winner` empty). |
 | `KILL` | `attacker`, `victim`, `attackerId`, `victimId` | Any player death, in or out of a round (a player who joins mid-round is killed too). The first fields are the v1.3.2 `KILL` line unchanged ([legacy](#legacy-v132-logs)), the ids are new. `attacker` and `attackerId` are empty when there's no attacker or it's the victim themself, as in `ELIM`. `victimId` is empty for a player who has no id yet (not spawned). |
 | `DEFLECT` | `round`, `id`, `speed`, `target` | A player deflects the ball, during a round only. `speed` is the ball speed after the deflect, rounded to a whole number; `target` is the player the ball now goes for. Each player can deflect at most once every 0.8 s (deflect window plus lockout), so a round logs at most about 1.25 `DEFLECT` lines per second per player alive. |
+| `SIT_OUT` | `id`, `on` | The host starts (`on` `1`) or stops (`on` `0`) [sitting out](#host-sit-out). `id` is the id of the player who is the host at that moment; to follow the lobby owner, use only ids whose `JOIN` has `host` `1`. Logged when it takes effect, between rounds or while the lobby waits for players, so it's always after the last `ROUND_END` and before the next `ROUND_START`. A sit-out also ends with no `SIT_OUT` `0`: at that id's `LEAVE`, and at the end of the match. |
 | `UNRANKED` | `reason` | The match [won't count](#unranked-matches). Logged once per reason, at `MATCH_START` or when it happens. |
 | `MATCH_END` | `result` | How the match ended normally. `TIME` in a ranked match: time ran out and any tiebreaker is over. `ROUNDS` in a tourney match: round `roundLimit` has ended. |
 
@@ -116,7 +117,24 @@ For genjiball-ranked "Rating engine: OpenSkill per round". The server, not the l
 
 The host can stop their own rating from changing without leaving their slot, with the AFK button in the host tool. While it's on (until they turn it off, across matches), the server drops the host from every round that starts as if they had left it. A round already under way when they turn it on still counts for them: no rating change for them, and the others are rated on their order without them. Everything else about the match counts as usual.
 
-It isn't in the log: the game can't see the host tool's button. The host tool sends the rounds with the upload (genjiball-ranked `docs/api.md`, `X-Host-Afk`), and the server finds the host by `host` `1` in `JOIN`. A host who leaves and comes back has a new id, also with `host` `1`, and is dropped under both.
+The AFK button isn't in the log: the game can't see the host tool. The host tool sends the rounds with the upload (genjiball-ranked `docs/api.md`, `X-Host-Afk`), and the server finds the host by `host` `1` in `JOIN`. A host who leaves and comes back has a new id, also with `host` `1`, and is dropped under both.
+
+## Host sit-out
+
+In a ranked lobby the host plays the first round of the match, then **sits out**: they stay in their slot, dead, and aren't brought back for the next rounds. Pressing **Crouch + Interact** in game switches it: a host sitting out plays again from the next round, a playing host sits out from the next round. The round under way never changes. In a tourney the host plays: sitting out is off until they press the button. A new host (the old one left) plays until they press it.
+
+A host who sits out isn't alive when a round starts, so they aren't in `ROUND_START` and no round rates them: the server needs nothing more. They don't count toward the players a round needs, so with the host sitting out and one other player the lobby waits for players.
+
+A host who sits out never plays a **tiebreaker**. The game decides whether there is one among the other players only: their highest score, and whether two or more of them have it. A tie with the sitting-out host alone isn't a tie, so time running out then ends the match with no tiebreaker round. The game decides it at the end of the round win pause, after a button press during the pause has taken effect: a host who presses it then is in or out of the tie, and of the tiebreaker, by that choice. With no tie, the match ends then, so `MATCH_END` comes after the pause.
+
+`SIT_OUT` is in the log for the host tool, which turns its [AFK](#host-afk) on while the host sits out (genjiball-host-tool, "AFK on while the host sits out"). A host who starts sitting out right after winning a round is still alive: the game kills them before the next round starts, a `KILL` with no attacker and no `ELIM`, outside any round.
+
+**When a sit-out ends.** It ends with `SIT_OUT` `0` when the host presses the button to play. It also ends with no `SIT_OUT` line:
+
+- at the host's `LEAVE` (they left the lobby or moved to spectator). If they come back to a slot, they get a new `JOIN` with a new id and, as the host again, `host` `1`, and they play until they press the button;
+- at the end of the match (`MATCH_END`, or the end of the file). The next match starts with the host playing round 1.
+
+**Which host.** `id` is the id of whoever is the host when the line is logged. `host` in `JOIN` is `1` for the player who is the host when that `JOIN` is logged, and isn't updated later. A player who only becomes the host afterwards (while the lobby owner spectates, say) keeps an empty `host`, and their `SIT_OUT` lines carry their own id. When the host changes, the sit-out of the player who was the host ends with no line: that's their `LEAVE`, or for a player who stood in as host while staying in their slot, the moment the host changes back. A reader that wants the lobby owner's sit-out, like the host tool, follows `SIT_OUT` only for ids whose `JOIN` has `host` `1`, and treats each of those as ended at that id's `LEAVE`.
 
 ## Tourney matches
 
@@ -192,6 +210,7 @@ The parser rejects a match whose version it doesn't know, with a clear error.
 | 1 | The first v1.3.3R release. Ranked matches only. |
 | 2 | [Tourney matches](#tourney-matches): the `TOURNEY` line and `MATCH_END` `ROUNDS`. A format 1 parser would skip `TOURNEY` and rate a tourney as a ranked match. The game writes `2` for every match, ranked ones too; a format 2 parser reads a format 1 match as a ranked match. |
 | 2 (same version) | The `build` field at the end of `GBR` ([build id](#build-id)). A field added at the end of a line, so it needs no new version: older parsers ignore it, and a parser reading a log without it stores no build. |
+| 2 (same version) | The `SIT_OUT` line ([host sit-out](#host-sit-out)). A new event type: older parsers ignore it, and a host sitting out is never in a `ROUND_START`, so they rate the match the same. |
 
 The server has to accept a version before the game writes it: it goes live first, then the game is released. A field added at the end of a line (like `build`) needs no such ordering: the old server keeps working, and it only starts storing the field once it's updated.
 
